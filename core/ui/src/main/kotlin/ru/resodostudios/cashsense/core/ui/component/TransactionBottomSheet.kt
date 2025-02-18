@@ -44,12 +44,13 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
+import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
+import java.time.format.FormatStyle
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -107,7 +108,10 @@ fun TransactionBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CsTag(
-                    text = transaction.timestamp.formatDate(DATE_TIME),
+                    text = transaction.timestamp.formatDate(
+                        DateFormatType.DATE_TIME,
+                        FormatStyle.SHORT
+                    ),
                     icon = CsIcons.Outlined.Schedule,
                 )
                 val transactionStatusTag = if (transaction.status == COMPLETED) {

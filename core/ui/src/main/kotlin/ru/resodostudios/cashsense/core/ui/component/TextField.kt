@@ -35,11 +35,12 @@ import androidx.compose.ui.text.style.TextAlign
 import kotlinx.datetime.toKotlinInstant
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType
+import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
+import java.time.format.FormatStyle
 import java.util.Calendar
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -125,7 +126,7 @@ fun TimePickerTextField(
     val time = timestamp
         .toInstant()
         .toKotlinInstant()
-        .formatDate(FormatDateType.TIME)
+        .formatDate(DateFormatType.TIME, FormatStyle.SHORT)
 
     OutlinedTextField(
         value = time,
