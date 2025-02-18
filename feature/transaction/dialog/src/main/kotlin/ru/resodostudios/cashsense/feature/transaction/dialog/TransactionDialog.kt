@@ -62,6 +62,7 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
+import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
@@ -91,6 +92,7 @@ internal fun TransactionDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionDialog(
     transactionDialogState: TransactionDialogUiState,
@@ -168,6 +170,9 @@ private fun TransactionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
                     onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
+                )
+                TimePickerTextField(
+                    onTimeSelect = {},
                 )
                 OutlinedTextField(
                     value = transactionDialogState.description,

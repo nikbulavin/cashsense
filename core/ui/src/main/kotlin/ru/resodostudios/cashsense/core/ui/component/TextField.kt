@@ -15,7 +15,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDialog
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -28,9 +32,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import kotlinx.datetime.toKotlinInstant
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
+import ru.resodostudios.cashsense.core.ui.util.FormatDateType
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
+import java.util.Calendar
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -100,6 +110,66 @@ fun DatePickerTextField(
             },
         ) {
             DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerTextField(
+    onTimeSelect: (TimePickerState) -> Unit,
+    modifier: Modifier = Modifier,
+    timestamp: Calendar = Calendar.getInstance(),
+) {
+    var openDialog by remember { mutableStateOf(false) }
+    val time = timestamp
+        .toInstant()
+        .toKotlinInstant()
+        .formatDate(FormatDateType.TIME)
+
+    OutlinedTextField(
+        value = time,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text(stringResource(localesR.string.time)) },
+        trailingIcon = {
+            IconButton(onClick = { openDialog = true }) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Schedule,
+                    contentDescription = null,
+                )
+            }
+        },
+        singleLine = true,
+        modifier = modifier,
+    )
+    if (openDialog) {
+        val timePickerState = rememberTimePickerState(
+            initialHour = timestamp.get(Calendar.HOUR_OF_DAY),
+            initialMinute = timestamp.get(Calendar.MINUTE),
+        )
+        TimePickerDialog(
+            title = { Text(stringResource(localesR.string.time)) },
+            onDismissRequest = { openDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        openDialog = false
+                        onTimeSelect(timePickerState)
+                    },
+                ) {
+                    Text(stringResource(localesR.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openDialog = false }
+                ) {
+                    Text(stringResource(localesR.string.cancel))
+                }
+            },
+        ) {
+            TimePicker(state = timePickerState)
         }
     }
 }
