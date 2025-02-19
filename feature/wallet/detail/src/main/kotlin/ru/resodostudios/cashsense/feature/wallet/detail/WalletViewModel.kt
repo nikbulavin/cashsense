@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -32,8 +31,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
-import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
-import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
@@ -55,7 +53,7 @@ class WalletViewModel @Inject constructor(
             selectedCategories = emptySet(),
             financeType = NOT_SET,
             dateType = ALL,
-            selectedDate = LocalDate(getCurrentYear(), getCurrentMonth(), 1),
+            selectedDate = getCurrentZonedDateTime().date,
         )
     )
 
@@ -174,7 +172,7 @@ class WalletViewModel @Inject constructor(
         transactionFilterState.update {
             it.copy(
                 dateType = dateType,
-                selectedDate = LocalDate(getCurrentYear(), getCurrentMonth(), 1),
+                selectedDate = getCurrentZonedDateTime().date,
             )
         }
     }

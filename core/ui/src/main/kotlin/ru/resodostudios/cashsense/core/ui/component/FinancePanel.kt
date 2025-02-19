@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
@@ -65,6 +64,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.math.MathContext
@@ -469,7 +469,7 @@ fun FinancePanelDefaultPreview(
                     selectedCategories = categories.take(3).toSet(),
                     financeType = NOT_SET,
                     dateType = ALL,
-                    selectedDate = LocalDate(2025, 1, 1),
+                    selectedDate = getCurrentZonedDateTime().date,
                 ),
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
@@ -501,7 +501,7 @@ fun FinancePanelOpenedPreview(
                     selectedCategories = categories.take(3).toSet(),
                     financeType = EXPENSES,
                     dateType = MONTH,
-                    selectedDate = LocalDate(2025, 1, 1),
+                    selectedDate = getCurrentZonedDateTime().date,
                 ),
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
