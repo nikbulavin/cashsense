@@ -26,7 +26,7 @@ fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: Tran
                 ALL -> true
                 WEEK -> it.transaction.timestamp.getZonedWeek() == getCurrentWeek()
                 MONTH -> matchesSelectedYearMonth(it.transaction, transactionFilter)
-                YEAR -> it.transaction.timestamp.getZonedYear() == transactionFilter.selectedYearMonth.year
+                YEAR -> it.transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year
             }
         }
 
@@ -49,5 +49,5 @@ fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: Tran
 private fun matchesSelectedYearMonth(
     transaction: Transaction,
     transactionFilter: TransactionFilter,
-) = transaction.timestamp.getZonedYear() == transactionFilter.selectedYearMonth.year &&
-        transaction.timestamp.getZonedMonth() == transactionFilter.selectedYearMonth.monthValue
+) = transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year &&
+        transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.monthNumber
