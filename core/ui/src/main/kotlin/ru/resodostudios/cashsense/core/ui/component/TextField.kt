@@ -53,7 +53,7 @@ fun DatePickerTextField(
     timestamp: Instant,
     @StringRes labelRes: Int,
     icon: ImageVector,
-    onDateClick: (Instant) -> Unit,
+    onDateSelect: (Instant) -> Unit,
     modifier: Modifier = Modifier,
     onlyFutureDates: Boolean = false,
 ) {
@@ -76,6 +76,7 @@ fun DatePickerTextField(
         modifier = modifier,
     )
     if (openDialog) {
+        val timeZone = LocalTimeZone.current
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = timestamp.toEpochMilliseconds(),
             selectableDates = if (onlyFutureDates) {
@@ -96,7 +97,18 @@ fun DatePickerTextField(
                 TextButton(
                     onClick = {
                         openDialog = false
-                        onDateClick(Instant.fromEpochMilliseconds(datePickerState.selectedDateMillis!!))
+                        val localTime = timestamp.toLocalDateTime(timeZone)
+                        val selectedDate = Instant
+                            .fromEpochMilliseconds(datePickerState.selectedDateMillis!!)
+                            .toLocalDateTime(timeZone)
+                        val instant = LocalDateTime(
+                            selectedDate.year,
+                            selectedDate.monthNumber,
+                            selectedDate.dayOfMonth,
+                            localTime.hour,
+                            localTime.minute,
+                        ).toInstant(timeZone)
+                        onDateSelect(instant)
                     },
                     enabled = confirmEnabled.value,
                 ) {

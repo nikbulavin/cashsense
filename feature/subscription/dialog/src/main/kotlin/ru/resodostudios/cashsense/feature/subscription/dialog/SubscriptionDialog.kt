@@ -152,7 +152,7 @@ fun SubscriptionDialog(
                 timestamp = subscriptionDialogState.paymentDate,
                 labelRes = localesR.string.payment_date,
                 icon = CsIcons.Outlined.Calendar,
-                onDateClick = { onSubscriptionEvent(UpdatePaymentDate(it)) },
+                onDateSelect = { onSubscriptionEvent(UpdatePaymentDate(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),

@@ -165,7 +165,7 @@ private fun TransactionDialog(
                     labelRes = localesR.string.date,
                     icon = CsIcons.Outlined.Calendar,
                     modifier = Modifier.fillMaxWidth(),
-                    onDateClick = { onTransactionEvent(UpdateDate(it)) },
+                    onDateSelect = { onTransactionEvent(UpdateDate(it)) },
                 )
                 TimePickerTextField(
                     onTimeSelect = { onTransactionEvent(UpdateDate(it)) },
