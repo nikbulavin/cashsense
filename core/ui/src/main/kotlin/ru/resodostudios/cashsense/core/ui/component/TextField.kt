@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDialog
-import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -32,16 +31,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import kotlinx.datetime.toKotlinInstant
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
 import java.time.format.FormatStyle
-import java.util.Calendar
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -118,18 +120,14 @@ fun DatePickerTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerTextField(
-    onTimeSelect: (TimePickerState) -> Unit,
+    timestamp: Instant,
+    onTimeSelect: (Instant) -> Unit,
     modifier: Modifier = Modifier,
-    timestamp: Calendar = Calendar.getInstance(),
 ) {
     var openDialog by remember { mutableStateOf(false) }
-    val time = timestamp
-        .toInstant()
-        .toKotlinInstant()
-        .formatDate(DateFormatType.TIME, FormatStyle.SHORT)
 
     OutlinedTextField(
-        value = time,
+        value = timestamp.formatDate(DateFormatType.TIME, FormatStyle.SHORT),
         onValueChange = {},
         readOnly = true,
         label = { Text(stringResource(localesR.string.time)) },
@@ -145,9 +143,11 @@ fun TimePickerTextField(
         modifier = modifier,
     )
     if (openDialog) {
+        val timeZone = LocalTimeZone.current
+        val localTime = timestamp.toLocalDateTime(timeZone)
         val timePickerState = rememberTimePickerState(
-            initialHour = timestamp.get(Calendar.HOUR_OF_DAY),
-            initialMinute = timestamp.get(Calendar.MINUTE),
+            initialHour = localTime.hour,
+            initialMinute = localTime.minute,
         )
         TimePickerDialog(
             title = { Text(stringResource(localesR.string.time)) },
@@ -156,7 +156,14 @@ fun TimePickerTextField(
                 TextButton(
                     onClick = {
                         openDialog = false
-                        onTimeSelect(timePickerState)
+                        val instant = LocalDateTime(
+                            localTime.year,
+                            localTime.monthNumber,
+                            localTime.dayOfMonth,
+                            timePickerState.hour,
+                            timePickerState.minute,
+                        ).toInstant(timeZone)
+                        onTimeSelect(instant)
                     },
                 ) {
                     Text(stringResource(localesR.string.ok))

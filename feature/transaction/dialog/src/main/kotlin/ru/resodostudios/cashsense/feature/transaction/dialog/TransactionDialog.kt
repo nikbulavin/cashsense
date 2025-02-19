@@ -92,7 +92,6 @@ internal fun TransactionDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionDialog(
     transactionDialogState: TransactionDialogUiState,
@@ -172,7 +171,9 @@ private fun TransactionDialog(
                     onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
                 )
                 TimePickerTextField(
-                    onTimeSelect = {},
+                    onTimeSelect = { onTransactionEvent(UpdateDate(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    timestamp = transactionDialogState.date,
                 )
                 OutlinedTextField(
                     value = transactionDialogState.description,
