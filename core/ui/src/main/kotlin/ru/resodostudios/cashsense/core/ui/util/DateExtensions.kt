@@ -29,8 +29,6 @@ fun Instant.isInCurrentMonthAndYear(): Boolean {
 
 fun getCurrentYear(): Int = getCurrentZonedDateTime().year
 
-fun getCurrentMonth(): Int = getCurrentZonedDateTime().monthNumber
-
 fun getCurrentWeek(): Int = getCurrentZonedDateTime()
     .toJavaLocalDateTime()
     .get(WeekFields.ISO.weekOfWeekBasedYear())
