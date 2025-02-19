@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
@@ -64,7 +63,6 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateAmount
@@ -163,12 +161,11 @@ private fun TransactionDialog(
                     transactionState = transactionDialogState,
                 )
                 DatePickerTextField(
-                    value = transactionDialogState.date.formatDate(),
-                    labelTextId = localesR.string.date,
+                    timestamp = transactionDialogState.date,
+                    labelRes = localesR.string.date,
                     icon = CsIcons.Outlined.Calendar,
                     modifier = Modifier.fillMaxWidth(),
-                    initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
-                    onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
+                    onDateClick = { onTransactionEvent(UpdateDate(it)) },
                 )
                 TimePickerTextField(
                     onTimeSelect = { onTransactionEvent(UpdateDate(it)) },

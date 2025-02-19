@@ -50,21 +50,20 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerTextField(
-    value: String,
-    @StringRes labelTextId: Int,
+    timestamp: Instant,
+    @StringRes labelRes: Int,
     icon: ImageVector,
-    onDateClick: (Long) -> Unit,
+    onDateClick: (Instant) -> Unit,
     modifier: Modifier = Modifier,
-    initialSelectedDateMillis: Long? = null,
-    isAllDatesEnabled: Boolean = true,
+    onlyFutureDates: Boolean = false,
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
     OutlinedTextField(
-        value = value,
+        value = timestamp.formatDate(),
         onValueChange = {},
         readOnly = true,
-        label = { Text(stringResource(labelTextId)) },
+        label = { Text(stringResource(labelRes)) },
         trailingIcon = {
             IconButton(onClick = { openDialog = true }) {
                 Icon(
@@ -78,8 +77,8 @@ fun DatePickerTextField(
     )
     if (openDialog) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = initialSelectedDateMillis,
-            selectableDates = if (!isAllDatesEnabled) {
+            initialSelectedDateMillis = timestamp.toEpochMilliseconds(),
+            selectableDates = if (onlyFutureDates) {
                 object : SelectableDates {
                     override fun isSelectableDate(utcTimeMillis: Long): Boolean =
                         utcTimeMillis >= System.currentTimeMillis()
@@ -97,7 +96,7 @@ fun DatePickerTextField(
                 TextButton(
                     onClick = {
                         openDialog = false
-                        onDateClick(datePickerState.selectedDateMillis!!)
+                        onDateClick(Instant.fromEpochMilliseconds(datePickerState.selectedDateMillis!!))
                     },
                     enabled = confirmEnabled.value,
                 ) {
