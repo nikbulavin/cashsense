@@ -64,10 +64,10 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.math.MathContext
-import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Currency
 import java.util.Locale
@@ -84,7 +84,7 @@ fun FinancePanel(
     transactionFilter: TransactionFilter,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     modifier: Modifier = Modifier,
@@ -270,7 +270,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     @StringRes subtitleRes: Int,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -392,7 +392,7 @@ private fun FilterDateTypeSelectorRow(
 
 @Composable
 private fun FilterBySelectedDateTypeRow(
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     transactionFilter: TransactionFilter,
     modifier: Modifier = Modifier,
 ) {
@@ -411,17 +411,17 @@ private fun FilterBySelectedDateTypeRow(
         }
 
         val selectedDate = when (transactionFilter.dateType) {
-            YEAR -> transactionFilter.selectedYearMonth.year.toString()
+            YEAR -> transactionFilter.selectedDate.year.toString()
             MONTH -> {
-                val monthName = Month(transactionFilter.selectedYearMonth.monthValue)
+                val monthName = Month(transactionFilter.selectedDate.monthNumber)
                     .getDisplayName(
                         TextStyle.FULL_STANDALONE,
                         Locale.getDefault()
                     )
                     .replaceFirstChar { it.uppercaseChar() }
 
-                if (transactionFilter.selectedYearMonth.year != getCurrentYear()) {
-                    "$monthName ${transactionFilter.selectedYearMonth.year}"
+                if (transactionFilter.selectedDate.year != getCurrentYear()) {
+                    "$monthName ${transactionFilter.selectedDate.year}"
                 } else {
                     monthName
                 }
@@ -469,7 +469,7 @@ fun FinancePanelDefaultPreview(
                     selectedCategories = categories.take(3).toSet(),
                     financeType = NOT_SET,
                     dateType = ALL,
-                    selectedYearMonth = YearMonth.of(2025, 1),
+                    selectedDate = getCurrentZonedDateTime().date,
                 ),
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),
@@ -501,7 +501,7 @@ fun FinancePanelOpenedPreview(
                     selectedCategories = categories.take(3).toSet(),
                     financeType = EXPENSES,
                     dateType = MONTH,
-                    selectedYearMonth = YearMonth.of(2025, 1),
+                    selectedDate = getCurrentZonedDateTime().date,
                 ),
                 availableCategories = categories.toList(),
                 currency = getUsdCurrency(),

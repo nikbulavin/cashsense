@@ -1,10 +1,10 @@
 package ru.resodostudios.cashsense.core.model.data
 
-import java.time.YearMonth
+import kotlinx.datetime.LocalDate
 
 data class TransactionFilter(
     val selectedCategories: Set<Category>,
     val financeType: FinanceType,
     val dateType: DateType,
-    val selectedYearMonth: YearMonth,
+    val selectedDate: LocalDate,
 )
