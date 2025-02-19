@@ -81,7 +81,7 @@ private fun TransactionOverviewScreen(
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -232,7 +232,7 @@ private fun LazyListScope.header(
     financePanelUiState: FinancePanelUiState,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
 ) {

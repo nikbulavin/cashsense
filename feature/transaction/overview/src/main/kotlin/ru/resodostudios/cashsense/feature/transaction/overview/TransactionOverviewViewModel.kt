@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -30,12 +32,10 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
-import ru.resodostudios.cashsense.core.ui.util.getCurrentMonth
-import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
-import java.time.YearMonth
 import java.util.Currency
 import javax.inject.Inject
 
@@ -53,7 +53,7 @@ class TransactionOverviewViewModel @Inject constructor(
             selectedCategories = emptySet(),
             financeType = NOT_SET,
             dateType = ALL,
-            selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
+            selectedDate = getCurrentZonedDateTime().date,
         )
     )
 
@@ -126,7 +126,7 @@ class TransactionOverviewViewModel @Inject constructor(
                         .groupBy {
                             val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
                             when (transactionFilter.dateType) {
-                                YEAR -> zonedDateTime.monthValue
+                                YEAR -> zonedDateTime.monthNumber
                                 MONTH -> zonedDateTime.dayOfMonth
                                 ALL, WEEK -> zonedDateTime.dayOfWeek.value
                             }
@@ -238,17 +238,17 @@ class TransactionOverviewViewModel @Inject constructor(
         transactionFilterState.update {
             it.copy(
                 dateType = dateType,
-                selectedYearMonth = YearMonth.of(getCurrentYear(), getCurrentMonth()),
+                selectedDate = getCurrentZonedDateTime().date,
             )
         }
     }
 
-    fun updateSelectedDate(increment: Short) {
+    fun updateSelectedDate(dateOffset: Int) {
         when (transactionFilterState.value.dateType) {
             MONTH -> {
                 transactionFilterState.update {
                     it.copy(
-                        selectedYearMonth = it.selectedYearMonth.plusMonths(increment.toLong()),
+                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.MONTH),
                     )
                 }
             }
@@ -256,7 +256,7 @@ class TransactionOverviewViewModel @Inject constructor(
             YEAR -> {
                 transactionFilterState.update {
                     it.copy(
-                        selectedYearMonth = it.selectedYearMonth.plusYears(increment.toLong()),
+                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.YEAR),
                     )
                 }
             }
