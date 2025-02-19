@@ -183,7 +183,7 @@ private fun TransactionDialog(
                         imeAction = ImeAction.Done,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
+                        onDone = { focusManager.clearFocus() },
                     ),
                     label = { Text(stringResource(localesR.string.description)) },
                     modifier = Modifier
@@ -221,8 +221,8 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        Pair(stringResource(localesR.string.expense), CsIcons.Outlined.TrendingDown),
-        Pair(stringResource(localesR.string.income_singular), CsIcons.Outlined.TrendingUp),
+        stringResource(localesR.string.expense) to CsIcons.Outlined.TrendingDown,
+        stringResource(localesR.string.income_singular) to CsIcons.Outlined.TrendingUp,
     )
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         transactionTypes.forEachIndexed { index, transactionType ->
@@ -262,8 +262,8 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        Pair(stringResource(localesR.string.completed), CsIcons.Outlined.CheckCircle),
-        Pair(stringResource(localesR.string.pending), CsIcons.Outlined.Pending),
+        stringResource(localesR.string.completed) to CsIcons.Outlined.CheckCircle,
+        stringResource(localesR.string.pending) to CsIcons.Outlined.Pending,
     )
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         statusTypes.forEachIndexed { index, statusType ->
