@@ -127,8 +127,8 @@ class TransactionOverviewViewModel @Inject constructor(
                             val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
                             when (transactionFilter.dateType) {
                                 YEAR -> zonedDateTime.monthNumber
-                                MONTH -> zonedDateTime.dayOfMonth
-                                ALL, WEEK -> zonedDateTime.dayOfWeek.value
+                                ALL, MONTH -> zonedDateTime.dayOfMonth
+                                WEEK -> zonedDateTime.dayOfWeek.value
                             }
                         }
                         .mapValues { (_, transactions) ->
