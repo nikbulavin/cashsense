@@ -167,7 +167,6 @@ class WalletViewModel @Inject constructor(
             transactionFilterState.update {
                 it.copy(
                     selectedCategories = emptySet(),
-
                 )
             }
         }
