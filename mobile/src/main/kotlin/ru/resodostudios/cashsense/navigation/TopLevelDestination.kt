@@ -25,31 +25,29 @@ import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 /**
- * Represents the top-level destinations in the application.
- * Each destination has associated icons, text resources, and navigation routes.
- * This enum is used for configuring the bottom navigation bar and managing navigation within the app.
+ * Enum class representing the top-level destinations in the application.
  *
- * @property selectedIcon The icon displayed when the destination is selected in the bottom navigation.
- * @property unselectedIcon The icon displayed when the destination is not selected.
- * @property iconTextId The resource ID for the text displayed below the icon in the bottom navigation.
- * @property titleTextId The resource ID for the title displayed in the top app bar when this destination is active.
- * @property fabIcon The icon displayed on the floating action button (FAB) for this destination (if applicable).
- * @property fabTitle The resource ID for the content description of the FAB (if applicable).
- * @property route The Kotlin class representing the composable route for this destination.
- *               Used for navigating to the main screen of the destination.
- * @property baseRoute The Kotlin class representing the base composable route for this destination.
- *               Used for navigating to any screen within the destination's navigation graph.
- *               Defaults to the `route` if not specified separately.
+ * Each destination corresponds to a screen accessible from the main navigation bar.
+ * It holds information about the destination's icons, titles, routes, and associated FAB (Floating Action Button) data.
+ *
+ * @property selectedIcon The [ImageVector] to display for the destination when it is selected in the navigation bar.
+ * @property unselectedIcon The [ImageVector] to display for the destination when it is not selected in the navigation bar.
+ * @property iconTextId The [StringRes] resource ID for the content description of the icon.
+ * @property titleTextId The [StringRes] resource ID for the title of the destination.
+ * @property route The [KClass] representing the composable route associated with the destination.
+ * @property baseRoute The [KClass] representing the base route for the destination, for nested navigation. Defaults to [route] if not provided.
+ * @property fabIcon The [ImageVector] to display on the FAB when this destination is active. Null if no FAB is needed.
+ * @property fabTitle The [StringRes] resource ID for the content description or title of the FAB when this destination is active. Null if no FAB is needed.
  */
 enum class TopLevelDestination(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     @StringRes val iconTextId: Int,
     @StringRes val titleTextId: Int,
-    val fabIcon: ImageVector?,
-    @StringRes val fabTitle: Int?,
     val route: KClass<*>,
     val baseRoute: KClass<*> = route,
+    val fabIcon: ImageVector? = null,
+    @StringRes val fabTitle: Int? = null,
 ) {
     HOME(
         selectedIcon = CsIcons.Filled.Home,
@@ -86,8 +84,6 @@ enum class TopLevelDestination(
         unselectedIcon = CsIcons.Outlined.Settings,
         iconTextId = localesR.string.settings_title,
         titleTextId = localesR.string.settings_title,
-        fabIcon = null,
-        fabTitle = null,
         route = SettingsRoute::class,
         baseRoute = SettingsBaseRoute::class,
     )

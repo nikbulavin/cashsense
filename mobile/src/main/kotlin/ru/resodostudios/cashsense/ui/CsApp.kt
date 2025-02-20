@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration.Indefinite
@@ -23,9 +24,14 @@ import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -48,6 +54,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsApp(
     appState: CsAppState,
@@ -55,6 +62,7 @@ fun CsApp(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
+    val currentTopLevelDestination = appState.currentTopLevelDestination
     val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
@@ -91,6 +99,8 @@ fun CsApp(
         }
     }
 
+    var previousDestination by remember { mutableStateOf(HOME) }
+
     NavigationSuiteScaffold(
         layoutType = layoutType,
         navigationSuiteItems = {
@@ -115,18 +125,21 @@ fun CsApp(
                             maxLines = 1,
                         )
                     },
-                    onClick = { appState.navigateToTopLevelDestination(destination) },
+                    onClick = {
+                        if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
+                            previousDestination = currentTopLevelDestination
+                        }
+                        appState.navigateToTopLevelDestination(destination)
+                    },
                 )
             }
         },
     ) {
-        val destination = appState.currentTopLevelDestination
-
         Scaffold(
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHostState,
-                    modifier = if (destination == SETTINGS) {
+                    modifier = if (currentTopLevelDestination == SETTINGS) {
                         Modifier.windowInsetsPadding(WindowInsets.safeDrawing)
                     } else {
                         Modifier
@@ -134,28 +147,31 @@ fun CsApp(
                 )
             },
             floatingActionButton = {
-                if (destination != null) {
-                    if (destination.fabTitle != null && destination.fabIcon != null) {
-                        CsFloatingActionButton(
-                            titleRes = destination.fabTitle,
-                            icon = destination.fabIcon,
-                            onClick = {
-                                when (destination) {
-                                    HOME -> appState.navController.navigateToWalletDialog()
-                                    CATEGORIES -> appState.navController.navigateToCategoryDialog()
-                                    SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
-                                    else -> {}
-                                }
-                            },
-                            modifier = Modifier
-                                .navigationBarsPadding()
-                                .windowInsetsPadding(
-                                    WindowInsets.safeDrawing.only(
-                                        WindowInsetsSides.Horizontal,
-                                    ),
+                if (currentTopLevelDestination != null) {
+                    val visible = currentTopLevelDestination != SETTINGS
+                    CsFloatingActionButton(
+                        titleRes = currentTopLevelDestination.fabTitle ?: previousDestination.fabTitle!!,
+                        icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
+                        onClick = {
+                            when (currentTopLevelDestination) {
+                                HOME -> appState.navController.navigateToWalletDialog()
+                                CATEGORIES -> appState.navController.navigateToCategoryDialog()
+                                SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
+                                SETTINGS -> {}
+                            }
+                        },
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal,
                                 ),
-                        )
-                    }
+                            )
+                            .animateFloatingActionButton(
+                                visible = visible,
+                                alignment = Alignment.BottomEnd,
+                            ),
+                    )
                 }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -164,7 +180,7 @@ fun CsApp(
             },
         ) { padding ->
             Column(
-                Modifier
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
                     .consumeWindowInsets(padding)
@@ -174,9 +190,9 @@ fun CsApp(
                         ),
                     ),
             ) {
-                if (destination != null) {
+                if (currentTopLevelDestination != null) {
                     CsTopAppBar(
-                        titleRes = destination.titleTextId,
+                        titleRes = currentTopLevelDestination.titleTextId,
                     )
                 }
 
