@@ -1,6 +1,6 @@
 [versions]
 aboutLibraries = "11.6.3"
-accompanist = "0.37.0"
+accompanist = "0.37.2"
 androidGradlePlugin = "8.8.1"
 androidxActivityCompose = "1.10.0"
 androidxBrowser = "1.8.0"
