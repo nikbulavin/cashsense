@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import android.text.Layout
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
@@ -57,15 +59,20 @@ import com.patrykandpatrick.vico.core.common.component.Shadow
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.locales.R
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
 import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.time.format.TextStyle
 import java.util.Currency
@@ -74,13 +81,12 @@ import java.util.Locale
 @Composable
 fun FinanceGraph(
     transactionFilter: TransactionFilter,
-    graphData: Map<Int, BigDecimal>,
+    modelProducer: CartesianChartModelProducer,
     currency: Currency,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberVicoScrollState()
     val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
-    val modelProducer = remember { CartesianChartModelProducer() }
 
     val xDateFormatter = CartesianValueFormatter { _, x, _ ->
         when (transactionFilter.dateType) {
@@ -121,12 +127,6 @@ fun FinanceGraph(
         }
     }
 
-    LaunchedEffect(graphData) {
-        modelProducer.runTransaction {
-            if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
-            lineSeries { series(graphData.keys, graphData.values) }
-        }
-    }
     ProvideVicoTheme(rememberM3VicoTheme()) {
         CartesianChartHost(
             chart = rememberCartesianChart(
@@ -256,6 +256,37 @@ private fun rememberMarker(
                     layerMargins.ensureValuesAtLeast(top = topMargin, bottom = bottomMargin)
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FinanceGraphPreview() {
+    CsTheme {
+        Surface {
+            val graphData = mapOf(
+                1 to BigDecimal(100),
+                2 to BigDecimal(200),
+                3 to BigDecimal(300),
+            )
+            val modelProducer = remember { CartesianChartModelProducer() }
+            runBlocking {
+                modelProducer.runTransaction {
+                    lineSeries { series(graphData.keys, graphData.values) }
+                }
+            }
+            FinanceGraph(
+                transactionFilter = TransactionFilter(
+                    dateType = MONTH,
+                    financeType = FinanceType.EXPENSES,
+                    selectedDate = getCurrentZonedDateTime().date,
+                    selectedCategories = emptySet(),
+                ),
+                currency = getUsdCurrency(),
+                modelProducer = modelProducer,
+                modifier = Modifier.padding(16.dp),
+            )
         }
     }
 }

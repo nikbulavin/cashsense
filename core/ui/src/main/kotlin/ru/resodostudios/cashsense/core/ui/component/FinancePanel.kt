@@ -34,7 +34,9 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,6 +45,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import kotlinx.datetime.Month
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
@@ -340,9 +344,16 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             style = MaterialTheme.typography.labelLarge,
         )
         AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
+            val modelProducer = remember { CartesianChartModelProducer() }
+            LaunchedEffect(Unit) {
+                modelProducer.runTransaction {
+                    if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
+                    lineSeries { series(graphData.keys, graphData.values) }
+                }
+            }
             FinanceGraph(
                 transactionFilter = transactionFilter,
-                graphData = graphData,
+                modelProducer = modelProducer,
                 currency = currency,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             )
