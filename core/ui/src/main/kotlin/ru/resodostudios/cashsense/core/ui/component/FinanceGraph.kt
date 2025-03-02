@@ -84,22 +84,17 @@ fun FinanceGraph(
     modelProducer: CartesianChartModelProducer,
     currency: Currency,
     modifier: Modifier = Modifier,
+    locale: Locale = Locale.getDefault(),
 ) {
     val scrollState = rememberVicoScrollState()
     val zoomState = rememberVicoZoomState(initialZoom = Zoom.max(Zoom.Content, Zoom.Content))
 
     val xDateFormatter = CartesianValueFormatter { _, x, _ ->
+        val textStyle = TextStyle.NARROW_STANDALONE
         when (transactionFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(
-                TextStyle.NARROW_STANDALONE,
-                Locale.getDefault(),
-            )
-
+            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(textStyle, locale)
             MONTH -> x.toInt().toString()
-            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(
-                TextStyle.NARROW_STANDALONE,
-                Locale.getDefault(),
-            )
+            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(textStyle, locale)
         }
     }
 
