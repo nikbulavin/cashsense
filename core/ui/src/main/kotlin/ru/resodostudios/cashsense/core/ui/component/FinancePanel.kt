@@ -345,7 +345,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
         )
         AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
             val modelProducer = remember { CartesianChartModelProducer() }
-            LaunchedEffect(Unit) {
+            LaunchedEffect(graphData) {
                 modelProducer.runTransaction {
                     if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
                     lineSeries { series(graphData.keys, graphData.values) }
