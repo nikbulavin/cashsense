@@ -342,6 +342,8 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
             style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
             val modelProducer = remember { CartesianChartModelProducer() }
