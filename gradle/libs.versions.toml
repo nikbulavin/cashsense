@@ -3,6 +3,7 @@ aboutLibraries = "11.6.3"
 accompanist = "0.37.2"
 androidGradlePlugin = "8.8.2"
 androidxActivityCompose = "1.10.1"
+androidxAppCompat = "1.7.0"
 androidxBrowser = "1.8.0"
 androidxCore = "1.15.0"
 androidxCoreSplashscreen = "1.2.0-beta01"
@@ -47,6 +48,7 @@ aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", ve
 aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivityCompose" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
