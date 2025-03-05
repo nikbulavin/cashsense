@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
@@ -240,7 +241,7 @@ private fun LazyListScope.about(
             onClick = {
                 launchCustomChromeTab(
                     context = context,
-                    uri = Uri.parse(FEEDBACK_URL),
+                    uri = FEEDBACK_URL.toUri(),
                     toolbarColor = backgroundColor,
                 )
             },
@@ -260,7 +261,7 @@ private fun LazyListScope.about(
             onClick = {
                 launchCustomChromeTab(
                     context = context,
-                    uri = Uri.parse(PRIVACY_POLICY_URL),
+                    uri = PRIVACY_POLICY_URL.toUri(),
                     toolbarColor = backgroundColor,
                 )
             },
