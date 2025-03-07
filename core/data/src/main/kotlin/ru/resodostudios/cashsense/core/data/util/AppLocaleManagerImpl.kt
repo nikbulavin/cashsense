@@ -25,7 +25,9 @@ import kotlinx.coroutines.flow.shareIn
 import ru.resodostudios.cashsense.core.network.CsDispatchers.IO
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import javax.inject.Singleton
 
+@Singleton
 internal class AppLocaleManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher,
