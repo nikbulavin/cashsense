@@ -79,6 +79,6 @@ internal class AppLocaleManagerImpl @Inject constructor(
         } else {
             AppCompatDelegate.getApplicationLocales().get(0)
         }
-        return languageCode?.language ?: "en-US"
+        return languageCode?.language ?: "en"
     }
 }

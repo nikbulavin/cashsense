@@ -37,6 +37,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurrencyAlt
@@ -63,6 +64,7 @@ internal fun SettingsScreen(
         onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
         onCurrencyUpdate = viewModel::updateCurrency,
+        onLanguageUpdate = viewModel::updateLanguage,
     )
 }
 
@@ -73,6 +75,7 @@ private fun SettingsScreen(
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
+    onLanguageUpdate: (String) -> Unit,
 ) {
     when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -84,6 +87,7 @@ private fun SettingsScreen(
                 general(
                     settings = settingsState.settings,
                     onCurrencyUpdate = onCurrencyUpdate,
+                    onLanguageUpdate = onLanguageUpdate,
                 )
                 appearance(
                     settings = settingsState.settings,
@@ -124,12 +128,15 @@ fun SettingsScreenPreview() {
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                         currency = getUsdCurrency(),
+                        languageCode = "",
+                        languageName = "English",
                     )
                 ),
                 onLicensesClick = {},
                 onDynamicColorPreferenceUpdate = {},
                 onDarkThemeConfigUpdate = {},
                 onCurrencyUpdate = {},
+                onLanguageUpdate = {},
             )
         }
     }
@@ -138,8 +145,14 @@ fun SettingsScreenPreview() {
 private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
+    onLanguageUpdate: (String) -> Unit,
 ) {
-    item { SectionTitle(text = stringResource(localesR.string.settings_general), topPadding = 10.dp) }
+    item {
+        SectionTitle(
+            text = stringResource(localesR.string.settings_general),
+            topPadding = 10.dp,
+        )
+    }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -160,6 +173,29 @@ private fun LazyListScope.general(
                 currency = settings.currency,
                 onDismiss = { showCurrencyDialog = false },
                 onCurrencyClick = onCurrencyUpdate,
+            )
+        }
+    }
+    item {
+        var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+
+        CsListItem(
+            headlineContent = { Text(stringResource(localesR.string.language)) },
+            leadingContent = {
+                Icon(
+                    imageVector = CsIcons.Outlined.Language,
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text(settings.languageName) },
+            onClick = { showLanguageDialog = true },
+        )
+
+        if (showLanguageDialog) {
+            LanguageDialog(
+                language = settings.languageCode,
+                onLanguageClick = onLanguageUpdate,
+                onDismiss = { showLanguageDialog = false },
             )
         }
     }
