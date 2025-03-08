@@ -39,7 +39,8 @@ internal class AppLocaleManagerImpl @Inject constructor(
 
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                if (intent.action == Intent.ACTION_LOCALE_CHANGED) trySend(getLanguageCode()) else return
+                if (intent.action != Intent.ACTION_LOCALE_CHANGED) return
+                trySend(getLanguageCode())
             }
         }
 
@@ -73,9 +74,7 @@ internal class AppLocaleManagerImpl @Inject constructor(
 
     private fun getLanguageCode(): String {
         val languageCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.getSystemService(LocaleManager::class.java)
-                ?.applicationLocales
-                ?.get(0)
+            context.getSystemService(LocaleManager::class.java).applicationLocales.get(0)
         } else {
             AppCompatDelegate.getApplicationLocales().get(0)
         }
