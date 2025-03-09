@@ -41,7 +41,7 @@ protobuf = "4.29.3"
 protobufPlugin = "0.9.4"
 retrofit = "2.11.0"
 room = "2.7.0-rc01"
-vico = "2.1.0-alpha.6"
+vico = "2.1.0-beta.1"
 
 [libraries]
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutLibraries" }
