@@ -5,35 +5,59 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.data.Language
 import java.util.Currency
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
+    private val appLocaleManager: AppLocaleManager,
 ) : ViewModel() {
 
-    val settingsUiState: StateFlow<SettingsUiState> =
-        userDataRepository.userData
-            .map { userData ->
-                SettingsUiState.Success(
-                    settings = UserEditableSettings(
-                        useDynamicColor = userData.useDynamicColor,
-                        darkThemeConfig = userData.darkThemeConfig,
-                        currency = Currency.getInstance(userData.currency),
-                    )
-                )
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = WhileSubscribed(5_000),
-                initialValue = SettingsUiState.Loading,
+    private val availableLanguages = listOf(
+        Language("en", "English"),
+        Language("ru", "Русский"),
+        Language("ar", "العربية"),
+        Language("de", "Deutsch"),
+        Language("es", "Español"),
+        Language("fr", "Français"),
+        Language("hi", "हिंदी"),
+        Language("it", "Italiano"),
+        Language("ja", "日本語"),
+        Language("ko", "한국어"),
+        Language("pl", "Polski"),
+        Language("ta", "தமிழ்"),
+        Language("zh", "简体字"),
+    )
+
+    val settingsUiState: StateFlow<SettingsUiState> = combine(
+        userDataRepository.userData,
+        appLocaleManager.currentLocale,
+    ) { userData, currentLocale ->
+        val language = availableLanguages
+            .find { it.code == currentLocale } ?: availableLanguages.first()
+        SettingsUiState.Success(
+            settings = UserEditableSettings(
+                useDynamicColor = userData.useDynamicColor,
+                darkThemeConfig = userData.darkThemeConfig,
+                currency = Currency.getInstance(userData.currency),
+                language = language,
+                availableLanguages = availableLanguages,
             )
+        )
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(5_000),
+            initialValue = SettingsUiState.Loading,
+        )
 
     fun updateDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
         viewModelScope.launch {
@@ -52,12 +76,18 @@ class SettingsViewModel @Inject constructor(
             userDataRepository.setCurrency(currency.currencyCode)
         }
     }
+
+    fun updateLanguage(language: String) {
+        appLocaleManager.updateLocale(language)
+    }
 }
 
 data class UserEditableSettings(
     val useDynamicColor: Boolean,
     val darkThemeConfig: DarkThemeConfig,
     val currency: Currency,
+    val language: Language,
+    val availableLanguages: List<Language>,
 )
 
 sealed interface SettingsUiState {
