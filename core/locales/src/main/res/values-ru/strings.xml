@@ -102,5 +102,6 @@
     <string name="app_update_downloaded">Обновление загружено</string>
     <string name="update">Обновить</string>
     <string name="install">Установить</string>
+    <string name="time">Время</string>
     <string name="language">Язык</string>
 </resources>
