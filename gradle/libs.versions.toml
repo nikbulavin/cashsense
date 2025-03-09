@@ -1,8 +1,9 @@
 [versions]
 aboutLibraries = "12.0.0-a04"
 accompanist = "0.37.2"
-androidGradlePlugin = "8.8.2"
+androidGradlePlugin = "8.9.0"
 androidxActivityCompose = "1.10.1"
+androidxAppCompat = "1.7.0"
 androidxBrowser = "1.8.0"
 androidxCore = "1.15.0"
 androidxCoreSplashscreen = "1.2.0-beta01"
@@ -33,7 +34,7 @@ kotlinxCoroutines = "1.10.1"
 kotlinxDatetime = "0.6.2"
 kotlinxSerializationJson = "1.8.0"
 ksp = "2.1.10-1.0.31"
-lottie = "6.6.2"
+lottie = "6.6.3"
 okhttp = "4.12.0"
 playAppUpdate = "2.1.0"
 protobuf = "4.29.3"
@@ -47,6 +48,7 @@ aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", ve
 aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivityCompose" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom-alpha", version.ref = "composeBom" }
