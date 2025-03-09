@@ -26,33 +26,18 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
-import java.util.Locale
+import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun LanguageDialog(
     language: String,
+    availableLanguages: List<Language>,
     onLanguageClick: (String) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var languageState by rememberSaveable { mutableStateOf(language) }
-
-    val availableLanguages = listOf(
-        "en",
-        "ru",
-        "ar",
-        "de",
-        "es",
-        "fr",
-        "hi",
-        "it",
-        "ja",
-        "ko",
-        "pl",
-        "ta",
-        "zh",
-    )
 
     CsAlertDialog(
         titleRes = localesR.string.language,
@@ -67,8 +52,8 @@ fun LanguageDialog(
         modifier = modifier,
     ) {
         LazyColumn(Modifier.selectableGroup()) {
-            items(availableLanguages) { code ->
-                val selected = code == languageState
+            items(availableLanguages) { language ->
+                val selected = language.code == languageState
                 Box(Modifier.clip(RoundedCornerShape(18.dp))) {
                     Row(
                         modifier = Modifier
@@ -76,7 +61,7 @@ fun LanguageDialog(
                             .height(56.dp)
                             .selectable(
                                 selected = selected,
-                                onClick = { languageState = code },
+                                onClick = { languageState = language.code },
                                 role = Role.RadioButton,
                             )
                             .padding(horizontal = 16.dp),
@@ -87,7 +72,7 @@ fun LanguageDialog(
                             onClick = null,
                         )
                         Text(
-                            text = Locale.forLanguageTag(code).displayName,
+                            text = language.name,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(start = 16.dp),
                         )

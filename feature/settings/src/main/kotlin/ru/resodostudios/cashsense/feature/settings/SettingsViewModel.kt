@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.data.Language
 import java.util.Currency
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,17 +21,35 @@ class SettingsViewModel @Inject constructor(
     private val appLocaleManager: AppLocaleManager,
 ) : ViewModel() {
 
+    private val availableLanguages = listOf(
+        Language("en", "English"),
+        Language("ru", "Русский"),
+        Language("ar", "العربية"),
+        Language("de", "Deutsch"),
+        Language("es", "Español"),
+        Language("fr", "Français"),
+        Language("hi", "हिंदी"),
+        Language("it", "Italiano"),
+        Language("ja", "日本語"),
+        Language("ko", "한국어"),
+        Language("pl", "Polski"),
+        Language("ta", "தமிழ்"),
+        Language("zh", "简体字"),
+    )
+
     val settingsUiState: StateFlow<SettingsUiState> = combine(
         userDataRepository.userData,
         appLocaleManager.currentLocale,
     ) { userData, currentLocale ->
+        val language = availableLanguages
+            .find { it.code == currentLocale } ?: availableLanguages.first()
         SettingsUiState.Success(
             settings = UserEditableSettings(
                 useDynamicColor = userData.useDynamicColor,
                 darkThemeConfig = userData.darkThemeConfig,
                 currency = Currency.getInstance(userData.currency),
-                languageCode = currentLocale,
-                languageName = Locale.forLanguageTag(currentLocale).displayName,
+                language = language,
+                availableLanguages = availableLanguages,
             )
         )
     }
@@ -68,8 +86,8 @@ data class UserEditableSettings(
     val useDynamicColor: Boolean,
     val darkThemeConfig: DarkThemeConfig,
     val currency: Currency,
-    val languageCode: String,
-    val languageName: String,
+    val language: Language,
+    val availableLanguages: List<Language>,
 )
 
 sealed interface SettingsUiState {

@@ -44,6 +44,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurre
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
@@ -128,8 +129,8 @@ fun SettingsScreenPreview() {
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                         currency = getUsdCurrency(),
-                        languageCode = "",
-                        languageName = "English",
+                        language = Language("en", "English"),
+                        availableLanguages = emptyList(),
                     )
                 ),
                 onLicensesClick = {},
@@ -187,13 +188,14 @@ private fun LazyListScope.general(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(settings.languageName) },
+            supportingContent = { Text(settings.language.name) },
             onClick = { showLanguageDialog = true },
         )
 
         if (showLanguageDialog) {
             LanguageDialog(
-                language = settings.languageCode,
+                language = settings.language.code,
+                availableLanguages = settings.availableLanguages,
                 onLanguageClick = onLanguageUpdate,
                 onDismiss = { showLanguageDialog = false },
             )
