@@ -1,9 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,19 +35,15 @@ import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
 import java.math.BigDecimal
-import javax.inject.Inject
 
-@HiltViewModel
-class WalletViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = WalletViewModel.Factory::class)
+class WalletViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val userDataRepository: UserDataRepository,
-    savedStateHandle: SavedStateHandle,
     getExtendedUserWallet: GetExtendedUserWalletUseCase,
+    @Assisted val walletId: String,
 ) : ViewModel() {
-
-    private val walletRoute: WalletRoute = savedStateHandle.toRoute()
 
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
@@ -60,7 +57,7 @@ class WalletViewModel @Inject constructor(
     private val selectedTransactionIdState = MutableStateFlow<String?>(null)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        getExtendedUserWallet.invoke(walletRoute.walletId),
+        getExtendedUserWallet.invoke(walletId),
         transactionFilterState,
         selectedTransactionIdState,
     ) { extendedUserWallet, transactionFilter, selectedTransactionId ->
@@ -201,6 +198,13 @@ class WalletViewModel @Inject constructor(
 
             ALL, WEEK -> {}
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            walletId: String,
+        ): WalletViewModel
     }
 }
 

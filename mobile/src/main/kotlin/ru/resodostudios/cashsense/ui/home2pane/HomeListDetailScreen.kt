@@ -1,9 +1,7 @@
 package ru.resodostudios.cashsense.ui.home2pane
 
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.VerticalDragHandle
@@ -18,26 +16,23 @@ import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationIt
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.defaultDragHandleSemantics
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldPredictiveBackHandler
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -48,22 +43,17 @@ import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.HomeScreen
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.transaction.overview.TransactionOverviewScreen
 import ru.resodostudios.cashsense.feature.transaction.overview.navigation.TransactionOverviewRoute
-import ru.resodostudios.cashsense.feature.transaction.overview.navigation.navigateToTransactionOverview
-import ru.resodostudios.cashsense.feature.transaction.overview.navigation.transactionOverviewScreen
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletScreen
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletViewModel
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.navigateToWallet
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.walletScreen
-import kotlin.uuid.Uuid
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
 
 @Serializable
 internal object WalletPlaceholderRoute
-
-@Serializable
-internal object DetailPaneNavHostRoute
 
 @Serializable
 internal object HomeListDetailRoute
@@ -147,53 +137,45 @@ internal fun HomeListDetailScreen(
         keyProvider = scaffoldNavigator.scaffoldValue,
         anchors = PaneExpansionAnchors,
     )
-    var nestedNavHostStartRoute by remember {
+    var walletRoute by remember {
         val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
     }
-    var nestedNavKey by rememberSaveable(
-        stateSaver = Saver({ it.toString() }, Uuid::parse),
-    ) {
-        mutableStateOf(Uuid.random())
-    }
-    val nestedNavController = key(nestedNavKey) {
-        rememberNavController()
-    }
     val coroutineScope = rememberCoroutineScope()
+
+    ThreePaneScaffoldPredictiveBackHandler(
+        scaffoldNavigator,
+        BackNavigationBehavior.PopUntilScaffoldValueChange,
+    )
+    BackHandler(
+        paneExpansionState.currentAnchor == PaneExpansionAnchor.Proportion(0f) &&
+                scaffoldNavigator.isListPaneVisible() &&
+                scaffoldNavigator.isDetailPaneVisible(),
+    ) {
+        coroutineScope.launch {
+            paneExpansionState.animateTo(PaneExpansionAnchor.Proportion(1f))
+        }
+    }
 
     fun onWalletClickShowDetailPane(walletId: String?) {
         if (walletId != null) {
             onWalletClick(walletId)
-            if (scaffoldNavigator.isDetailPaneVisible()) {
-                nestedNavController.navigateToWallet(walletId) {
-                    popUpTo<DetailPaneNavHostRoute>()
-                }
-            } else {
-                nestedNavHostStartRoute = WalletRoute(walletId)
-                nestedNavKey = Uuid.random()
-                clearUndoState()
-            }
+            walletRoute = WalletRoute(walletId)
             coroutineScope.launch {
                 scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
             }
+            if (!scaffoldNavigator.isDetailPaneVisible()) clearUndoState()
         } else if (scaffoldNavigator.isDetailPaneVisible()) {
-            nestedNavController.navigate(WalletPlaceholderRoute)
+            walletRoute = WalletPlaceholderRoute
         }
     }
 
     fun onTotalBalanceClickShowDetailPane() {
-        if (scaffoldNavigator.isDetailPaneVisible()) {
-            nestedNavController.navigateToTransactionOverview {
-                popUpTo<DetailPaneNavHostRoute>()
-            }
-        } else {
-            nestedNavHostStartRoute = TransactionOverviewRoute
-            nestedNavKey = Uuid.random()
-            clearUndoState()
-        }
+        walletRoute = TransactionOverviewRoute
         coroutineScope.launch {
             scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
         }
+        if (!scaffoldNavigator.isDetailPaneVisible()) clearUndoState()
     }
 
     NavigableListDetailPaneScaffold(
@@ -219,44 +201,47 @@ internal fun HomeListDetailScreen(
         },
         detailPane = {
             AnimatedPane {
-                key(nestedNavKey) {
-                    NavHost(
-                        navController = nestedNavController,
-                        startDestination = nestedNavHostStartRoute,
-                        route = DetailPaneNavHostRoute::class,
-                        enterTransition = { slideInVertically { it / 24 } + fadeIn() },
-                        exitTransition = { fadeOut(snap()) },
-                    ) {
-                        transactionOverviewScreen(
-                            shouldShowTopBar = !scaffoldNavigator.isListPaneVisible(),
-                            onBackClick = {
-                                coroutineScope.launch {
-                                    scaffoldNavigator.navigateBack()
-                                }
-                            },
-                            onTransactionClick = navigateToTransactionDialog,
-                        )
-                        walletScreen(
-                            showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
-                            onEditWallet = onEditWallet,
-                            onDeleteWallet = {
-                                onDeleteWallet(it)
-                                if (scaffoldNavigator.isDetailPaneVisible()) {
-                                    nestedNavController.navigate(WalletPlaceholderRoute)
-                                }
-                                coroutineScope.launch {
-                                    scaffoldNavigator.navigateBack()
-                                }
-                            },
-                            onTransfer = onTransfer,
-                            onBackClick = {
-                                coroutineScope.launch {
-                                    scaffoldNavigator.navigateBack()
-                                }
-                            },
-                            navigateToTransactionDialog = navigateToTransactionDialog,
-                        )
-                        composable<WalletPlaceholderRoute> {
+                AnimatedContent(walletRoute) { route ->
+                    when (route) {
+                        is TransactionOverviewRoute -> {
+                            TransactionOverviewScreen(
+                                shouldShowTopBar = !scaffoldNavigator.isListPaneVisible(),
+                                onBackClick = {
+                                    coroutineScope.launch {
+                                        scaffoldNavigator.navigateBack()
+                                    }
+                                },
+                                onTransactionClick = navigateToTransactionDialog,
+                            )
+                        }
+                        is WalletRoute -> {
+                            WalletScreen(
+                                onBackClick = {
+                                    coroutineScope.launch {
+                                        scaffoldNavigator.navigateBack()
+                                    }
+                                },
+                                onTransfer = onTransfer,
+                                onEditWallet = onEditWallet,
+                                onDeleteClick = {
+                                    onDeleteWallet(it)
+                                    if (scaffoldNavigator.isDetailPaneVisible()) {
+                                        walletRoute = WalletPlaceholderRoute
+                                    }
+                                    coroutineScope.launch {
+                                        scaffoldNavigator.navigateBack()
+                                    }
+                                },
+                                showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
+                                navigateToTransactionDialog = navigateToTransactionDialog,
+                                viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory>(
+                                    key = route.walletId,
+                                ) { factory ->
+                                    factory.create(route.walletId)
+                                },
+                            )
+                        }
+                        is WalletPlaceholderRoute -> {
                             EmptyState(
                                 messageRes = localesR.string.select_wallet,
                                 animationRes = R.raw.anim_select_wallet,

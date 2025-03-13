@@ -53,7 +53,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun WalletScreen(
+fun WalletScreen(
     onBackClick: () -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,

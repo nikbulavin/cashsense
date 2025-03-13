@@ -46,7 +46,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun TransactionOverviewScreen(
+fun TransactionOverviewScreen(
     shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
