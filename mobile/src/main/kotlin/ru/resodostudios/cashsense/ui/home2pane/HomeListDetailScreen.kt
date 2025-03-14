@@ -134,14 +134,20 @@ internal fun HomeListDetailScreen(
         ),
     )
     val paneExpansionState = rememberPaneExpansionState(
-        keyProvider = scaffoldNavigator.scaffoldValue,
-        anchors = PaneExpansionAnchors,
+        anchors = listOf(
+            PaneExpansionAnchor.Proportion(0f),
+            PaneExpansionAnchor.Proportion(0.35f),
+            PaneExpansionAnchor.Proportion(0.5f),
+            PaneExpansionAnchor.Proportion(0.65f),
+            PaneExpansionAnchor.Proportion(1f),
+        ),
     )
     var walletRoute by remember {
         val route = selectedWalletId?.let { WalletRoute(it) } ?: WalletPlaceholderRoute
         mutableStateOf(route)
     }
     val coroutineScope = rememberCoroutineScope()
+    val interactionSource = remember { MutableInteractionSource() }
 
     ThreePaneScaffoldPredictiveBackHandler(
         scaffoldNavigator,
@@ -253,13 +259,12 @@ internal fun HomeListDetailScreen(
         },
         paneExpansionState = paneExpansionState,
         paneExpansionDragHandle = {
-            val interactionSource = remember { MutableInteractionSource() }
             VerticalDragHandle(
                 modifier = Modifier.paneExpansionDraggable(
-                    state = it,
+                    state = paneExpansionState,
                     minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
                     interactionSource = interactionSource,
-                    semanticsProperties = it.defaultDragHandleSemantics(),
+                    semanticsProperties = paneExpansionState.defaultDragHandleSemantics(),
                 ),
                 interactionSource = interactionSource,
             )
@@ -274,13 +279,3 @@ private fun <T> ThreePaneScaffoldNavigator<T>.isListPaneVisible(): Boolean =
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private fun <T> ThreePaneScaffoldNavigator<T>.isDetailPaneVisible(): Boolean =
     scaffoldValue[ListDetailPaneScaffoldRole.Detail] == PaneAdaptedValue.Expanded
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-private val PaneExpansionAnchors =
-    listOf(
-        PaneExpansionAnchor.Proportion(0f),
-        PaneExpansionAnchor.Proportion(0.35f),
-        PaneExpansionAnchor.Proportion(0.5f),
-        PaneExpansionAnchor.Proportion(0.65f),
-        PaneExpansionAnchor.Proportion(1f),
-    )
