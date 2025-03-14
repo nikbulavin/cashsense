@@ -25,6 +25,7 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
+import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -101,14 +102,15 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                         .sumOf { it.transaction.amount }
                         .plus(walletPopulated.wallet.initialBalance)
 
-                    WalletItem(
-                        walletId = walletPopulated.wallet.id,
-                        title = walletPopulated.wallet.title,
-                        currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                        modifier = GlanceModifier
-                            .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
-                            .clickable(openHomeScreen(walletPopulated.wallet.id)),
-                    )
+                    Column {
+                        WalletItem(
+                            walletId = walletPopulated.wallet.id,
+                            title = walletPopulated.wallet.title,
+                            currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
+                            onClick = openHomeScreen(walletPopulated.wallet.id),
+                        )
+                        Spacer(GlanceModifier.height(4.dp))
+                    }
                 }
             }
         } else {
@@ -135,11 +137,17 @@ fun WalletItem(
     walletId: String,
     title: String,
     currentBalance: String,
+    onClick: Action,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .cornerRadius(12.dp)
+            .background(GlanceTheme.colors.background)
+            .clickable(onClick),
     ) {
         Column(
             verticalAlignment = Alignment.CenterVertically,
