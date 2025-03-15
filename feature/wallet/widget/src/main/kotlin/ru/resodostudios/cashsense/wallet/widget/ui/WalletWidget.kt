@@ -50,6 +50,8 @@ import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
+import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
+import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 class WalletWidget : GlanceAppWidget() {
@@ -147,7 +149,7 @@ fun WalletItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp)
+            .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
             .cornerRadius(12.dp)
             .background(GlanceTheme.colors.secondaryContainer)
             .clickable(onClick),
@@ -159,17 +161,14 @@ fun WalletItem(
         ) {
             Text(
                 text = title,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = GlanceTheme.colors.onSecondaryContainer,
-                ),
+                style = CsGlanceTypography.titleMedium
+                    .copy(color = GlanceTheme.colors.onSecondaryContainer),
                 maxLines = 1,
             )
-            Spacer(GlanceModifier.height(4.dp))
             Text(
                 text = currentBalance,
-                style = TextStyle(GlanceTheme.colors.onSecondaryContainer),
+                style = CsGlanceTypography.bodyMedium
+                    .copy(color = GlanceTheme.colors.onSecondaryContainer),
                 maxLines = 1,
             )
         }
@@ -188,6 +187,7 @@ fun WalletItem(
             ),
             contentDescription = context.getString(localesR.string.add),
             backgroundColor = null,
+            contentColor = GlanceTheme.colors.onSecondaryContainer,
         )
     }
 }

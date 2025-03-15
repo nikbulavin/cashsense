@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.wallet.widget.ui
+package ru.resodostudios.cashsense.wallet.widget.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceTheme
