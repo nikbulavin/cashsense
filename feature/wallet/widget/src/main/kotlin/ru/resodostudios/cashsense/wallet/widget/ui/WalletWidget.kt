@@ -88,7 +88,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                 modifier = GlanceModifier.clickable(openHomeScreen()),
             )
         },
-        modifier = GlanceModifier.cornerRadius(16.dp),
+        modifier = GlanceModifier.cornerRadius(24.dp),
     ) {
         if (wallets.isNotEmpty()) {
             LazyColumn {
@@ -144,7 +144,7 @@ fun WalletItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 4.dp)
             .cornerRadius(12.dp)
             .background(GlanceTheme.colors.background)
             .clickable(onClick),
@@ -184,6 +184,7 @@ fun WalletItem(
                 }
             ),
             contentDescription = LocalContext.current.getString(localesR.string.add),
+            backgroundColor = null,
         )
     }
 }
