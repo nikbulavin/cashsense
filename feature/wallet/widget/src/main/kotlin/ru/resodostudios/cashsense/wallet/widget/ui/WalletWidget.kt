@@ -96,7 +96,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                     items = wallets,
                     itemId = { walletPopulated ->
                         walletPopulated.wallet.id.hashCode().toLong()
-                    }
+                    },
                 ) { walletPopulated ->
                     val currentBalance = walletPopulated.transactionsWithCategories
                         .sumOf { it.transaction.amount }
@@ -166,7 +166,7 @@ fun WalletItem(
             Spacer(GlanceModifier.height(4.dp))
             Text(
                 text = currentBalance,
-                style = TextStyle(GlanceTheme.colors.onBackground),
+                style = TextStyle(GlanceTheme.colors.onSurfaceVariant),
                 maxLines = 1,
             )
         }
