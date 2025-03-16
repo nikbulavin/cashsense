@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.wallet.widget.ui
+package ru.resodostudios.cashsense.wallet.widget.ui.theme
 
 import androidx.glance.material3.ColorProviders
 import ru.resodostudios.cashsense.core.designsystem.theme.darkScheme

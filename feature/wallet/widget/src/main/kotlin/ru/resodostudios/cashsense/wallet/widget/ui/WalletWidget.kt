@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -25,6 +24,7 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
+import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -34,9 +34,7 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -49,6 +47,8 @@ import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
+import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
+import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 class WalletWidget : GlanceAppWidget() {
@@ -79,15 +79,16 @@ class WalletWidget : GlanceAppWidget() {
 
 @Composable
 private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
+    val context = LocalContext.current
     Scaffold(
         titleBar = {
             TitleBar(
                 startIcon = ImageProvider(R.drawable.ic_outlined_wallet),
-                title = LocalContext.current.getString(localesR.string.wallet_widget_title),
-                modifier = GlanceModifier.clickable(openHomeScreen()),
+                title = context.getString(localesR.string.wallet_widget_title),
+                modifier = GlanceModifier.clickable(openHomeScreen(context)),
             )
         },
-        modifier = GlanceModifier.cornerRadius(16.dp),
+        modifier = GlanceModifier.cornerRadius(24.dp),
     ) {
         if (wallets.isNotEmpty()) {
             LazyColumn {
@@ -95,20 +96,22 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                     items = wallets,
                     itemId = { walletPopulated ->
                         walletPopulated.wallet.id.hashCode().toLong()
-                    }
+                    },
                 ) { walletPopulated ->
                     val currentBalance = walletPopulated.transactionsWithCategories
                         .sumOf { it.transaction.amount }
                         .plus(walletPopulated.wallet.initialBalance)
 
-                    WalletItem(
-                        walletId = walletPopulated.wallet.id,
-                        title = walletPopulated.wallet.title,
-                        currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                        modifier = GlanceModifier
-                            .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
-                            .clickable(openHomeScreen(walletPopulated.wallet.id)),
-                    )
+                    Column {
+                        WalletItem(
+                            context = context,
+                            walletId = walletPopulated.wallet.id,
+                            title = walletPopulated.wallet.title,
+                            currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
+                            onClick = openHomeScreen(context, walletPopulated.wallet.id),
+                        )
+                        Spacer(GlanceModifier.height(4.dp))
+                    }
                 }
             }
         } else {
@@ -117,13 +120,9 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                 modifier = GlanceModifier.fillMaxSize(),
             ) {
                 Text(
-                    text = LocalContext.current.getString(localesR.string.wallet_widget_empty),
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = GlanceTheme.colors.onBackground,
-                    ),
-                    maxLines = 1,
+                    text = context.getString(localesR.string.wallet_widget_empty),
+                    style = CsGlanceTypography.titleMedium
+                        .copy(color = GlanceTheme.colors.onBackground),
                 )
             }
         }
@@ -132,14 +131,21 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
 
 @Composable
 fun WalletItem(
+    context: Context,
     walletId: String,
     title: String,
     currentBalance: String,
+    onClick: Action,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
+            .cornerRadius(12.dp)
+            .background(GlanceTheme.colors.secondaryContainer)
+            .clickable(onClick),
     ) {
         Column(
             verticalAlignment = Alignment.CenterVertically,
@@ -148,17 +154,14 @@ fun WalletItem(
         ) {
             Text(
                 text = title,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = GlanceTheme.colors.onBackground,
-                ),
+                style = CsGlanceTypography.titleMedium
+                    .copy(color = GlanceTheme.colors.onSecondaryContainer),
                 maxLines = 1,
             )
-            Spacer(GlanceModifier.height(4.dp))
             Text(
                 text = currentBalance,
-                style = TextStyle(GlanceTheme.colors.onBackground),
+                style = CsGlanceTypography.bodyMedium
+                    .copy(color = GlanceTheme.colors.onSecondaryContainer),
                 maxLines = 1,
             )
         }
@@ -167,30 +170,29 @@ fun WalletItem(
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
-                    component = ComponentName(
-                        LocalContext.current.packageName,
-                        TARGET_ACTIVITY_NAME,
-                    )
+                    data =
+                        "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
+                    component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
             ),
-            contentDescription = LocalContext.current.getString(localesR.string.add),
+            contentDescription = context.getString(localesR.string.add),
+            backgroundColor = null,
+            contentColor = GlanceTheme.colors.onSecondaryContainer,
         )
     }
 }
 
-@Composable
 private fun openHomeScreen(
+    context: Context,
     walletId: String? = null,
-): Action = actionStartActivity(
-    Intent().apply {
-        action = Intent.ACTION_VIEW
-        data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId".toUri()
-        component = ComponentName(
-            LocalContext.current.packageName,
-            TARGET_ACTIVITY_NAME,
-        )
-        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-    }
-)
+): Action {
+    return actionStartActivity(
+        Intent().apply {
+            action = Intent.ACTION_VIEW
+            data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId".toUri()
+            component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+    )
+}
