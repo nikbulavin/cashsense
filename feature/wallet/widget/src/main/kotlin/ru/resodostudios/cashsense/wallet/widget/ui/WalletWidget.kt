@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -35,9 +34,7 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
-import androidx.glance.text.TextStyle
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -124,12 +121,8 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
             ) {
                 Text(
                     text = context.getString(localesR.string.wallet_widget_empty),
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = GlanceTheme.colors.onBackground,
-                    ),
-                    maxLines = 1,
+                    style = CsGlanceTypography.titleMedium
+                        .copy(color = GlanceTheme.colors.onBackground),
                 )
             }
         }
@@ -177,11 +170,9 @@ fun WalletItem(
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
-                    component = ComponentName(
-                        context.packageName,
-                        TARGET_ACTIVITY_NAME,
-                    )
+                    data =
+                        "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
+                    component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
             ),
@@ -200,10 +191,7 @@ private fun openHomeScreen(
         Intent().apply {
             action = Intent.ACTION_VIEW
             data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId".toUri()
-            component = ComponentName(
-                context.packageName,
-                TARGET_ACTIVITY_NAME,
-            )
+            component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
     )
