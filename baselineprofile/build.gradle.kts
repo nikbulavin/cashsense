@@ -28,10 +28,10 @@ android {
         )
     }
 
-    testOptions.managedDevices.devices {
-        create<ManagedVirtualDevice>("pixel6Api34") {
+    testOptions.managedDevices.allDevices {
+        create<ManagedVirtualDevice>("pixel6Api35") {
             device = "Pixel 6"
-            apiLevel = 34
+            apiLevel = 35
             systemImageSource = "aosp"
         }
     }
@@ -40,7 +40,8 @@ android {
 }
 
 baselineProfile {
-    managedDevices += "pixel6Api34"
+    managedDevices.clear()
+    managedDevices += "pixel6Api35"
     useConnectedDevices = false
 }
 
