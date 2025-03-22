@@ -88,6 +88,7 @@ fun EmptyState(
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
