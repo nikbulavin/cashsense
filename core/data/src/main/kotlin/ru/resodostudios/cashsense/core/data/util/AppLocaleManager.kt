@@ -6,5 +6,5 @@ interface AppLocaleManager {
 
     val currentLocale: Flow<String>
 
-    fun updateLocale(code: String)
+    fun updateLocale(languageCode: String)
 }

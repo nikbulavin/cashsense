@@ -164,7 +164,8 @@ fun FinanceGraph(
                     text = stringResource(R.string.not_enough_data),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.align(Alignment.Center),
-                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
