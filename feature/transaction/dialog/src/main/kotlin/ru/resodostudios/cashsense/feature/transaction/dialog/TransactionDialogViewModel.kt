@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
+import android.app.Activity
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
@@ -57,6 +59,7 @@ class TransactionDialogViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
+    private val inAppReviewManager: InAppReviewManager,
 ) : ViewModel() {
 
     private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
@@ -81,7 +84,7 @@ class TransactionDialogViewModel @Inject constructor(
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
             Repeat -> repeatTransaction()
-            is Save -> saveTransaction(event.state)
+            is Save -> saveTransaction(event.state, event.activity)
             is UpdateTransactionId -> updateTransactionId(event.id)
             is UpdateWalletId -> updateWalletId(event.id)
             is UpdateCurrency -> updateCurrency(event.currency)
@@ -95,7 +98,7 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun saveTransaction(state: TransactionDialogUiState) {
+    private fun saveTransaction(state: TransactionDialogUiState, activity: Activity) {
         appScope.launch {
             val transaction = state.asTransaction(transactionDestination.walletId)
             val transactionCategoryCrossRef = state.category?.id
@@ -111,6 +114,7 @@ class TransactionDialogViewModel @Inject constructor(
             if (transactionCategoryCrossRef != null) {
                 transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
             }
+            inAppReviewManager.openReviewDialog(activity)
         }
     }
 
