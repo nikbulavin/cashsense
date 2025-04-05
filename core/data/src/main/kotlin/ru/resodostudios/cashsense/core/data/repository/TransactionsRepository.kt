@@ -12,6 +12,8 @@ interface TransactionsRepository {
 
     fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRef>>
 
+    fun getTransactionsCount(): Flow<Int>
+
     suspend fun upsertTransaction(transaction: Transaction)
 
     suspend fun deleteTransaction(id: String)
