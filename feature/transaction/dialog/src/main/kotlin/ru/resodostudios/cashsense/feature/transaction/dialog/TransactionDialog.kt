@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
+import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -105,6 +108,7 @@ private fun TransactionDialog(
     } else {
         localesR.string.new_transaction to localesR.string.add
     }
+    val activity = LocalActivity.current
 
     CsAlertDialog(
         titleRes = titleRes,
@@ -112,7 +116,7 @@ private fun TransactionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.ReceiptLong,
         onConfirm = {
-            onTransactionEvent(Save(transactionDialogState))
+            activity?.let { onTransactionEvent(Save(transactionDialogState, it)) }
             onDismiss()
         },
         isConfirmEnabled = transactionDialogState.amount.isAmountValid(),

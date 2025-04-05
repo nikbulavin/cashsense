@@ -20,6 +20,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions_categories WHERE category_id = :categoryId")
     fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRefEntity>>
 
+    @Query("SELECT count(*) FROM transactions")
+    fun getTransactionsCount(): Flow<Int>
+
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)
 

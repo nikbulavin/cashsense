@@ -18,6 +18,8 @@ import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRe
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManagerImpl
+import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
+import ru.resodostudios.cashsense.core.data.util.InAppReviewManagerImpl
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManagerImpl
 import ru.resodostudios.cashsense.core.data.util.ReminderScheduler
@@ -73,6 +75,11 @@ internal abstract class DataModule {
     internal abstract fun bindsInAppUpdateManager(
         inAppUpdateManager: InAppUpdateManagerImpl,
     ): InAppUpdateManager
+
+    @Binds
+    internal abstract fun bindsInAppReviewManager(
+        inAppReviewManager: InAppReviewManagerImpl,
+    ): InAppReviewManager
 
     @Binds
     internal abstract fun bindsAppLocaleManager(
