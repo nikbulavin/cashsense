@@ -25,6 +25,8 @@ internal class OfflineTransactionRepository @Inject constructor(
             it.map(TransactionCategoryCrossRefEntity::asExternalModel)
         }
 
+    override fun getTransactionsCount(): Flow<Int> = dao.getTransactionsCount()
+
     override suspend fun upsertTransaction(transaction: Transaction) =
         dao.upsertTransaction(transaction.asEntity())
 
