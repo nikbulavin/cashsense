@@ -21,4 +21,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
 }
