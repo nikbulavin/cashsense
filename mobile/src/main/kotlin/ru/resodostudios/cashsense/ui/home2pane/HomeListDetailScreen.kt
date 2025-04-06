@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.ui.home2pane
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -28,6 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -48,6 +52,7 @@ import ru.resodostudios.cashsense.feature.transaction.overview.navigation.Transa
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletScreen
 import ru.resodostudios.cashsense.feature.wallet.detail.WalletViewModel
 import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
+import kotlin.math.max
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
@@ -171,6 +176,11 @@ internal fun HomeListDetailScreen(
                 scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
             }
             if (!scaffoldNavigator.isDetailPaneVisible()) clearUndoState()
+            if (paneExpansionState.currentAnchor == PaneExpansionAnchor.Proportion(1f)) {
+                coroutineScope.launch {
+                    paneExpansionState.animateTo(PaneExpansionAnchor.Proportion(0f))
+                }
+            }
         } else if (scaffoldNavigator.isDetailPaneVisible()) {
             walletRoute = WalletPlaceholderRoute
         }
@@ -184,74 +194,115 @@ internal fun HomeListDetailScreen(
         if (!scaffoldNavigator.isDetailPaneVisible()) clearUndoState()
     }
 
+    val minPaneWidth = 300.dp
+
     NavigableListDetailPaneScaffold(
         navigator = scaffoldNavigator,
         listPane = {
             AnimatedPane {
-                HomeScreen(
-                    onWalletClick = ::onWalletClickShowDetailPane,
-                    onTransfer = onTransfer,
-                    onEditWallet = onEditWallet,
-                    onDeleteWallet = onDeleteWallet,
-                    onTransactionCreate = {
-                        navigateToTransactionDialog(it, null, false)
-                    },
-                    highlightSelectedWallet = scaffoldNavigator.isDetailPaneVisible(),
-                    onShowSnackbar = onShowSnackbar,
-                    shouldDisplayUndoWallet = shouldDisplayUndoWallet,
-                    undoWalletRemoval = undoWalletRemoval,
-                    clearUndoState = clearUndoState,
-                    onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
-                )
+                Box(
+                    modifier = Modifier.clipToBounds()
+                        .layout { measurable, constraints ->
+                            val width = max(minPaneWidth.roundToPx(), constraints.maxWidth)
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    minWidth = minPaneWidth.roundToPx(),
+                                    maxWidth = width,
+                                ),
+                            )
+                            layout(constraints.maxWidth, placeable.height) {
+                                placeable.placeRelative(
+                                    x = 0,
+                                    y = 0,
+                                )
+                            }
+                        },
+                ) {
+                    HomeScreen(
+                        onWalletClick = ::onWalletClickShowDetailPane,
+                        onTransfer = onTransfer,
+                        onEditWallet = onEditWallet,
+                        onDeleteWallet = onDeleteWallet,
+                        onTransactionCreate = {
+                            navigateToTransactionDialog(it, null, false)
+                        },
+                        highlightSelectedWallet = scaffoldNavigator.isDetailPaneVisible(),
+                        onShowSnackbar = onShowSnackbar,
+                        shouldDisplayUndoWallet = shouldDisplayUndoWallet,
+                        undoWalletRemoval = undoWalletRemoval,
+                        clearUndoState = clearUndoState,
+                        onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
+                    )
+                }
             }
         },
         detailPane = {
             AnimatedPane {
-                AnimatedContent(walletRoute) { route ->
-                    when (route) {
-                        is TransactionOverviewRoute -> {
-                            TransactionOverviewScreen(
-                                shouldShowTopBar = !scaffoldNavigator.isListPaneVisible(),
-                                onBackClick = {
-                                    coroutineScope.launch {
-                                        scaffoldNavigator.navigateBack()
-                                    }
-                                },
-                                onTransactionClick = navigateToTransactionDialog,
+                Box(
+                    modifier = Modifier.clipToBounds()
+                        .layout { measurable, constraints ->
+                            val width = max(minPaneWidth.roundToPx(), constraints.maxWidth)
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    minWidth = minPaneWidth.roundToPx(),
+                                    maxWidth = width,
+                                ),
                             )
-                        }
-                        is WalletRoute -> {
-                            WalletScreen(
-                                onBackClick = {
-                                    coroutineScope.launch {
-                                        scaffoldNavigator.navigateBack()
-                                    }
-                                },
-                                onTransfer = onTransfer,
-                                onEditWallet = onEditWallet,
-                                onDeleteClick = {
-                                    onDeleteWallet(it)
-                                    if (scaffoldNavigator.isDetailPaneVisible()) {
-                                        walletRoute = WalletPlaceholderRoute
-                                    }
-                                    coroutineScope.launch {
-                                        scaffoldNavigator.navigateBack()
-                                    }
-                                },
-                                showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
-                                navigateToTransactionDialog = navigateToTransactionDialog,
-                                viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory>(
-                                    key = route.walletId,
-                                ) { factory ->
-                                    factory.create(route.walletId)
-                                },
-                            )
-                        }
-                        is WalletPlaceholderRoute -> {
-                            EmptyState(
-                                messageRes = localesR.string.select_wallet,
-                                animationRes = R.raw.anim_select_wallet,
-                            )
+                            layout(constraints.maxWidth, placeable.height) {
+                                placeable.placeRelative(
+                                    x = constraints.maxWidth -
+                                            max(constraints.maxWidth, placeable.width),
+                                    y = 0,
+                                )
+                            }
+                        },
+                ) {
+                    AnimatedContent(walletRoute) { route ->
+                        when (route) {
+                            is TransactionOverviewRoute -> {
+                                TransactionOverviewScreen(
+                                    shouldShowTopBar = !scaffoldNavigator.isListPaneVisible(),
+                                    onBackClick = {
+                                        coroutineScope.launch {
+                                            scaffoldNavigator.navigateBack()
+                                        }
+                                    },
+                                    onTransactionClick = navigateToTransactionDialog,
+                                )
+                            }
+                            is WalletRoute -> {
+                                WalletScreen(
+                                    onBackClick = {
+                                        coroutineScope.launch {
+                                            scaffoldNavigator.navigateBack()
+                                        }
+                                    },
+                                    onTransfer = onTransfer,
+                                    onEditWallet = onEditWallet,
+                                    onDeleteClick = {
+                                        onDeleteWallet(it)
+                                        if (scaffoldNavigator.isDetailPaneVisible()) {
+                                            walletRoute = WalletPlaceholderRoute
+                                        }
+                                        coroutineScope.launch {
+                                            scaffoldNavigator.navigateBack()
+                                        }
+                                    },
+                                    showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
+                                    navigateToTransactionDialog = navigateToTransactionDialog,
+                                    viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory>(
+                                        key = route.walletId,
+                                    ) { factory ->
+                                        factory.create(route.walletId)
+                                    },
+                                )
+                            }
+                            is WalletPlaceholderRoute -> {
+                                EmptyState(
+                                    messageRes = localesR.string.select_wallet,
+                                    animationRes = R.raw.anim_select_wallet,
+                                )
+                            }
                         }
                     }
                 }
