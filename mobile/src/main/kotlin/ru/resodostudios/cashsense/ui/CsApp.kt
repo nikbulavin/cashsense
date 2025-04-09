@@ -1,12 +1,12 @@
 package ru.resodostudios.cashsense.ui
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -25,7 +25,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
-import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -102,11 +101,31 @@ fun CsApp(
 
     var previousDestination by remember { mutableStateOf(HOME) }
 
-    val state = rememberNavigationSuiteScaffoldState()
     val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     NavigationSuiteScaffold(
-        state = state,
+        primaryActionContent = {
+            if (currentTopLevelDestination != null) {
+                val visible = currentTopLevelDestination != SETTINGS
+                CsFloatingActionButton(
+                    contentDescriptionRes = currentTopLevelDestination.fabTitle ?: previousDestination.fabTitle!!,
+                    icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
+                    onClick = {
+                        when (currentTopLevelDestination) {
+                            HOME -> appState.navController.navigateToWalletDialog()
+                            CATEGORIES -> appState.navController.navigateToCategoryDialog()
+                            SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
+                            SETTINGS -> {}
+                        }
+                    },
+                    modifier = Modifier
+                        .animateFloatingActionButton(
+                            visible = visible,
+                            alignment = Alignment.BottomEnd,
+                        ),
+                )
+            }
+        },
         navigationItems = {
             appState.topLevelDestinations.forEach { destination ->
                 val selected = currentDestination.isRouteInHierarchy(destination.baseRoute)
@@ -139,6 +158,7 @@ fun CsApp(
             }
         },
         navigationSuiteType = navigationSuiteType,
+        navigationItemVerticalArrangement = Arrangement.Center,
     ) {
         Scaffold(
             snackbarHost = {
@@ -150,34 +170,6 @@ fun CsApp(
                         Modifier
                     },
                 )
-            },
-            floatingActionButton = {
-                if (currentTopLevelDestination != null) {
-                    val visible = currentTopLevelDestination != SETTINGS
-                    CsFloatingActionButton(
-                        titleRes = currentTopLevelDestination.fabTitle ?: previousDestination.fabTitle!!,
-                        icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
-                        onClick = {
-                            when (currentTopLevelDestination) {
-                                HOME -> appState.navController.navigateToWalletDialog()
-                                CATEGORIES -> appState.navController.navigateToCategoryDialog()
-                                SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
-                                SETTINGS -> {}
-                            }
-                        },
-                        modifier = Modifier
-                            .navigationBarsPadding()
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing.only(
-                                    WindowInsetsSides.Horizontal,
-                                ),
-                            )
-                            .animateFloatingActionButton(
-                                visible = visible,
-                                alignment = Alignment.BottomEnd,
-                            ),
-                    )
-                }
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             modifier = Modifier.semantics {
