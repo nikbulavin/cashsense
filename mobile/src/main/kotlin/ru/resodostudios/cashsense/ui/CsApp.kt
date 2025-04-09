@@ -22,8 +22,10 @@ import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,7 +65,6 @@ fun CsApp(
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
     val currentTopLevelDestination = appState.currentTopLevelDestination
-    val layoutType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
 
@@ -101,12 +102,15 @@ fun CsApp(
 
     var previousDestination by remember { mutableStateOf(HOME) }
 
+    val state = rememberNavigationSuiteScaffoldState()
+    val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
+
     NavigationSuiteScaffold(
-        layoutType = layoutType,
-        navigationSuiteItems = {
+        state = state,
+        navigationItems = {
             appState.topLevelDestinations.forEach { destination ->
                 val selected = currentDestination.isRouteInHierarchy(destination.baseRoute)
-                item(
+                NavigationSuiteItem(
                     selected = selected,
                     icon = {
                         val navItemIcon = if (selected) {
@@ -134,6 +138,7 @@ fun CsApp(
                 )
             }
         },
+        navigationSuiteType = navigationSuiteType,
     ) {
         Scaffold(
             snackbarHost = {
