@@ -106,7 +106,6 @@ fun CsApp(
     NavigationSuiteScaffold(
         primaryActionContent = {
             if (currentTopLevelDestination != null) {
-                val visible = currentTopLevelDestination != SETTINGS
                 CsFloatingActionButton(
                     contentDescriptionRes = currentTopLevelDestination.fabTitle ?: previousDestination.fabTitle!!,
                     icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
@@ -120,7 +119,7 @@ fun CsApp(
                     },
                     modifier = Modifier
                         .animateFloatingActionButton(
-                            visible = visible,
+                            visible = currentTopLevelDestination != SETTINGS,
                             alignment = Alignment.BottomEnd,
                         ),
                 )
