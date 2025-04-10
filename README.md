@@ -42,8 +42,7 @@ and [three levels of contrast][m3contrast].
 
 # Localization
 
-If you'd like to contribute to translating this app, you can [join][crowdinInvite] our localization efforts
-on [Crowdin][crowdin].
+If you'd like to contribute to translating this app, you can [join][crowdinInvite] our localization efforts. 
 Your contributions will help ensure that everyone can enjoy the app in their native language.
 
 # License
@@ -64,5 +63,3 @@ Your contributions will help ensure that everyone can enjoy the app in their nat
 [lottie]: https://github.com/airbnb/lottie/blob/master/android-compose.md
 
 [crowdinInvite]: https://crowdin.com/project/cashsense/invite?h=d573fbd44b6bcf6bfc0dfbbfb3bf800f2198579
-
-[crowdin]: https://crowdin.com/
