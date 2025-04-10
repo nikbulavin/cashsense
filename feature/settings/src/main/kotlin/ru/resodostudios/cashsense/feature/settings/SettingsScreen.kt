@@ -314,7 +314,7 @@ private fun LazyListScope.about(
                     contentDescription = null,
                 )
             },
-            onClick = onLicensesClick,
+            onClick = null,
         )
     }
     item {
