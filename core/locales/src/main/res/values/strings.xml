@@ -102,5 +102,6 @@
     <string name="app_update_downloaded">Update is downloaded</string>
     <string name="update">Update</string>
     <string name="install">Install</string>
+    <string name="time">Time</string>
     <string name="language">Language</string>
 </resources>

@@ -15,7 +15,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -28,30 +31,39 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
+import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
+import java.time.format.FormatStyle
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerTextField(
-    value: String,
-    @StringRes labelTextId: Int,
+    timestamp: Instant,
+    @StringRes labelRes: Int,
     icon: ImageVector,
-    onDateClick: (Long) -> Unit,
+    onDateSelect: (Instant) -> Unit,
     modifier: Modifier = Modifier,
-    initialSelectedDateMillis: Long? = null,
-    isAllDatesEnabled: Boolean = true,
+    onlyFutureDates: Boolean = false,
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
     OutlinedTextField(
-        value = value,
+        value = timestamp.formatDate(),
         onValueChange = {},
         readOnly = true,
-        label = { Text(stringResource(labelTextId)) },
+        label = { Text(stringResource(labelRes)) },
         trailingIcon = {
             IconButton(onClick = { openDialog = true }) {
                 Icon(
@@ -64,9 +76,10 @@ fun DatePickerTextField(
         modifier = modifier,
     )
     if (openDialog) {
+        val timeZone = LocalTimeZone.current
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = initialSelectedDateMillis,
-            selectableDates = if (!isAllDatesEnabled) {
+            initialSelectedDateMillis = timestamp.toEpochMilliseconds(),
+            selectableDates = if (onlyFutureDates) {
                 object : SelectableDates {
                     override fun isSelectableDate(utcTimeMillis: Long): Boolean =
                         utcTimeMillis >= System.currentTimeMillis()
@@ -84,7 +97,18 @@ fun DatePickerTextField(
                 TextButton(
                     onClick = {
                         openDialog = false
-                        onDateClick(datePickerState.selectedDateMillis!!)
+                        val localTime = timestamp.toLocalDateTime(timeZone)
+                        val selectedDate = Instant
+                            .fromEpochMilliseconds(datePickerState.selectedDateMillis!!)
+                            .toLocalDateTime(timeZone)
+                        val instant = LocalDateTime(
+                            selectedDate.year,
+                            selectedDate.monthNumber,
+                            selectedDate.dayOfMonth,
+                            localTime.hour,
+                            localTime.minute,
+                        ).toInstant(timeZone)
+                        onDateSelect(instant)
                     },
                     enabled = confirmEnabled.value,
                 ) {
@@ -100,6 +124,71 @@ fun DatePickerTextField(
             },
         ) {
             DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerTextField(
+    timestamp: Instant,
+    onTimeSelect: (Instant) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var openDialog by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = timestamp.formatDate(DateFormatType.TIME, FormatStyle.SHORT),
+        onValueChange = {},
+        readOnly = true,
+        label = { Text(stringResource(localesR.string.time)) },
+        trailingIcon = {
+            IconButton(onClick = { openDialog = true }) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Schedule,
+                    contentDescription = null,
+                )
+            }
+        },
+        singleLine = true,
+        modifier = modifier,
+    )
+    if (openDialog) {
+        val timeZone = LocalTimeZone.current
+        val localTime = timestamp.toLocalDateTime(timeZone)
+        val timePickerState = rememberTimePickerState(
+            initialHour = localTime.hour,
+            initialMinute = localTime.minute,
+        )
+        TimePickerDialog(
+            title = { Text(stringResource(localesR.string.time)) },
+            onDismissRequest = { openDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        openDialog = false
+                        val instant = LocalDateTime(
+                            localTime.year,
+                            localTime.monthNumber,
+                            localTime.dayOfMonth,
+                            timePickerState.hour,
+                            timePickerState.minute,
+                        ).toInstant(timeZone)
+                        onTimeSelect(instant)
+                    },
+                ) {
+                    Text(stringResource(localesR.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openDialog = false }
+                ) {
+                    Text(stringResource(localesR.string.cancel))
+                }
+            },
+        ) {
+            TimePicker(state = timePickerState)
         }
     }
 }

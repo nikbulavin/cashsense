@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,17 +8,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -46,7 +53,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun WalletScreen(
+fun WalletScreen(
     onBackClick: () -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -79,6 +86,7 @@ internal fun WalletScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WalletScreen(
     walletState: WalletUiState,
@@ -134,14 +142,15 @@ private fun WalletScreen(
                 )
             }
 
-            LazyColumn(
-                contentPadding = PaddingValues(bottom = 88.dp),
-                modifier = modifier.fillMaxSize(),
-            ) {
-                item {
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+            Scaffold(
+                modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
                     WalletTopBar(
                         userWallet = walletState.userWallet,
                         showNavigationIcon = showNavigationIcon,
+                        scrollBehavior = scrollBehavior,
                         onBackClick = onBackClick,
                         onNewTransactionClick = {
                             navigateToTransactionDialog(walletState.userWallet.id, null, false)
@@ -151,40 +160,52 @@ private fun WalletScreen(
                         onEditClick = onEditWallet,
                         onDeleteClick = onDeleteWallet,
                     )
-                }
-                item {
-                    FinancePanel(
-                        availableCategories = walletState.availableCategories,
-                        currency = walletState.userWallet.currency,
-                        expenses = walletState.expenses,
-                        income = walletState.income,
-                        graphData = walletState.graphData,
-                        transactionFilter = walletState.transactionFilter,
-                        onDateTypeUpdate = onDateTypeUpdate,
-                        onFinanceTypeUpdate = onFinanceTypeUpdate,
-                        onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategorySelect = onCategorySelect,
-                        onCategoryDeselect = onCategoryDeselect,
-                        modifier = Modifier.padding(top = 16.dp),
+                },
+            ) { paddingValues ->
+                LazyColumn(
+                    contentPadding = PaddingValues(bottom = 110.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                ) {
+                    item {
+                        FinancePanel(
+                            availableCategories = walletState.availableCategories,
+                            currency = walletState.userWallet.currency,
+                            expenses = walletState.expenses,
+                            income = walletState.income,
+                            graphData = walletState.graphData,
+                            transactionFilter = walletState.transactionFilter,
+                            onDateTypeUpdate = onDateTypeUpdate,
+                            onFinanceTypeUpdate = onFinanceTypeUpdate,
+                            onSelectedDateUpdate = onSelectedDateUpdate,
+                            onCategorySelect = onCategorySelect,
+                            onCategoryDeselect = onCategoryDeselect,
+                            modifier = Modifier.padding(top = 6.dp),
+                        )
+                    }
+                    transactions(
+                        transactionsCategories = walletState.transactionsCategories,
+                        onTransactionClick = {
+                            updateTransactionId(it)
+                            showTransactionBottomSheet = true
+                        },
                     )
                 }
-                transactions(
-                    transactionsCategories = walletState.transactionsCategories,
-                    onTransactionClick = {
-                        updateTransactionId(it)
-                        showTransactionBottomSheet = true
-                    },
-                )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun WalletTopBar(
     userWallet: UserWallet,
     showNavigationIcon: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior,
     onBackClick: () -> Unit,
     onNewTransactionClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
@@ -194,25 +215,24 @@ private fun WalletTopBar(
 ) {
     TopAppBar(
         title = {
-            Column {
+            Text(
+                text = userWallet.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        subtitle = {
+            AnimatedAmount(
+                targetState = userWallet.currentBalance,
+                label = "WalletBalance",
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 Text(
-                    text = userWallet.title,
+                    text = it.formatAmount(userWallet.currency),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                AnimatedAmount(
-                    targetState = userWallet.currentBalance,
-                    label = "wallet_balance",
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = it.formatAmount(userWallet.currency),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
             }
         },
         navigationIcon = {
@@ -240,6 +260,10 @@ private fun WalletTopBar(
             )
         },
         windowInsets = WindowInsets(0, 0, 0, 0),
+        scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+        ),
     )
 }
 
@@ -253,7 +277,16 @@ private fun PrimaryToggleButton(
     } else {
         CsIcons.Outlined.Star to localesR.string.non_primary_icon_description
     }
-    IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
+    val hapticFeedback = LocalHapticFeedback.current
+    IconToggleButton(
+        checked = userWallet.isPrimary,
+        onCheckedChange = { isChecked ->
+            hapticFeedback.performHapticFeedback(
+                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+            )
+            onPrimaryClick(userWallet.id, isChecked)
+        },
+    ) {
         Icon(
             imageVector = primaryIcon,
             contentDescription = stringResource(primaryIconContentDescriptionRes),

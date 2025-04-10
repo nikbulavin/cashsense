@@ -13,12 +13,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,9 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus.Denied
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
@@ -52,7 +51,6 @@ import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
@@ -151,17 +149,14 @@ fun SubscriptionDialog(
                     .padding(bottom = 8.dp),
             )
             DatePickerTextField(
-                value = subscriptionDialogState.paymentDate.formatDate(),
-                labelTextId = localesR.string.payment_date,
+                timestamp = subscriptionDialogState.paymentDate,
+                labelRes = localesR.string.payment_date,
                 icon = CsIcons.Outlined.Calendar,
-                onDateClick = {
-                    onSubscriptionEvent(UpdatePaymentDate(Instant.fromEpochMilliseconds(it)))
-                },
+                onDateSelect = { onSubscriptionEvent(UpdatePaymentDate(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
-                initialSelectedDateMillis = subscriptionDialogState.paymentDate.toEpochMilliseconds(),
-                isAllDatesEnabled = false,
+                onlyFutureDates = true,
             )
             CsListItem(
                 headlineContent = { Text(stringResource(localesR.string.reminder)) },
@@ -173,7 +168,7 @@ fun SubscriptionDialog(
                     )
                 },
                 trailingContent = {
-                    Switch(
+                    CsSwitch(
                         checked = subscriptionDialogState.isReminderEnabled,
                         onCheckedChange = { onSubscriptionEvent(UpdateReminderSwitch(it)) },
                     )
@@ -223,7 +218,7 @@ fun RepeatingIntervalDropdownMenu(
         OutlinedTextField(
             value = intervalNames[interval.ordinal],
             onValueChange = {},
-            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
             readOnly = true,
             singleLine = true,
             keyboardOptions = KeyboardOptions(

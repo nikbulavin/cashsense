@@ -10,6 +10,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 
@@ -42,8 +44,12 @@ fun CsAlertDialog(
         },
         text = content,
         confirmButton = {
+            val hapticFeedback = LocalHapticFeedback.current
             Button(
-                onClick = onConfirm,
+                onClick = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                    onConfirm()
+                },
                 enabled = isConfirmEnabled,
             ) {
                 Text(stringResource(confirmButtonTextRes))

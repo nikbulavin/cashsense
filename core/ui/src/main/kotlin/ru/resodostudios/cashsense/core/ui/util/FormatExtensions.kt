@@ -4,10 +4,8 @@ import androidx.compose.runtime.Composable
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
+import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE_TIME
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.TIME
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
@@ -39,17 +37,15 @@ fun getDecimalFormat(
 } as DecimalFormat
 
 @Composable
-fun Instant.formatDate(formatDateType: FormatDateType = DATE): String = when (formatDateType) {
-    DATE_TIME -> DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-    DATE -> DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-    TIME -> DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM)
-}
-    .withLocale(Locale.getDefault())
-    .withZone(LocalTimeZone.current.toJavaZoneId())
-    .format(toJavaInstant())
-
-enum class FormatDateType {
-    DATE_TIME,
-    DATE,
-    TIME,
-}
+fun Instant.formatDate(
+    dateFormatType: DateFormatType = DateFormatType.DATE,
+    formatStyle: FormatStyle = FormatStyle.MEDIUM,
+): String =
+    when (dateFormatType) {
+        DateFormatType.DATE_TIME -> DateTimeFormatter.ofLocalizedDateTime(formatStyle)
+        DateFormatType.DATE -> DateTimeFormatter.ofLocalizedDate(formatStyle)
+        DateFormatType.TIME -> DateTimeFormatter.ofLocalizedTime(formatStyle)
+    }
+        .withLocale(Locale.getDefault())
+        .withZone(LocalTimeZone.current.toJavaZoneId())
+        .format(toJavaInstant())

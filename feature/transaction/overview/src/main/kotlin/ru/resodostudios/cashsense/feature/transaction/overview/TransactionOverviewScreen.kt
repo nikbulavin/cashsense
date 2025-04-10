@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction.overview
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,17 +9,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,12 +43,10 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import java.math.BigDecimal
-import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun TransactionOverviewScreen(
+fun TransactionOverviewScreen(
     shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -69,6 +72,7 @@ internal fun TransactionOverviewScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
@@ -121,78 +125,107 @@ private fun TransactionOverviewScreen(
                 )
             }
 
-            LazyColumn(
-                contentPadding = PaddingValues(bottom = 88.dp),
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                header(
-                    financePanelUiState = financePanelUiState,
-                    onDateTypeUpdate = onDateTypeUpdate,
-                    onFinanceTypeUpdate = onFinanceTypeUpdate,
-                    onSelectedDateUpdate = onSelectedDateUpdate,
-                    onCategorySelect = onCategorySelect,
-                    onCategoryDeselect = onCategoryDeselect,
-                    shouldShowTopBar = shouldShowTopBar,
-                    onBackClick = onBackClick,
-                )
-                transactions(
-                    transactionsCategories = transactionOverviewState.transactionsCategories,
-                    onTransactionClick = {
-                        updateTransactionId(it)
-                        showTransactionBottomSheet = true
-                    },
-                )
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+            Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
+                    TopBar(
+                        financePanelUiState = financePanelUiState,
+                        shouldShowTopBar = shouldShowTopBar,
+                        onBackClick = onBackClick,
+                        scrollBehavior = scrollBehavior,
+                        modifier = Modifier.padding(bottom = 6.dp),
+                    )
+                },
+            ) { paddingValues ->
+                LazyColumn(
+                    contentPadding = PaddingValues(bottom = 110.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                ) {
+                    header(
+                        financePanelUiState = financePanelUiState,
+                        onDateTypeUpdate = onDateTypeUpdate,
+                        onFinanceTypeUpdate = onFinanceTypeUpdate,
+                        onSelectedDateUpdate = onSelectedDateUpdate,
+                        onCategorySelect = onCategorySelect,
+                        onCategoryDeselect = onCategoryDeselect,
+                    )
+                    transactions(
+                        transactionsCategories = transactionOverviewState.transactionsCategories,
+                        onTransactionClick = {
+                            updateTransactionId(it)
+                            showTransactionBottomSheet = true
+                        },
+                    )
+                }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun TopBar(
+    financePanelUiState: FinancePanelUiState,
+    shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
-    totalBalance: BigDecimal,
-    currency: Currency,
-    shouldShowApproximately: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
-    TopAppBar(
-        title = {
-            Column {
-                Text(
-                    text = stringResource(localesR.string.total_balance),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+    when (financePanelUiState) {
+        FinancePanelUiState.Loading -> Unit
+        FinancePanelUiState.NotShown -> Unit
+        is FinancePanelUiState.Shown -> {
+            AnimatedVisibility(shouldShowTopBar) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(localesR.string.total_balance),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    subtitle = {
+                        AnimatedAmount(
+                            targetState = financePanelUiState.totalBalance,
+                            label = "TotalBalance",
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = financePanelUiState.totalBalance.formatAmount(
+                                    currency = financePanelUiState.userCurrency,
+                                    withApproximately = financePanelUiState.shouldShowApproximately,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBackClick) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.ArrowBack,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                    windowInsets = WindowInsets(0, 0, 0, 0),
+                    scrollBehavior = scrollBehavior,
+                    colors = TopAppBarDefaults.topAppBarColors().copy(
+                        scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    modifier = modifier,
                 )
-                AnimatedAmount(
-                    targetState = totalBalance,
-                    label = "TotalBalance",
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = totalBalance.formatAmount(
-                            currency = currency,
-                            withApproximately = shouldShowApproximately,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
             }
-        },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = CsIcons.Outlined.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-        },
-        windowInsets = WindowInsets(0, 0, 0, 0),
-        modifier = modifier,
-    )
+        }
+    }
 }
 
 private fun LazyListScope.header(
@@ -202,8 +235,6 @@ private fun LazyListScope.header(
     onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
-    shouldShowTopBar: Boolean,
-    onBackClick: () -> Unit,
 ) {
     when (financePanelUiState) {
         FinancePanelUiState.Loading -> item {
@@ -216,17 +247,6 @@ private fun LazyListScope.header(
 
         FinancePanelUiState.NotShown -> Unit
         is FinancePanelUiState.Shown -> {
-            if (shouldShowTopBar) {
-                item {
-                    TopBar(
-                        currency = financePanelUiState.userCurrency,
-                        totalBalance = financePanelUiState.totalBalance,
-                        onBackClick = onBackClick,
-                        modifier = Modifier.padding(bottom = 16.dp),
-                        shouldShowApproximately = financePanelUiState.shouldShowApproximately,
-                    )
-                }
-            }
             item {
                 FinancePanel(
                     availableCategories = financePanelUiState.availableCategories,

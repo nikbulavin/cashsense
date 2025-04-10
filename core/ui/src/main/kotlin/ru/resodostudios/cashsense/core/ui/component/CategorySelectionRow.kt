@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -22,7 +22,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CategorySelectionRow(
     availableCategories: List<Category>,
@@ -60,7 +59,13 @@ private fun CategoryChip(
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = { Text(category.title.toString()) },
+        label = {
+            Text(
+                text = category.title.toString(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
         leadingIcon = {
             Icon(
                 imageVector = icon,

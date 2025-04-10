@@ -12,15 +12,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,9 +44,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
@@ -65,8 +64,8 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
+import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateAmount
@@ -166,12 +165,16 @@ private fun TransactionDialog(
                     transactionState = transactionDialogState,
                 )
                 DatePickerTextField(
-                    value = transactionDialogState.date.formatDate(),
-                    labelTextId = localesR.string.date,
+                    timestamp = transactionDialogState.date,
+                    labelRes = localesR.string.date,
                     icon = CsIcons.Outlined.Calendar,
                     modifier = Modifier.fillMaxWidth(),
-                    initialSelectedDateMillis = transactionDialogState.date.toEpochMilliseconds(),
-                    onDateClick = { onTransactionEvent(UpdateDate(Instant.fromEpochMilliseconds(it))) },
+                    onDateSelect = { onTransactionEvent(UpdateDate(it)) },
+                )
+                TimePickerTextField(
+                    onTimeSelect = { onTransactionEvent(UpdateDate(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    timestamp = transactionDialogState.date,
                 )
                 OutlinedTextField(
                     value = transactionDialogState.description,
@@ -181,7 +184,7 @@ private fun TransactionDialog(
                         imeAction = ImeAction.Done,
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() }
+                        onDone = { focusManager.clearFocus() },
                     ),
                     label = { Text(stringResource(localesR.string.description)) },
                     modifier = Modifier
@@ -197,7 +200,7 @@ private fun TransactionDialog(
                         )
                     },
                     trailingContent = {
-                        Switch(
+                        CsSwitch(
                             checked = transactionDialogState.ignored,
                             onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
                         )
@@ -219,8 +222,8 @@ private fun TransactionTypeChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val transactionTypes = listOf(
-        Pair(stringResource(localesR.string.expense), CsIcons.Outlined.TrendingDown),
-        Pair(stringResource(localesR.string.income_singular), CsIcons.Outlined.TrendingUp),
+        stringResource(localesR.string.expense) to CsIcons.Outlined.TrendingDown,
+        stringResource(localesR.string.income_singular) to CsIcons.Outlined.TrendingUp,
     )
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         transactionTypes.forEachIndexed { index, transactionType ->
@@ -260,8 +263,8 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     val statusTypes = listOf(
-        Pair(stringResource(localesR.string.completed), CsIcons.Outlined.CheckCircle),
-        Pair(stringResource(localesR.string.pending), CsIcons.Outlined.Pending),
+        stringResource(localesR.string.completed) to CsIcons.Outlined.CheckCircle,
+        stringResource(localesR.string.pending) to CsIcons.Outlined.Pending,
     )
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         statusTypes.forEachIndexed { index, statusType ->
@@ -315,7 +318,7 @@ private fun CategoryDropdownMenu(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
                     readOnly = true,
                     value = currentCategory?.title ?: stringResource(localesR.string.none),
                     onValueChange = {},

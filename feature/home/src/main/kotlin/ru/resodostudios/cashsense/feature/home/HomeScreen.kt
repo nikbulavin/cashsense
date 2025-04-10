@@ -12,8 +12,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -136,7 +137,7 @@ internal fun HomeScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 88.dp,
+                    bottom = 110.dp,
                 ),
             ) {
                 totalBalanceSection(
@@ -209,6 +210,7 @@ private fun LazyStaggeredGridScope.wallets(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyStaggeredGridScope.totalBalanceSection(
     totalBalanceState: TotalBalanceUiState,
     onTotalBalanceClick: () -> Unit = {},
@@ -226,25 +228,24 @@ private fun LazyStaggeredGridScope.totalBalanceSection(
                     onClick = onTotalBalanceClick,
                 ) {
                     if (totalBalanceState is TotalBalanceUiState.Shown) {
-                        val totalBalance = totalBalanceState.amount.formatAmount(
-                            currency = totalBalanceState.userCurrency,
-                            withApproximately = totalBalanceState.shouldShowApproximately,
-                        )
                         AnimatedAmount(
                             targetState = totalBalanceState.amount,
                             label = "TotalBalance",
                         ) {
                             Text(
-                                text = totalBalance,
+                                text = totalBalanceState.amount.formatAmount(
+                                    currency = totalBalanceState.userCurrency,
+                                    withApproximately = totalBalanceState.shouldShowApproximately,
+                                ),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
                     } else {
-                        LinearProgressIndicator(
+                        LinearWavyProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 12.dp),
+                                .padding(top = 8.dp, bottom = 6.dp),
                         )
                     }
                 }

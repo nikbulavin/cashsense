@@ -6,14 +6,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
+import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
@@ -45,16 +44,16 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
+import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE_TIME
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
+import java.time.format.FormatStyle
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TransactionBottomSheet(
     transactionCategory: TransactionWithCategory,
@@ -109,7 +108,10 @@ fun TransactionBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CsTag(
-                    text = transaction.timestamp.formatDate(DATE_TIME),
+                    text = transaction.timestamp.formatDate(
+                        DateFormatType.DATE_TIME,
+                        FormatStyle.SHORT
+                    ),
                     icon = CsIcons.Outlined.Schedule,
                 )
                 val transactionStatusTag = if (transaction.status == COMPLETED) {
@@ -160,7 +162,7 @@ fun TransactionBottomSheet(
                         )
                     },
                     trailingContent = {
-                        Switch(
+                        CsSwitch(
                             checked = transaction.ignored,
                             onCheckedChange = onIgnoreClick,
                         )
