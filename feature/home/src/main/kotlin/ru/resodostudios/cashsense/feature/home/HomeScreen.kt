@@ -137,7 +137,7 @@ internal fun HomeScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 88.dp,
+                    bottom = 110.dp,
                 ),
             ) {
                 totalBalanceSection(

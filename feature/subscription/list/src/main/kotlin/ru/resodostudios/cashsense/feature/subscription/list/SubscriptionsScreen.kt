@@ -122,7 +122,7 @@ private fun SubscriptionsGrid(
             start = 16.dp,
             end = 16.dp,
             top = 16.dp,
-            bottom = 88.dp,
+            bottom = 110.dp,
         ),
         modifier = modifier,
     ) {
