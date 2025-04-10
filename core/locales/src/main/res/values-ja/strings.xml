@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">アップデートがダウンロードされました</string>
     <string name="update">更新</string>
     <string name="install">インストール</string>
+    <string name="time">時間</string>
+    <string name="language">言語</string>
 </resources>

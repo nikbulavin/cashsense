@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">Mise à jour téléchargée</string>
     <string name="update">Mettre à jour</string>
     <string name="install">Installer</string>
+    <string name="time">Heure</string>
+    <string name="language">Langue</string>
 </resources>

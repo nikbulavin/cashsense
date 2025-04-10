@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">업데이트가 다운로드되었습니다</string>
     <string name="update">업데이트</string>
     <string name="install">설치</string>
+    <string name="time">시간</string>
+    <string name="language">언어</string>
 </resources>

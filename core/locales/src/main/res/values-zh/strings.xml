@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">更新已下载</string>
     <string name="update">更新</string>
     <string name="install">安装</string>
+    <string name="time">时间</string>
+    <string name="language">语言</string>
 </resources>

@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">تم تحميل التحديث</string>
     <string name="update">تحديث</string>
     <string name="install">تثبيت</string>
+    <string name="time">الوقت</string>
+    <string name="language">اللغة</string>
 </resources>

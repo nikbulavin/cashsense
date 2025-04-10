@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">अपडेट डाउनलोड किया गया</string>
     <string name="update">अपडेट करें</string>
     <string name="install">इंस्टॉल करें</string>
+    <string name="time">समय</string>
+    <string name="language">भाषा</string>
 </resources>

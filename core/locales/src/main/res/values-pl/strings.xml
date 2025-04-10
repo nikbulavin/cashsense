@@ -102,4 +102,6 @@
     <string name="app_update_downloaded">Aktualizacja została pobrana</string>
     <string name="update">Zaktualizuj</string>
     <string name="install">Zainstaluj</string>
+    <string name="time">Czas</string>
+    <string name="language">Język</string>
 </resources>
