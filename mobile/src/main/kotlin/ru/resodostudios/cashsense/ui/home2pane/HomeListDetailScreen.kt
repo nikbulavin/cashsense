@@ -201,7 +201,8 @@ internal fun HomeListDetailScreen(
         listPane = {
             AnimatedPane {
                 Box(
-                    modifier = Modifier.clipToBounds()
+                    modifier = Modifier
+                        .clipToBounds()
                         .layout { measurable, constraints ->
                             val width = max(minPaneWidth.roundToPx(), constraints.maxWidth)
                             val placeable = measurable.measure(
@@ -222,7 +223,10 @@ internal fun HomeListDetailScreen(
                         onWalletClick = ::onWalletClickShowDetailPane,
                         onTransfer = onTransfer,
                         onEditWallet = onEditWallet,
-                        onDeleteWallet = onDeleteWallet,
+                        onDeleteWallet = {
+                            onDeleteWallet(it)
+                            if (selectedWalletId == it) walletRoute = WalletPlaceholderRoute
+                        },
                         onTransactionCreate = {
                             navigateToTransactionDialog(it, null, false)
                         },
@@ -239,7 +243,8 @@ internal fun HomeListDetailScreen(
         detailPane = {
             AnimatedPane {
                 Box(
-                    modifier = Modifier.clipToBounds()
+                    modifier = Modifier
+                        .clipToBounds()
                         .layout { measurable, constraints ->
                             val width = max(minPaneWidth.roundToPx(), constraints.maxWidth)
                             val placeable = measurable.measure(
@@ -270,6 +275,7 @@ internal fun HomeListDetailScreen(
                                     onTransactionClick = navigateToTransactionDialog,
                                 )
                             }
+
                             is WalletRoute -> {
                                 WalletScreen(
                                     onBackClick = {
@@ -297,6 +303,7 @@ internal fun HomeListDetailScreen(
                                     },
                                 )
                             }
+
                             is WalletPlaceholderRoute -> {
                                 EmptyState(
                                     messageRes = localesR.string.select_wallet,
