@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.StatusType
@@ -157,6 +158,12 @@ class TransferDialogViewModel @Inject constructor(
             it.copy(convertedAmount = convertedAmount, amount = amount)
         }
     }
+
+    fun updateDate(date: Instant) {
+        _transferDialogState.update {
+            it.copy(date = date)
+        }
+    }
 }
 
 @Immutable
@@ -168,6 +175,7 @@ data class TransferDialogUiState(
     val convertedAmount: String = "",
     val transferWallets: List<TransferWallet> = emptyList(),
     val isLoading: Boolean = false,
+    val date: Instant = Clock.System.now(),
 )
 
 data class TransferWallet(
