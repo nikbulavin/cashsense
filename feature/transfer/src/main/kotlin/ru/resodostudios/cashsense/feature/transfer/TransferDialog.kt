@@ -1,15 +1,12 @@
 package ru.resodostudios.cashsense.feature.transfer
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -106,59 +103,66 @@ private fun TransferDialog(
             val exchangeRateEnabled =
                 transferState.sendingWallet.currency != transferState.receivingWallet.currency
 
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+            LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                WalletDropdownMenu(
-                    title = localesR.string.from_wallet,
-                    onWalletSelect = onSendingWalletUpdate,
-                    selectedWallet = transferState.sendingWallet,
-                    availableWallets = transferState.transferWallets,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                WalletDropdownMenu(
-                    title = localesR.string.to_wallet,
-                    onWalletSelect = onReceivingWalletUpdate,
-                    selectedWallet = transferState.receivingWallet,
-                    availableWallets = transferState.transferWallets,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedAmountField(
-                    value = transferState.amount,
-                    onValueChange = onAmountUpdate,
-                    labelRes = localesR.string.amount,
-                    currency = transferState.sendingWallet.currency ?: getUsdCurrency(),
-                    imeAction = if (exchangeRateEnabled) ImeAction.Next else ImeAction.Done,
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Down) },
-                        onDone = { focusManager.clearFocus() },
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    value = transferState.exchangeRate,
-                    onValueChange = { onExchangingRateUpdate(it.cleanAmount()) },
-                    label = { Text(stringResource(localesR.string.exchange_rate)) },
-                    placeholder = { Text("0.01") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done,
-                    ),
-                    enabled = exchangeRateEnabled,
-                    keyboardActions = KeyboardActions(
-                        onDone = { focusManager.clearFocus() },
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                AnimatedVisibility(transferState.receivingWallet.currency != null) {
+                item {
+                    WalletDropdownMenu(
+                        title = localesR.string.from_wallet,
+                        onWalletSelect = onSendingWalletUpdate,
+                        selectedWallet = transferState.sendingWallet,
+                        availableWallets = transferState.transferWallets,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                item {
+                    WalletDropdownMenu(
+                        title = localesR.string.to_wallet,
+                        onWalletSelect = onReceivingWalletUpdate,
+                        selectedWallet = transferState.receivingWallet,
+                        availableWallets = transferState.transferWallets,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                item {
+                    OutlinedAmountField(
+                        value = transferState.amount,
+                        onValueChange = onAmountUpdate,
+                        labelRes = localesR.string.amount,
+                        currency = transferState.sendingWallet.currency ?: getUsdCurrency(),
+                        imeAction = if (exchangeRateEnabled) ImeAction.Next else ImeAction.Done,
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                            onDone = { focusManager.clearFocus() },
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                item {
+                    OutlinedTextField(
+                        value = transferState.exchangeRate,
+                        onValueChange = { onExchangingRateUpdate(it.cleanAmount()) },
+                        label = { Text(stringResource(localesR.string.exchange_rate)) },
+                        placeholder = { Text("0.01") },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Decimal,
+                            imeAction = ImeAction.Done,
+                        ),
+                        enabled = exchangeRateEnabled,
+                        keyboardActions = KeyboardActions(
+                            onDone = { focusManager.clearFocus() },
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                item {
                     OutlinedAmountField(
                         value = transferState.convertedAmount,
                         onValueChange = onConvertedAmountUpdate,
                         labelRes = localesR.string.converted_amount,
-                        currency = transferState.receivingWallet.currency!!,
+                        currency = transferState.receivingWallet.currency ?: getUsdCurrency(),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
