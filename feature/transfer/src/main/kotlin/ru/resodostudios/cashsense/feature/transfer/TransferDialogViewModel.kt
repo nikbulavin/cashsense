@@ -187,7 +187,6 @@ data class TransferWallet(
 
 fun TransferDialogUiState.asTransfer(): List<Transaction> {
     val transferId = Uuid.random()
-    val timestamp = Clock.System.now()
     val withdrawalAmount = BigDecimal(amount)
 
     val withdrawalTransaction = Transaction(
@@ -195,7 +194,7 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         walletOwnerId = sendingWallet.id,
         description = null,
         amount = withdrawalAmount.negate(),
-        timestamp = timestamp,
+        timestamp = date,
         status = StatusType.COMPLETED,
         ignored = true,
         transferId = transferId,
@@ -206,12 +205,12 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         walletOwnerId = receivingWallet.id,
         description = null,
         amount = BigDecimal(convertedAmount),
-        timestamp = timestamp,
+        timestamp = date,
         status = StatusType.COMPLETED,
         ignored = true,
         transferId = transferId,
         currency = getUsdCurrency(),
     )
 
-    return buildList { add(withdrawalTransaction); add(depositTransaction) }
+    return listOf(withdrawalTransaction, depositTransaction)
 }
