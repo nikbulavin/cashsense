@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.settings
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -321,10 +322,15 @@ private fun LazyListScope.about(
         val packageInfo: PackageInfo? =
             context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo?.versionName ?: stringResource(localesR.string.none)
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            "(${packageInfo?.longVersionCode})"
+        } else {
+            ""
+        }
 
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.version)) },
-            supportingContent = { Text(versionName) },
+            supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Info,
