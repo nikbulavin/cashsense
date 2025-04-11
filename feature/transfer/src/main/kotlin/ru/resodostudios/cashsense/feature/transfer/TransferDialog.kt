@@ -164,26 +164,22 @@ private fun TransferDialog(
                         value = transferState.convertedAmount,
                         onValueChange = onConvertedAmountUpdate,
                         labelRes = localesR.string.converted_amount,
-                        currency = transferState.receivingWallet.currency!!,
+                        currency = transferState.receivingWallet.currency ?: getUsdCurrency(),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
-                item {
-                    DatePickerTextField(
-                        timestamp = transferState.date,
-                        labelRes = localesR.string.date,
-                        icon = CsIcons.Outlined.Calendar,
-                        modifier = Modifier.fillMaxWidth(),
-                        onDateSelect = onDateUpdate,
-                    )
-                }
-                item {
-                    TimePickerTextField(
-                        timestamp = transferState.date,
-                        modifier = Modifier.fillMaxWidth(),
-                        onTimeSelect = onDateUpdate,
-                    )
-                }
+                DatePickerTextField(
+                    timestamp = transferState.date,
+                    labelRes = localesR.string.date,
+                    icon = CsIcons.Outlined.Calendar,
+                    modifier = Modifier.fillMaxWidth(),
+                    onDateSelect = onDateUpdate,
+                )
+                TimePickerTextField(
+                    timestamp = transferState.date,
+                    modifier = Modifier.fillMaxWidth(),
+                    onTimeSelect = onDateUpdate,
+                )
             }
         }
     }
