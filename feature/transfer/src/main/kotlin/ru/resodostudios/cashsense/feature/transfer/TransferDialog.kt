@@ -38,6 +38,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.OutlinedAmountField
+import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
@@ -178,6 +179,13 @@ private fun TransferDialog(
                         icon = CsIcons.Outlined.Calendar,
                         modifier = Modifier.fillMaxWidth(),
                         onDateSelect = onDateUpdate,
+                    )
+                }
+                item {
+                    TimePickerTextField(
+                        timestamp = transferState.date,
+                        modifier = Modifier.fillMaxWidth(),
+                        onTimeSelect = onDateUpdate,
                     )
                 }
             }
