@@ -41,7 +41,7 @@ class Home2PaneViewModel @Inject constructor(
     private val _shouldDisplayUndoWalletState = MutableStateFlow(false)
     val shouldDisplayUndoWalletState = _shouldDisplayUndoWalletState.asStateFlow()
 
-    fun onWalletClick(walletId: String?) {
+    fun onWalletSelect(walletId: String?) {
         savedStateHandle[WALLET_ID_KEY] = walletId
     }
 

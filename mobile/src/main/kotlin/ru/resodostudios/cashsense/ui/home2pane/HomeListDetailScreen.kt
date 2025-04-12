@@ -102,7 +102,7 @@ internal fun HomeListDetailScreen(
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        onWalletClick = viewModel::onWalletClick,
+        onWalletSelect = viewModel::onWalletSelect,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
         onDeleteWallet = viewModel::deleteWallet,
@@ -119,7 +119,7 @@ internal fun HomeListDetailScreen(
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    onWalletClick: (String) -> Unit,
+    onWalletSelect: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
     onDeleteWallet: (String) -> Unit,
@@ -169,8 +169,8 @@ internal fun HomeListDetailScreen(
     }
 
     fun onWalletClickShowDetailPane(walletId: String?) {
+        onWalletSelect(walletId)
         if (walletId != null) {
-            onWalletClick(walletId)
             walletRoute = WalletRoute(walletId)
             coroutineScope.launch {
                 scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
@@ -181,7 +181,7 @@ internal fun HomeListDetailScreen(
                     paneExpansionState.animateTo(PaneExpansionAnchor.Proportion(0f))
                 }
             }
-        } else if (scaffoldNavigator.isDetailPaneVisible()) {
+        } else {
             walletRoute = WalletPlaceholderRoute
         }
     }
@@ -224,8 +224,9 @@ internal fun HomeListDetailScreen(
                         onTransfer = onTransfer,
                         onEditWallet = onEditWallet,
                         onDeleteWallet = {
+                            onWalletSelect(null)
+                            walletRoute = WalletPlaceholderRoute
                             onDeleteWallet(it)
-                            if (selectedWalletId == it) walletRoute = WalletPlaceholderRoute
                         },
                         onTransactionCreate = {
                             navigateToTransactionDialog(it, null, false)
@@ -286,13 +287,12 @@ internal fun HomeListDetailScreen(
                                     onTransfer = onTransfer,
                                     onEditWallet = onEditWallet,
                                     onDeleteClick = {
-                                        onDeleteWallet(it)
-                                        if (scaffoldNavigator.isDetailPaneVisible()) {
-                                            walletRoute = WalletPlaceholderRoute
-                                        }
                                         coroutineScope.launch {
                                             scaffoldNavigator.navigateBack()
                                         }
+                                        onWalletSelect(null)
+                                        walletRoute = WalletPlaceholderRoute
+                                        onDeleteWallet(it)
                                     },
                                     showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
                                     navigateToTransactionDialog = navigateToTransactionDialog,
