@@ -279,7 +279,7 @@ private fun TotalBalanceSection(
                     LinearWavyProgressIndicator(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 12.dp),
+                            .padding(top = 8.dp, bottom = 6.dp),
                     )
                 }
             }
