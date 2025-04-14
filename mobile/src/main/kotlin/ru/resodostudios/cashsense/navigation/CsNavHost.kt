@@ -9,13 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.categoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
-import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesSection
+import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
-import ru.resodostudios.cashsense.feature.settings.navigation.settingsSection
+import ru.resodostudios.cashsense.feature.settings.navigation.settingsScreen
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.subscriptionDialog
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsSection
+import ru.resodostudios.cashsense.feature.subscription.list.navigation.subscriptionsScreen
 import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.navigateToTransactionDialog
 import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.transactionDialog
 import ru.resodostudios.cashsense.feature.transfer.navigation.navigateToTransferDialog
@@ -54,21 +54,17 @@ fun CsNavHost(
                 transactionDialog(navController::navigateUp)
             },
         )
-        categoriesSection(
+        categoriesScreen(
             onEditCategory = navController::navigateToCategoryDialog,
             onShowSnackbar = onShowSnackbar,
-            nestedGraphs = {
-                categoryDialog(navController::navigateUp)
-            },
+            nestedGraphs = { categoryDialog(navController::navigateUp) },
         )
-        subscriptionsSection(
+        subscriptionsScreen(
             onEditSubscription = navController::navigateToSubscriptionDialog,
             onShowSnackbar = onShowSnackbar,
-            nestedGraphs = {
-                subscriptionDialog(navController::navigateUp)
-            },
+            nestedGraphs = { subscriptionDialog(navController::navigateUp) },
         )
-        settingsSection(
+        settingsScreen(
             onLicensesClick = navController::navigateToLicenses,
             nestedGraphs = { licensesScreen(navController::navigateUp) },
         )

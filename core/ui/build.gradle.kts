@@ -4,9 +4,6 @@ plugins {
 }
 
 android {
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
     namespace = "ru.resodostudios.cashsense.core.ui"
 }
 

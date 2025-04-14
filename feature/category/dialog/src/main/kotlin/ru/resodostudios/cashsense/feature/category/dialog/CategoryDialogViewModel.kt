@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.category.dialog
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -67,6 +68,7 @@ class CategoryDialogViewModel @Inject constructor(
     }
 }
 
+@Immutable
 data class CategoryDialogUiState(
     val id: String = "",
     val title: String = "",

@@ -33,11 +33,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
+import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.OutlinedAmountField
+import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
@@ -61,6 +65,7 @@ internal fun TransferDialog(
         onExchangingRateUpdate = viewModel::updateExchangingRate,
         onConvertedAmountUpdate = viewModel::updateConvertedAmount,
         onTransferSave = viewModel::saveTransfer,
+        onDateUpdate = viewModel::updateDate,
         modifier = modifier,
     )
 }
@@ -75,6 +80,7 @@ private fun TransferDialog(
     onExchangingRateUpdate: (String) -> Unit,
     onConvertedAmountUpdate: (String) -> Unit,
     onTransferSave: (TransferDialogUiState) -> Unit,
+    onDateUpdate: (Instant) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CsAlertDialog(
@@ -158,10 +164,22 @@ private fun TransferDialog(
                         value = transferState.convertedAmount,
                         onValueChange = onConvertedAmountUpdate,
                         labelRes = localesR.string.converted_amount,
-                        currency = transferState.receivingWallet.currency!!,
+                        currency = transferState.receivingWallet.currency ?: getUsdCurrency(),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
+                DatePickerTextField(
+                    timestamp = transferState.date,
+                    labelRes = localesR.string.date,
+                    icon = CsIcons.Outlined.Calendar,
+                    modifier = Modifier.fillMaxWidth(),
+                    onDateSelect = onDateUpdate,
+                )
+                TimePickerTextField(
+                    timestamp = transferState.date,
+                    modifier = Modifier.fillMaxWidth(),
+                    onTimeSelect = onDateUpdate,
+                )
             }
         }
     }

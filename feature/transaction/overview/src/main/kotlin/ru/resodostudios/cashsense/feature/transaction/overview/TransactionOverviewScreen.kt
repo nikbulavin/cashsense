@@ -46,7 +46,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun TransactionOverviewScreen(
+fun TransactionOverviewScreen(
     shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -81,7 +81,7 @@ private fun TransactionOverviewScreen(
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -140,7 +140,7 @@ private fun TransactionOverviewScreen(
                 },
             ) { paddingValues ->
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = 88.dp),
+                    contentPadding = PaddingValues(bottom = 110.dp),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
@@ -198,7 +198,10 @@ private fun TopBar(
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Text(
-                                text = it.formatAmount(financePanelUiState.userCurrency),
+                                text = financePanelUiState.totalBalance.formatAmount(
+                                    currency = financePanelUiState.userCurrency,
+                                    withApproximately = financePanelUiState.shouldShowApproximately,
+                                ),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -229,7 +232,7 @@ private fun LazyListScope.header(
     financePanelUiState: FinancePanelUiState,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
 ) {
@@ -258,6 +261,7 @@ private fun LazyListScope.header(
                     onCategorySelect = onCategorySelect,
                     onCategoryDeselect = onCategoryDeselect,
                     modifier = Modifier.fillMaxWidth(),
+                    shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )
             }
         }

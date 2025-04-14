@@ -26,10 +26,10 @@ protobuf {
 }
 
 androidComponents.beforeVariants {
-    android.sourceSets.forEach {
+    android.sourceSets.register(it.name) {
         val buildDir = layout.buildDirectory.get().asFile
-        it.java.srcDir(buildDir.resolve("generated/source/proto/${it.name}/java"))
-        it.kotlin.srcDir(buildDir.resolve("generated/source/proto/${it.name}/kotlin"))
+        java.srcDir(buildDir.resolve("generated/sources/proto/${it.name}/java"))
+        kotlin.srcDir(buildDir.resolve("generated/sources/proto/${it.name}/kotlin"))
     }
 }
 

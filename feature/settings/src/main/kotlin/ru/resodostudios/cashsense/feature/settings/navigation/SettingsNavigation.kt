@@ -17,7 +17,7 @@ object SettingsRoute
 fun NavController.navigateToSettings(navOptions: NavOptions? = null) =
     navigate(route = SettingsBaseRoute, navOptions)
 
-fun NavGraphBuilder.settingsSection(
+fun NavGraphBuilder.settingsScreen(
     onLicensesClick: () -> Unit,
     nestedGraphs: NavGraphBuilder.() -> Unit,
 ) {

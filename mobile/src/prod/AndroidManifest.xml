@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application tools:ignore="MissingApplicationIcon">
+        <!-- Enable Firebase analytics for `prod` builds -->
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="false"
+            tools:replace="android:value" />
+    </application>
+</manifest>

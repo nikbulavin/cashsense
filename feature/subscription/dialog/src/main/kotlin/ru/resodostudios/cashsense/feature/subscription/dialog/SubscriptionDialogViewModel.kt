@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -137,6 +138,7 @@ class SubscriptionDialogViewModel @Inject constructor(
     }
 }
 
+@Immutable
 data class SubscriptionDialogUiState(
     val id: String = "",
     val title: String = "",

@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.component
 
+import android.os.Build
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -15,18 +16,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -46,6 +53,18 @@ fun EmptyState(
     @RawRes animationRes: Int,
     modifier: Modifier = Modifier,
 ) {
+    val dynamicProperties = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        rememberLottieDynamicProperties(
+            rememberLottieDynamicProperty(
+                property = LottieProperty.COLOR_FILTER,
+                value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    MaterialTheme.colorScheme.primary.toArgb(),
+                    BlendModeCompat.COLOR,
+                ),
+                keyPath = arrayOf("**"),
+            )
+        )
+    } else null
     val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(animationRes))
     val progress by animateLottieCompositionAsState(
         composition = lottieComposition,
@@ -65,6 +84,7 @@ fun EmptyState(
                 modifier = Modifier.size(185.dp),
                 composition = lottieComposition,
                 progress = { progress },
+                dynamicProperties = dynamicProperties,
             )
             Text(
                 text = stringResource(messageRes),
@@ -72,6 +92,7 @@ fun EmptyState(
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

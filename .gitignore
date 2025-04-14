@@ -3,7 +3,14 @@
 .kotlin
 /.idea
 .DS_Store
-/build
+
+# generated files
+bin/
+gen/
+out/
+build/
+generated/
+
 /captures
 .externalNativeBuild
 .cxx

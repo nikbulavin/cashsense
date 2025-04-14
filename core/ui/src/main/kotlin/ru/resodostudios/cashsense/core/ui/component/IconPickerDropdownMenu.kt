@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
@@ -19,6 +18,8 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Apparel
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Attractions
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.BakeryDining
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Bitcoin
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Book
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
@@ -33,17 +34,20 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Handyman
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LocalBar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LocalGasStation
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LocalTaxi
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Memory
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Monitoring
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Movie
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MusicNote
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Payments
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Percent
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pets
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Phishing
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pill
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Restaurant
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.School
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Scooter
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SelfCare
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ShoppingCart
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SimCard
@@ -52,7 +56,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SportsEsports
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Travel
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Work
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun IconPickerDropdownMenu(
     currentIcon: ImageVector,
@@ -106,7 +109,11 @@ enum class StoredIcon(
     CHAIR(CsIcons.Outlined.Chair, 3),
     EXERCISE(CsIcons.Outlined.Exercise, 4),
     FASTFOOD(CsIcons.Outlined.Fastfood, 5),
+    RESTAURANT(CsIcons.Outlined.Restaurant, 17),
+    BAKERY_DINING(CsIcons.Outlined.BakeryDining, 37),
     DIRECTIONS_BUS(CsIcons.Outlined.DirectionsBus, 6),
+    LOCAL_TAXI(CsIcons.Outlined.LocalTaxi, 35),
+    SCOOTER(CsIcons.Outlined.Scooter, 36),
     HANDYMAN(CsIcons.Outlined.Handyman, 7),
     LANGUAGE(CsIcons.Outlined.Language, 8),
     LOCAL_BAR(CsIcons.Outlined.LocalBar, 9),
@@ -117,7 +124,6 @@ enum class StoredIcon(
     PHISHING(CsIcons.Outlined.Phishing, 14),
     PILL(CsIcons.Outlined.Pill, 15),
     TRANSACTION(CsIcons.Outlined.ReceiptLong, 16),
-    RESTAURANT(CsIcons.Outlined.Restaurant, 17),
     SCHOOL(CsIcons.Outlined.School, 18),
     SELF_CARE(CsIcons.Outlined.SelfCare, 19),
     SHOPPING_CART(CsIcons.Outlined.ShoppingCart, 20),
@@ -134,7 +140,9 @@ enum class StoredIcon(
     BOOK(CsIcons.Outlined.Book, 31),
     DENTISTRY(CsIcons.Outlined.Dentistry, 32),
     DIAMOND(CsIcons.Outlined.Diamond, 33),
-    MOVIE(CsIcons.Outlined.Movie, 34);
+    MOVIE(CsIcons.Outlined.Movie, 34),
+    PERCENT(CsIcons.Outlined.Percent, 38),
+    AUTORENEW(CsIcons.Outlined.Autorenew, 39);
 
     companion object {
 

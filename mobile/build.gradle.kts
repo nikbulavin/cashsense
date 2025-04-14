@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.cashsense.android.application)
     alias(libs.plugins.cashsense.android.application.compose)
     alias(libs.plugins.cashsense.android.application.firebase)
+    alias(libs.plugins.cashsense.android.application.flavors)
     alias(libs.plugins.cashsense.hilt)
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.baselineprofile)
@@ -13,8 +14,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "ru.resodostudios.cashsense"
-        versionCode = 37
-        versionName = "1.2.1"
+        versionCode = 42
+        versionName = "1.3.0-beta02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -77,6 +78,7 @@ dependencies {
     implementation(projects.work)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)

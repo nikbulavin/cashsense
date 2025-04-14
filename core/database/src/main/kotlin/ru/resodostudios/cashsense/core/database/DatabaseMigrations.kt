@@ -39,4 +39,11 @@ internal object DatabaseMigrations {
         ),
     )
     class Schema3to4 : AutoMigrationSpec
+
+    @RenameColumn(
+        tableName = "currency_exchange_rates",
+        fromColumnName = "uuid",
+        toColumnName = "id",
+    )
+    class Schema9to10 : AutoMigrationSpec
 }

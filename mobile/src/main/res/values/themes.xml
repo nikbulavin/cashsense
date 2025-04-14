@@ -3,7 +3,7 @@
 
     <!-- Allows us to override night specific attributes in the
          values-night folder. -->
-    <style name="NightAdjusted.Theme.Cs" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="NightAdjusted.Theme.Cs" parent="Theme.AppCompat.Light.NoActionBar" />
 
     <!-- The final theme we use -->
     <style name="Theme.Cs" parent="NightAdjusted.Theme.Cs">

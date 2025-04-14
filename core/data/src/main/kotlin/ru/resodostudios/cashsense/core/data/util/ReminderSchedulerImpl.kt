@@ -13,7 +13,7 @@ internal class ReminderSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ReminderScheduler {
 
-    private val alarmManager: AlarmManager = checkNotNull(context.getSystemService<AlarmManager>())
+    private val alarmManager: AlarmManager = checkNotNull(context.getSystemService())
 
     private fun createPendingIntent(reminderId: Int): PendingIntent {
         val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {

@@ -98,4 +98,10 @@
     <string name="primary_icon_description">Make primary</string>
     <string name="non_primary_icon_description">Make non-primary</string>
     <string name="total_balance">Total balance</string>
+    <string name="app_update_available">New version is available</string>
+    <string name="app_update_downloaded">Update is downloaded</string>
+    <string name="update">Update</string>
+    <string name="install">Install</string>
+    <string name="time">Time</string>
+    <string name="language">Language</string>
 </resources>

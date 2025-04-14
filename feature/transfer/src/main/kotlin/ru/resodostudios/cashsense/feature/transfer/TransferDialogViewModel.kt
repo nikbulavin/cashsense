@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transfer
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.StatusType
@@ -156,8 +158,15 @@ class TransferDialogViewModel @Inject constructor(
             it.copy(convertedAmount = convertedAmount, amount = amount)
         }
     }
+
+    fun updateDate(date: Instant) {
+        _transferDialogState.update {
+            it.copy(date = date)
+        }
+    }
 }
 
+@Immutable
 data class TransferDialogUiState(
     val sendingWallet: TransferWallet = TransferWallet(),
     val receivingWallet: TransferWallet = TransferWallet(),
@@ -166,6 +175,7 @@ data class TransferDialogUiState(
     val convertedAmount: String = "",
     val transferWallets: List<TransferWallet> = emptyList(),
     val isLoading: Boolean = false,
+    val date: Instant = Clock.System.now(),
 )
 
 data class TransferWallet(
@@ -177,7 +187,6 @@ data class TransferWallet(
 
 fun TransferDialogUiState.asTransfer(): List<Transaction> {
     val transferId = Uuid.random()
-    val timestamp = Clock.System.now()
     val withdrawalAmount = BigDecimal(amount)
 
     val withdrawalTransaction = Transaction(
@@ -185,7 +194,7 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         walletOwnerId = sendingWallet.id,
         description = null,
         amount = withdrawalAmount.negate(),
-        timestamp = timestamp,
+        timestamp = date,
         status = StatusType.COMPLETED,
         ignored = true,
         transferId = transferId,
@@ -196,12 +205,12 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         walletOwnerId = receivingWallet.id,
         description = null,
         amount = BigDecimal(convertedAmount),
-        timestamp = timestamp,
+        timestamp = date,
         status = StatusType.COMPLETED,
         ignored = true,
         transferId = transferId,
         currency = getUsdCurrency(),
     )
 
-    return buildList { add(withdrawalTransaction); add(depositTransaction) }
+    return listOf(withdrawalTransaction, depositTransaction)
 }

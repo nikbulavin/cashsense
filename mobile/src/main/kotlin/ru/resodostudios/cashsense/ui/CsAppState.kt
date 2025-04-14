@@ -16,6 +16,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -39,6 +41,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 @Composable
 fun rememberCsAppState(
     timeZoneMonitor: TimeZoneMonitor,
+    inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
 ): CsAppState {
@@ -50,6 +53,7 @@ fun rememberCsAppState(
     ) {
         CsAppState(
             timeZoneMonitor = timeZoneMonitor,
+            inAppUpdateManager = inAppUpdateManager,
             coroutineScope = coroutineScope,
             navController = navController,
         )
@@ -59,6 +63,7 @@ fun rememberCsAppState(
 @Stable
 class CsAppState(
     timeZoneMonitor: TimeZoneMonitor,
+    inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope,
     val navController: NavHostController,
 ) {
@@ -91,6 +96,13 @@ class CsAppState(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TimeZone.currentSystemDefault(),
+        )
+
+    val inAppUpdateResult = inAppUpdateManager.inAppUpdateResult
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = InAppUpdateResult.NotAvailable,
         )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {

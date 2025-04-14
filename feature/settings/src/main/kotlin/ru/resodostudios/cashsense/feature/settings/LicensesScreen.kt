@@ -42,6 +42,7 @@ internal fun LicensesScreen(
         LibrariesContainer(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxSize(),
+            showDescription = true,
         )
     }
 }

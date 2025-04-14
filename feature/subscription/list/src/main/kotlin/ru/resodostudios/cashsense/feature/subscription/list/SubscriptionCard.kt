@@ -7,7 +7,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,14 +33,12 @@ import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.WEEKLY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
-import ru.resodostudios.cashsense.core.ui.util.FormatDateType.DATE
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SubscriptionCard(
     subscription: Subscription,
@@ -78,7 +75,7 @@ fun SubscriptionCard(
                 modifier = Modifier.padding(top = 12.dp),
             ) {
                 CsTag(
-                    text = subscription.paymentDate.formatDate(DATE),
+                    text = subscription.paymentDate.formatDate(),
                     icon = CsIcons.Outlined.Calendar,
                 )
                 AnimatedVisibility(

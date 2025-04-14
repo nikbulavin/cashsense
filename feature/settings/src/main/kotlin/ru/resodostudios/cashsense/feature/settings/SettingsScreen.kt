@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.settings
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -14,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,20 +28,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
@@ -62,6 +66,7 @@ internal fun SettingsScreen(
         onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
         onCurrencyUpdate = viewModel::updateCurrency,
+        onLanguageUpdate = viewModel::updateLanguage,
     )
 }
 
@@ -72,6 +77,7 @@ private fun SettingsScreen(
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
+    onLanguageUpdate: (String) -> Unit,
 ) {
     when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -83,6 +89,7 @@ private fun SettingsScreen(
                 general(
                     settings = settingsState.settings,
                     onCurrencyUpdate = onCurrencyUpdate,
+                    onLanguageUpdate = onLanguageUpdate,
                 )
                 appearance(
                     settings = settingsState.settings,
@@ -123,12 +130,15 @@ fun SettingsScreenPreview() {
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                         currency = getUsdCurrency(),
+                        language = Language("en", "English"),
+                        availableLanguages = emptyList(),
                     )
                 ),
                 onLicensesClick = {},
                 onDynamicColorPreferenceUpdate = {},
                 onDarkThemeConfigUpdate = {},
                 onCurrencyUpdate = {},
+                onLanguageUpdate = {},
             )
         }
     }
@@ -137,8 +147,14 @@ fun SettingsScreenPreview() {
 private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
+    onLanguageUpdate: (String) -> Unit,
 ) {
-    item { SectionTitle(text = stringResource(localesR.string.settings_general), topPadding = 10.dp) }
+    item {
+        SectionTitle(
+            text = stringResource(localesR.string.settings_general),
+            topPadding = 10.dp,
+        )
+    }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -159,6 +175,30 @@ private fun LazyListScope.general(
                 currency = settings.currency,
                 onDismiss = { showCurrencyDialog = false },
                 onCurrencyClick = onCurrencyUpdate,
+            )
+        }
+    }
+    item {
+        var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+
+        CsListItem(
+            headlineContent = { Text(stringResource(localesR.string.language)) },
+            leadingContent = {
+                Icon(
+                    imageVector = CsIcons.Outlined.Language,
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text(settings.language.name) },
+            onClick = { showLanguageDialog = true },
+        )
+
+        if (showLanguageDialog) {
+            LanguageDialog(
+                language = settings.language.code,
+                availableLanguages = settings.availableLanguages,
+                onLanguageClick = onLanguageUpdate,
+                onDismiss = { showLanguageDialog = false },
             )
         }
     }
@@ -211,7 +251,7 @@ private fun LazyListScope.appearance(
                     )
                 },
                 trailingContent = {
-                    Switch(
+                    CsSwitch(
                         checked = settings.useDynamicColor,
                         onCheckedChange = onDynamicColorPreferenceUpdate,
                     )
@@ -240,7 +280,7 @@ private fun LazyListScope.about(
             onClick = {
                 launchCustomChromeTab(
                     context = context,
-                    uri = Uri.parse(FEEDBACK_URL),
+                    uri = FEEDBACK_URL.toUri(),
                     toolbarColor = backgroundColor,
                 )
             },
@@ -260,7 +300,7 @@ private fun LazyListScope.about(
             onClick = {
                 launchCustomChromeTab(
                     context = context,
-                    uri = Uri.parse(PRIVACY_POLICY_URL),
+                    uri = PRIVACY_POLICY_URL.toUri(),
                     toolbarColor = backgroundColor,
                 )
             },
@@ -282,10 +322,15 @@ private fun LazyListScope.about(
         val packageInfo: PackageInfo? =
             context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo?.versionName ?: stringResource(localesR.string.none)
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            "(${packageInfo?.longVersionCode})"
+        } else {
+            ""
+        }
 
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.version)) },
-            supportingContent = { Text(versionName) },
+            supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Info,

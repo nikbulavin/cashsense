@@ -9,11 +9,6 @@ android {
         buildConfig = true
     }
     namespace = "ru.resodostudios.cashsense.core.network"
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
 }
 
 dependencies {

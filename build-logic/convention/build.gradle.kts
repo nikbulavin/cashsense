@@ -12,6 +12,7 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.firebase.crashlytics.gradlePlugin)
+    compileOnly(libs.firebase.performance.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
@@ -57,6 +58,10 @@ gradlePlugin {
         register("androidFirebase") {
             id = libs.plugins.cashsense.android.application.firebase.get().pluginId
             implementationClass = "AndroidApplicationFirebaseConventionPlugin"
+        }
+        register("androidFlavors") {
+            id = libs.plugins.cashsense.android.application.flavors.get().pluginId
+            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
         }
         register("hilt") {
             id = libs.plugins.cashsense.hilt.get().pluginId

@@ -17,7 +17,7 @@ object CategoriesRoute
 fun NavController.navigateToCategories(navOptions: NavOptions? = null) =
     navigate(route = CategoriesBaseRoute, navOptions)
 
-fun NavGraphBuilder.categoriesSection(
+fun NavGraphBuilder.categoriesScreen(
     onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     nestedGraphs: NavGraphBuilder.() -> Unit,

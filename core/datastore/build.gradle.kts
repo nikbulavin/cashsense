@@ -8,11 +8,6 @@ android {
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
     namespace = "ru.resodostudios.cashsense.core.datastore"
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
-        }
-    }
 }
 
 dependencies {

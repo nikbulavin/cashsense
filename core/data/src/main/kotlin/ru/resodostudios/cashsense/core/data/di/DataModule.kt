@@ -16,6 +16,12 @@ import ru.resodostudios.cashsense.core.data.repository.offline.OfflineSubscripti
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineTransactionRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
+import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
+import ru.resodostudios.cashsense.core.data.util.AppLocaleManagerImpl
+import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
+import ru.resodostudios.cashsense.core.data.util.InAppReviewManagerImpl
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
+import ru.resodostudios.cashsense.core.data.util.InAppUpdateManagerImpl
 import ru.resodostudios.cashsense.core.data.util.ReminderScheduler
 import ru.resodostudios.cashsense.core.data.util.ReminderSchedulerImpl
 import ru.resodostudios.cashsense.core.data.util.TimeZoneBroadcastMonitor
@@ -62,6 +68,21 @@ internal abstract class DataModule {
 
     @Binds
     internal abstract fun bindsNotificationAlarmScheduler(
-        reminderSchedulerImpl: ReminderSchedulerImpl,
+        reminderScheduler: ReminderSchedulerImpl,
     ): ReminderScheduler
+
+    @Binds
+    internal abstract fun bindsInAppUpdateManager(
+        inAppUpdateManager: InAppUpdateManagerImpl,
+    ): InAppUpdateManager
+
+    @Binds
+    internal abstract fun bindsInAppReviewManager(
+        inAppReviewManager: InAppReviewManagerImpl,
+    ): InAppReviewManager
+
+    @Binds
+    internal abstract fun bindsAppLocaleManager(
+        appLocaleManager: AppLocaleManagerImpl,
+    ): AppLocaleManager
 }

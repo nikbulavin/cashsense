@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,7 +24,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,7 +53,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun WalletScreen(
+fun WalletScreen(
     onBackClick: () -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -95,7 +98,7 @@ private fun WalletScreen(
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
-    onSelectedDateUpdate: (Short) -> Unit,
+    onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -160,7 +163,7 @@ private fun WalletScreen(
                 },
             ) { paddingValues ->
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = 88.dp),
+                    contentPadding = PaddingValues(bottom = 110.dp),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
@@ -274,7 +277,16 @@ private fun PrimaryToggleButton(
     } else {
         CsIcons.Outlined.Star to localesR.string.non_primary_icon_description
     }
-    IconButton(onClick = { onPrimaryClick(userWallet.id, !userWallet.isPrimary) }) {
+    val hapticFeedback = LocalHapticFeedback.current
+    IconToggleButton(
+        checked = userWallet.isPrimary,
+        onCheckedChange = { isChecked ->
+            hapticFeedback.performHapticFeedback(
+                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+            )
+            onPrimaryClick(userWallet.id, isChecked)
+        },
+    ) {
         Icon(
             imageVector = primaryIcon,
             contentDescription = stringResource(primaryIconContentDescriptionRes),

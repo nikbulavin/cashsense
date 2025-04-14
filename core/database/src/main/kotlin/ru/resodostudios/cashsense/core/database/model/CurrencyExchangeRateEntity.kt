@@ -13,7 +13,7 @@ import java.util.Currency
 )
 data class CurrencyExchangeRateEntity(
     @PrimaryKey
-    val uuid: String,
+    val id: String,
     @ColumnInfo(name = "base_currency")
     val baseCurrency: Currency,
     @ColumnInfo(name = "target_currency")
@@ -23,8 +23,9 @@ data class CurrencyExchangeRateEntity(
     val timestamp: Instant,
 )
 
-fun CurrencyExchangeRateEntity.asExternalModel() = CurrencyExchangeRate(
-    baseCurrency = baseCurrency,
-    targetCurrency = targetCurrency,
-    exchangeRate = exchangeRate,
-)
+fun CurrencyExchangeRateEntity.asExternalModel() =
+    CurrencyExchangeRate(
+        baseCurrency = baseCurrency,
+        targetCurrency = targetCurrency,
+        exchangeRate = exchangeRate,
+    )
