@@ -142,11 +142,12 @@ internal fun HomeScreen(
             modifier = Modifier
                 .zIndex(1f)
                 .padding(start = 16.dp, end = 16.dp)
+                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                 .hazeEffect(hazeState) {
                     blurRadius = 18.dp
                     backgroundColor = color
                     progressive = HazeProgressive.verticalGradient(
-                        startIntensity = 1f,
+                        startIntensity = 0.75f,
                         endIntensity = 0f,
                     )
                 }
@@ -155,8 +156,7 @@ internal fun HomeScreen(
                         colors = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
                         startY = 85.0f,
                     )
-                )
-                .clip(RoundedCornerShape(24.dp)),
+                ),
         )
         when (walletsState) {
             Loading -> LoadingState(Modifier.fillMaxSize())
@@ -301,13 +301,13 @@ private fun TotalBalanceCard(
     }
     val borderBrush = remember(color) {
         Brush.verticalGradient(
-            colors = listOf(Color.Transparent, color, Color.Transparent),
-            startY = 25f,
-            endY = 155f,
+            colors = listOf(Color.Transparent, color),
+            startY = 75f,
             tileMode = TileMode.Decal,
         )
     }
     OutlinedCard(
+        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
         border = BorderStroke(1.dp, borderBrush),
         modifier = modifier
             .then(
