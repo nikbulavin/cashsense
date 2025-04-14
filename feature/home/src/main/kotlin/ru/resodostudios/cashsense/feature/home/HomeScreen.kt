@@ -28,10 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,6 +99,7 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
@@ -136,28 +135,65 @@ internal fun HomeScreen(
     val hazeState = remember { HazeState() }
     val color = MaterialTheme.colorScheme.surface
     Box {
-        TotalBalanceSection(
-            totalBalanceState = totalBalanceState,
-            onTotalBalanceClick = onTotalBalanceClick,
-            modifier = Modifier
-                .zIndex(1f)
-                .padding(start = 16.dp, end = 16.dp)
-                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                .hazeEffect(hazeState) {
-                    blurRadius = 18.dp
-                    backgroundColor = color
-                    progressive = HazeProgressive.verticalGradient(
-                        startIntensity = 0.75f,
-                        endIntensity = 0f,
-                    )
+        when (totalBalanceState) {
+            TotalBalanceUiState.NotShown -> Unit
+            TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
+                val brushColor =
+                    if (totalBalanceState is TotalBalanceUiState.Shown &&
+                        totalBalanceState.shouldShowBadIndicator
+                    ) {
+                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+                    } else {
+                        Color.Transparent
+                    }
+                TotalBalanceCard(
+                    onClick = onTotalBalanceClick,
+                    modifier = Modifier
+                        .zIndex(1f)
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                        .hazeEffect(hazeState) {
+                            blurRadius = 18.dp
+                            backgroundColor = color
+                            progressive = HazeProgressive.verticalGradient(
+                                startIntensity = 1f,
+                                endIntensity = 0f,
+                            )
+                        }
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.surface,
+                                    brushColor,
+                                ),
+                                startY = 100f,
+                            )
+                        ),
+                ) {
+                    if (totalBalanceState is TotalBalanceUiState.Shown) {
+                        AnimatedAmount(
+                            targetState = totalBalanceState.amount,
+                            label = "TotalBalance",
+                        ) {
+                            Text(
+                                text = totalBalanceState.amount.formatAmount(
+                                    currency = totalBalanceState.userCurrency,
+                                    withApproximately = totalBalanceState.shouldShowApproximately,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    } else {
+                        LinearWavyProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 6.dp),
+                        )
+                    }
                 }
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
-                        startY = 85.0f,
-                    )
-                ),
-        )
+            }
+        }
         when (walletsState) {
             Loading -> LoadingState(Modifier.fillMaxSize())
             Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
@@ -243,84 +279,20 @@ private fun LazyStaggeredGridScope.wallets(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun TotalBalanceSection(
-    totalBalanceState: TotalBalanceUiState,
-    modifier: Modifier = Modifier,
-    onTotalBalanceClick: () -> Unit = {},
-) {
-    when (totalBalanceState) {
-        TotalBalanceUiState.NotShown -> Unit
-        TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
-            val shouldShowBadIndicator = if (totalBalanceState is TotalBalanceUiState.Shown) {
-                totalBalanceState.shouldShowBadIndicator
-            } else false
-            TotalBalanceCard(
-                showBadIndicator = shouldShowBadIndicator,
-                onClick = onTotalBalanceClick,
-                modifier = modifier,
-            ) {
-                if (totalBalanceState is TotalBalanceUiState.Shown) {
-                    AnimatedAmount(
-                        targetState = totalBalanceState.amount,
-                        label = "TotalBalance",
-                    ) {
-                        Text(
-                            text = totalBalanceState.amount.formatAmount(
-                                currency = totalBalanceState.userCurrency,
-                                withApproximately = totalBalanceState.shouldShowApproximately,
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                } else {
-                    LinearWavyProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 6.dp),
-                    )
-                }
-            }
-        }
-    }
-}
-
 @Composable
 private fun TotalBalanceCard(
-    showBadIndicator: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     headlineContent: @Composable () -> Unit,
 ) {
-    val color = if (showBadIndicator) {
-        MaterialTheme.colorScheme.error
-    } else {
-        MaterialTheme.colorScheme.outlineVariant
-    }
-    val borderBrush = remember(color) {
-        Brush.verticalGradient(
-            colors = listOf(Color.Transparent, color),
-            startY = 75f,
-            tileMode = TileMode.Decal,
-        )
-    }
+    val borderBrush = Brush.verticalGradient(
+        colors = listOf(Color.Transparent, MaterialTheme.colorScheme.outlineVariant),
+        startY = 75f,
+    )
     OutlinedCard(
         shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
         border = BorderStroke(1.dp, borderBrush),
-        modifier = modifier
-            .then(
-                if (showBadIndicator) {
-                    Modifier.shadow(
-                        ambientColor = color,
-                        elevation = 12.dp,
-                        spotColor = color,
-                    )
-                } else {
-                    Modifier
-                },
-            ),
+        modifier = modifier,
         onClick = onClick,
         colors = CardDefaults.cardColors().copy(
             containerColor = Color.Transparent,
