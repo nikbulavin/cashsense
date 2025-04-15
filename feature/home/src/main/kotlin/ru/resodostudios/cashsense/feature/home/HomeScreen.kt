@@ -132,8 +132,9 @@ internal fun HomeScreen(
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
         clearUndoState()
     }
+
     val hazeState = remember { HazeState() }
-    val color = MaterialTheme.colorScheme.surface
+
     Box {
         when (totalBalanceState) {
             TotalBalanceUiState.NotShown -> Unit
@@ -146,6 +147,8 @@ internal fun HomeScreen(
                     } else {
                         Color.Transparent
                     }
+
+                val hazeBackgroundColor = MaterialTheme.colorScheme.surface
                 TotalBalanceCard(
                     onClick = onTotalBalanceClick,
                     modifier = Modifier
@@ -154,7 +157,7 @@ internal fun HomeScreen(
                         .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                         .hazeEffect(hazeState) {
                             blurRadius = 18.dp
-                            backgroundColor = color
+                            backgroundColor = hazeBackgroundColor
                             progressive = HazeProgressive.verticalGradient(
                                 startIntensity = 1f,
                                 endIntensity = 0f,
@@ -162,10 +165,7 @@ internal fun HomeScreen(
                         }
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface,
-                                    brushColor,
-                                ),
+                                colors = listOf(MaterialTheme.colorScheme.surface, brushColor),
                                 startY = 100f,
                             )
                         ),
