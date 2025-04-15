@@ -143,7 +143,7 @@ internal fun HomeScreen(
                     if (totalBalanceState is TotalBalanceUiState.Shown &&
                         totalBalanceState.shouldShowBadIndicator
                     ) {
-                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.75f)
                     } else {
                         Color.Transparent
                     }
@@ -156,7 +156,7 @@ internal fun HomeScreen(
                         .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                         .hazeEffect(hazeState) {
-                            blurRadius = 18.dp
+                            blurRadius = 20.dp
                             backgroundColor = hazeBackgroundColor
                             progressive = HazeProgressive.verticalGradient(
                                 startIntensity = 1f,
@@ -295,7 +295,7 @@ private fun TotalBalanceCard(
         modifier = modifier,
         onClick = onClick,
         colors = CardDefaults.cardColors().copy(
-            containerColor = Color.Transparent,
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.25f),
         ),
     ) {
         CsListItem(
