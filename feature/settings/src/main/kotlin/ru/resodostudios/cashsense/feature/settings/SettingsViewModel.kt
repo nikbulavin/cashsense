@@ -34,7 +34,7 @@ class SettingsViewModel @Inject constructor(
         Language("ko", "한국어"),
         Language("pl", "Polski"),
         Language("ta", "தமிழ்"),
-        Language("zh", "简体字"),
+        Language("zh", "简体中文"),
     )
 
     val settingsUiState: StateFlow<SettingsUiState> = combine(
