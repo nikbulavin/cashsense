@@ -156,17 +156,17 @@ internal fun HomeScreen(
                         .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                         .hazeEffect(hazeState) {
-                            blurRadius = 20.dp
+                            blurRadius = 22.dp
                             backgroundColor = hazeBackgroundColor
                             progressive = HazeProgressive.verticalGradient(
                                 startIntensity = 1f,
-                                endIntensity = 0f,
+                                endIntensity = 0.25f,
                             )
                         }
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(MaterialTheme.colorScheme.surface, brushColor),
-                                startY = 100f,
+                                startY = 95f,
                             )
                         ),
                 ) {
