@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -136,9 +139,12 @@ internal fun HomeScreen(
     val hazeState = remember { HazeState() }
 
     Box {
+        var totalBalanceShown by remember { mutableStateOf(false) }
+
         when (totalBalanceState) {
-            TotalBalanceUiState.NotShown -> Unit
+            TotalBalanceUiState.NotShown -> totalBalanceShown = false
             TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
+                totalBalanceShown = true
                 val brushColor =
                     if (totalBalanceState is TotalBalanceUiState.Shown &&
                         totalBalanceState.shouldShowBadIndicator
@@ -198,6 +204,7 @@ internal fun HomeScreen(
             Loading -> LoadingState(Modifier.fillMaxSize())
             Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
             is Success -> {
+                val topPadding by animateDpAsState(if (totalBalanceShown) 88.dp else 16.dp)
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
                     verticalItemSpacing = 16.dp,
@@ -209,7 +216,7 @@ internal fun HomeScreen(
                         start = 16.dp,
                         end = 16.dp,
                         bottom = 110.dp,
-                        top = 88.dp,
+                        top = topPadding,
                     ),
                 ) {
                     wallets(
