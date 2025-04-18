@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.database.CsDatabase
+import ru.resodostudios.cashsense.core.database.util.DatabaseTransferManager
 import javax.inject.Singleton
 
 @Module
@@ -23,4 +24,13 @@ internal object DatabaseModule {
         CsDatabase::class.java,
         "cs-database",
     ).build()
+
+    @Provides
+    fun providesDatabaseTransferManager(
+        @ApplicationContext context: Context,
+        database: CsDatabase,
+    ) = DatabaseTransferManager(
+        context = context,
+        databaseOpenHelper = database.openHelper,
+    )
 }
