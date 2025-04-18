@@ -12,4 +12,5 @@ dependencies {
     api(projects.core.model)
 
     implementation(libs.kotlinx.datetime)
+    implementation(libs.zip4j)
 }
