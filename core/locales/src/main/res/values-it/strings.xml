@@ -104,4 +104,9 @@
     <string name="install">Installa</string>
     <string name="time">Ora</string>
     <string name="language">Lingua</string>
+    <string name="backup_and_restore">Backup e ripristino</string>
+    <string name="backup">Backup</string>
+    <string name="backup_description">Esporta tutti i dati in un file</string>
+    <string name="restore">Ripristina</string>
+    <string name="restore_description">Importa dati da un file di backup</string>
 </resources>

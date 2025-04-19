@@ -104,4 +104,9 @@
     <string name="install">تثبيت</string>
     <string name="time">الوقت</string>
     <string name="language">اللغة</string>
+    <string name="backup_and_restore">النسخ الاحتياطي والاستعادة</string>
+    <string name="backup">نسخ احتياطي</string>
+    <string name="backup_description">تصدير جميع البيانات إلى ملف</string>
+    <string name="restore">استعادة</string>
+    <string name="restore_description">استيراد البيانات من ملف النسخ الاحتياطي</string>
 </resources>

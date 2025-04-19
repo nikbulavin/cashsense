@@ -104,4 +104,9 @@
     <string name="install">நிறுவ</string>
     <string name="time">நேரம்</string>
     <string name="language">மொழி</string>
+    <string name="backup_and_restore">காப்புப்பிரதி மற்றும் மீட்டமைப்பு</string>
+    <string name="backup">காப்புப்பிரதி</string>
+    <string name="backup_description">எல்லா தரவையும் ஒரு கோப்பாக ஏற்றுமதி செய்க</string>
+    <string name="restore">மீட்டமை</string>
+    <string name="restore_description">காப்புப்பிரதி கோப்பிலிருந்து தரவுகளை இறக்குமதி செய்க</string>
 </resources>

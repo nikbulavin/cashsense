@@ -104,4 +104,9 @@
     <string name="install">安装</string>
     <string name="time">时间</string>
     <string name="language">语言</string>
+    <string name="backup_and_restore">备份与还原</string>
+    <string name="backup">备份</string>
+    <string name="backup_description">将所有数据导出到文件</string>
+    <string name="restore">还原</string>
+    <string name="restore_description">从备份文件导入数据</string>
 </resources>
