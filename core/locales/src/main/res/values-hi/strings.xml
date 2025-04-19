@@ -104,4 +104,9 @@
     <string name="install">इंस्टॉल करें</string>
     <string name="time">समय</string>
     <string name="language">भाषा</string>
+    <string name="backup_and_restore">बैकअप और पुनर्स्थापना</string>
+    <string name="backup">बैकअप</string>
+    <string name="backup_description">सभी डेटा को फ़ाइल में निर्यात करें</string>
+    <string name="restore">पुनर्स्थापित करें</string>
+    <string name="restore_description">बैकअप फ़ाइल से डेटा आयात करें</string>
 </resources>

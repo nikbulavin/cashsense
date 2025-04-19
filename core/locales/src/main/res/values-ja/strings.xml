@@ -104,4 +104,9 @@
     <string name="install">インストール</string>
     <string name="time">時間</string>
     <string name="language">言語</string>
+    <string name="backup_and_restore">バックアップと復元</string>
+    <string name="backup">バックアップ</string>
+    <string name="backup_description">すべてのデータをファイルにエクスポート</string>
+    <string name="restore">復元</string>
+    <string name="restore_description">バックアップファイルからデータをインポート</string>
 </resources>

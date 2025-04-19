@@ -104,4 +104,9 @@
     <string name="install">Установить</string>
     <string name="time">Время</string>
     <string name="language">Язык</string>
+    <string name="backup_and_restore">Резервное копирование и восстановление</string>
+    <string name="backup">Резервное копирование</string>
+    <string name="backup_description">Экспорт всех данных в файл</string>
+    <string name="restore">Восстановление</string>
+    <string name="restore_description">Импорт данных из файла резервной копии</string>
 </resources>

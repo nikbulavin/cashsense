@@ -104,4 +104,9 @@
     <string name="install">Zainstaluj</string>
     <string name="time">Czas</string>
     <string name="language">Język</string>
+    <string name="backup_and_restore">Kopia zapasowa i przywracanie</string>
+    <string name="backup">Kopia zapasowa</string>
+    <string name="backup_description">Eksportuj wszystkie dane do pliku</string>
+    <string name="restore">Przywróć</string>
+    <string name="restore_description">Importuj dane z pliku kopii zapasowej</string>
 </resources>

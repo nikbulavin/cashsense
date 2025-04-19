@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.settings
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -79,6 +80,14 @@ class SettingsViewModel @Inject constructor(
 
     fun updateLanguage(language: String) {
         appLocaleManager.updateLocale(language)
+    }
+
+    fun exportData(backupFileUri: Uri) {
+        userDataRepository.exportData(backupFileUri)
+    }
+
+    fun importData(backupFileUri: Uri, restart: Boolean = true) {
+        userDataRepository.importData(backupFileUri, restart)
     }
 }
 

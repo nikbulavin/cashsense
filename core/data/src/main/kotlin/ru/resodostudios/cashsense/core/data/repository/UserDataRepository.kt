@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.data.repository
 
+import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.UserData
@@ -15,4 +16,8 @@ interface UserDataRepository {
     suspend fun setPrimaryWallet(id: String, isPrimary: Boolean)
 
     suspend fun setCurrency(currency: String)
+
+    fun exportData(backupFileUri: Uri)
+
+    fun importData(backupFileUri: Uri, restart: Boolean = true)
 }
