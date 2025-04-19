@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -35,12 +37,14 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SettingsBackupRestore
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
@@ -67,6 +71,8 @@ internal fun SettingsScreen(
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
         onCurrencyUpdate = viewModel::updateCurrency,
         onLanguageUpdate = viewModel::updateLanguage,
+        onDataExport = viewModel::exportData,
+        onDataImport = viewModel::importData,
     )
 }
 
@@ -78,6 +84,8 @@ private fun SettingsScreen(
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
     onCurrencyUpdate: (Currency) -> Unit,
     onLanguageUpdate: (String) -> Unit,
+    onDataExport: (Uri) -> Unit,
+    onDataImport: (Uri, Boolean) -> Unit,
 ) {
     when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -95,6 +103,10 @@ private fun SettingsScreen(
                     settings = settingsState.settings,
                     onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
                     onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
+                )
+                backupAndRestore(
+                    onDataExport = onDataExport,
+                    onDataImport = onDataImport,
                 )
                 about(
                     context = context,
@@ -139,6 +151,8 @@ fun SettingsScreenPreview() {
                 onDarkThemeConfigUpdate = {},
                 onCurrencyUpdate = {},
                 onLanguageUpdate = {},
+                onDataExport = {},
+                onDataImport = { _, _ -> },
             )
         }
     }
@@ -258,6 +272,51 @@ private fun LazyListScope.appearance(
                 },
             )
         }
+    }
+}
+
+private fun LazyListScope.backupAndRestore(
+    onDataExport: (Uri) -> Unit,
+    onDataImport: (Uri, Boolean) -> Unit,
+) {
+    item { SectionTitle(stringResource(localesR.string.backup_and_restore)) }
+    item {
+        val exportDbLauncher =
+            rememberLauncherForActivityResult(
+                ActivityResultContracts.CreateDocument("application/zip"),
+            ) {
+                it?.let { onDataExport(it) }
+            }
+        CsListItem(
+            headlineContent = { Text(stringResource(localesR.string.backup)) },
+            leadingContent = {
+                Icon(
+                    imageVector = CsIcons.Outlined.FolderZip,
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text(stringResource(localesR.string.backup_description)) },
+            onClick = { exportDbLauncher.launch("CASH_SENSE_BACKUP") },
+        )
+    }
+    item {
+        val importDbLauncher =
+            rememberLauncherForActivityResult(
+                ActivityResultContracts.OpenDocument(),
+            ) {
+                it?.let { onDataImport(it, true) }
+            }
+        CsListItem(
+            headlineContent = { Text(stringResource(localesR.string.restore)) },
+            leadingContent = {
+                Icon(
+                    imageVector = CsIcons.Outlined.SettingsBackupRestore,
+                    contentDescription = null,
+                )
+            },
+            supportingContent = { Text(stringResource(localesR.string.restore_description)) },
+            onClick = { importDbLauncher.launch(arrayOf("application/zip")) },
+        )
     }
 }
 
