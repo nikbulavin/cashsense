@@ -19,7 +19,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun LicensesScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         topBar = {
@@ -37,7 +36,7 @@ internal fun LicensesScreen(
                 }
             )
         },
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
         LibrariesContainer(
             contentPadding = paddingValues,
