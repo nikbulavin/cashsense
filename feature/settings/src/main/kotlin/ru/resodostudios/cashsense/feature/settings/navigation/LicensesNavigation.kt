@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.settings.navigation
 
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -21,8 +22,8 @@ fun NavGraphBuilder.licensesScreen(
     onBackClick: () -> Unit,
 ) {
     composable<LicensesRoute>(
-        popExitTransition = { slideOutHorizontally { it } + fadeOut() },
-        enterTransition = { slideInHorizontally { it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally { it / 12 } + fadeOut(tween(300)) },
+        enterTransition = { slideInHorizontally { it / 12 } + fadeIn(tween(300)) },
     ) {
         LicensesScreen(
             onBackClick = onBackClick,
