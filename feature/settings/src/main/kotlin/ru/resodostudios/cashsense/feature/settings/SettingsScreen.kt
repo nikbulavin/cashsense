@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -128,6 +129,8 @@ private fun SectionTitle(
         style = MaterialTheme.typography.labelLarge,
         modifier = modifier.padding(top = topPadding, bottom = 16.dp, start = 16.dp, end = 16.dp),
         color = MaterialTheme.colorScheme.primary,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -295,7 +298,13 @@ private fun LazyListScope.backupAndRestore(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(stringResource(localesR.string.backup_description)) },
+            supportingContent = {
+                Text(
+                    text = stringResource(localesR.string.backup_description),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
             onClick = { exportDbLauncher.launch("CASH_SENSE_BACKUP") },
         )
     }
@@ -314,7 +323,13 @@ private fun LazyListScope.backupAndRestore(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(stringResource(localesR.string.restore_description)) },
+            supportingContent = {
+                Text(
+                    text = stringResource(localesR.string.restore_description),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
             onClick = { importDbLauncher.launch(arrayOf("application/zip")) },
         )
     }
