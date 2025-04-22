@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.navigation
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -38,9 +40,9 @@ fun CsNavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
         modifier = modifier,
-        enterTransition = { slideInVertically { it / 24 } + fadeIn() },
+        enterTransition = { slideInVertically(spring(Spring.DampingRatioLowBouncy)) { it / 24 } + fadeIn() },
         exitTransition = { fadeOut(snap()) },
-        popEnterTransition = { slideInVertically { it / 24 } + fadeIn() },
+        popEnterTransition = { slideInVertically(spring(Spring.DampingRatioLowBouncy)) { it / 24 } + fadeIn() },
         popExitTransition = { fadeOut(snap()) },
     ) {
         homeListDetailScreen(
