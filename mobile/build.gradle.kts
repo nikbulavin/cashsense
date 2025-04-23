@@ -88,7 +88,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.profileinstaller)
-    implementation(libs.androidx.tracing.ktx)
+    implementation(libs.androidx.tracing)
     implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
