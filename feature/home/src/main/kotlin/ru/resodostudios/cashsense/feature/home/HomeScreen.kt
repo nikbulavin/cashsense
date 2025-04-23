@@ -136,9 +136,8 @@ internal fun HomeScreen(
         clearUndoState()
     }
 
-    val hazeState = remember { HazeState() }
-
     Box {
+        val hazeState = remember { HazeState() }
         var totalBalanceShown by remember { mutableStateOf(false) }
 
         when (totalBalanceState) {
@@ -162,6 +161,7 @@ internal fun HomeScreen(
                         .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                         .hazeEffect(hazeState) {
+                            blurEnabled = true
                             blurRadius = 22.dp
                             backgroundColor = hazeBackgroundColor
                             progressive = HazeProgressive.verticalGradient(
