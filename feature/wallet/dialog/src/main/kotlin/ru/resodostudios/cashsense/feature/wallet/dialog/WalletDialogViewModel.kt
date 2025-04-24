@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -64,18 +65,21 @@ class WalletDialogViewModel @Inject constructor(
                     isLoading = true,
                 )
             }
-            val userData = userDataRepository.userData.first()
-            val walletTransactions = walletsRepository.getWalletWithTransactionsAndCategories(id)
-                .first()
-            val wallet = walletTransactions.wallet
-            val isCurrencyEditable = walletTransactions.transactionsWithCategories.isEmpty()
+            val primaryWalletId = async {
+                userDataRepository.userData.first().primaryWalletId
+            }
+            val walletTransactions = async {
+                walletsRepository.getWalletWithTransactionsAndCategories(id).first()
+            }
+            val wallet = walletTransactions.await().wallet
+            val isCurrencyEditable = walletTransactions.await().transactionsWithCategories.isEmpty()
             _walletDialogState.update {
                 it.copy(
                     title = wallet.title,
                     initialBalance = wallet.initialBalance.toString(),
                     currency = wallet.currency,
-                    currentPrimaryWalletId = userData.primaryWalletId,
-                    isPrimary = userData.primaryWalletId == wallet.id,
+                    currentPrimaryWalletId = primaryWalletId.await(),
+                    isPrimary = primaryWalletId.await() == wallet.id,
                     isLoading = false,
                     isCurrencyEditable = isCurrencyEditable,
                 )
