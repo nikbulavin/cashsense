@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -52,9 +53,11 @@ import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
+import java.time.format.FormatStyle
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -290,6 +293,8 @@ private fun LazyListScope.backupAndRestore(
             ) {
                 it?.let { onDataExport(it) }
             }
+        val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
+        val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.backup)) },
             leadingContent = {
@@ -305,7 +310,7 @@ private fun LazyListScope.backupAndRestore(
                     overflow = TextOverflow.Ellipsis,
                 )
             },
-            onClick = { exportDbLauncher.launch("CASH_SENSE_BACKUP") },
+            onClick = { exportDbLauncher.launch(fileName) },
         )
     }
     item {
