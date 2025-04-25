@@ -1,6 +1,13 @@
 package ru.resodostudios.cashsense.feature.home
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -176,26 +183,38 @@ internal fun HomeScreen(
                             )
                         ),
                 ) {
-                    if (totalBalanceState is TotalBalanceUiState.Shown) {
-                        AnimatedAmount(
-                            targetState = totalBalanceState.amount,
-                            label = "TotalBalance",
-                        ) {
-                            Text(
-                                text = totalBalanceState.amount.formatAmount(
-                                    currency = totalBalanceState.userCurrency,
-                                    withApproximately = totalBalanceState.shouldShowApproximately,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                    AnimatedContent(
+                        targetState = totalBalanceState,
+                        label = "TotalBalanceState",
+                        transitionSpec = {
+                            (fadeIn(animationSpec = tween(220, delayMillis = 90)) + scaleIn(
+                                initialScale = 0.92f,
+                                animationSpec = tween(220, delayMillis = 90),
+                            )) togetherWith fadeOut(snap())
+                        },
+                        modifier = Modifier.zIndex(1f),
+                    ) { state ->
+                        if (state is TotalBalanceUiState.Shown) {
+                            AnimatedAmount(
+                                targetState = state.amount,
+                                label = "TotalBalanceAnimatedAmount",
+                            ) {
+                                Text(
+                                    text = state.amount.formatAmount(
+                                        currency = state.userCurrency,
+                                        withApproximately = state.shouldShowApproximately,
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        } else {
+                            LinearWavyProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp, bottom = 6.dp),
                             )
                         }
-                    } else {
-                        LinearWavyProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 6.dp),
-                        )
                     }
                 }
             }
