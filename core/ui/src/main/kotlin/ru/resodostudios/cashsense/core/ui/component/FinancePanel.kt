@@ -345,7 +345,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        AnimatedVisibility(graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
+        if (graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
             val modelProducer = remember { CartesianChartModelProducer() }
             LaunchedEffect(graphData) {
                 modelProducer.runTransaction {
@@ -360,7 +360,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             )
         }
-        AnimatedVisibility(transactionFilter.financeType != NOT_SET) {
+        if (transactionFilter.financeType != NOT_SET) {
             CategorySelectionRow(
                 availableCategories = availableCategories,
                 selectedCategories = transactionFilter.selectedCategories,
