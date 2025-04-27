@@ -12,6 +12,8 @@
         android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
         tools:node="remove" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".CsApplication"
         android:allowBackup="true"
