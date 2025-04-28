@@ -83,14 +83,14 @@ fun WalletCard(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 12.dp, start = 16.dp, end = 16.dp)
                 .fillMaxWidth(),
         ) {
             Text(
                 text = userWallet.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
             )
             AnimatedAmount(
                 targetState = userWallet.currentBalance,

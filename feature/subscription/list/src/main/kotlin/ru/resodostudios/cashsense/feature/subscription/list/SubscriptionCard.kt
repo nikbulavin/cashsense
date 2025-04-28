@@ -53,18 +53,17 @@ fun SubscriptionCard(
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
-                .padding(16.dp)
+                .padding(top = 12.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .fillMaxWidth(),
         ) {
             Text(
                 text = subscription.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
             )
             Text(
-                text = subscription.amount
-                    .formatAmount(subscription.currency),
+                text = subscription.amount.formatAmount(subscription.currency),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,

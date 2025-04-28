@@ -31,9 +31,9 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
