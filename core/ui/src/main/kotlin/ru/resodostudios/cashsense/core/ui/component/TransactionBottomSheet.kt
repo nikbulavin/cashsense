@@ -49,7 +49,6 @@ import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
-import java.math.BigDecimal
 import java.time.format.FormatStyle
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -81,9 +80,7 @@ fun TransactionBottomSheet(
             CsListItem(
                 headlineContent = {
                     Text(
-                        text = transaction.amount
-                            .run { if (this < BigDecimal.ZERO) negate() else abs() }
-                            .formatAmount(currency, true),
+                        text = transaction.amount.formatAmount(currency, true),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
