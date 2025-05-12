@@ -8,8 +8,10 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toKotlinInstant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -17,7 +19,6 @@ import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
-import java.time.temporal.ChronoUnit
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 fun LazyListScope.transactions(
@@ -27,10 +28,11 @@ fun LazyListScope.transactions(
     if (transactionsCategories.isNotEmpty()) {
         val transactionsByDay = transactionsCategories
             .groupBy {
+                val timeZone = TimeZone.currentSystemDefault()
                 it.transaction.timestamp
-                    .toJavaInstant()
-                    .truncatedTo(ChronoUnit.DAYS)
-                    .toKotlinInstant()
+                    .toLocalDateTime(timeZone).date
+                    .atTime(0, 0)
+                    .toInstant(timeZone)
             }
             .toSortedMap(compareByDescending { it })
 
