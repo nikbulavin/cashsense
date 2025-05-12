@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction.overview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,6 +33,8 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
+import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
@@ -46,6 +50,7 @@ class TransactionOverviewViewModel @Inject constructor(
     walletRepository: WalletsRepository,
     userDataRepository: UserDataRepository,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
+    @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val transactionFilterState = MutableStateFlow(
@@ -149,6 +154,7 @@ class TransactionOverviewViewModel @Inject constructor(
                     .catch { FinancePanelUiState.NotShown }
             }
         }
+        .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -173,6 +179,7 @@ class TransactionOverviewViewModel @Inject constructor(
             transactionsCategories = transactions,
         )
     }
+        .flowOn(defaultDispatcher)
         .catch { TransactionOverviewUiState.Loading }
         .stateIn(
             scope = viewModelScope,

@@ -6,12 +6,14 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,6 +33,8 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
+import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
@@ -43,6 +47,7 @@ class WalletViewModel @AssistedInject constructor(
     private val userDataRepository: UserDataRepository,
     getExtendedUserWallet: GetExtendedUserWalletUseCase,
     @Assisted val walletId: String,
+    @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val transactionFilterState = MutableStateFlow(
@@ -98,6 +103,7 @@ class WalletViewModel @AssistedInject constructor(
             availableCategories = filterableTransactions.availableCategories,
         )
     }
+        .flowOn(defaultDispatcher)
         .catch { WalletUiState.Loading }
         .stateIn(
             scope = viewModelScope,
