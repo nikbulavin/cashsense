@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -18,6 +20,8 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
+import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import java.math.BigDecimal
@@ -31,6 +35,7 @@ class HomeViewModel @Inject constructor(
     private val currencyConversionRepository: CurrencyConversionRepository,
     userDataRepository: UserDataRepository,
     walletRepository: WalletsRepository,
+    @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val homeDestination: HomeRoute = savedStateHandle.toRoute()
@@ -62,20 +67,22 @@ class HomeViewModel @Inject constructor(
                             targetCurrency = userCurrency,
                         ),
                     ) { wallets, exchangeRates ->
-                        val exchangeRateMap = exchangeRates
-                            .associate { it.baseCurrency to it.exchangeRate }
+                        val exchangeRateMap = exchangeRates.associate {
+                            it.baseCurrency to it.exchangeRate
+                        }
 
                         var totalBalance = BigDecimal.ZERO
                         val allTransactions = mutableListOf<Transaction>()
 
                         wallets.forEach { wallet ->
-                            val balance = wallet.userWallet.currentBalance
-                            val currency = wallet.userWallet.currency
+                            val walletBalance = wallet.userWallet.currentBalance
+                            val walletCurrency = wallet.userWallet.currency
 
-                            val convertedBalance = if (userCurrency == currency) {
-                                balance
+                            val convertedBalance = if (userCurrency == walletCurrency) {
+                                walletBalance
                             } else {
-                                exchangeRateMap[currency]?.let { rate -> balance * rate }
+                                exchangeRateMap[walletCurrency]
+                                    ?.let { rate -> walletBalance * rate }
                                     ?: return@combine TotalBalanceUiState.NotShown
                             }
                             totalBalance += convertedBalance
@@ -105,6 +112,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+        .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
