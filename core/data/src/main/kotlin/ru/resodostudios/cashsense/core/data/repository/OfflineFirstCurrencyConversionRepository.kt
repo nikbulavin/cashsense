@@ -42,7 +42,8 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                     removeAll(cachedBaseCurrencies)
                 }
                 if (missingBaseCurrencies.isNotEmpty()) {
-                    getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
+                    val exchangeRates = getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
+                    dao.upsertCurrencyExchangeRates(exchangeRates)
                 }
             }
             .catch { emit(emptyList()) }
@@ -52,7 +53,7 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
         dao.deleteOutdatedCurrencyExchangeRates(cutoff)
     }
 
-    private suspend fun getCurrencyExchangeRates(
+    override suspend fun getCurrencyExchangeRates(
         baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
     ) = coroutineScope {
@@ -61,10 +62,8 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                 network.getCurrencyExchangeRate(
                     baseCurrencyCode = baseCurrency.currencyCode,
                     targetCurrencyCode = targetCurrency.currencyCode,
-                )
+                ).asEntity()
             }
         }.awaitAll()
-    }.also { remoteData ->
-        dao.upsertCurrencyExchangeRates(remoteData.map { it.asEntity() })
     }
 }

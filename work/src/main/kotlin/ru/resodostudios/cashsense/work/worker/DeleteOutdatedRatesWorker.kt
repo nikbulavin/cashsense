@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
 import ru.resodostudios.cashsense.core.network.CsDispatchers
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.work.initializer.SyncConstraints
@@ -29,6 +30,7 @@ internal class DeleteOutdatedRatesWorker @AssistedInject constructor(
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
     @Dispatcher(CsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val dao: CurrencyConversionDao,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
@@ -40,11 +42,19 @@ internal class DeleteOutdatedRatesWorker @AssistedInject constructor(
             val userCurrency = async {
                 Currency.getInstance(userDataRepository.userData.first().currency)
             }
-            currencyConversionRepository.getConvertedCurrencies(
-                baseCurrencies = baseCurrencies.await(),
-                targetCurrency = userCurrency.await(),
-            )
-            Result.success()
+            val exchangeRates = runCatching {
+                currencyConversionRepository.getCurrencyExchangeRates(
+                    baseCurrencies = baseCurrencies.await(),
+                    targetCurrency = userCurrency.await(),
+                )
+            }.getOrNull()
+            if (exchangeRates != null) {
+                currencyConversionRepository.deleteOutdatedCurrencyExchangeRates()
+                dao.upsertCurrencyExchangeRates(exchangeRates)
+                Result.success()
+            } else {
+                Result.retry()
+            }
         }
     }
 
