@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.component
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -18,27 +19,29 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -280,6 +283,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     modifier: Modifier = Modifier,
     shouldShowApproximately: Boolean = false,
 ) {
+    BackHandler { onBackClick() }
     Column(modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -292,7 +296,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 transactionFilter = transactionFilter,
                 onDateTypeUpdate = onDateTypeUpdate,
                 modifier = Modifier
-                    .defaultMinSize(minWidth = 400.dp)
+                    .widthIn(max = 500.dp)
                     .weight(1f, false),
             )
             FilledTonalIconButton(
@@ -371,6 +375,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FilterDateTypeSelectorRow(
     transactionFilter: TransactionFilter,
@@ -382,15 +387,26 @@ private fun FilterDateTypeSelectorRow(
         stringResource(localesR.string.month),
         stringResource(localesR.string.year),
     )
-    SingleChoiceSegmentedButtonRow(modifier) {
+    val hapticFeedback = LocalHapticFeedback.current
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+        modifier = modifier,
+    ) {
         dateTypes.forEachIndexed { index, label ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = dateTypes.size,
-                ),
-                onClick = { onDateTypeUpdate(DateType.entries[index]) },
-                selected = transactionFilter.dateType == DateType.entries[index],
+            val checked = transactionFilter.dateType == DateType.entries[index]
+            ToggleButton(
+                checked = checked,
+                onCheckedChange = {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                    onDateTypeUpdate(DateType.entries[index])
+                },
+                shapes = when (index) {
+                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                    dateTypes.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                },
+                modifier = Modifier.weight(1f),
             ) {
                 Text(
                     text = label,

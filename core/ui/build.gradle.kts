@@ -14,6 +14,7 @@ dependencies {
 
     implementation(projects.core.common)
 
+    implementation(libs.androidx.activity.compose)
     implementation(libs.lottie.compose)
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
