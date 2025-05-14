@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,15 +22,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
@@ -272,24 +269,17 @@ private fun PrimaryToggleButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
-    val (primaryIcon, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
-        CsIcons.Filled.Star to localesR.string.primary_icon_description
+    val (icon, contentDescription) = if (userWallet.isPrimary) {
+        CsIcons.Filled.Star to stringResource(localesR.string.primary_icon_description)
     } else {
-        CsIcons.Outlined.Star to localesR.string.non_primary_icon_description
+        CsIcons.Outlined.Star to stringResource(localesR.string.non_primary_icon_description)
     }
-    val hapticFeedback = LocalHapticFeedback.current
-    IconToggleButton(
+    CsIconToggleButton(
         checked = userWallet.isPrimary,
         onCheckedChange = { isChecked ->
-            hapticFeedback.performHapticFeedback(
-                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-            )
             onPrimaryClick(userWallet.id, isChecked)
         },
-    ) {
-        Icon(
-            imageVector = primaryIcon,
-            contentDescription = stringResource(primaryIconContentDescriptionRes),
-        )
-    }
+        icon = icon,
+        contentDescription = contentDescription,
+    )
 }
