@@ -10,14 +10,19 @@ import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +43,17 @@ import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SettingsBackupRestore
@@ -224,6 +234,7 @@ private fun LazyListScope.general(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.appearance(
     settings: UserEditableSettings,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
@@ -232,13 +243,6 @@ private fun LazyListScope.appearance(
 ) {
     item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
-        val themeOptions = listOf(
-            stringResource(localesR.string.theme_system_default),
-            stringResource(localesR.string.theme_light),
-            stringResource(localesR.string.theme_dark),
-        )
-        var showThemeDialog by rememberSaveable { mutableStateOf(false) }
-
         CsListItem(
             headlineContent = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
@@ -247,18 +251,46 @@ private fun LazyListScope.appearance(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(themeOptions.elementAt(settings.darkThemeConfig.ordinal)) },
-            onClick = { showThemeDialog = true },
-        )
+            trailingContent = {
+                val themeOptions = listOf(
+                    stringResource(localesR.string.theme_system_default),
+                    stringResource(localesR.string.theme_light),
+                    stringResource(localesR.string.theme_dark),
+                )
+                val uncheckedIcons = listOf(
+                    CsIcons.Outlined.Android,
+                    CsIcons.Outlined.LightMode,
+                    CsIcons.Outlined.DarkMode,
+                )
+                val checkedIcons = listOf(
+                    CsIcons.Outlined.Android,
+                    CsIcons.Filled.LightMode,
+                    CsIcons.Filled.DarkMode,
+                )
+                val selectedIndex = settings.darkThemeConfig.ordinal
 
-        if (showThemeDialog) {
-            ThemeDialog(
-                themeConfig = settings.darkThemeConfig,
-                themeOptions = themeOptions,
-                onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
-                onDismiss = { showThemeDialog = false },
-            )
-        }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    themeOptions.forEachIndexed { index, label ->
+                        ToggleButton(
+                            checked = selectedIndex == index,
+                            onCheckedChange = { onDarkThemeConfigUpdate(DarkThemeConfig.entries[index]) },
+                            shapes = when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
+                                contentDescription = label,
+                            )
+                        }
+                    }
+                }
+            }
+        )
     }
     item {
         AnimatedVisibility(supportDynamicColor) {
