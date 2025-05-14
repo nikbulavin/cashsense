@@ -30,7 +30,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -268,6 +270,7 @@ private fun LazyListScope.appearance(
                     CsIcons.Filled.DarkMode,
                 )
                 val selectedIndex = settings.darkThemeConfig.ordinal
+                val hapticFeedback = LocalHapticFeedback.current
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -275,7 +278,10 @@ private fun LazyListScope.appearance(
                     themeOptions.forEachIndexed { index, label ->
                         ToggleButton(
                             checked = selectedIndex == index,
-                            onCheckedChange = { onDarkThemeConfigUpdate(DarkThemeConfig.entries[index]) },
+                            onCheckedChange = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
+                            },
                             shapes = when (index) {
                                 0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                 themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
