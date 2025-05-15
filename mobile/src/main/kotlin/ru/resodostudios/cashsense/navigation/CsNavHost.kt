@@ -6,6 +6,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -32,6 +33,7 @@ import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
 fun CsNavHost(
     appState: CsAppState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigationSuiteType: NavigationSuiteType,
     modifier: Modifier = Modifier,
 ) {
     val navController = appState.navController
@@ -49,7 +51,10 @@ fun CsNavHost(
             onEditWallet = navController::navigateToWalletDialog,
             onTransfer = navController::navigateToTransferDialog,
             navigateToTransactionDialog = navController::navigateToTransactionDialog,
+            navigateToWalletDialog = navController::navigateToWalletDialog,
             onShowSnackbar = onShowSnackbar,
+            hideFab = { appState.hideFab = it },
+            navigationSuiteType = navigationSuiteType,
             nestedDestinations = {
                 walletDialog(navController::navigateUp)
                 transferDialog(navController::navigateUp)

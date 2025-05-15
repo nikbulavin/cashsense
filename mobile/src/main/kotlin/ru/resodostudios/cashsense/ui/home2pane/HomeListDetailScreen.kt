@@ -4,6 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -22,12 +25,14 @@ import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneSca
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldPredictiveBackHandler
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.layout
@@ -41,6 +46,9 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
+import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
@@ -68,6 +76,9 @@ fun NavGraphBuilder.homeListDetailScreen(
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToWalletDialog: () -> Unit,
+    hideFab: (Boolean) -> Unit = {},
+    navigationSuiteType: NavigationSuiteType,
     nestedDestinations: NavGraphBuilder.() -> Unit,
 ) {
     navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
@@ -81,6 +92,9 @@ fun NavGraphBuilder.homeListDetailScreen(
                 onTransfer = onTransfer,
                 onShowSnackbar = onShowSnackbar,
                 navigateToTransactionDialog = navigateToTransactionDialog,
+                navigateToWalletDialog = navigateToWalletDialog,
+                hideFab = hideFab,
+                navigationSuiteType = navigationSuiteType,
             )
         }
         nestedDestinations()
@@ -93,6 +107,9 @@ internal fun HomeListDetailScreen(
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToWalletDialog: () -> Unit,
+    hideFab: (Boolean) -> Unit = {},
+    navigationSuiteType: NavigationSuiteType,
     viewModel: Home2PaneViewModel = hiltViewModel(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
@@ -102,6 +119,7 @@ internal fun HomeListDetailScreen(
     HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         navigateToTransactionDialog = navigateToTransactionDialog,
+        navigateToWalletDialog = navigateToWalletDialog,
         onWalletSelect = viewModel::onWalletSelect,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
@@ -111,14 +129,20 @@ internal fun HomeListDetailScreen(
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
         undoWalletRemoval = viewModel::undoWalletRemoval,
         clearUndoState = viewModel::clearUndoState,
+        hideFab = hideFab,
+        navigationSuiteType = navigationSuiteType,
     )
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@OptIn(
+    ExperimentalMaterial3AdaptiveApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToWalletDialog: () -> Unit,
     onWalletSelect: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -128,6 +152,8 @@ internal fun HomeListDetailScreen(
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
+    hideFab: (Boolean) -> Unit = {},
+    navigationSuiteType: NavigationSuiteType,
 ) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
@@ -167,6 +193,9 @@ internal fun HomeListDetailScreen(
             paneExpansionState.animateTo(PaneExpansionAnchor.Proportion(1f))
         }
     }
+
+    if (scaffoldNavigator.isDetailPaneVisible()) hideFab(true) else hideFab(false)
+
 
     fun onWalletClickShowDetailPane(walletId: String?) {
         onWalletSelect(walletId)
@@ -238,6 +267,23 @@ internal fun HomeListDetailScreen(
                         clearUndoState = clearUndoState,
                         onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
                     )
+                    if (scaffoldNavigator.isDetailPaneVisible() && scaffoldNavigator.isListPaneVisible()) {
+                        CsFloatingActionButton(
+                            contentDescriptionRes = localesR.string.new_wallet,
+                            icon = CsIcons.Outlined.Wallet,
+                            onClick = navigateToWalletDialog,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 16.dp, end = 16.dp)
+                                .then(
+                                    if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
+                                        Modifier.navigationBarsPadding()
+                                    } else {
+                                        Modifier
+                                    },
+                                ),
+                        )
+                    }
                 }
             }
         },
