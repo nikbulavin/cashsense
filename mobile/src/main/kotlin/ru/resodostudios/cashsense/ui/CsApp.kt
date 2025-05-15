@@ -153,6 +153,7 @@ fun CsApp(
                         if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
                             previousDestination = currentTopLevelDestination
                         }
+                        if (destination != HOME) appState.hideFab = false
                         appState.navigateToTopLevelDestination(destination)
                     },
                 )
