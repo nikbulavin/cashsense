@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Instant
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -38,6 +38,7 @@ internal fun TransactionItem(
     currency: Currency,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(18.dp),
 ) {
     val transaction = transactionCategory.transaction
     val category = transactionCategory.category
@@ -49,7 +50,8 @@ internal fun TransactionItem(
         StoredIcon.asImageVector(iconId) to title
     }
 
-    CsListItem(
+    CsListItemEmphasized(
+        shape = shape,
         headlineContent = {
             Text(
                 text = transaction.amount.formatAmount(currency, true),

@@ -1,12 +1,17 @@
 package ru.resodostudios.cashsense.core.ui
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -44,17 +49,37 @@ fun LazyListScope.transactions(
                 )
             }
             item { Spacer(Modifier.height(16.dp)) }
-            items(
+            itemsIndexed(
                 items = transactionGroup.value,
-                key = { it.transaction.id },
-                contentType = { "transactionCategory" },
-            ) { transactionCategory ->
+                key = { _, transactionCategory -> transactionCategory.transaction.id },
+                contentType = { _, _ -> "transaction" }
+            ) { index, transactionCategory ->
+                val singleItemShape = RoundedCornerShape(14.dp)
+                val firstItemShape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
+                val lastItemShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 14.dp, bottomEnd = 14.dp)
+                val middleItemShape = RoundedCornerShape(4.dp)
+                val shape = when {
+                    index == 0 && transactionGroup.value.size == 1 -> singleItemShape
+                    index == 0 -> firstItemShape
+                    index == transactionGroup.value.lastIndex -> lastItemShape
+                    else -> middleItemShape
+                }
                 TransactionItem(
                     transactionCategory = transactionCategory,
                     currency = transactionCategory.transaction.currency,
                     onClick = onTransactionClick,
-                    modifier = Modifier.animateItem(),
+                    shape = shape,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .animateItem(
+                            placementSpec = spring(
+                                dampingRatio = Spring.DampingRatioLowBouncy,
+                                stiffness = Spring.StiffnessLow,
+                                visibilityThreshold = IntOffset.VisibilityThreshold,
+                            ),
+                        ),
                 )
+                if (index != transactionGroup.value.lastIndex) Spacer(Modifier.height(2.dp))
             }
         }
     } else {
