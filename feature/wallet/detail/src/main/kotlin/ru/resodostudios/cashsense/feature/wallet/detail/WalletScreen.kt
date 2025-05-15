@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,6 +13,7 @@ import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -57,7 +57,6 @@ import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
-import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -165,13 +164,7 @@ private fun WalletScreen(
                         showNavigationIcon = showNavigationIcon,
                         scrollBehavior = scrollBehavior,
                         onBackClick = onBackClick,
-                        onNewTransactionClick = {
-                            navigateToTransactionDialog(walletState.userWallet.id, null, false)
-                        },
                         onPrimaryClick = onPrimaryClick,
-                        onTransferClick = onTransfer,
-                        onEditClick = onEditWallet,
-                        onDeleteClick = onDeleteWallet,
                     )
                 },
             ) { paddingValues ->
@@ -179,7 +172,7 @@ private fun WalletScreen(
 
                 Box(modifier = Modifier.padding(paddingValues)) {
                     LazyColumn(
-                        contentPadding = PaddingValues(bottom = 110.dp),
+                        contentPadding = PaddingValues(bottom = 96.dp),
                         modifier = Modifier
                             .fillMaxSize()
                             .floatingToolbarVerticalNestedScroll(
@@ -236,7 +229,9 @@ private fun BoxScope.WalletToolbar(
     onDeleteWallet: (String) -> Unit,
     navigateToTransactionDialog: (String, String?, Boolean) -> Unit
 ) {
+    val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     HorizontalFloatingToolbar(
+        colors = vibrantColors,
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .offset(y = -ScreenOffset),
@@ -247,7 +242,7 @@ private fun BoxScope.WalletToolbar(
             ) {
                 Icon(
                     CsIcons.Outlined.SendMoney,
-                    contentDescription = stringResource(localesR.string.new_transfer),
+                    contentDescription = stringResource(localesR.string.transfer),
                 )
             }
         },
@@ -302,7 +297,7 @@ private fun BoxScope.WalletToolbar(
             ) {
                 Icon(
                     imageVector = CsIcons.Outlined.Add,
-                    contentDescription = stringResource(localesR.string.new_transaction),
+                    contentDescription = stringResource(localesR.string.add_transaction),
                 )
             }
         }
@@ -319,11 +314,7 @@ private fun WalletTopBar(
     showNavigationIcon: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
     onBackClick: () -> Unit,
-    onNewTransactionClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
-    onTransferClick: (String) -> Unit,
-    onEditClick: (String) -> Unit,
-    onDeleteClick: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -337,7 +328,6 @@ private fun WalletTopBar(
             AnimatedAmount(
                 targetState = userWallet.currentBalance,
                 label = "WalletBalance",
-                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = it.formatAmount(userWallet.currency),
@@ -357,20 +347,7 @@ private fun WalletTopBar(
                 }
             }
         },
-        actions = {
-            IconButton(onClick = onNewTransactionClick) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Add,
-                    contentDescription = stringResource(localesR.string.add_transaction_icon_description),
-                )
-            }
-            PrimaryToggleButton(userWallet, onPrimaryClick)
-            WalletDropdownMenu(
-                onTransferClick = { onTransferClick(userWallet.id) },
-                onEditClick = { onEditClick(userWallet.id) },
-                onDeleteClick = { onDeleteClick(userWallet.id) },
-            )
-        },
+        actions = { PrimaryToggleButton(userWallet, onPrimaryClick) },
         windowInsets = WindowInsets(0, 0, 0, 0),
         scrollBehavior = scrollBehavior,
         colors = TopAppBarDefaults.topAppBarColors().copy(
