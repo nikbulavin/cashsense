@@ -1,13 +1,22 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
+import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVerticalNestedScroll
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -35,6 +45,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -83,7 +96,10 @@ fun WalletScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun WalletScreen(
     walletState: WalletUiState,
@@ -159,39 +175,138 @@ private fun WalletScreen(
                     )
                 },
             ) { paddingValues ->
-                LazyColumn(
-                    contentPadding = PaddingValues(bottom = 110.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                ) {
-                    item {
-                        FinancePanel(
-                            availableCategories = walletState.availableCategories,
-                            currency = walletState.userWallet.currency,
-                            expenses = walletState.expenses,
-                            income = walletState.income,
-                            graphData = walletState.graphData,
-                            transactionFilter = walletState.transactionFilter,
-                            onDateTypeUpdate = onDateTypeUpdate,
-                            onFinanceTypeUpdate = onFinanceTypeUpdate,
-                            onSelectedDateUpdate = onSelectedDateUpdate,
-                            onCategorySelect = onCategorySelect,
-                            onCategoryDeselect = onCategoryDeselect,
-                            modifier = Modifier.padding(top = 6.dp),
+                var expanded by rememberSaveable { mutableStateOf(true) }
+
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(bottom = 110.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .floatingToolbarVerticalNestedScroll(
+                                expanded = expanded,
+                                onExpand = { expanded = true },
+                                onCollapse = { expanded = false },
+                            ),
+                    ) {
+                        item {
+                            FinancePanel(
+                                availableCategories = walletState.availableCategories,
+                                currency = walletState.userWallet.currency,
+                                expenses = walletState.expenses,
+                                income = walletState.income,
+                                graphData = walletState.graphData,
+                                transactionFilter = walletState.transactionFilter,
+                                onDateTypeUpdate = onDateTypeUpdate,
+                                onFinanceTypeUpdate = onFinanceTypeUpdate,
+                                onSelectedDateUpdate = onSelectedDateUpdate,
+                                onCategorySelect = onCategorySelect,
+                                onCategoryDeselect = onCategoryDeselect,
+                                modifier = Modifier.padding(top = 6.dp),
+                            )
+                        }
+                        transactions(
+                            transactionsCategories = walletState.transactionsCategories,
+                            onTransactionClick = {
+                                updateTransactionId(it)
+                                showTransactionBottomSheet = true
+                            },
                         )
                     }
-                    transactions(
-                        transactionsCategories = walletState.transactionsCategories,
-                        onTransactionClick = {
-                            updateTransactionId(it)
-                            showTransactionBottomSheet = true
-                        },
+                    WalletToolbar(
+                        expanded = expanded,
+                        onTransfer = onTransfer,
+                        walletId = walletState.userWallet.id,
+                        onEditWallet = onEditWallet,
+                        onDeleteWallet = onDeleteWallet,
+                        navigateToTransactionDialog = navigateToTransactionDialog,
                     )
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun BoxScope.WalletToolbar(
+    expanded: Boolean,
+    onTransfer: (String) -> Unit,
+    walletId: String,
+    onEditWallet: (String) -> Unit,
+    onDeleteWallet: (String) -> Unit,
+    navigateToTransactionDialog: (String, String?, Boolean) -> Unit
+) {
+    HorizontalFloatingToolbar(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .offset(y = -ScreenOffset),
+        expanded = expanded,
+        leadingContent = {
+            IconButton(
+                onClick = { onTransfer(walletId) },
+            ) {
+                Icon(
+                    CsIcons.Outlined.SendMoney,
+                    contentDescription = stringResource(localesR.string.new_transfer),
+                )
+            }
+        },
+        trailingContent = {
+            val editButtonLabel = stringResource(localesR.string.edit)
+            val deleteButtonLabel = stringResource(localesR.string.delete)
+            AppBarRow(
+                maxItemCount = 1,
+                overflowIndicator = { menuState ->
+                    IconButton(
+                        onClick = {
+                            if (menuState.isExpanded) {
+                                menuState.dismiss()
+                            } else {
+                                menuState.show()
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = CsIcons.Outlined.MoreVert,
+                            contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+                        )
+                    }
+                }
+            ) {
+                clickableItem(
+                    onClick = { onEditWallet(walletId) },
+                    icon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Edit,
+                            contentDescription = stringResource(localesR.string.edit),
+                        )
+                    },
+                    label = editButtonLabel,
+                )
+                clickableItem(
+                    onClick = { onDeleteWallet(walletId) },
+                    icon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Delete,
+                            contentDescription = deleteButtonLabel,
+                        )
+                    },
+                    label = deleteButtonLabel,
+                )
+            }
+        },
+        content = {
+            FilledIconButton(
+                modifier = Modifier.width(64.dp),
+                onClick = { navigateToTransactionDialog(walletId, null, false) },
+            ) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Add,
+                    contentDescription = stringResource(localesR.string.new_transaction),
+                )
+            }
+        }
+    )
 }
 
 @OptIn(
