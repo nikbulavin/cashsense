@@ -373,5 +373,8 @@ private fun PrimaryToggleButton(
         },
         icon = icon,
         contentDescription = contentDescription,
+        modifier = Modifier
+            .width(52.dp)
+            .padding(end = 4.dp),
     )
 }
