@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
@@ -55,15 +54,14 @@ fun CsListItemEmphasized(
         modifier = modifier
             .clip(shape)
             .then(
-                if (onClick != null) Modifier.clickable { onClick() } else modifier
-            )
-            .background(MaterialTheme.colorScheme.surfaceContainer),
+                if (onClick != null) Modifier.clickable { onClick() } else Modifier
+            ),
         overlineContent = overlineContent,
         supportingContent = supportingContent,
         leadingContent = leadingContent,
         trailingContent = trailingContent,
         colors = ListItemDefaults.colors(
-            containerColor = Color.Transparent,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     )
 }
