@@ -42,7 +42,7 @@ fun CsListItem(
 fun CsListItemEmphasized(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(18.dp),
+    shape: RoundedCornerShape = ListItemShape.Single,
     onClick: (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -64,4 +64,24 @@ fun CsListItemEmphasized(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     )
+}
+
+/**
+ * An object that provides different shapes for list items.
+ * It defines shapes for single, middle, first, and last items in a list.
+ *
+ * - `Single`: A shape with large rounded corners on all sides, suitable for a standalone list item.
+ * - `Middle`: A shape with small rounded corners on all sides, suitable for items in the middle of a list.
+ * - `First`: A shape with large rounded corners on the top and small rounded corners on the bottom, suitable for the first item in a list.
+ * - `Last`: A shape with small rounded corners on the top and large rounded corners on the bottom, suitable for the last item in a list.
+ */
+object ListItemShape {
+
+    private val largeCorner = 18.dp
+    private val smallCorner = 6.dp
+
+    val Single = RoundedCornerShape(largeCorner)
+    val Middle = RoundedCornerShape(smallCorner)
+    val First = RoundedCornerShape(largeCorner, largeCorner, smallCorner, smallCorner)
+    val Last = RoundedCornerShape(smallCorner, smallCorner, largeCorner, largeCorner)
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -18,6 +17,7 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
+import ru.resodostudios.cashsense.core.designsystem.component.ListItemShape
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
@@ -54,15 +54,11 @@ fun LazyListScope.transactions(
                 key = { _, transactionCategory -> transactionCategory.transaction.id },
                 contentType = { _, _ -> "transaction" }
             ) { index, transactionCategory ->
-                val singleItemShape = RoundedCornerShape(14.dp)
-                val firstItemShape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp, bottomStart = 4.dp, bottomEnd = 4.dp)
-                val lastItemShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp, bottomStart = 14.dp, bottomEnd = 14.dp)
-                val middleItemShape = RoundedCornerShape(4.dp)
                 val shape = when {
-                    index == 0 && transactionGroup.value.size == 1 -> singleItemShape
-                    index == 0 -> firstItemShape
-                    index == transactionGroup.value.lastIndex -> lastItemShape
-                    else -> middleItemShape
+                    index == 0 && transactionGroup.value.size == 1 -> ListItemShape.Single
+                    index == 0 -> ListItemShape.First
+                    index == transactionGroup.value.lastIndex -> ListItemShape.Last
+                    else -> ListItemShape.Middle
                 }
                 TransactionItem(
                     transactionCategory = transactionCategory,
