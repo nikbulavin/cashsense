@@ -11,7 +11,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -79,7 +79,10 @@ import java.util.Currency
 import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 fun FinancePanel(
     availableCategories: List<Category>,
@@ -100,15 +103,14 @@ fun FinancePanel(
         modifier = modifier.animateContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+        val slowAnimationSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
         SharedTransitionLayout {
             AnimatedContent(
                 targetState = transactionFilter.financeType,
                 label = "FinancePanel",
                 transitionSpec = {
-                    (fadeIn(animationSpec = tween(220, delayMillis = 90)) + scaleIn(
-                        initialScale = 0.92f,
-                        animationSpec = tween(220, delayMillis = 90),
-                    )) togetherWith fadeOut(snap())
+                    fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
                 },
             ) { financeType ->
                 when (financeType) {
@@ -121,12 +123,12 @@ fun FinancePanel(
                             val expensesProgress by animateFloatAsState(
                                 targetValue = getFinanceProgress(expenses, income + expenses),
                                 label = "ExpensesProgress",
-                                animationSpec = tween(durationMillis = 400),
+                                animationSpec = slowAnimationSpec,
                             )
                             val incomeProgress by animateFloatAsState(
                                 targetValue = getFinanceProgress(income, income + expenses),
                                 label = "IncomeProgress",
-                                animationSpec = tween(durationMillis = 400),
+                                animationSpec = slowAnimationSpec,
                             )
                             FinanceCard(
                                 amount = expenses,
@@ -265,7 +267,10 @@ private fun SharedTransitionScope.FinanceCard(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun SharedTransitionScope.DetailedFinanceSection(
     amount: BigDecimal,
@@ -309,7 +314,10 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 )
             }
         }
-        AnimatedVisibility(transactionFilter.dateType != WEEK) {
+        AnimatedVisibility(
+            visible = transactionFilter.dateType != WEEK,
+            enter = fadeIn() + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
+        ) {
             FilterBySelectedDateTypeRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,

@@ -7,10 +7,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import java.math.BigDecimal
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnimatedAmount(
     targetState: BigDecimal,
@@ -18,13 +22,14 @@ fun AnimatedAmount(
     modifier: Modifier = Modifier,
     content: @Composable AnimatedContentScope.(targetState: BigDecimal) -> Unit,
 ) {
+    val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
     AnimatedContent(
         targetState = targetState,
         transitionSpec = {
             if (targetState > initialState) {
-                slideInVertically { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
+                slideInVertically(animationSpec) { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
             } else {
-                slideInVertically { it } + fadeIn() togetherWith slideOutVertically { -it } + fadeOut()
+                slideInVertically(animationSpec) { it } + fadeIn() togetherWith slideOutVertically { -it } + fadeOut()
             }
         },
         label = label,

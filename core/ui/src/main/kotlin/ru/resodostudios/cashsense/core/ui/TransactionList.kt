@@ -1,16 +1,14 @@
 package ru.resodostudios.cashsense.core.ui
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -26,6 +24,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.transactions(
     transactionsCategories: List<TransactionWithCategory>,
     onTransactionClick: (String) -> Unit,
@@ -68,11 +67,7 @@ fun LazyListScope.transactions(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .animateItem(
-                            placementSpec = spring(
-                                dampingRatio = Spring.DampingRatioLowBouncy,
-                                stiffness = Spring.StiffnessLow,
-                                visibilityThreshold = IntOffset.VisibilityThreshold,
-                            ),
+                            placementSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
                         ),
                 )
                 if (index != transactionGroup.value.lastIndex) Spacer(Modifier.height(2.dp))
