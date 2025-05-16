@@ -25,12 +25,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
@@ -304,7 +304,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     .widthIn(max = 500.dp)
                     .weight(1f, false),
             )
-            FilledTonalIconButton(
+            OutlinedIconButton(
                 onClick = onBackClick,
                 modifier = Modifier.padding(start = 12.dp),
             ) {

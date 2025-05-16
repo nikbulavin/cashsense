@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconToggleButton
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
@@ -20,7 +20,7 @@ fun CsIconToggleButton(
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    FilledIconToggleButton(
+    FilledTonalIconToggleButton(
         shape = IconButtonDefaults.smallSquareShape,
         checked = checked,
         onCheckedChange = { isChecked ->
