@@ -11,6 +11,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -42,8 +43,9 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.Clock
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.ListItemShape
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
@@ -109,6 +111,8 @@ private fun SettingsScreen(
             val context = LocalContext.current
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 general(
                     settings = settingsState.settings,
@@ -137,12 +141,12 @@ private fun SettingsScreen(
 private fun SectionTitle(
     text: String,
     modifier: Modifier = Modifier,
-    topPadding: Dp = 32.dp,
+    topPadding: Dp = 30.dp,
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
-        modifier = modifier.padding(top = topPadding, bottom = 16.dp, start = 16.dp, end = 16.dp),
+        modifier = modifier.padding(top = topPadding, bottom = 12.dp),
         color = MaterialTheme.colorScheme.primary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -184,13 +188,14 @@ private fun LazyListScope.general(
     item {
         SectionTitle(
             text = stringResource(localesR.string.settings_general),
-            topPadding = 10.dp,
+            topPadding = 8.dp,
         )
     }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.First,
             headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
@@ -213,7 +218,8 @@ private fun LazyListScope.general(
     item {
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.Last,
             headlineContent = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
@@ -245,7 +251,8 @@ private fun LazyListScope.appearance(
 ) {
     item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
-        CsListItem(
+        CsListItemEmphasized(
+            shape = if (supportDynamicColor) ListItemShape.First else ListItemShape.Single,
             headlineContent = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
@@ -300,7 +307,8 @@ private fun LazyListScope.appearance(
     }
     item {
         AnimatedVisibility(supportDynamicColor) {
-            CsListItem(
+            CsListItemEmphasized(
+                shape = ListItemShape.Last,
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
@@ -333,7 +341,8 @@ private fun LazyListScope.backupAndRestore(
             }
         val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
         val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.First,
             headlineContent = { Text(stringResource(localesR.string.backup)) },
             leadingContent = {
                 Icon(
@@ -358,7 +367,8 @@ private fun LazyListScope.backupAndRestore(
             ) {
                 it?.let { onDataImport(it, true) }
             }
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.Last,
             headlineContent = { Text(stringResource(localesR.string.restore)) },
             leadingContent = {
                 Icon(
@@ -386,7 +396,8 @@ private fun LazyListScope.about(
     item {
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.First,
             headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
@@ -406,7 +417,8 @@ private fun LazyListScope.about(
     item {
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.Middle,
             headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
@@ -424,7 +436,8 @@ private fun LazyListScope.about(
         )
     }
     item {
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.Middle,
             headlineContent = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
@@ -445,7 +458,8 @@ private fun LazyListScope.about(
             ""
         }
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemShape.Last,
             headlineContent = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {
