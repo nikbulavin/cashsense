@@ -27,6 +27,7 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -40,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -307,10 +309,13 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             OutlinedIconButton(
                 onClick = onBackClick,
                 modifier = Modifier.padding(start = 12.dp),
+                border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
+                    brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
+                ),
             ) {
                 Icon(
                     imageVector = CsIcons.Outlined.Close,
-                    contentDescription = null,
+                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
                 )
             }
         }
