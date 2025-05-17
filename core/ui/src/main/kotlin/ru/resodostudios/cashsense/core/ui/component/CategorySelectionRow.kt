@@ -12,6 +12,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -55,10 +57,16 @@ private fun CategoryChip(
     modifier: Modifier = Modifier,
 ) {
     val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
+    val hapticFeedback = LocalHapticFeedback.current
 
     FilterChip(
         selected = selected,
-        onClick = onClick,
+        onClick = {
+            hapticFeedback.performHapticFeedback(
+                if (selected) HapticFeedbackType.ToggleOff else HapticFeedbackType.ToggleOn
+            )
+            onClick()
+        },
         label = {
             Text(
                 text = category.title.toString(),
