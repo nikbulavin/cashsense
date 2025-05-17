@@ -76,14 +76,15 @@ internal fun TransactionItem(
             )
         },
         trailingContent = {
+            val animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 AnimatedVisibility(
                     visible = transaction.ignored,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut(),
+                    enter = fadeIn() + scaleIn(animationSpec),
+                    exit = fadeOut() + scaleOut(animationSpec),
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.errorContainer,
@@ -101,8 +102,8 @@ internal fun TransactionItem(
                 }
                 AnimatedVisibility(
                     visible = transaction.status == PENDING,
-                    enter = fadeIn() + scaleIn(),
-                    exit = fadeOut() + scaleOut(),
+                    enter = fadeIn() + scaleIn(animationSpec),
+                    exit = fadeOut() + scaleOut(animationSpec),
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.tertiaryContainer,
