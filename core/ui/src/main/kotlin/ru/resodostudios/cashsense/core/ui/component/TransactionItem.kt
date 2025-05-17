@@ -92,7 +92,7 @@ internal fun TransactionItem(
                     ) {
                         Icon(
                             imageVector = CsIcons.Outlined.Block,
-                            contentDescription = null,
+                            contentDescription = stringResource(localesR.string.transaction_ignore),
                             modifier = Modifier
                                 .padding(4.dp)
                                 .size(20.dp),
@@ -111,7 +111,7 @@ internal fun TransactionItem(
                     ) {
                         Icon(
                             imageVector = CsIcons.Outlined.Pending,
-                            contentDescription = null,
+                            contentDescription = stringResource(localesR.string.pending),
                             modifier = Modifier
                                 .padding(4.dp)
                                 .size(20.dp),
