@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.plus
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
@@ -35,6 +36,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
@@ -99,7 +101,7 @@ class WalletViewModel @AssistedInject constructor(
             selectedTransactionCategory = selectedTransactionId?.let { id ->
                 filterableTransactions.transactionsCategories.find { it.transaction.id == id }
             },
-            transactionsCategories = filterableTransactions.transactionsCategories,
+            transactionsCategories = filterableTransactions.transactionsCategories.groupByDate(),
             availableCategories = filterableTransactions.availableCategories,
         )
     }
@@ -222,7 +224,7 @@ sealed interface WalletUiState {
         val transactionFilter: TransactionFilter,
         val userWallet: UserWallet,
         val selectedTransactionCategory: TransactionWithCategory?,
-        val transactionsCategories: List<TransactionWithCategory>,
+        val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
         val income: BigDecimal,
