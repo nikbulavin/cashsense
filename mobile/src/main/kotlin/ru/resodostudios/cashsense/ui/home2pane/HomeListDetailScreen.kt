@@ -2,12 +2,18 @@ package ru.resodostudios.cashsense.ui.home2pane
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
@@ -216,6 +222,7 @@ internal fun HomeListDetailScreen(
     }
 
     fun onTotalBalanceClickShowDetailPane() {
+        onWalletSelect(null)
         walletRoute = TransactionOverviewRoute
         coroutineScope.launch {
             scaffoldNavigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
@@ -309,7 +316,13 @@ internal fun HomeListDetailScreen(
                             }
                         },
                 ) {
-                    AnimatedContent(walletRoute) { route ->
+                    val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+                    AnimatedContent(
+                        targetState = walletRoute,
+                        transitionSpec = {
+                            fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
+                        },
+                    ) { route ->
                         when (route) {
                             is TransactionOverviewRoute -> {
                                 TransactionOverviewScreen(
