@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -23,14 +24,17 @@ fun AnimatedAmount(
     content: @Composable AnimatedContentScope.(targetState: BigDecimal) -> Unit,
 ) {
     val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+    val fadeAnimationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     AnimatedContent(
         targetState = targetState,
         transitionSpec = {
             if (targetState > initialState) {
-                slideInVertically(animationSpec) { -it } + fadeIn() togetherWith slideOutVertically { it } + fadeOut()
+                (slideInVertically(animationSpec) { -it } + fadeIn())
+                    .togetherWith(slideOutVertically { it } + fadeOut(fadeAnimationSpec))
             } else {
-                slideInVertically(animationSpec) { it } + fadeIn() togetherWith slideOutVertically { -it } + fadeOut()
-            }
+                (slideInVertically(animationSpec) { it } + fadeIn())
+                    .togetherWith(slideOutVertically { -it } + fadeOut(fadeAnimationSpec))
+            }.using(SizeTransform(clip = false))
         },
         label = label,
         modifier = modifier,
