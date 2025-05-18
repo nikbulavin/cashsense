@@ -28,19 +28,11 @@ fun CsSwitch(
             onCheckedChange(isChecked)
         },
         thumbContent = {
-            if (checked) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                )
-            } else {
-                Icon(
-                    imageVector = CsIcons.Outlined.Close,
-                    contentDescription = null,
-                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                )
-            }
+            Icon(
+                imageVector = if (checked) CsIcons.Outlined.Check else CsIcons.Outlined.Close,
+                contentDescription = null,
+                modifier = Modifier.size(SwitchDefaults.IconSize),
+            )
         },
         modifier = modifier,
     )
