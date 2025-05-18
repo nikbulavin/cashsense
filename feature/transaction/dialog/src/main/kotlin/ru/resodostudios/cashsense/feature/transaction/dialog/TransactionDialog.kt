@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,9 +16,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +31,6 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -45,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsConnectedButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -221,40 +217,13 @@ private fun TransactionTypeChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    val transactionTypes = listOf(
-        stringResource(localesR.string.expense) to CsIcons.Outlined.TrendingDown,
-        stringResource(localesR.string.income_singular) to CsIcons.Outlined.TrendingUp,
+    CsConnectedButtonGroup(
+        selectedIndex = transactionState.transactionType.ordinal,
+        options = listOf(stringResource(localesR.string.expense), stringResource(localesR.string.income_singular)),
+        uncheckedIcons = listOf(CsIcons.Outlined.TrendingDown, CsIcons.Outlined.TrendingUp),
+        onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[it])) },
+        modifier = Modifier.fillMaxWidth(),
     )
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-        transactionTypes.forEachIndexed { index, transactionType ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = transactionTypes.size,
-                ),
-                onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[index])) },
-                selected = transactionState.transactionType == TransactionType.entries[index],
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
-                        Icon(
-                            imageVector = transactionType.second,
-                            contentDescription = null,
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                        )
-                    }
-                },
-                colors = SegmentedButtonDefaults.colors(
-                    inactiveContainerColor = Color.Transparent,
-                ),
-            ) {
-                Text(
-                    text = transactionType.first,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -262,40 +231,13 @@ private fun TransactionStatusChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    val statusTypes = listOf(
-        stringResource(localesR.string.completed) to CsIcons.Outlined.CheckCircle,
-        stringResource(localesR.string.pending) to CsIcons.Outlined.Pending,
+    CsConnectedButtonGroup(
+        selectedIndex = transactionState.status.ordinal,
+        options = listOf(stringResource(localesR.string.completed), stringResource(localesR.string.pending)),
+        uncheckedIcons = listOf(CsIcons.Outlined.CheckCircle, CsIcons.Outlined.Pending),
+        onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[it])) },
+        modifier = Modifier.fillMaxWidth(),
     )
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-        statusTypes.forEachIndexed { index, statusType ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = statusTypes.size,
-                ),
-                onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[index])) },
-                selected = transactionState.status == StatusType.entries[index],
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
-                        Icon(
-                            imageVector = statusType.second,
-                            contentDescription = null,
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                        )
-                    }
-                },
-                colors = SegmentedButtonDefaults.colors(
-                    inactiveContainerColor = Color.Transparent,
-                ),
-            ) {
-                Text(
-                    text = statusType.first,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
