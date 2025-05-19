@@ -32,7 +32,7 @@ fun CsIconToggleButton(
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     FilledTonalIconToggleButton(
-        shape = IconButtonDefaults.smallSquareShape,
+        shapes = IconButtonDefaults.toggleableShapes(),
         checked = checked,
         onCheckedChange = { isChecked ->
             hapticFeedback.performHapticFeedback(

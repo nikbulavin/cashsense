@@ -307,6 +307,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     .weight(1f, false),
             )
             OutlinedIconButton(
+                shapes = IconButtonDefaults.shapes(),
                 onClick = onBackClick,
                 modifier = Modifier.padding(start = 12.dp),
                 border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
