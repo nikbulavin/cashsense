@@ -258,12 +258,6 @@ internal fun HomeListDetailScreen(
                     HomeScreen(
                         onWalletClick = ::onWalletClickShowDetailPane,
                         onTransfer = onTransfer,
-                        onEditWallet = onEditWallet,
-                        onDeleteWallet = {
-                            onWalletSelect(null)
-                            walletRoute = WalletPlaceholderRoute
-                            onDeleteWallet(it)
-                        },
                         onTransactionCreate = {
                             navigateToTransactionDialog(it, null, false)
                         },
