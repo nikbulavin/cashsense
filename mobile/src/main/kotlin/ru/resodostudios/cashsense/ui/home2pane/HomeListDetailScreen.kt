@@ -15,7 +15,6 @@ import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
-import androidx.compose.material3.adaptive.layout.defaultDragHandleSemantics
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation.NavigableListDetailPaneScaffold
@@ -322,7 +321,6 @@ internal fun HomeListDetailScreen(
                     state = paneExpansionState,
                     minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
                     interactionSource = interactionSource,
-                    semanticsProperties = paneExpansionState.defaultDragHandleSemantics(),
                 ),
                 interactionSource = interactionSource,
             )
