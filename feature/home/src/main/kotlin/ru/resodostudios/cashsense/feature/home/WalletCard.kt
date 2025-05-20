@@ -45,7 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
@@ -116,6 +118,7 @@ fun WalletCard(
                 income = income,
                 currency = userWallet.currency,
                 modifier = Modifier.padding(top = 8.dp),
+                isPrimary = userWallet.isPrimary,
             )
         }
         val addTransactionText = stringResource(localesR.string.add_transaction)
@@ -216,6 +219,7 @@ private fun TagsSection(
     income: BigDecimal,
     currency: Currency,
     modifier: Modifier = Modifier,
+    isPrimary: Boolean = false,
 ) {
     LookaheadScope {
         FlowRow(
@@ -224,6 +228,17 @@ private fun TagsSection(
             modifier = modifier.animateContentSize(),
         ) {
             val animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+            AnimatedVisibility(
+                visible = isPrimary,
+                enter = fadeIn() + scaleIn(animationSpec),
+                exit = fadeOut() + scaleOut(animationSpec),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsTag(
+                    text = stringResource(localesR.string.primary),
+                    icon = CsIcons.Filled.Star,
+                )
+            }
             AnimatedVisibility(
                 visible = expenses.signum() > 0,
                 enter = fadeIn() + scaleIn(animationSpec),
