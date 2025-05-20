@@ -60,7 +60,6 @@
     <string name="add_transaction">取引を追加</string>
     <string name="edit_transaction">取引を編集</string>
     <string name="new_transaction">新しい取引</string>
-    <string name="add_transaction_icon_description">取引を追加</string>
     <string name="expense">費用</string>
     <string name="expenses">費用</string>
     <string name="income_singular">収入</string>

@@ -60,7 +60,6 @@
     <string name="add_transaction">Добавить транзакцию</string>
     <string name="edit_transaction">Изменение транзакции</string>
     <string name="new_transaction">Новая транзакция</string>
-    <string name="add_transaction_icon_description">Добавить транзакцию</string>
     <string name="expense">Расход</string>
     <string name="expenses">Расходы</string>
     <string name="income_singular">Доход</string>

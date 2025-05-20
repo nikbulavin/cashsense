@@ -60,7 +60,6 @@
     <string name="add_transaction">Transaktion hinzufügen</string>
     <string name="edit_transaction">Transaktion bearbeiten</string>
     <string name="new_transaction">Neue Transaktion</string>
-    <string name="add_transaction_icon_description">Transaktion hinzufügen</string>
     <string name="expense">Ausgaben</string>
     <string name="expenses">Ausgaben</string>
     <string name="income_singular">Einnahmen</string>
