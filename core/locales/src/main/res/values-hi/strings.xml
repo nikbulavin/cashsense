@@ -60,7 +60,6 @@
     <string name="add_transaction">लेनदेन जोड़ें</string>
     <string name="edit_transaction">लेनदेन संपादित करें</string>
     <string name="new_transaction">नया लेनदेन</string>
-    <string name="add_transaction_icon_description">लेनदेन जोड़ें</string>
     <string name="expense">व्यय</string>
     <string name="expenses">व्यय</string>
     <string name="income_singular">आय</string>

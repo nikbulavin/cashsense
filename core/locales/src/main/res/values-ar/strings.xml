@@ -60,7 +60,6 @@
     <string name="add_transaction">إضافة معاملة</string>
     <string name="edit_transaction">تحرير المعاملة</string>
     <string name="new_transaction">معاملة جديدة</string>
-    <string name="add_transaction_icon_description">إضافة معاملة</string>
     <string name="expense">مصاريف</string>
     <string name="expenses">النفقات</string>
     <string name="income_singular">الدخل</string>

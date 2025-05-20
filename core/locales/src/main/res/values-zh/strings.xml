@@ -60,7 +60,6 @@
     <string name="add_transaction">添加交易</string>
     <string name="edit_transaction">编辑交易</string>
     <string name="new_transaction">新建交易</string>
-    <string name="add_transaction_icon_description">添加交易</string>
     <string name="expense">支出</string>
     <string name="expenses">支出</string>
     <string name="income_singular">收入</string>

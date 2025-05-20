@@ -249,7 +249,7 @@ private fun WalletTopBar(
             IconButton(onClick = onNewTransactionClick) {
                 Icon(
                     imageVector = CsIcons.Outlined.Add,
-                    contentDescription = stringResource(localesR.string.add_transaction_icon_description),
+                    contentDescription = stringResource(localesR.string.add_transaction),
                 )
             }
             PrimaryToggleButton(userWallet, onPrimaryClick)
