@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.component
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -280,6 +281,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     modifier: Modifier = Modifier,
     shouldShowApproximately: Boolean = false,
 ) {
+    BackHandler { onBackClick() }
     Column(modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
