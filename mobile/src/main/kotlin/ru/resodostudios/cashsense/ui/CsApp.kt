@@ -169,7 +169,9 @@ fun CsApp(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
-                            if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
+                            if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
+                                currentTopLevelDestination != SETTINGS
+                            ) {
                                 Modifier.padding(bottom = 100.dp)
                             } else {
                                 Modifier
