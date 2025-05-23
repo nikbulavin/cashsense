@@ -44,10 +44,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
 import dev.chrisbanes.haze.HazeProgressive
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
@@ -99,7 +103,11 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalHazeApi::class,
+    ExperimentalHazeMaterialsApi::class,
+)
 @Composable
 internal fun HomeScreen(
     walletsState: WalletsUiState,
@@ -132,7 +140,9 @@ internal fun HomeScreen(
     }
 
     Box {
-        val hazeState = remember { HazeState() }
+        val hazeState = rememberHazeState()
+        val hazeStyle = HazeMaterials.regular(MaterialTheme.colorScheme.surface)
+
         var totalBalanceShown by remember { mutableStateOf(false) }
 
         when (totalBalanceState) {
@@ -148,17 +158,15 @@ internal fun HomeScreen(
                         Color.Transparent
                     }
 
-                val hazeBackgroundColor = MaterialTheme.colorScheme.surface
                 TotalBalanceCard(
                     onClick = onTotalBalanceClick,
                     modifier = Modifier
                         .zIndex(1f)
                         .padding(horizontal = 16.dp)
                         .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
-                        .hazeEffect(hazeState) {
-                            blurEnabled = true
-                            blurRadius = 22.dp
-                            backgroundColor = hazeBackgroundColor
+                        .hazeEffect(hazeState, hazeStyle) {
+                            inputScale = HazeInputScale.Auto
+                            blurRadius = 32.dp
                             progressive = HazeProgressive.verticalGradient(
                                 startIntensity = 1f,
                                 endIntensity = 0.25f,

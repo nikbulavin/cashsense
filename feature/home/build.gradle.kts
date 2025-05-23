@@ -13,4 +13,5 @@ dependencies {
     implementation(projects.core.locales)
 
     implementation(libs.haze)
+    implementation(libs.haze.materials)
 }
