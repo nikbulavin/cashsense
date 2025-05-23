@@ -57,6 +57,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
@@ -210,7 +211,10 @@ fun FinancePanel(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun SharedTransitionScope.FinanceCard(
     amount: BigDecimal,
@@ -237,6 +241,7 @@ private fun SharedTransitionScope.FinanceCard(
                 targetState = amount,
                 label = "FinanceCardTitle",
                 modifier = Modifier.sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
@@ -257,6 +262,7 @@ private fun SharedTransitionScope.FinanceCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
@@ -336,6 +342,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
@@ -355,6 +362,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
                 ),
