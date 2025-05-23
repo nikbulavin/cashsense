@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -11,6 +10,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -73,12 +74,12 @@ class MainActivity : AppCompatActivity() {
                         trace("csEdgeToEdge") {
                             enableEdgeToEdge(
                                 statusBarStyle = SystemBarStyle.auto(
-                                    lightScrim = Color.TRANSPARENT,
-                                    darkScrim = Color.TRANSPARENT,
+                                    lightScrim = Color.Transparent.toArgb(),
+                                    darkScrim = Color.Transparent.toArgb(),
                                 ) { darkTheme },
                                 navigationBarStyle = SystemBarStyle.auto(
-                                    lightScrim = lightScrim,
-                                    darkScrim = darkScrim,
+                                    lightScrim = Color.Transparent.toArgb(),
+                                    darkScrim = Color.Transparent.toArgb(),
                                 ) { darkTheme },
                             )
                         }
@@ -109,9 +110,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-private val lightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
-private val darkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
 
 data class ThemeSettings(
     val darkTheme: Boolean,
