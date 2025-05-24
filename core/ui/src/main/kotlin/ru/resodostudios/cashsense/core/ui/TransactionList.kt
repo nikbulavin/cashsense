@@ -51,7 +51,8 @@ fun LazyListScope.transactions(
                     else -> ListItemShape.Middle
                 }
                 TransactionItem(
-                    transactionCategory = transactionCategory,
+                    transaction = transactionCategory.transaction,
+                    category = transactionCategory.category,
                     currency = transactionCategory.transaction.currency,
                     onClick = onTransactionClick,
                     shape = shape,

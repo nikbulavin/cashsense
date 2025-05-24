@@ -34,7 +34,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.util.Currency
@@ -43,14 +42,13 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun TransactionItem(
-    transactionCategory: TransactionWithCategory,
+    transaction: Transaction,
+    category: Category?,
     currency: Currency,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = RoundedCornerShape(18.dp),
 ) {
-    val transaction = transactionCategory.transaction
-    val category = transactionCategory.category
     val (icon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
     } else {
@@ -138,23 +136,21 @@ fun TransactionItemPreview() {
     CsTheme {
         Surface {
             TransactionItem(
-                transactionCategory = TransactionWithCategory(
-                    transaction = Transaction(
-                        id = "1",
-                        walletOwnerId = "1",
-                        description = null,
-                        amount = (-25).toBigDecimal(),
-                        timestamp = Instant.parse("2024-09-13T14:20:00Z"),
-                        status = PENDING,
-                        ignored = true,
-                        transferId = null,
-                        currency = getUsdCurrency(),
-                    ),
-                    category = Category(
-                        id = "1",
-                        title = "Fastfood",
-                        iconId = StoredIcon.FASTFOOD.storedId,
-                    ),
+                transaction = Transaction(
+                    id = "1",
+                    walletOwnerId = "1",
+                    description = null,
+                    amount = (-25).toBigDecimal(),
+                    timestamp = Instant.parse("2024-09-13T14:20:00Z"),
+                    status = PENDING,
+                    ignored = true,
+                    transferId = null,
+                    currency = getUsdCurrency(),
+                ),
+                category = Category(
+                    id = "1",
+                    title = "Fastfood",
+                    iconId = StoredIcon.FASTFOOD.storedId,
                 ),
                 currency = getUsdCurrency(),
                 onClick = {},
