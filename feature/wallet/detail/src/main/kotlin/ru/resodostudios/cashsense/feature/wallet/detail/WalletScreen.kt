@@ -21,6 +21,7 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -229,7 +230,7 @@ private fun BoxScope.WalletToolbar(
     walletId: String,
     onEditWallet: (String) -> Unit,
     onDeleteWallet: (String) -> Unit,
-    navigateToTransactionDialog: (String, String?, Boolean) -> Unit
+    navigateToTransactionDialog: (String, String?, Boolean) -> Unit,
 ) {
     val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     HorizontalFloatingToolbar(
@@ -243,7 +244,7 @@ private fun BoxScope.WalletToolbar(
                 onClick = { onTransfer(walletId) },
             ) {
                 Icon(
-                    CsIcons.Outlined.SendMoney,
+                    imageVector = CsIcons.Outlined.SendMoney,
                     contentDescription = stringResource(localesR.string.transfer),
                 )
             }
@@ -268,7 +269,7 @@ private fun BoxScope.WalletToolbar(
                             contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                         )
                     }
-                }
+                },
             ) {
                 clickableItem(
                     onClick = { onEditWallet(walletId) },
@@ -377,7 +378,7 @@ private fun PrimaryToggleButton(
         icon = icon,
         contentDescription = contentDescription,
         modifier = Modifier
-            .size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+            .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
             .padding(end = 4.dp),
     )
 }
