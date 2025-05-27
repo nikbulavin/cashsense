@@ -7,7 +7,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class InAppReviewManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val transactionsRepository: TransactionsRepository,
