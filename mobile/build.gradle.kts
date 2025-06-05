@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
+    debugImplementation(libs.leakcanary.android)
 
     baselineProfile(projects.baselineprofile)
 }
