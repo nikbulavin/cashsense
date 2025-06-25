@@ -1,8 +1,8 @@
 package ru.resodostudios.cashsense.core.model.data
 
-import kotlinx.datetime.Instant
 import java.math.BigDecimal
 import java.util.Currency
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 data class Transaction(

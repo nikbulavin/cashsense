@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.util
 
+import kotlinx.datetime.number
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
@@ -13,9 +14,9 @@ fun List<TransactionWithCategory>.getGraphData(dateType: DateType): Map<Int, Big
         .groupBy {
             val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
             when (dateType) {
-                YEAR -> zonedDateTime.monthNumber
-                ALL, MONTH -> zonedDateTime.dayOfMonth
-                WEEK -> zonedDateTime.dayOfWeek.value
+                YEAR -> zonedDateTime.month.number
+                ALL, MONTH -> zonedDateTime.day
+                WEEK -> zonedDateTime.dayOfWeek.ordinal
             }
         }
         .run {

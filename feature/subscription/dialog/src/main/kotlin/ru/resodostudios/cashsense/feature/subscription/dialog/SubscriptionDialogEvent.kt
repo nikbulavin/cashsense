@@ -1,10 +1,10 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog
 
 import androidx.compose.runtime.Immutable
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import java.util.Currency
+import kotlin.time.Instant
 
 @Immutable
 sealed interface SubscriptionDialogEvent {

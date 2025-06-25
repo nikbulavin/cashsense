@@ -1,8 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.util
 
 import androidx.compose.runtime.Composable
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
@@ -12,6 +10,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Currency
 import java.util.Locale
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
 
 fun BigDecimal.formatAmount(
     currency: Currency,

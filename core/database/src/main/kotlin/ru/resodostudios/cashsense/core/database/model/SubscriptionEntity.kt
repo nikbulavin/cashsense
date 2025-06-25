@@ -4,11 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import java.math.BigDecimal
 import java.util.Currency
+import kotlin.time.Instant
 
 @Entity(
     tableName = "subscriptions",

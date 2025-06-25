@@ -31,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -45,6 +45,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
 import java.time.format.FormatStyle
 import java.util.Currency
+import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,8 +104,8 @@ fun DatePickerTextField(
                             .toLocalDateTime(timeZone)
                         val instant = LocalDateTime(
                             selectedDate.year,
-                            selectedDate.monthNumber,
-                            selectedDate.dayOfMonth,
+                            selectedDate.month.number,
+                            selectedDate.day,
                             localTime.hour,
                             localTime.minute,
                         ).toInstant(timeZone)
@@ -169,8 +170,8 @@ fun TimePickerTextField(
                         openDialog = false
                         val instant = LocalDateTime(
                             localTime.year,
-                            localTime.monthNumber,
-                            localTime.dayOfMonth,
+                            localTime.month.number,
+                            localTime.day,
                             timePickerState.hour,
                             timePickerState.minute,
                         ).toInstant(timeZone)

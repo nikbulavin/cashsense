@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.core.model.data
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 data class Reminder(
     val id: Int? = null,

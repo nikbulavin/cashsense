@@ -4,11 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
 import java.util.Currency
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 @Entity(

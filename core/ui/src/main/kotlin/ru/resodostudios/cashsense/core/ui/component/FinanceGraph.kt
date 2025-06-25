@@ -63,6 +63,8 @@ import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
+import kotlinx.datetime.toJavaDayOfWeek
+import kotlinx.datetime.toJavaMonth
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.locales.R
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
@@ -93,9 +95,9 @@ fun FinanceGraph(
     val xDateFormatter = CartesianValueFormatter { _, x, _ ->
         val textStyle = TextStyle.NARROW_STANDALONE
         when (transactionFilter.dateType) {
-            YEAR -> Month(x.toInt().coerceIn(1, 12)).getDisplayName(textStyle, locale)
+            YEAR -> Month(x.toInt().coerceIn(1, 12)).toJavaMonth().getDisplayName(textStyle, locale)
             MONTH -> x.toInt().toString()
-            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).getDisplayName(textStyle, locale)
+            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).toJavaDayOfWeek().getDisplayName(textStyle, locale)
         }
     }
 
