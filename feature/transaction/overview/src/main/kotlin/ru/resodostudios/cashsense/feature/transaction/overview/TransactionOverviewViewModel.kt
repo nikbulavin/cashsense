@@ -37,7 +37,7 @@ import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.util.Currency
@@ -127,18 +127,7 @@ class TransactionOverviewViewModel @Inject constructor(
                             }
                         }
 
-                    val graphData = filteredTransactions
-                        .groupBy {
-                            val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
-                            when (transactionFilter.dateType) {
-                                YEAR -> zonedDateTime.monthNumber
-                                ALL, MONTH -> zonedDateTime.dayOfMonth
-                                WEEK -> zonedDateTime.dayOfWeek.value
-                            }
-                        }
-                        .mapValues { (_, transactions) ->
-                            transactions.sumOf { it.transaction.amount }.abs()
-                        }
+                    val graphData = filteredTransactions.getGraphData(transactionFilter.dateType)
 
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
