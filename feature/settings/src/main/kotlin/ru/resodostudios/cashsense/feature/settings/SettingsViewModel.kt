@@ -51,6 +51,7 @@ class SettingsViewModel @Inject constructor(
                 currency = Currency.getInstance(userData.currency),
                 language = language,
                 availableLanguages = availableLanguages,
+                shouldShowTotalBalance = userData.shouldShowTotalBalance,
             )
         )
     }
@@ -89,6 +90,12 @@ class SettingsViewModel @Inject constructor(
     fun importData(backupFileUri: Uri, restart: Boolean = true) {
         userDataRepository.importData(backupFileUri, restart)
     }
+
+    fun updateTotalBalanceVisibility(shouldShowTotalBalance: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setTotalBalancePreference(shouldShowTotalBalance)
+        }
+    }
 }
 
 data class UserEditableSettings(
@@ -97,6 +104,7 @@ data class UserEditableSettings(
     val currency: Currency,
     val language: Language,
     val availableLanguages: List<Language>,
+    val shouldShowTotalBalance: Boolean,
 )
 
 sealed interface SettingsUiState {

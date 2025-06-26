@@ -108,4 +108,6 @@
     <string name="backup_description">将所有数据导出到文件</string>
     <string name="restore">还原</string>
     <string name="restore_description">从备份文件导入数据</string>
+    <string name="show_total_balance">显示总余额</string>
+    <string name="show_total_balance_description">在主屏幕上显示或隐藏总资金卡片</string>
 </resources>

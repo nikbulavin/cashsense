@@ -30,4 +30,5 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
 internal fun getCustomInstance() = userPreferences {
     currency = getDefaultCurrency().currencyCode
     useDynamicColor = true
+    shouldShowTotalBalance = true
 }
