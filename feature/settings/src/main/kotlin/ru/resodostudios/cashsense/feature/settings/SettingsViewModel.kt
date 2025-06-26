@@ -22,21 +22,7 @@ class SettingsViewModel @Inject constructor(
     private val appLocaleManager: AppLocaleManager,
 ) : ViewModel() {
 
-    private val availableLanguages = listOf(
-        Language("en", "English"),
-        Language("ru", "Русский"),
-        Language("ar", "العربية"),
-        Language("de", "Deutsch"),
-        Language("es", "Español"),
-        Language("fr", "Français"),
-        Language("hi", "हिंदी"),
-        Language("it", "Italiano"),
-        Language("ja", "日本語"),
-        Language("ko", "한국어"),
-        Language("pl", "Polski"),
-        Language("ta", "தமிழ்"),
-        Language("zh", "简体中文"),
-    )
+    private val availableLanguages = Language.entries
 
     val settingsUiState: StateFlow<SettingsUiState> = combine(
         userDataRepository.userData,

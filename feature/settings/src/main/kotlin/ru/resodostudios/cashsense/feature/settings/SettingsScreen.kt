@@ -152,7 +152,7 @@ fun SettingsScreenPreview() {
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                         currency = getUsdCurrency(),
-                        language = Language("en", "English"),
+                        language = Language.ENGLISH,
                         availableLanguages = emptyList(),
                         shouldShowTotalBalance = true,
                     )
@@ -216,7 +216,7 @@ private fun LazyListScope.general(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(settings.language.name) },
+            supportingContent = { Text(settings.language.displayName) },
             onClick = { showLanguageDialog = true },
         )
 

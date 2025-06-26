@@ -72,7 +72,7 @@ fun LanguageDialog(
                             onClick = null,
                         )
                         Text(
-                            text = language.name,
+                            text = language.displayName,
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(start = 16.dp),
                         )
