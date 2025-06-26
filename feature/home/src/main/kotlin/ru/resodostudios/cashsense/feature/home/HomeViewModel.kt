@@ -48,13 +48,13 @@ class HomeViewModel @Inject constructor(
         walletRepository.getDistinctCurrencies(),
         userDataRepository.userData,
     ) { currencies, userData ->
-        val userCurrency = Currency.getInstance(userData.currency)
-        currencies to userCurrency
+        currencies to userData
     }
-        .flatMapLatest { (baseCurrencies, userCurrency) ->
+        .flatMapLatest { (baseCurrencies, userData) ->
             flow {
+                if (!userData.shouldShowTotalBalance) return@flow emit(TotalBalanceUiState.NotShown)
                 emit(TotalBalanceUiState.Loading)
-
+                val userCurrency = Currency.getInstance(userData.currency)
                 if (baseCurrencies.isEmpty()) {
                     emit(TotalBalanceUiState.NotShown)
                 } else {
@@ -116,7 +116,7 @@ class HomeViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = TotalBalanceUiState.Loading,
+            initialValue = TotalBalanceUiState.NotShown,
         )
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
