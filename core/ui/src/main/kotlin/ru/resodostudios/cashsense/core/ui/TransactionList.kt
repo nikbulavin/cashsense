@@ -10,7 +10,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
@@ -23,6 +22,7 @@ import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
+import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
