@@ -1,13 +1,13 @@
 package ru.resodostudios.cashsense.feature.subscription.list
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
+import kotlin.time.Instant
 
 /**
  * This [PreviewParameterProvider](https://developer.android.com/reference/kotlin/androidx/compose/ui/tooling/preview/PreviewParameterProvider)

@@ -4,9 +4,9 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.database.model.CurrencyExchangeRateEntity
 import java.util.Currency
+import kotlin.time.Instant
 
 @Dao
 interface CurrencyConversionDao {

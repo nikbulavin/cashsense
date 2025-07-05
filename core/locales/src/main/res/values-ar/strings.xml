@@ -108,4 +108,6 @@
     <string name="backup_description">تصدير جميع البيانات إلى ملف</string>
     <string name="restore">استعادة</string>
     <string name="restore_description">استيراد البيانات من ملف النسخ الاحتياطي</string>
+    <string name="show_total_balance">عرض الرصيد الإجمالي</string>
+    <string name="show_total_balance_description">عرض أو إخفاء بطاقة الأموال الإجمالية على الشاشة الرئيسية</string>
 </resources>

@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
@@ -51,6 +49,8 @@ import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.Transact
 import java.math.BigDecimal.ZERO
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 @HiltViewModel

@@ -39,7 +39,7 @@ import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.ui.util.getZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
 
@@ -79,18 +79,7 @@ class WalletViewModel @AssistedInject constructor(
             }
         val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
 
-        val graphData = filteredTransactions
-            .groupBy {
-                val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
-                when (transactionFilter.dateType) {
-                    YEAR -> zonedDateTime.monthNumber
-                    ALL, MONTH -> zonedDateTime.dayOfMonth
-                    WEEK -> zonedDateTime.dayOfWeek.value
-                }
-            }
-            .mapValues { (_, transactions) ->
-                transactions.sumOf { it.transaction.amount }.abs()
-            }
+        val graphData = filteredTransactions.getGraphData(transactionFilter.dateType)
 
         WalletUiState.Success(
             transactionFilter = transactionFilter,

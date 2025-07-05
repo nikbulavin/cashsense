@@ -3,10 +3,10 @@ package ru.resodostudios.cashsense.core.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.datetime.Instant
 import ru.resodostudios.cashsense.core.model.data.CurrencyExchangeRate
 import java.math.BigDecimal
 import java.util.Currency
+import kotlin.time.Instant
 
 @Entity(
     tableName = "currency_exchange_rates",

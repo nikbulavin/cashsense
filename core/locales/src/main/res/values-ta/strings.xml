@@ -108,4 +108,6 @@
     <string name="backup_description">எல்லா தரவையும் ஒரு கோப்பாக ஏற்றுமதி செய்க</string>
     <string name="restore">மீட்டமை</string>
     <string name="restore_description">காப்புப்பிரதி கோப்பிலிருந்து தரவுகளை இறக்குமதி செய்க</string>
+    <string name="show_total_balance">மொத்த இருப்பைக் காட்டு</string>
+    <string name="show_total_balance_description">முகப்புத் திரையில் மொத்த நிதிக் கார்டைக் காட்டவும் அல்லது மறைக்கவும்</string>
 </resources>

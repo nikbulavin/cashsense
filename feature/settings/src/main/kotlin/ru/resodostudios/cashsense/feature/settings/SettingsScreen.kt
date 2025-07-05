@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.datetime.Clock
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemShape
@@ -51,6 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
@@ -73,6 +73,7 @@ import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Success
 import java.time.format.FormatStyle
 import java.util.Currency
+import kotlin.time.Clock
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -91,6 +92,7 @@ internal fun SettingsScreen(
         onLanguageUpdate = viewModel::updateLanguage,
         onDataExport = viewModel::exportData,
         onDataImport = viewModel::importData,
+        onTotalBalanceVisibilityUpdate = viewModel::updateTotalBalanceVisibility,
     )
 }
 
@@ -104,6 +106,7 @@ private fun SettingsScreen(
     onLanguageUpdate: (String) -> Unit,
     onDataExport: (Uri) -> Unit,
     onDataImport: (Uri, Boolean) -> Unit,
+    onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
     when (settingsState) {
         Loading -> LoadingState(Modifier.fillMaxSize())
@@ -118,6 +121,7 @@ private fun SettingsScreen(
                     settings = settingsState.settings,
                     onCurrencyUpdate = onCurrencyUpdate,
                     onLanguageUpdate = onLanguageUpdate,
+                    onTotalBalanceVisibilityUpdate = onTotalBalanceVisibilityUpdate,
                 )
                 appearance(
                     settings = settingsState.settings,
@@ -164,8 +168,9 @@ fun SettingsScreenPreview() {
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                         currency = getUsdCurrency(),
-                        language = Language("en", "English"),
+                        language = Language.ENGLISH,
                         availableLanguages = emptyList(),
+                        shouldShowTotalBalance = true,
                     )
                 ),
                 onLicensesClick = {},
@@ -175,6 +180,7 @@ fun SettingsScreenPreview() {
                 onLanguageUpdate = {},
                 onDataExport = {},
                 onDataImport = { _, _ -> },
+                onTotalBalanceVisibilityUpdate = {},
             )
         }
     }
@@ -184,6 +190,7 @@ private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
     onLanguageUpdate: (String) -> Unit,
+    onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
     item {
         SectionTitle(
@@ -219,7 +226,7 @@ private fun LazyListScope.general(
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemShape.Last,
+            shape = ListItemShape.Middle,
             headlineContent = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
@@ -227,7 +234,7 @@ private fun LazyListScope.general(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(settings.language.name) },
+            supportingContent = { Text(settings.language.displayName) },
             onClick = { showLanguageDialog = true },
         )
 
@@ -239,6 +246,25 @@ private fun LazyListScope.general(
                 onDismiss = { showLanguageDialog = false },
             )
         }
+    }
+    item {
+        CsListItemEmphasized(
+            shape = ListItemShape.Last,
+            headlineContent = { Text(stringResource(localesR.string.show_total_balance)) },
+            supportingContent = { Text(stringResource(localesR.string.show_total_balance_description)) },
+            leadingContent = {
+                Icon(
+                    imageVector = CsIcons.Outlined.AccountBalance,
+                    contentDescription = null,
+                )
+            },
+            trailingContent = {
+                CsSwitch(
+                    checked = settings.shouldShowTotalBalance,
+                    onCheckedChange = onTotalBalanceVisibilityUpdate,
+                )
+            },
+        )
     }
 }
 

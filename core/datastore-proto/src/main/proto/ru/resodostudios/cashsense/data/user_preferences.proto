@@ -14,4 +14,6 @@ message UserPreferences {
     string primary_wallet_id = 3;
 
     string currency = 4;
+
+    bool should_show_total_balance = 5;
 }

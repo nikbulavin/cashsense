@@ -5,4 +5,5 @@ data class UserData(
     val useDynamicColor: Boolean,
     val primaryWalletId: String,
     val currency: String,
+    val shouldShowTotalBalance: Boolean,
 )

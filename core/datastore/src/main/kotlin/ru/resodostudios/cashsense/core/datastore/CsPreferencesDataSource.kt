@@ -39,6 +39,7 @@ class CsPreferencesDataSource @Inject constructor(
                 currency = runCatching {
                     Currency.getInstance(it.currency).currencyCode
                 }.getOrDefault(getDefaultCurrency().currencyCode),
+                shouldShowTotalBalance = it.shouldShowTotalBalance,
             )
         }
 
@@ -85,6 +86,14 @@ class CsPreferencesDataSource @Inject constructor(
             }
         } catch (e: IOException) {
             Log.e(TAG, "Failed to update currency.", e)
+        }
+    }
+
+    suspend fun setTotalBalancePreference(shouldShowTotalBalance: Boolean) {
+        runCatching {
+            userPreferences.updateData {
+                it.copy { this.shouldShowTotalBalance = shouldShowTotalBalance }
+            }
         }
     }
 }

@@ -1,17 +1,18 @@
 package ru.resodostudios.cashsense.core.ui.util
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import java.time.temporal.WeekFields
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 fun Instant.getZonedDateTime() = toLocalDateTime(TimeZone.currentSystemDefault())
 
 fun Instant.getZonedYear() = this.getZonedDateTime().year
 
-fun Instant.getZonedMonth() = this.getZonedDateTime().monthNumber
+fun Instant.getZonedMonth() = getZonedDateTime().month.number
 
 fun Instant.getZonedWeek() = this
     .getZonedDateTime()

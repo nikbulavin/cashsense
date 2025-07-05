@@ -108,4 +108,6 @@
     <string name="backup_description">Export all data to a file</string>
     <string name="restore">Restore</string>
     <string name="restore_description">Import data from a backup file</string>
+    <string name="show_total_balance">Show total balance</string>
+    <string name="show_total_balance_description">Display or hide the total funds card on the home screen</string>
 </resources>

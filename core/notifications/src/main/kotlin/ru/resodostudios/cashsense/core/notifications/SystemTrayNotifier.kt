@@ -15,9 +15,7 @@ import androidx.core.app.NotificationCompat.InboxStyle
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -29,6 +27,8 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE = 0

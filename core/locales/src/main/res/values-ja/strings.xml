@@ -108,4 +108,6 @@
     <string name="backup_description">すべてのデータをファイルにエクスポート</string>
     <string name="restore">復元</string>
     <string name="restore_description">バックアップファイルからデータをインポート</string>
+    <string name="show_total_balance">合計残高を表示</string>
+    <string name="show_total_balance_description">ホーム画面で合計資金額カードを表示または非表示にします</string>
 </resources>

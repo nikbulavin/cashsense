@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import kotlinx.datetime.Month
+import kotlinx.datetime.number
+import kotlinx.datetime.toJavaMonth
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
@@ -463,7 +465,8 @@ private fun FilterBySelectedDateTypeRow(
         val selectedDate = when (transactionFilter.dateType) {
             YEAR -> transactionFilter.selectedDate.year.toString()
             MONTH -> {
-                val monthName = Month(transactionFilter.selectedDate.monthNumber)
+                val monthName = Month(transactionFilter.selectedDate.month.number)
+                    .toJavaMonth()
                     .getDisplayName(
                         TextStyle.FULL_STANDALONE,
                         Locale.getDefault()

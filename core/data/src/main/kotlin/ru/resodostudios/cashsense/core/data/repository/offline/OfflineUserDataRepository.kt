@@ -43,4 +43,8 @@ internal class OfflineUserDataRepository @Inject constructor(
 
     override fun importData(backupFileUri: Uri, restart: Boolean) =
         databaseTransferManager.import(backupFileUri, restart)
+
+    override suspend fun setTotalBalancePreference(shouldShowTotalBalance: Boolean) {
+        csPreferencesDataSource.setTotalBalancePreference(shouldShowTotalBalance)
+    }
 }

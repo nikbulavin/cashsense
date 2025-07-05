@@ -108,4 +108,6 @@
     <string name="backup_description">Exportar todos los datos a un archivo</string>
     <string name="restore">Restaurar</string>
     <string name="restore_description">Importar datos desde un archivo de copia de seguridad</string>
+    <string name="show_total_balance">Mostrar saldo total</string>
+    <string name="show_total_balance_description">Mostrar u ocultar la tarjeta de fondos totales en la pantalla de inicio</string>
 </resources>

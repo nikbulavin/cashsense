@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.util
 
+import kotlinx.datetime.number
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
 import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
@@ -50,4 +51,4 @@ private fun matchesSelectedDate(
     transaction: Transaction,
     transactionFilter: TransactionFilter,
 ) = transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year &&
-        transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.monthNumber
+        transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.month.number
