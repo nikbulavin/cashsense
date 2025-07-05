@@ -5,33 +5,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.LineHeightStyle.Alignment
 import androidx.compose.ui.text.style.LineHeightStyle.Trim
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
 
-internal val fontProvider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs,
-)
-
-internal val RobotoSlabFont = GoogleFont("Roboto Slab")
-internal val PoppinsFont = GoogleFont("Poppins")
-
 internal val RobotoSlabFontFamily = FontFamily(
-    Font(googleFont = RobotoSlabFont, fontProvider = fontProvider),
     Font(resId = R.font.roboto_slab_regular),
-    Font(googleFont = RobotoSlabFont, fontProvider = fontProvider, weight = FontWeight.Medium),
     Font(resId = R.font.roboto_slab_medium, weight = FontWeight.Medium),
 )
 internal val PoppinsFontFamily = FontFamily(
-    Font(googleFont = PoppinsFont, fontProvider = fontProvider),
     Font(resId = R.font.poppins_regular),
-    Font(googleFont = PoppinsFont, fontProvider = fontProvider, weight = FontWeight.Medium),
     Font(resId = R.font.poppins_medium, weight = FontWeight.Medium),
 )
 

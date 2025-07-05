@@ -13,5 +13,4 @@ dependencies {
     api(libs.androidx.compose.ui.util)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.compose.ui.text.google.fonts)
 }
