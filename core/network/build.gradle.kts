@@ -23,9 +23,4 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.resources)
     implementation(libs.ktor.serialization.kotlinx.json)
-
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.okhttp.logging)
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.kotlin.serialization)
 }
