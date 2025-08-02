@@ -5,12 +5,14 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.network.CsNetworkDataSource
-import ru.resodostudios.cashsense.core.network.retrofit.RetrofitCsNetwork
+import ru.resodostudios.cashsense.core.network.ktor.KtorCsNetwork
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface NetworkDataModule {
+internal abstract class NetworkDataModule {
 
     @Binds
-    fun bindsCsNetworkDataSource(impl: RetrofitCsNetwork): CsNetworkDataSource
+    internal abstract fun bindsCsNetworkDataSource(
+        csNetworkDataSource: KtorCsNetwork
+    ): CsNetworkDataSource
 }
