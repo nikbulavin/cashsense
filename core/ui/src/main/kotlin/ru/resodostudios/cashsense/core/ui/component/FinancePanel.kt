@@ -246,6 +246,7 @@ private fun SharedTransitionScope.FinanceCard(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
             ) {
                 Text(
@@ -267,6 +268,7 @@ private fun SharedTransitionScope.FinanceCard(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
             )
             LinearProgressIndicator(
@@ -347,6 +349,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
         ) {
             Text(
@@ -367,6 +370,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
             style = MaterialTheme.typography.labelLarge,
             maxLines = 1,
