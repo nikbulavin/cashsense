@@ -45,6 +45,18 @@ and [three levels of contrast][m3contrast].
 If you'd like to contribute to translating this app, you can [join][crowdinInvite] our localization efforts. 
 Your contributions will help ensure that everyone can enjoy the app in their native language.
 
+# Donate
+
+If you like this project, you can support it with crypto donations:
+
+| Cryptocurrency | Address |
+|----------------|---------|
+| **Bitcoin (BTC)** | `bc1qn2dd85ek6dm8mm3wu3ws6cq507zgrtlgatl20z` |
+| **Ethereum (ETH)** | `0x78cD353134CbffeD8B941fF05a3Ac8B0bBd308e6` |
+| **USDT (TRC20)** | `TNs7AvHQ2TjFDKMA7nJ1US31A57tRUMvqN` |
+| **Toncoin (TON)** | `UQA9a2q2RnLsSbJKdrKTAQcMrGnYVXV31CRgHCTZ8706mEfT` |
+| **Litecoin (LTC)** | `ltc1q8qrcnc6y3ajg7xslaxy6n90d8hk3252amzq8aw` |
+
 # License
 
 **Cash Sense** is distributed under the terms of the Apache License (Version 2.0). See the
