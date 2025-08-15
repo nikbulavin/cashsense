@@ -74,7 +74,6 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.domain)
     implementation(projects.core.model)
-    implementation(projects.core.shortcuts)
     implementation(projects.core.ui)
 
     implementation(projects.work)
