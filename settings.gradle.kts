@@ -33,6 +33,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":baselineprofile")
 include(":mobile")
 
+include(":core:analytics")
 include(":core:common")
 include(":core:database")
 include(":core:datastore")
