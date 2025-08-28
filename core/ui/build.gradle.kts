@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+    api(projects.core.analytics)
     api(projects.core.designsystem)
     api(projects.core.locales)
     api(projects.core.model)

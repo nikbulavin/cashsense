@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsUiState.Loading
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsUiState.Success
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -106,6 +107,7 @@ internal fun SubscriptionsScreen(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "Subscriptions")
 }
 
 @Composable
