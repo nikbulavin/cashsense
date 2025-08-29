@@ -33,6 +33,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
+import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
@@ -45,6 +47,7 @@ import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
+import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -84,6 +87,7 @@ private fun TransferDialog(
     onDateUpdate: (Instant) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val analyticsHelper = LocalAnalyticsHelper.current
     CsAlertDialog(
         titleRes = localesR.string.new_transfer,
         confirmButtonTextRes = localesR.string.transfer,
@@ -91,6 +95,9 @@ private fun TransferDialog(
         icon = CsIcons.Outlined.SendMoney,
         onConfirm = {
             onTransferSave(transferState)
+            analyticsHelper.logNewItemAdded(
+                itemType = AnalyticsEvent.ItemTypes.TRANSFER,
+            )
             onDismiss()
         },
         isConfirmEnabled = transferState.amount.isAmountValid() &&

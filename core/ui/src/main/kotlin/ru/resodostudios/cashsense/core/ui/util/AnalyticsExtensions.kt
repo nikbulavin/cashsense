@@ -11,10 +11,21 @@ import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 
 private fun AnalyticsHelper.logScreenView(screenName: String) {
     logEvent(
-        AnalyticsEvent(
+        event = AnalyticsEvent(
             type = Types.SCREEN_VIEW,
             extras = listOf(
                 Param(ParamKeys.SCREEN_NAME, screenName),
+            ),
+        ),
+    )
+}
+
+fun AnalyticsHelper.logNewItemAdded(itemType: String) {
+    logEvent(
+        event = AnalyticsEvent(
+            type = Types.ADD_ITEM,
+            extras = listOf(
+                Param(ParamKeys.ITEM_TYPE, itemType),
             ),
         ),
     )

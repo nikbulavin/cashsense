@@ -17,6 +17,7 @@ data class AnalyticsEvent(
     class Types {
         companion object {
             const val SCREEN_VIEW = "screen_view" // (extras: SCREEN_NAME)
+            const val ADD_ITEM = "add_item" // (extras: ITEM_TYPE)
         }
     }
 
@@ -35,6 +36,17 @@ data class AnalyticsEvent(
     class ParamKeys {
         companion object {
             const val SCREEN_NAME = "screen_name"
+            const val ITEM_TYPE = "item_type"
+        }
+    }
+
+    class ItemTypes {
+        companion object {
+            const val CATEGORY = "category"
+            const val SUBSCRIPTION = "subscription"
+            const val TRANSACTION = "transaction"
+            const val TRANSFER = "transfer"
+            const val WALLET = "wallet"
         }
     }
 }
