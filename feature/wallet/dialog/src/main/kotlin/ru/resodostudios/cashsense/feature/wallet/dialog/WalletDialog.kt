@@ -26,6 +26,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
+import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
@@ -34,7 +36,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
+import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -74,6 +78,7 @@ private fun WalletDialog(
     } else {
         localesR.string.new_wallet to localesR.string.add
     }
+    val analyticsHelper = LocalAnalyticsHelper.current
 
     CsAlertDialog(
         titleRes = titleRes,
@@ -82,6 +87,11 @@ private fun WalletDialog(
         icon = CsIcons.Outlined.Wallet,
         onConfirm = {
             onWalletSave(walletDialogState)
+            if (walletDialogState.id.isBlank()) {
+                analyticsHelper.logNewItemAdded(
+                    itemType = AnalyticsEvent.ItemTypes.WALLET,
+                )
+            }
             onDismiss()
         },
         isConfirmEnabled = walletDialogState.title.isNotBlank(),
@@ -166,4 +176,5 @@ private fun WalletDialog(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "WalletDialog")
 }

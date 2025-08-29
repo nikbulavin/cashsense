@@ -60,6 +60,7 @@ import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -240,6 +241,7 @@ internal fun HomeScreen(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "Home")
 }
 
 private fun LazyStaggeredGridScope.wallets(

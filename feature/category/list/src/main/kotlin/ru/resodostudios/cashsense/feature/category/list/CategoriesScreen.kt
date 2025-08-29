@@ -30,6 +30,7 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -119,6 +120,7 @@ internal fun CategoriesScreen(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "Categories")
 }
 
 private fun LazyGridScope.categories(
