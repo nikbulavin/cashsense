@@ -49,6 +49,7 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.transactions
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -195,6 +196,7 @@ private fun WalletScreen(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "Wallet")
 }
 
 @OptIn(

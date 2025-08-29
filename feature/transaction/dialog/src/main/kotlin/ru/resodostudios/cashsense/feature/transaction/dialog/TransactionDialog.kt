@@ -44,6 +44,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
+import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
@@ -65,8 +67,10 @@ import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
+import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCategory
@@ -108,6 +112,7 @@ private fun TransactionDialog(
         localesR.string.new_transaction to localesR.string.add
     }
     val activity = LocalActivity.current
+    val analyticsHelper = LocalAnalyticsHelper.current
 
     CsAlertDialog(
         titleRes = titleRes,
@@ -116,6 +121,11 @@ private fun TransactionDialog(
         icon = CsIcons.Outlined.ReceiptLong,
         onConfirm = {
             activity?.let { onTransactionEvent(Save(transactionDialogState, it)) }
+            if (transactionDialogState.transactionId.isBlank()) {
+                analyticsHelper.logNewItemAdded(
+                    itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
+                )
+            }
             onDismiss()
         },
         isConfirmEnabled = transactionDialogState.amount.isAmountValid(),
@@ -214,6 +224,7 @@ private fun TransactionDialog(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "TransactionDialog")
 }
 
 @Composable

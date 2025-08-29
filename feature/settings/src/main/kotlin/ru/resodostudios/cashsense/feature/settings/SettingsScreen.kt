@@ -53,6 +53,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.settings.SettingsUiState.Loading
@@ -123,6 +124,7 @@ private fun SettingsScreen(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "Settings")
 }
 
 @Composable

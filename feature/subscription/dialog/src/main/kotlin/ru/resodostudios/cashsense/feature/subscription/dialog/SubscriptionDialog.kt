@@ -40,6 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus.Denied
 import com.google.accompanist.permissions.rememberPermissionState
+import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
+import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
@@ -50,8 +52,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
+import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.UpdateCurrency
@@ -86,6 +90,7 @@ fun SubscriptionDialog(
     } else {
         localesR.string.new_subscription to localesR.string.add
     }
+    val analyticsHelper = LocalAnalyticsHelper.current
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -94,6 +99,11 @@ fun SubscriptionDialog(
         icon = CsIcons.Outlined.Autorenew,
         onConfirm = {
             onSubscriptionEvent(Save(subscriptionDialogState.asSubscription()))
+            if (subscriptionDialogState.id.isBlank()) {
+                analyticsHelper.logNewItemAdded(
+                    itemType = AnalyticsEvent.ItemTypes.SUBSCRIPTION,
+                )
+            }
             onDismiss()
         },
         isConfirmEnabled = subscriptionDialogState.title.isNotBlank() &&
@@ -192,6 +202,7 @@ fun SubscriptionDialog(
 
         if (subscriptionDialogState.isReminderEnabled) NotificationPermissionEffect()
     }
+    TrackScreenViewEvent(screenName = "SubscriptionDialog")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
