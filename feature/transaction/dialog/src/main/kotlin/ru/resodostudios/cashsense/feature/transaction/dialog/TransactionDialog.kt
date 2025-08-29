@@ -65,6 +65,7 @@ import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
@@ -214,6 +215,7 @@ private fun TransactionDialog(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "TransactionDialog")
 }
 
 @Composable

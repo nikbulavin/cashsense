@@ -34,6 +34,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -166,4 +167,5 @@ private fun WalletDialog(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "WalletDialog")
 }

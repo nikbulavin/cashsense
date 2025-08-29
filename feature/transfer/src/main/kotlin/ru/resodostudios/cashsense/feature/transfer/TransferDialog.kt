@@ -41,6 +41,7 @@ import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.OutlinedAmountField
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
@@ -183,6 +184,7 @@ private fun TransferDialog(
             }
         }
     }
+    TrackScreenViewEvent(screenName = "TransferDialog")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

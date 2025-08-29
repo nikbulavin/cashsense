@@ -50,6 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.subscription.dialog.SubscriptionDialogEvent.Save
@@ -192,6 +193,7 @@ fun SubscriptionDialog(
 
         if (subscriptionDialogState.isReminderEnabled) NotificationPermissionEffect()
     }
+    TrackScreenViewEvent(screenName = "SubscriptionDialog")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
