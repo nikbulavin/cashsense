@@ -7,9 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
@@ -25,6 +27,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -36,10 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -115,6 +120,7 @@ fun HomeScreen(
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalHazeApi::class,
     ExperimentalHazeMaterialsApi::class,
+    ExperimentalMaterial3Api::class,
 )
 @Composable
 internal fun HomeScreen(
@@ -149,17 +155,22 @@ internal fun HomeScreen(
         clearUndoState()
     }
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
         topBar = {
             CsTopAppBar(
                 titleRes = localesR.string.app_name,
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.topAppBarColors().copy(
+                    scrolledContainerColor = Color.Transparent,
+                    containerColor = Color.Transparent,
+                ),
             )
         },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding),
-        ) {
+        Box {
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.regular(MaterialTheme.colorScheme.surface)
 
@@ -198,6 +209,7 @@ internal fun HomeScreen(
                                     startY = 95f,
                                 )
                             ),
+                        topPadding = innerPadding.calculateTopPadding(),
                     ) {
                         AnimatedContent(
                             targetState = totalBalanceState,
@@ -233,7 +245,7 @@ internal fun HomeScreen(
                 Loading -> LoadingState(Modifier.fillMaxSize())
                 Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
                 is Success -> {
-                    val topPadding by animateDpAsState(if (totalBalanceShown) 88.dp else 16.dp)
+                    val topPadding by animateDpAsState(if (totalBalanceShown) 88.dp else 0.dp)
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(300.dp),
                         verticalItemSpacing = 16.dp,
@@ -244,8 +256,8 @@ internal fun HomeScreen(
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,
-                            bottom = 110.dp,
-                            top = topPadding,
+                            bottom = 110.dp + innerPadding.calculateBottomPadding(),
+                            top = topPadding + innerPadding.calculateTopPadding(),
                         ),
                     ) {
                         wallets(
@@ -321,11 +333,12 @@ private fun LazyStaggeredGridScope.wallets(
 private fun TotalBalanceCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    topPadding: Dp = 0.dp,
     headlineContent: @Composable () -> Unit,
 ) {
     val borderBrush = Brush.verticalGradient(
         colors = listOf(Color.Transparent, MaterialTheme.colorScheme.outlineVariant),
-        startY = 75f,
+        startY = 200f,
     )
     OutlinedCard(
         shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
@@ -336,6 +349,7 @@ private fun TotalBalanceCard(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.25f),
         ),
     ) {
+        Spacer(Modifier.height(topPadding))
         CsListItem(
             leadingContent = {
                 Icon(
