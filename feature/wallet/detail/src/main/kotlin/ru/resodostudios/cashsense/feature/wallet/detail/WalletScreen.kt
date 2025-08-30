@@ -57,7 +57,6 @@ fun WalletScreen(
     onDeleteClick: (String) -> Unit,
     showNavigationIcon: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
@@ -71,7 +70,6 @@ fun WalletScreen(
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        modifier = modifier,
         updateTransactionId = viewModel::updateTransactionId,
         onUpdateTransactionIgnoring = viewModel::updateTransactionIgnoring,
         onDeleteTransaction = viewModel::deleteTransaction,
@@ -99,13 +97,12 @@ private fun WalletScreen(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     updateTransactionId: (String) -> Unit = {},
     onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
     onDeleteTransaction: () -> Unit = {},
 ) {
     when (walletState) {
-        WalletUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
