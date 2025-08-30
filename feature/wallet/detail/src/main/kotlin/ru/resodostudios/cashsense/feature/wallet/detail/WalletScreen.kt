@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,8 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -143,15 +139,11 @@ private fun WalletScreen(
                 )
             }
 
-            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
             Scaffold(
-                modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     WalletTopBar(
                         userWallet = walletState.userWallet,
                         showNavigationIcon = showNavigationIcon,
-                        scrollBehavior = scrollBehavior,
                         onBackClick = onBackClick,
                         onNewTransactionClick = {
                             navigateToTransactionDialog(walletState.userWallet.id, null, false)
@@ -162,12 +154,14 @@ private fun WalletScreen(
                         onDeleteClick = onDeleteWallet,
                     )
                 },
-            ) { paddingValues ->
+            ) { innerPadding ->
                 LazyColumn(
-                    contentPadding = PaddingValues(bottom = 110.dp),
+                    contentPadding = PaddingValues(
+                        bottom = 110.dp,
+                    ),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues),
+                        .padding(innerPadding),
                 ) {
                     item {
                         FinancePanel(
@@ -182,7 +176,6 @@ private fun WalletScreen(
                             onSelectedDateUpdate = onSelectedDateUpdate,
                             onCategorySelect = onCategorySelect,
                             onCategoryDeselect = onCategoryDeselect,
-                            modifier = Modifier.padding(top = 6.dp),
                         )
                     }
                     transactions(
@@ -207,7 +200,6 @@ private fun WalletScreen(
 private fun WalletTopBar(
     userWallet: UserWallet,
     showNavigationIcon: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior,
     onBackClick: () -> Unit,
     onNewTransactionClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
@@ -261,11 +253,6 @@ private fun WalletTopBar(
                 onDeleteClick = { onDeleteClick(userWallet.id) },
             )
         },
-        windowInsets = WindowInsets(0, 0, 0, 0),
-        scrollBehavior = scrollBehavior,
-        colors = TopAppBarDefaults.topAppBarColors().copy(
-            scrolledContainerColor = MaterialTheme.colorScheme.surface,
-        ),
     )
 }
 

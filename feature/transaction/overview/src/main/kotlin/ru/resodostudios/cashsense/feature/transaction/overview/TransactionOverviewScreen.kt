@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.transaction.overview
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -218,7 +217,6 @@ private fun TopBar(
                             )
                         }
                     },
-                    windowInsets = WindowInsets(0, 0, 0, 0),
                     scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.topAppBarColors().copy(
                         scrolledContainerColor = MaterialTheme.colorScheme.surface,
