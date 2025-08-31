@@ -266,7 +266,7 @@ internal fun HomeListDetailScreen(
                         when (route) {
                             is TransactionOverviewRoute -> {
                                 TransactionOverviewScreen(
-                                    shouldShowTopBar = !scaffoldNavigator.isListPaneVisible(),
+                                    shouldShowNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
                                     onBackClick = {
                                         coroutineScope.launch {
                                             scaffoldNavigator.navigateBack()

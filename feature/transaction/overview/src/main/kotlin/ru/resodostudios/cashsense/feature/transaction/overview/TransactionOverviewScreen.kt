@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction.overview
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
@@ -44,7 +42,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionOverviewScreen(
-    shouldShowTopBar: Boolean,
+    shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
@@ -53,7 +51,7 @@ fun TransactionOverviewScreen(
     val transactionOverviewState by viewModel.transactionOverviewUiState.collectAsStateWithLifecycle()
 
     TransactionOverviewScreen(
-        shouldShowTopBar = shouldShowTopBar,
+        shouldShowNavigationIcon = shouldShowNavigationIcon,
         onBackClick = onBackClick,
         onTransactionClick = onTransactionClick,
         financePanelUiState = financePanelUiState,
@@ -74,7 +72,7 @@ fun TransactionOverviewScreen(
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
     transactionOverviewState: TransactionOverviewUiState,
-    shouldShowTopBar: Boolean,
+    shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
@@ -126,7 +124,7 @@ private fun TransactionOverviewScreen(
                 topBar = {
                     TopBar(
                         financePanelUiState = financePanelUiState,
-                        shouldShowTopBar = shouldShowTopBar,
+                        shouldShowNavigationIcon = shouldShowNavigationIcon,
                         onBackClick = onBackClick,
                         modifier = Modifier.padding(bottom = 6.dp),
                     )
@@ -167,7 +165,7 @@ private fun TransactionOverviewScreen(
 @Composable
 private fun TopBar(
     financePanelUiState: FinancePanelUiState,
-    shouldShowTopBar: Boolean,
+    shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -175,43 +173,42 @@ private fun TopBar(
         FinancePanelUiState.Loading -> Unit
         FinancePanelUiState.NotShown -> Unit
         is FinancePanelUiState.Shown -> {
-            AnimatedVisibility(shouldShowTopBar) {
-                TopAppBar(
-                    title = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(localesR.string.total_balance),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                subtitle = {
+                    AnimatedAmount(
+                        targetState = financePanelUiState.totalBalance,
+                        label = "TotalBalance",
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
                         Text(
-                            text = stringResource(localesR.string.total_balance),
+                            text = financePanelUiState.totalBalance.formatAmount(
+                                currency = financePanelUiState.userCurrency,
+                                withApproximately = financePanelUiState.shouldShowApproximately,
+                            ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                    },
-                    subtitle = {
-                        AnimatedAmount(
-                            targetState = financePanelUiState.totalBalance,
-                            label = "TotalBalance",
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = financePanelUiState.totalBalance.formatAmount(
-                                    currency = financePanelUiState.userCurrency,
-                                    withApproximately = financePanelUiState.shouldShowApproximately,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.ArrowBack,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    modifier = modifier,
-                )
-            }
+                    }
+                },
+                navigationIcon = {
+                    if (shouldShowNavigationIcon) {
+                        CsIconButton(
+                            onClick = onBackClick,
+                            icon = CsIcons.Outlined.ArrowBack,
+                            contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                        )
+                    }
+                },
+                modifier = modifier,
+            )
         }
     }
 }
