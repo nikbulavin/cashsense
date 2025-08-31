@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Context
-import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,17 +13,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,6 +40,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
@@ -83,6 +88,7 @@ internal fun SettingsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
     settingsState: SettingsUiState,
@@ -95,32 +101,54 @@ private fun SettingsScreen(
     onDataImport: (Uri, Boolean) -> Unit,
     onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
-    when (settingsState) {
-        Loading -> LoadingState(Modifier.fillMaxSize())
-        is Success -> {
-            val context = LocalContext.current
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                general(
-                    settings = settingsState.settings,
-                    onCurrencyUpdate = onCurrencyUpdate,
-                    onLanguageUpdate = onLanguageUpdate,
-                    onTotalBalanceVisibilityUpdate = onTotalBalanceVisibilityUpdate,
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Scaffold(
+        topBar = {
+            CsTopAppBar(
+                titleRes = localesR.string.settings_title,
+                scrollBehavior = scrollBehavior,
+                colors = TopAppBarDefaults.topAppBarColors().copy(
+                    scrolledContainerColor = Color.Transparent,
+                    containerColor = Color.Transparent,
+                ),
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { innerPadding ->
+        when (settingsState) {
+            Loading -> {
+                LoadingState(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
                 )
-                appearance(
-                    settings = settingsState.settings,
-                    onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
-                    onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
-                )
-                backupAndRestore(
-                    onDataExport = onDataExport,
-                    onDataImport = onDataImport,
-                )
-                about(
-                    context = context,
-                    onLicensesClick = onLicensesClick,
-                )
+            }
+
+            is Success -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = innerPadding,
+                ) {
+                    general(
+                        settings = settingsState.settings,
+                        onCurrencyUpdate = onCurrencyUpdate,
+                        onLanguageUpdate = onLanguageUpdate,
+                        onTotalBalanceVisibilityUpdate = onTotalBalanceVisibilityUpdate,
+                    )
+                    appearance(
+                        settings = settingsState.settings,
+                        onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
+                        onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
+                    )
+                    backupAndRestore(
+                        onDataExport = onDataExport,
+                        onDataImport = onDataImport,
+                    )
+                    about(
+                        onLicensesClick = onLicensesClick,
+                    )
+                }
             }
         }
     }
@@ -368,11 +396,11 @@ private fun LazyListScope.backupAndRestore(
 }
 
 private fun LazyListScope.about(
-    context: Context,
     onLicensesClick: () -> Unit,
 ) {
     item { SectionTitle(stringResource(localesR.string.about)) }
     item {
+        val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
         CsListItem(
@@ -393,6 +421,7 @@ private fun LazyListScope.about(
         )
     }
     item {
+        val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
         CsListItem(
@@ -425,9 +454,9 @@ private fun LazyListScope.about(
         )
     }
     item {
-        val packageInfo: PackageInfo? =
-            context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo?.versionName ?: stringResource(localesR.string.none)
+        val context = LocalContext.current
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo?.versionName ?: "?.?.?"
         val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             "(${packageInfo?.longVersionCode})"
         } else {
