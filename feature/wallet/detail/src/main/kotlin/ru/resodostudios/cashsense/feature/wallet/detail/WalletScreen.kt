@@ -153,9 +153,7 @@ private fun WalletScreen(
                 },
             ) { innerPadding ->
                 LazyColumn(
-                    contentPadding = PaddingValues(
-                        bottom = 110.dp,
-                    ),
+                    contentPadding = PaddingValues(bottom = 110.dp),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
