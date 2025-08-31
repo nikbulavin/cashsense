@@ -9,12 +9,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
@@ -226,21 +231,19 @@ private fun WalletTopBar(
         },
         navigationIcon = {
             if (showNavigationIcon) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = CsIcons.Outlined.ArrowBack,
-                        contentDescription = null,
-                    )
-                }
+                CsIconButton(
+                    onClick = onBackClick,
+                    icon = CsIcons.Outlined.ArrowBack,
+                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                )
             }
         },
         actions = {
-            IconButton(onClick = onNewTransactionClick) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Add,
-                    contentDescription = stringResource(localesR.string.add_transaction),
-                )
-            }
+            CsIconButton(
+                onClick = onNewTransactionClick,
+                icon = CsIcons.Outlined.Add,
+                contentDescription = stringResource(localesR.string.add_transaction),
+            )
             PrimaryToggleButton(userWallet, onPrimaryClick)
             WalletDropdownMenu(
                 onTransferClick = { onTransferClick(userWallet.id) },
@@ -251,29 +254,39 @@ private fun WalletTopBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimaryToggleButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
     val (primaryIcon, @StringRes primaryIconContentDescriptionRes) = if (userWallet.isPrimary) {
-        CsIcons.Filled.Star to localesR.string.primary_icon_description
+        CsIcons.Filled.Star to localesR.string.non_primary_icon_description
     } else {
-        CsIcons.Outlined.Star to localesR.string.non_primary_icon_description
+        CsIcons.Outlined.Star to localesR.string.primary_icon_description
     }
     val hapticFeedback = LocalHapticFeedback.current
-    IconToggleButton(
-        checked = userWallet.isPrimary,
-        onCheckedChange = { isChecked ->
-            hapticFeedback.performHapticFeedback(
-                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-            )
-            onPrimaryClick(userWallet.id, isChecked)
-        },
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below,
+        ),
+        tooltip = { PlainTooltip { Text(stringResource(primaryIconContentDescriptionRes)) } },
+        state = rememberTooltipState(),
     ) {
-        Icon(
-            imageVector = primaryIcon,
-            contentDescription = stringResource(primaryIconContentDescriptionRes),
-        )
+        IconToggleButton(
+            checked = userWallet.isPrimary,
+            onCheckedChange = { isChecked ->
+                hapticFeedback.performHapticFeedback(
+                    if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onPrimaryClick(userWallet.id, isChecked)
+            },
+        ) {
+            Icon(
+                imageVector = primaryIcon,
+                contentDescription = stringResource(primaryIconContentDescriptionRes),
+            )
+        }
     }
 }
