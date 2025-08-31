@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="close">Закрыть</string>
   <string name="currency">Валюта</string>
   <string name="ok">ОК</string>
   <string name="cancel">Отменить</string>

@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.PlainTooltip
@@ -31,6 +32,32 @@ fun CsIconButton(
         state = rememberTooltipState(),
     ) {
         IconButton(onClick = onClick) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CsFilledTonalIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Below,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        FilledTonalIconButton(onClick = onClick) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
