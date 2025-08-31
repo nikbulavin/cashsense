@@ -9,18 +9,18 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 @Composable
 fun CsSwitch(
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     Switch(
         checked = checked,
-        onCheckedChange = { isChecked ->
+        onCheckedChange = if (onCheckedChange != null) { isChecked ->
             hapticFeedback.performHapticFeedback(
                 if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
             )
             onCheckedChange(isChecked)
-        },
+        } else null,
         modifier = modifier,
     )
 }
