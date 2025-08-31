@@ -91,8 +91,10 @@ private fun SubscriptionsScreen(
                         .fillMaxSize(),
                 )
             }
+
             is Success -> {
-                val subscriptionDeletedMessage = stringResource(localesR.string.subscription_deleted)
+                val subscriptionDeletedMessage =
+                    stringResource(localesR.string.subscription_deleted)
                 val undoText = stringResource(localesR.string.undo)
 
                 LaunchedEffect(subscriptionsState.shouldDisplayUndoSubscription) {
