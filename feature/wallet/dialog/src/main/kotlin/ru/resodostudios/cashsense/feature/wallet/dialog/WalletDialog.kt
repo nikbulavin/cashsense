@@ -8,7 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
@@ -62,6 +62,7 @@ internal fun WalletDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WalletDialog(
     walletDialogState: WalletDialogUiState,
@@ -153,20 +154,12 @@ private fun WalletDialog(
                         .padding(bottom = 8.dp),
                     enabled = walletDialogState.isCurrencyEditable,
                 )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.primary)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Star,
-                            contentDescription = null,
-                        )
-                    },
-                    trailingContent = {
-                        CsSwitch(
-                            checked = walletDialogState.isPrimary,
-                            onCheckedChange = onPrimaryUpdate,
-                        )
-                    }
+                CsTonalToggleButton(
+                    checked = walletDialogState.isPrimary,
+                    icon = if (walletDialogState.isPrimary) CsIcons.Filled.Star else CsIcons.Outlined.Star,
+                    titleRes = localesR.string.primary,
+                    onCheckedChange = onPrimaryUpdate,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             LaunchedEffect(walletDialogState.id) {
