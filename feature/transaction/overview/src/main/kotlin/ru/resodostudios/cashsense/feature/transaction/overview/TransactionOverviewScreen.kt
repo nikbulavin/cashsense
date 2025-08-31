@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.transaction.overview
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,15 +15,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -126,16 +122,12 @@ private fun TransactionOverviewScreen(
                 )
             }
 
-            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
             Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     TopBar(
                         financePanelUiState = financePanelUiState,
                         shouldShowTopBar = shouldShowTopBar,
                         onBackClick = onBackClick,
-                        scrollBehavior = scrollBehavior,
                         modifier = Modifier.padding(bottom = 6.dp),
                     )
                 },
@@ -177,7 +169,6 @@ private fun TopBar(
     financePanelUiState: FinancePanelUiState,
     shouldShowTopBar: Boolean,
     onBackClick: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier,
 ) {
     when (financePanelUiState) {
@@ -218,11 +209,6 @@ private fun TopBar(
                             )
                         }
                     },
-                    windowInsets = WindowInsets(0, 0, 0, 0),
-                    scrollBehavior = scrollBehavior,
-                    colors = TopAppBarDefaults.topAppBarColors().copy(
-                        scrolledContainerColor = MaterialTheme.colorScheme.surface,
-                    ),
                     modifier = modifier,
                 )
             }

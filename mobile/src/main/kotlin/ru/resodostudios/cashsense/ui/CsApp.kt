@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -45,7 +44,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
-import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
@@ -182,36 +180,26 @@ fun CsApp(
             modifier = Modifier.semantics {
                 testTagsAsResourceId = true
             },
-        ) { padding ->
-            Column(
+        ) { innerPadding ->
+            CsNavHost(
+                appState = appState,
+                onShowSnackbar = { message, action ->
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = action,
+                        duration = Short,
+                    ) == ActionPerformed
+                },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .consumeWindowInsets(padding)
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
                     .windowInsetsPadding(
                         WindowInsets.safeDrawing.only(
                             WindowInsetsSides.Horizontal,
                         ),
                     ),
-            ) {
-                if (currentTopLevelDestination != null) {
-                    CsTopAppBar(
-                        titleRes = currentTopLevelDestination.titleTextId,
-                    )
-                }
-
-                CsNavHost(
-                    appState = appState,
-                    onShowSnackbar = { message, action ->
-                        snackbarHostState.showSnackbar(
-                            message = message,
-                            actionLabel = action,
-                            duration = Short,
-                        ) == ActionPerformed
-                    },
-                    modifier = Modifier.padding(padding),
-                )
-            }
+            )
         }
     }
 }

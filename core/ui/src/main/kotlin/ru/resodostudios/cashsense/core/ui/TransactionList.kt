@@ -37,7 +37,9 @@ fun LazyListScope.transactions(
             .toSortedMap(compareByDescending { it })
 
         transactionsByDay.forEach { transactionGroup ->
-            stickyHeader {
+            stickyHeader(
+                contentType = "Date",
+            ) {
                 CsTag(
                     text = transactionGroup.key.formatDate(DateFormatType.DATE, FormatStyle.MEDIUM),
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp),
@@ -47,7 +49,7 @@ fun LazyListScope.transactions(
             items(
                 items = transactionGroup.value,
                 key = { it.transaction.id },
-                contentType = { "transactionCategory" },
+                contentType = { "Transaction" },
             ) { transactionCategory ->
                 TransactionItem(
                     transactionCategory = transactionCategory,
