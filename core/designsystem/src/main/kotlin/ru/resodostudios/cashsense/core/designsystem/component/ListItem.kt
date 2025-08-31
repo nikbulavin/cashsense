@@ -45,7 +45,7 @@ fun CsListItem(
 fun CsToggableListItem(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    onToggle: ((Boolean) -> Unit)? = null,
+    onCheckedChange: ((Boolean) -> Unit)? = null,
     checked: Boolean = false,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -58,14 +58,14 @@ fun CsToggableListItem(
         modifier = modifier
             .clip(RoundedCornerShape(18.dp))
             .then(
-                if (onToggle != null) {
+                if (onCheckedChange != null) {
                     Modifier.toggleable(
                         value = checked,
                         onValueChange = { isChecked ->
                             hapticFeedback.performHapticFeedback(
                                 if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
                             )
-                            onToggle(isChecked)
+                            onCheckedChange(isChecked)
                         },
                         role = Role.Switch,
                     )

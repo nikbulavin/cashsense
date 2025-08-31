@@ -277,7 +277,7 @@ private fun LazyListScope.general(
                 )
             },
             checked = settings.shouldShowTotalBalance,
-            onToggle = onTotalBalanceVisibilityUpdate,
+            onCheckedChange = onTotalBalanceVisibilityUpdate,
         )
     }
 }
@@ -335,7 +335,7 @@ private fun LazyListScope.appearance(
                     )
                 },
                 checked = settings.useDynamicColor,
-                onToggle = onDynamicColorPreferenceUpdate,
+                onCheckedChange = onDynamicColorPreferenceUpdate,
             )
         }
     }
