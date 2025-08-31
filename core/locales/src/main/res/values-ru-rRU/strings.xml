@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="next_date">Следующая дата</string>
+  <string name="previous_date">Предыдущая дата</string>
   <string name="close">Закрыть</string>
   <string name="currency">Валюта</string>
   <string name="ok">ОК</string>
