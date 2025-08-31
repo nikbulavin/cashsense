@@ -40,6 +40,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
@@ -260,7 +261,7 @@ private fun LazyListScope.general(
         }
     }
     item {
-        CsListItem(
+        CsToggableListItem(
             headlineContent = { Text(stringResource(localesR.string.show_total_balance)) },
             supportingContent = { Text(stringResource(localesR.string.show_total_balance_description)) },
             leadingContent = {
@@ -272,9 +273,11 @@ private fun LazyListScope.general(
             trailingContent = {
                 CsSwitch(
                     checked = settings.shouldShowTotalBalance,
-                    onCheckedChange = onTotalBalanceVisibilityUpdate,
+                    onCheckedChange = null,
                 )
             },
+            checked = settings.shouldShowTotalBalance,
+            onToggle = onTotalBalanceVisibilityUpdate,
         )
     }
 }
@@ -317,7 +320,7 @@ private fun LazyListScope.appearance(
     }
     item {
         AnimatedVisibility(supportDynamicColor) {
-            CsListItem(
+            CsToggableListItem(
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
@@ -328,9 +331,11 @@ private fun LazyListScope.appearance(
                 trailingContent = {
                     CsSwitch(
                         checked = settings.useDynamicColor,
-                        onCheckedChange = onDynamicColorPreferenceUpdate,
+                        onCheckedChange = null,
                     )
                 },
+                checked = settings.useDynamicColor,
+                onToggle = onDynamicColorPreferenceUpdate,
             )
         }
     }
