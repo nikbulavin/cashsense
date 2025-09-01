@@ -110,4 +110,8 @@
   <string name="restore_description">Daten aus einer Sicherungsdatei importieren</string>
   <string name="show_total_balance">Gesamtsaldo anzeigen</string>
   <string name="show_total_balance_description">Gesamtbetragskarte auf dem Startbildschirm ein- oder ausblenden</string>
+  <string name="app_name">Cash Sense</string>
+  <string name="close">Close</string>
+  <string name="next_date">Next date</string>
+  <string name="previous_date">Previous date</string>
 </resources>
