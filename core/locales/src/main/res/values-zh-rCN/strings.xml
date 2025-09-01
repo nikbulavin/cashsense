@@ -110,4 +110,8 @@
   <string name="restore_description">从备份文件导入数据</string>
   <string name="show_total_balance">显示总余额</string>
   <string name="show_total_balance_description">在主屏幕上显示或隐藏总资金卡片</string>
+  <string name="app_name">Cash Sense</string>
+  <string name="close">Close</string>
+  <string name="next_date">Next date</string>
+  <string name="previous_date">Previous date</string>
 </resources>
