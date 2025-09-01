@@ -110,4 +110,8 @@
   <string name="restore_description">காப்புப்பிரதி கோப்பிலிருந்து தரவுகளை இறக்குமதி செய்க</string>
   <string name="show_total_balance">மொத்த இருப்பைக் காட்டு</string>
   <string name="show_total_balance_description">முகப்புத் திரையில் மொத்த நிதிக் கார்டைக் காட்டவும் அல்லது மறைக்கவும்</string>
+  <string name="app_name">Cash Sense</string>
+  <string name="close">Close</string>
+  <string name="next_date">Next date</string>
+  <string name="previous_date">Previous date</string>
 </resources>
