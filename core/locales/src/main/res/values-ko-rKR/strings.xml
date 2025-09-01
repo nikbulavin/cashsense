@@ -110,4 +110,8 @@
   <string name="restore_description">백업 파일에서 데이터 가져오기</string>
   <string name="show_total_balance">총 잔액 표시</string>
   <string name="show_total_balance_description">홈 화면에 총 자금 카드 표시 또는 숨기기</string>
+  <string name="app_name">Cash Sense</string>
+  <string name="close">Close</string>
+  <string name="next_date">Next date</string>
+  <string name="previous_date">Previous date</string>
 </resources>
