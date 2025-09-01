@@ -110,4 +110,8 @@
   <string name="restore_description">バックアップファイルからデータをインポート</string>
   <string name="show_total_balance">合計残高を表示</string>
   <string name="show_total_balance_description">ホーム画面で合計資金額カードを表示または非表示にします</string>
+  <string name="app_name">Cash Sense</string>
+  <string name="close">Close</string>
+  <string name="next_date">Next date</string>
+  <string name="previous_date">Previous date</string>
 </resources>
