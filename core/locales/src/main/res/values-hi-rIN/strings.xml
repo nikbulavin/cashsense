@@ -110,4 +110,8 @@
   <string name="restore_description">बैकअप फ़ाइल से डेटा आयात करें</string>
   <string name="show_total_balance">कुल शेष राशि दिखाएं</string>
   <string name="show_total_balance_description">होम स्क्रीन पर कुल फंड कार्ड दिखाएं या छिपाएं</string>
+  <string name="app_name">Cash Sense</string>
+  <string name="close">Close</string>
+  <string name="next_date">Next date</string>
+  <string name="previous_date">Previous date</string>
 </resources>
