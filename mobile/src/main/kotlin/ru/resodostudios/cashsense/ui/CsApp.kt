@@ -184,6 +184,7 @@ fun CsApp(
         ) { innerPadding ->
             CsNavHost(
                 appState = appState,
+                navigationSuiteType = navigationSuiteType,
                 onShowSnackbar = { message, action ->
                     snackbarHostState.showSnackbar(
                         message = message,
