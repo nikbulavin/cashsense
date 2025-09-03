@@ -110,8 +110,7 @@
   <string name="restore_description">Importer des données depuis un fichier de sauvegarde</string>
   <string name="show_total_balance">Afficher le solde total</string>
   <string name="show_total_balance_description">Afficher ou masquer la carte du total des fonds sur l\'écran d\'accueil</string>
-  <string name="app_name">Cash Sense</string>
-  <string name="close">Close</string>
-  <string name="next_date">Next date</string>
-  <string name="previous_date">Previous date</string>
+  <string name="close">Fermer</string>
+  <string name="next_date">Date suivante</string>
+  <string name="previous_date">Date précédente</string>
 </resources>
