@@ -15,7 +15,7 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemShape
+import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
@@ -47,10 +47,10 @@ fun LazyListScope.transactions(
                 contentType = { _, _ -> "Transaction" }
             ) { index, transactionCategory ->
                 val shape = when {
-                    index == 0 && transactionGroup.value.size == 1 -> ListItemShape.Single
-                    index == 0 -> ListItemShape.First
-                    index == transactionGroup.value.lastIndex -> ListItemShape.Last
-                    else -> ListItemShape.Middle
+                    index == 0 && transactionGroup.value.size == 1 -> ListItemPositionShapes.Single
+                    index == 0 -> ListItemPositionShapes.First
+                    index == transactionGroup.value.lastIndex -> ListItemPositionShapes.Last
+                    else -> ListItemPositionShapes.Middle
                 }
                 TransactionItem(
                     transaction = transactionCategory.transaction,

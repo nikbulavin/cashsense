@@ -46,7 +46,7 @@ fun CsListItem(
 fun CsToggableListItem(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = ListItemShape.Single,
+    shape: RoundedCornerShape = ListItemPositionShapes.Single,
     onCheckedChange: ((Boolean) -> Unit)? = null,
     checked: Boolean = false,
     overlineContent: @Composable (() -> Unit)? = null,
@@ -89,7 +89,7 @@ fun CsToggableListItem(
 fun CsListItemEmphasized(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = ListItemShape.Single,
+    shape: RoundedCornerShape = ListItemPositionShapes.Single,
     onClick: (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -114,21 +114,33 @@ fun CsListItemEmphasized(
 }
 
 /**
- * An object that provides different shapes for list items.
- * It defines shapes for single, middle, first, and last items in a list.
+ * Defines the shapes for list items based on their position in a list.
+ * This is used to create a visually cohesive list where the corners of items
+ * are rounded differently depending on whether the item is at the beginning,
+ * middle, or end of the list, or if it's a single item.
  *
- * - `Single`: A shape with large rounded corners on all sides, suitable for a standalone list item.
- * - `Middle`: A shape with small rounded corners on all sides, suitable for items in the middle of a list.
- * - `First`: A shape with large rounded corners on the top and small rounded corners on the bottom, suitable for the first item in a list.
- * - `Last`: A shape with small rounded corners on the top and large rounded corners on the bottom, suitable for the last item in a list.
+ * - `Single`: Used for a standalone list item. Has large rounded corners on all sides.
+ * - `Middle`: Used for items in the middle of a list. Has small rounded corners on all sides.
+ * - `First`: Used for the first item in a list. Has large rounded corners on the top and small rounded corners on the bottom.
+ * - `Last`: Used for the last item in a list. Has small rounded corners on the top and large rounded corners on the bottom.
  */
-object ListItemShape {
+object ListItemPositionShapes {
 
-    private val largeCorner = 18.dp
-    private val smallCorner = 6.dp
+    private val largeCornerRadius = 18.dp
+    private val smallCornerRadius = 6.dp
 
-    val Single = RoundedCornerShape(largeCorner)
-    val Middle = RoundedCornerShape(smallCorner)
-    val First = RoundedCornerShape(largeCorner, largeCorner, smallCorner, smallCorner)
-    val Last = RoundedCornerShape(smallCorner, smallCorner, largeCorner, largeCorner)
+    val Single = RoundedCornerShape(largeCornerRadius)
+    val Middle = RoundedCornerShape(smallCornerRadius)
+    val First = RoundedCornerShape(
+        topStart = largeCornerRadius,
+        topEnd = largeCornerRadius,
+        bottomEnd = smallCornerRadius,
+        bottomStart = smallCornerRadius,
+    )
+    val Last = RoundedCornerShape(
+        topStart = smallCornerRadius,
+        topEnd = smallCornerRadius,
+        bottomEnd = largeCornerRadius,
+        bottomStart = largeCornerRadius,
+    )
 }

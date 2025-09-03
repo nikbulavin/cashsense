@@ -50,7 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasiz
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemShape
+import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
@@ -236,7 +236,7 @@ private fun LazyListScope.general(
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemShape.First,
+            shape = ListItemPositionShapes.First,
             headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
@@ -260,7 +260,7 @@ private fun LazyListScope.general(
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemShape.Middle,
+            shape = ListItemPositionShapes.Middle,
             headlineContent = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
@@ -283,7 +283,7 @@ private fun LazyListScope.general(
     }
     item {
         CsToggableListItem(
-            shape = ListItemShape.Last,
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.show_total_balance)) },
             supportingContent = { Text(stringResource(localesR.string.show_total_balance_description)) },
             leadingContent = {
@@ -314,7 +314,7 @@ private fun LazyListScope.appearance(
     item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
         CsListItemEmphasized(
-            shape = if (supportDynamicColor) ListItemShape.First else ListItemShape.Single,
+            shape = if (supportDynamicColor) ListItemPositionShapes.First else ListItemPositionShapes.Single,
             headlineContent = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
@@ -370,7 +370,7 @@ private fun LazyListScope.appearance(
     item {
         AnimatedVisibility(supportDynamicColor) {
             CsToggableListItem(
-                shape = ListItemShape.Last,
+                shape = ListItemPositionShapes.Last,
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
@@ -406,7 +406,7 @@ private fun LazyListScope.backupAndRestore(
         val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
         val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
         CsListItemEmphasized(
-            shape = ListItemShape.First,
+            shape = ListItemPositionShapes.First,
             headlineContent = { Text(stringResource(localesR.string.backup)) },
             leadingContent = {
                 Icon(
@@ -432,7 +432,7 @@ private fun LazyListScope.backupAndRestore(
                 it?.let { onDataImport(it, true) }
             }
         CsListItemEmphasized(
-            shape = ListItemShape.Last,
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.restore)) },
             leadingContent = {
                 Icon(
@@ -461,7 +461,7 @@ private fun LazyListScope.about(
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
         CsListItemEmphasized(
-            shape = ListItemShape.First,
+            shape = ListItemPositionShapes.First,
             headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
@@ -483,7 +483,7 @@ private fun LazyListScope.about(
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
         CsListItemEmphasized(
-            shape = ListItemShape.Middle,
+            shape = ListItemPositionShapes.Middle,
             headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
@@ -502,7 +502,7 @@ private fun LazyListScope.about(
     }
     item {
         CsListItemEmphasized(
-            shape = ListItemShape.Middle,
+            shape = ListItemPositionShapes.Middle,
             headlineContent = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
@@ -524,7 +524,7 @@ private fun LazyListScope.about(
         }
 
         CsListItemEmphasized(
-            shape = ListItemShape.Last,
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {
