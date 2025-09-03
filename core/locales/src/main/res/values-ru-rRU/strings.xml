@@ -110,7 +110,6 @@
   <string name="restore_description">Импорт данных из файла резервной копии</string>
   <string name="show_total_balance">Показывать общий баланс</string>
   <string name="show_total_balance_description">Отобразить или скрыть карточку с общим кол-вом средств на главном экране</string>
-  <string name="app_name">Cash Sense</string>
   <string name="close">Закрыть</string>
   <string name="next_date">Следующая дата</string>
   <string name="previous_date">Предыдущая дата</string>
