@@ -32,8 +32,15 @@ fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: Tran
         }
 
     val availableCategories = filteredTransactions
+        .asSequence()
         .mapNotNull { it.category }
         .distinct()
+        .sortedBy { category ->
+            filteredTransactions
+                .filter { it.category == category }
+                .sumOf { it.transaction.amount }
+        }
+        .toList()
 
     val filteredByCategories = if (transactionFilter.selectedCategories.isNotEmpty()) {
         filteredTransactions.filter { it.category in transactionFilter.selectedCategories }
@@ -50,5 +57,5 @@ fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: Tran
 private fun matchesSelectedDate(
     transaction: Transaction,
     transactionFilter: TransactionFilter,
-) = transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year &&
-        transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.month.number
+) = transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year
+        && transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.month.number
