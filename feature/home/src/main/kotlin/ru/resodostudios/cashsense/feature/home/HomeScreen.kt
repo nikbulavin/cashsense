@@ -160,7 +160,7 @@ internal fun HomeScreen(
     Scaffold(
         topBar = {
             CsTopAppBar(
-                titleRes = localesR.string.app_name,
+                titleRes = R.string.app_name,
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors().copy(
                     scrolledContainerColor = Color.Transparent,
