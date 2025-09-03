@@ -110,8 +110,7 @@
   <string name="restore_description">استيراد البيانات من ملف النسخ الاحتياطي</string>
   <string name="show_total_balance">عرض الرصيد الإجمالي</string>
   <string name="show_total_balance_description">عرض أو إخفاء بطاقة الأموال الإجمالية على الشاشة الرئيسية</string>
-  <string name="app_name">Cash Sense</string>
-  <string name="close">Close</string>
-  <string name="next_date">Next date</string>
-  <string name="previous_date">Previous date</string>
+  <string name="close">إغلاق</string>
+  <string name="next_date">التاريخ التالي</string>
+  <string name="previous_date">التاريخ السابق</string>
 </resources>
