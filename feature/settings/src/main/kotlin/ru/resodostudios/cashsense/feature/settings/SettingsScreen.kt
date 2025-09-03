@@ -10,6 +10,7 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -141,8 +142,13 @@ private fun SettingsScreen(
 
             is Success -> {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = innerPadding,
+                    contentPadding = PaddingValues(
+                        top = 16.dp + innerPadding.calculateTopPadding(),
+                        bottom = 16.dp + innerPadding.calculateBottomPadding(),
+                        start = 16.dp,
+                        end = 16.dp,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     general(
                         settings = settingsState.settings,
