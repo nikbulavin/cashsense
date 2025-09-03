@@ -110,8 +110,7 @@
   <string name="restore_description">Importuj dane z pliku kopii zapasowej</string>
   <string name="show_total_balance">Pokaż całkowite saldo</string>
   <string name="show_total_balance_description">Wyświetl lub ukryj kartę całkowitych środków na ekranie głównym</string>
-  <string name="app_name">Cash Sense</string>
-  <string name="close">Close</string>
-  <string name="next_date">Next date</string>
-  <string name="previous_date">Previous date</string>
+  <string name="close">Zamknij</string>
+  <string name="next_date">Następna data</string>
+  <string name="previous_date">Poprzednia data</string>
 </resources>
