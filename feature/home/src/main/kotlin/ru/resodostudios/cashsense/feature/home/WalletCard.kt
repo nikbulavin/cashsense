@@ -24,9 +24,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
@@ -62,7 +63,7 @@ import java.math.BigDecimal
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WalletCard(
     userWallet: UserWallet,
@@ -126,20 +127,17 @@ fun WalletCard(
         ButtonGroup(
             modifier = Modifier.padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 16.dp),
             overflowIndicator = { menuState ->
-                IconButton(
+                CsIconButton(
                     onClick = {
                         if (menuState.isExpanded) {
                             menuState.dismiss()
                         } else {
                             menuState.show()
                         }
-                    }
-                ) {
-                    Icon(
-                        imageVector = CsIcons.Outlined.MoreVert,
-                        contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
-                    )
-                }
+                    },
+                    icon = CsIcons.Outlined.MoreVert,
+                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+                )
             }
         ) {
             customItem(
@@ -334,7 +332,9 @@ fun WalletCardPreview() {
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },
-                modifier = Modifier.padding(16.dp).width(500.dp),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .width(500.dp),
             )
         }
     }
