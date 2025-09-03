@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -23,11 +23,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,13 +38,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
@@ -73,7 +76,6 @@ fun WalletScreen(
     onDeleteClick: (String) -> Unit,
     showNavigationIcon: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
@@ -87,7 +89,6 @@ fun WalletScreen(
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        modifier = modifier,
         updateTransactionId = viewModel::updateTransactionId,
         onUpdateTransactionIgnoring = viewModel::updateTransactionIgnoring,
         onDeleteTransaction = viewModel::deleteTransaction,
@@ -118,13 +119,12 @@ private fun WalletScreen(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     updateTransactionId: (String) -> Unit = {},
     onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
     onDeleteTransaction: () -> Unit = {},
 ) {
     when (walletState) {
-        WalletUiState.Loading -> LoadingState(modifier.fillMaxSize())
+        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
             var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
             var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
@@ -158,15 +158,11 @@ private fun WalletScreen(
                 )
             }
 
-            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
             Scaffold(
-                modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     WalletTopBar(
                         userWallet = walletState.userWallet,
                         showNavigationIcon = showNavigationIcon,
-                        scrollBehavior = scrollBehavior,
                         onBackClick = onBackClick,
                         onPrimaryClick = onPrimaryClick,
                     )
@@ -317,7 +313,6 @@ private fun BoxScope.WalletToolbar(
 private fun WalletTopBar(
     userWallet: UserWallet,
     showNavigationIcon: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior,
     onBackClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
@@ -344,43 +339,46 @@ private fun WalletTopBar(
         },
         navigationIcon = {
             if (showNavigationIcon) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = CsIcons.Outlined.ArrowBack,
-                        contentDescription = null,
-                    )
-                }
+                CsIconButton(
+                    onClick = onBackClick,
+                    icon = CsIcons.Outlined.ArrowBack,
+                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                )
             }
         },
         actions = { PrimaryToggleButton(userWallet, onPrimaryClick) },
-        windowInsets = WindowInsets(0, 0, 0, 0),
-        scrollBehavior = scrollBehavior,
-        colors = TopAppBarDefaults.topAppBarColors().copy(
-            scrolledContainerColor = MaterialTheme.colorScheme.surface,
-        ),
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimaryToggleButton(
     userWallet: UserWallet,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
-    val (icon, contentDescription) = if (userWallet.isPrimary) {
-        CsIcons.Filled.Star to stringResource(localesR.string.primary_icon_description)
+    val (icon, @StringRes contentDescriptionRes) = if (userWallet.isPrimary) {
+        CsIcons.Filled.Star to localesR.string.non_primary_icon_description
     } else {
-        CsIcons.Outlined.Star to stringResource(localesR.string.non_primary_icon_description)
+        CsIcons.Outlined.Star to localesR.string.primary_icon_description
     }
-    CsIconToggleButton(
-        checked = userWallet.isPrimary,
-        onCheckedChange = { isChecked ->
-            onPrimaryClick(userWallet.id, isChecked)
-        },
-        icon = icon,
-        contentDescription = contentDescription,
-        modifier = Modifier
-            .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-            .padding(end = 4.dp),
-    )
+
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = TooltipAnchorPosition.Below,
+        ),
+        tooltip = { PlainTooltip { Text(stringResource(contentDescriptionRes)) } },
+        state = rememberTooltipState(),
+    ) {
+        CsIconToggleButton(
+            checked = userWallet.isPrimary,
+            onCheckedChange = { isChecked ->
+                onPrimaryClick(userWallet.id, isChecked)
+            },
+            icon = icon,
+            contentDescription = stringResource(contentDescriptionRes),
+            modifier = Modifier
+                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
+                .padding(end = 4.dp),
+        )
+    }
 }

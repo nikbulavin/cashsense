@@ -43,8 +43,7 @@ import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsConnectedButtonGroup
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
@@ -197,20 +196,12 @@ private fun TransactionDialog(
                         .fillMaxWidth()
                         .focusRequester(descTextField),
                 )
-                CsListItem(
-                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Block,
-                            contentDescription = null,
-                        )
-                    },
-                    trailingContent = {
-                        CsSwitch(
-                            checked = transactionDialogState.ignored,
-                            onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
-                        )
-                    },
+                CsTonalToggleButton(
+                    checked = transactionDialogState.ignored,
+                    icon = CsIcons.Outlined.Block,
+                    titleRes = localesR.string.transaction_ignore,
+                    onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             LaunchedEffect(Unit) {

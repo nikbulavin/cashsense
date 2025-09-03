@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
@@ -53,7 +52,7 @@ enum class TopLevelDestination(
         selectedIcon = CsIcons.Filled.Home,
         unselectedIcon = CsIcons.Outlined.Home,
         iconTextId = localesR.string.home_title,
-        titleTextId = R.string.app_name,
+        titleTextId = localesR.string.home_title,
         fabIcon = CsIcons.Outlined.Wallet,
         fabTitle = localesR.string.new_wallet,
         route = HomeRoute::class,

@@ -24,14 +24,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
@@ -41,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -54,6 +50,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaMonth
+import ru.resodostudios.cashsense.core.designsystem.component.CsFilledTonalIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
@@ -282,6 +280,7 @@ private fun SharedTransitionScope.FinanceCard(
 @OptIn(
     ExperimentalSharedTransitionApi::class,
     ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class,
 )
 @Composable
 private fun SharedTransitionScope.DetailedFinanceSection(
@@ -316,19 +315,12 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     .widthIn(max = 500.dp)
                     .weight(1f, false),
             )
-            OutlinedIconButton(
-                shapes = IconButtonDefaults.shapes(),
+            CsFilledTonalIconButton(
                 onClick = onBackClick,
+                icon = CsIcons.Outlined.Close,
+                contentDescription = stringResource(localesR.string.close),
                 modifier = Modifier.padding(start = 12.dp),
-                border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
-                    brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
-                ),
-            ) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Close,
-                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
-                )
-            }
+            )
         }
         AnimatedVisibility(
             visible = transactionFilter.dateType != WEEK,
@@ -446,6 +438,7 @@ private fun FilterDateTypeSelectorRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FilterBySelectedDateTypeRow(
     onSelectedDateUpdate: (Int) -> Unit,
@@ -457,14 +450,11 @@ private fun FilterBySelectedDateTypeRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth(),
     ) {
-        IconButton(
+        CsIconButton(
             onClick = { onSelectedDateUpdate(-1) },
-        ) {
-            Icon(
-                imageVector = CsIcons.Outlined.ChevronLeft,
-                contentDescription = null,
-            )
-        }
+            icon = CsIcons.Outlined.ChevronLeft,
+            contentDescription = stringResource(localesR.string.previous_date),
+        )
 
         val selectedDate = when (transactionFilter.dateType) {
             YEAR -> transactionFilter.selectedDate.year.toString()
@@ -493,14 +483,11 @@ private fun FilterBySelectedDateTypeRow(
             overflow = TextOverflow.Ellipsis,
         )
 
-        IconButton(
+        CsIconButton(
             onClick = { onSelectedDateUpdate(1) },
-        ) {
-            Icon(
-                imageVector = CsIcons.Outlined.ChevronRight,
-                contentDescription = null,
-            )
-        }
+            icon = CsIcons.Outlined.ChevronRight,
+            contentDescription = stringResource(localesR.string.next_date),
+        )
     }
 }
 

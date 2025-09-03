@@ -43,8 +43,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
@@ -168,7 +168,9 @@ fun SubscriptionDialog(
                     .padding(bottom = 16.dp),
                 onlyFutureDates = true,
             )
-            CsListItem(
+            CsToggableListItem(
+                checked = subscriptionDialogState.isReminderEnabled,
+                onCheckedChange = { onSubscriptionEvent(UpdateReminderSwitch(it)) },
                 headlineContent = { Text(stringResource(localesR.string.reminder)) },
                 supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
@@ -180,7 +182,7 @@ fun SubscriptionDialog(
                 trailingContent = {
                     CsSwitch(
                         checked = subscriptionDialogState.isReminderEnabled,
-                        onCheckedChange = { onSubscriptionEvent(UpdateReminderSwitch(it)) },
+                        onCheckedChange = null,
                     )
                 },
             )

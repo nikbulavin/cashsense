@@ -32,7 +32,9 @@ fun LazyListScope.transactions(
 ) {
     if (transactionsCategories.isNotEmpty()) {
         transactionsCategories.forEach { transactionGroup ->
-            stickyHeader {
+            stickyHeader(
+                contentType = "Date",
+            ) {
                 CsTag(
                     text = transactionGroup.key.formatDate(DateFormatType.DATE, FormatStyle.MEDIUM),
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp),
@@ -42,7 +44,7 @@ fun LazyListScope.transactions(
             itemsIndexed(
                 items = transactionGroup.value,
                 key = { _, transactionCategory -> transactionCategory.transaction.id },
-                contentType = { _, _ -> "transaction" }
+                contentType = { _, _ -> "Transaction" }
             ) { index, transactionCategory ->
                 val shape = when {
                     index == 0 && transactionGroup.value.size == 1 -> ListItemShape.Single
