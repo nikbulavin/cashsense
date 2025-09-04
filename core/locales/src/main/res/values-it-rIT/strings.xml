@@ -110,4 +110,7 @@
   <string name="restore_description">Importa dati da un file di backup</string>
   <string name="show_total_balance">Mostra saldo totale</string>
   <string name="show_total_balance_description">Mostra o nascondi la scheda dei fondi totali nella schermata principale</string>
+  <string name="close">Chiudi</string>
+  <string name="next_date">Data successiva</string>
+  <string name="previous_date">Data precedente</string>
 </resources>

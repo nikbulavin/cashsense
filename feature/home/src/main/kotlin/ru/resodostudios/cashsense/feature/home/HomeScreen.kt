@@ -154,7 +154,7 @@ internal fun HomeScreen(
     Scaffold(
         topBar = {
             CsTopAppBar(
-                titleRes = localesR.string.app_name,
+                titleRes = R.string.app_name,
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors().copy(
                     scrolledContainerColor = Color.Transparent,
@@ -174,14 +174,6 @@ internal fun HomeScreen(
                 TotalBalanceUiState.NotShown -> totalBalanceShown = false
                 TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
                     totalBalanceShown = true
-                    val brushColor =
-                        if (totalBalanceState is TotalBalanceUiState.Shown &&
-                            totalBalanceState.shouldShowBadIndicator
-                        ) {
-                            MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.75f)
-                        } else {
-                            Color.Transparent
-                        }
 
                     TotalBalanceCard(
                         onClick = onTotalBalanceClick,
@@ -199,8 +191,7 @@ internal fun HomeScreen(
                             }
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(MaterialTheme.colorScheme.surface, brushColor),
-                                    startY = 95f,
+                                    colors = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
                                 )
                             ),
                         topPadding = innerPadding.calculateTopPadding(),
@@ -404,7 +395,6 @@ fun HomeScreenPopulatedPreview(
                 totalBalanceState = TotalBalanceUiState.Shown(
                     amount = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
-                    shouldShowBadIndicator = true,
                     shouldShowApproximately = true,
                 ),
                 onWalletClick = {},

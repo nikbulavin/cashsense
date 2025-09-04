@@ -23,21 +23,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
-import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
-import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.component.IconPickerDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun CategoryDialog(
+internal fun CategoryDialog(
     onDismiss: () -> Unit,
     viewModel: CategoryDialogViewModel = hiltViewModel(),
 ) {
@@ -53,9 +49,9 @@ fun CategoryDialog(
 }
 
 @Composable
-fun CategoryDialog(
+private fun CategoryDialog(
     categoryDialogState: CategoryDialogUiState,
-    onSaveCategory: (Category) -> Unit,
+    onSaveCategory: (CategoryDialogUiState) -> Unit,
     onUpdateTitle: (String) -> Unit,
     onUpdateIconId: (Int) -> Unit,
     onDismiss: () -> Unit,
@@ -65,7 +61,6 @@ fun CategoryDialog(
     } else {
         localesR.string.new_category to localesR.string.add
     }
-    val analyticsHelper = LocalAnalyticsHelper.current
 
     CsAlertDialog(
         titleRes = dialogTitle,
@@ -73,12 +68,7 @@ fun CategoryDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.Category,
         onConfirm = {
-            onSaveCategory(categoryDialogState.asCategory())
-            if (categoryDialogState.id.isBlank()) {
-                analyticsHelper.logNewItemAdded(
-                    itemType = AnalyticsEvent.ItemTypes.CATEGORY,
-                )
-            }
+            onSaveCategory(categoryDialogState)
             onDismiss()
         },
         isConfirmEnabled = categoryDialogState.title.isNotBlank(),
