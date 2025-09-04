@@ -12,18 +12,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
+import ru.resodostudios.cashsense.core.analytics.AnalyticsHelper
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
 @HiltViewModel
-class CategoryDialogViewModel @Inject constructor(
+internal class CategoryDialogViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
     savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
+    private val analyticsHelper: AnalyticsHelper,
 ) : ViewModel() {
 
     private val categoryDialogDestination: CategoryDialogRoute = savedStateHandle.toRoute()
@@ -49,9 +53,14 @@ class CategoryDialogViewModel @Inject constructor(
         }
     }
 
-    fun saveCategory(category: Category) {
+    fun saveCategory(state: CategoryDialogUiState) {
         appScope.launch {
-            categoriesRepository.upsertCategory(category)
+            if (state.id.isBlank()) {
+                analyticsHelper.logNewItemAdded(
+                    itemType = AnalyticsEvent.ItemTypes.CATEGORY,
+                )
+            }
+            categoriesRepository.upsertCategory(state.asCategory())
         }
     }
 
@@ -76,9 +85,10 @@ data class CategoryDialogUiState(
     val isLoading: Boolean = false,
 )
 
-fun CategoryDialogUiState.asCategory() =
-    Category(
+fun CategoryDialogUiState.asCategory(): Category {
+    return Category(
         id = id.ifBlank { Uuid.random().toHexString() },
         title = title,
         iconId = iconId,
     )
+}
