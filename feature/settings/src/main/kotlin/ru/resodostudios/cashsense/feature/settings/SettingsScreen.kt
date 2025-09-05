@@ -184,7 +184,7 @@ private fun SectionTitle(
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
-        modifier = modifier.padding(top = topPadding, bottom = 12.dp),
+        modifier = modifier.padding(top = topPadding, bottom = 12.dp, start = 8.dp),
         color = MaterialTheme.colorScheme.primary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
