@@ -27,10 +27,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
@@ -175,18 +174,11 @@ fun WalletCard(
             }
             customItem(
                 buttonGroupContent = {
-                    OutlinedIconButton(
-                        shapes = IconButtonDefaults.shapes(),
+                    CsOutlinedIconButton(
                         onClick = { onTransferClick(userWallet.id) },
-                        border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
-                            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
-                        ),
-                    ) {
-                        Icon(
-                            imageVector = CsIcons.Outlined.SendMoney,
-                            contentDescription = addTransferText,
-                        )
-                    }
+                        icon = CsIcons.Outlined.SendMoney,
+                        contentDescription = addTransferText,
+                    )
                 }
             ) { state ->
                 DropdownMenuItem(

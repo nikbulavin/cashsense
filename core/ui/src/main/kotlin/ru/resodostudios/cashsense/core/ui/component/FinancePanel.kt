@@ -50,8 +50,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaMonth
-import ru.resodostudios.cashsense.core.designsystem.component.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
@@ -315,7 +315,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     .widthIn(max = 500.dp)
                     .weight(1f, false),
             )
-            CsFilledTonalIconButton(
+            CsOutlinedIconButton(
                 onClick = onBackClick,
                 icon = CsIcons.Outlined.Close,
                 contentDescription = stringResource(localesR.string.close),
