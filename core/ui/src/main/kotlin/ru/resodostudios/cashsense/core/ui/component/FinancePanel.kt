@@ -266,6 +266,7 @@ private fun SharedTransitionScope.FinanceCard(
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             LinearProgressIndicator(
                 progress = { if (enabled) indicatorProgress else 0f },
@@ -348,7 +349,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     currency = currency,
                     withApproximately = shouldShowApproximately,
                 ),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -364,6 +365,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
             style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
