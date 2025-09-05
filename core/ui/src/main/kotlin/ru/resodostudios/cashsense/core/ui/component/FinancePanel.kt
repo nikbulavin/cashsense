@@ -31,15 +31,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +49,7 @@ import kotlinx.datetime.number
 import kotlinx.datetime.toJavaMonth
 import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
@@ -272,6 +270,7 @@ private fun SharedTransitionScope.FinanceCard(
             LinearProgressIndicator(
                 progress = { if (enabled) indicatorProgress else 0f },
                 modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.secondary,
             )
         }
     }
@@ -403,11 +402,10 @@ private fun FilterDateTypeSelectorRow(
     modifier: Modifier = Modifier,
 ) {
     val dateTypes = listOf(
-        stringResource(localesR.string.week),
-        stringResource(localesR.string.month),
-        stringResource(localesR.string.year),
+        localesR.string.week,
+        localesR.string.month,
+        localesR.string.year,
     )
-    val hapticFeedback = LocalHapticFeedback.current
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -415,25 +413,17 @@ private fun FilterDateTypeSelectorRow(
     ) {
         dateTypes.forEachIndexed { index, label ->
             val checked = transactionFilter.dateType == DateType.entries[index]
-            ToggleButton(
+            CsTonalToggleButton(
                 checked = checked,
-                onCheckedChange = {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    onDateTypeUpdate(DateType.entries[index])
-                },
+                titleRes = label,
+                onCheckedChange = { onDateTypeUpdate(DateType.entries[index]) },
                 shapes = when (index) {
                     0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                     dateTypes.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                     else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                 },
                 modifier = Modifier.weight(1f),
-            ) {
-                Text(
-                    text = label,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+            )
         }
     }
 }
