@@ -40,6 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,17 +57,25 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
+import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
+import ru.resodostudios.cashsense.core.model.data.TransactionFilter
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
+import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -379,6 +389,95 @@ private fun PrimaryToggleButton(
             modifier = Modifier
                 .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
                 .padding(end = 4.dp),
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun WalletScreenPopulatedPreview(
+    @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
+    transactionsCategories: List<TransactionWithCategory>,
+) {
+    CsTheme {
+        WalletScreen(
+            walletState = WalletUiState.Success(
+                transactionFilter = TransactionFilter(
+                    selectedCategories = emptySet(),
+                    financeType = FinanceType.NOT_SET,
+                    dateType = DateType.ALL,
+                    selectedDate = getCurrentZonedDateTime().date,
+                ),
+                userWallet = UserWallet(
+                    id = "1",
+                    title = "Credit",
+                    initialBalance = BigDecimal(1000),
+                    currency = getUsdCurrency(),
+                    isPrimary = true,
+                    currentBalance = BigDecimal(57500),
+                ),
+                selectedTransactionCategory = null,
+                transactionsCategories = transactionsCategories.groupByDate(),
+                availableCategories = emptyList(),
+                expenses = BigDecimal(495.90),
+                income = BigDecimal(1000),
+                graphData = emptyMap(),
+            ),
+            showNavigationIcon = true,
+            onPrimaryClick = { _, _ -> },
+            onTransfer = {},
+            onEditWallet = {},
+            onDeleteWallet = {},
+            onBackClick = {},
+            onDateTypeUpdate = {},
+            onFinanceTypeUpdate = {},
+            onSelectedDateUpdate = {},
+            onCategorySelect = {},
+            onCategoryDeselect = {},
+            navigateToTransactionDialog = { _, _, _ -> },
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun WalletScreenEmptyPreview() {
+    CsTheme {
+        WalletScreen(
+            walletState = WalletUiState.Success(
+                transactionFilter = TransactionFilter(
+                    selectedCategories = emptySet(),
+                    financeType = FinanceType.NOT_SET,
+                    dateType = DateType.ALL,
+                    selectedDate = getCurrentZonedDateTime().date,
+                ),
+                userWallet = UserWallet(
+                    id = "1",
+                    title = "Credit",
+                    initialBalance = BigDecimal(1000),
+                    currency = getUsdCurrency(),
+                    isPrimary = true,
+                    currentBalance = BigDecimal(57500),
+                ),
+                selectedTransactionCategory = null,
+                transactionsCategories = emptyMap(),
+                availableCategories = emptyList(),
+                expenses = BigDecimal(495.90),
+                income = BigDecimal(1000),
+                graphData = emptyMap(),
+            ),
+            showNavigationIcon = true,
+            onPrimaryClick = { _, _ -> },
+            onTransfer = {},
+            onEditWallet = {},
+            onDeleteWallet = {},
+            onBackClick = {},
+            onDateTypeUpdate = {},
+            onFinanceTypeUpdate = {},
+            onSelectedDateUpdate = {},
+            onCategorySelect = {},
+            onCategoryDeselect = {},
+            navigateToTransactionDialog = { _, _, _ -> },
         )
     }
 }
