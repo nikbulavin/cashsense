@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -54,6 +53,8 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -103,105 +104,106 @@ fun FinancePanel(
         modifier = modifier.animateContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
-        val slowAnimationSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
-        SharedTransitionLayout {
-            AnimatedContent(
-                targetState = transactionFilter.financeType,
-                label = "FinancePanel",
-                transitionSpec = {
-                    fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
-                },
-            ) { financeType ->
-                when (financeType) {
-                    NOT_SET -> {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                        ) {
-                            val expensesProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(expenses, income + expenses),
-                                label = "ExpensesProgress",
-                                animationSpec = slowAnimationSpec,
-                            )
-                            val incomeProgress by animateFloatAsState(
-                                targetValue = getFinanceProgress(income, income + expenses),
-                                label = "IncomeProgress",
-                                animationSpec = slowAnimationSpec,
-                            )
-                            FinanceCard(
-                                amount = expenses,
-                                currency = currency,
-                                subtitleRes = localesR.string.expenses,
-                                indicatorProgress = expensesProgress,
-                                modifier = Modifier.weight(1f),
-                                onClick = {
-                                    onFinanceTypeUpdate(EXPENSES)
-                                    onDateTypeUpdate(MONTH)
-                                },
-                                animatedVisibilityScope = this@AnimatedContent,
-                                shouldShowApproximately = shouldShowApproximately,
-                            )
-                            FinanceCard(
-                                amount = income,
-                                currency = currency,
-                                subtitleRes = localesR.string.income_plural,
-                                indicatorProgress = incomeProgress,
-                                modifier = Modifier.weight(1f),
-                                onClick = {
-                                    onFinanceTypeUpdate(INCOME)
-                                    onDateTypeUpdate(MONTH)
-                                },
-                                animatedVisibilityScope = this@AnimatedContent,
-                                shouldShowApproximately = shouldShowApproximately,
-                            )
-                        }
-                    }
-
-                    EXPENSES -> {
-                        DetailedFinanceSection(
+        val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+        AnimatedContent(
+            targetState = transactionFilter.financeType,
+            label = "FinancePanel",
+            transitionSpec = {
+                fadeIn() + scaleIn(animSpec, 0.92f) togetherWith fadeOut(snap())
+            },
+        ) { financeType ->
+            when (financeType) {
+                NOT_SET -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                    ) {
+                        val expensesProgress by animateFloatAsState(
+                            targetValue = getFinanceProgress(expenses, income + expenses),
+                            label = "ExpensesProgress",
+                            animationSpec = animSpec,
+                        )
+                        val incomeProgress by animateFloatAsState(
+                            targetValue = getFinanceProgress(income, income + expenses),
+                            label = "IncomeProgress",
+                            animationSpec = animSpec,
+                        )
+                        FinanceCard(
                             amount = expenses,
-                            graphData = graphData,
-                            transactionFilter = transactionFilter,
                             currency = currency,
                             subtitleRes = localesR.string.expenses,
-                            onBackClick = {
-                                onFinanceTypeUpdate(NOT_SET)
-                                onDateTypeUpdate(ALL)
+                            indicatorProgress = expensesProgress,
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                onFinanceTypeUpdate(EXPENSES)
+                                onDateTypeUpdate(MONTH)
                             },
-                            onDateTypeUpdate = onDateTypeUpdate,
-                            onSelectedDateUpdate = onSelectedDateUpdate,
-                            onCategorySelect = onCategorySelect,
-                            onCategoryDeselect = onCategoryDeselect,
-                            modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
-                            availableCategories = availableCategories,
                             shouldShowApproximately = shouldShowApproximately,
+                            sharedContentState = SharedElementKey.Expenses,
                         )
-                    }
-
-                    INCOME -> {
-                        DetailedFinanceSection(
+                        FinanceCard(
                             amount = income,
-                            graphData = graphData,
-                            transactionFilter = transactionFilter,
                             currency = currency,
                             subtitleRes = localesR.string.income_plural,
-                            onBackClick = {
-                                onFinanceTypeUpdate(NOT_SET)
-                                onDateTypeUpdate(ALL)
+                            indicatorProgress = incomeProgress,
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                onFinanceTypeUpdate(INCOME)
+                                onDateTypeUpdate(MONTH)
                             },
-                            onDateTypeUpdate = onDateTypeUpdate,
-                            onSelectedDateUpdate = onSelectedDateUpdate,
-                            onCategorySelect = onCategorySelect,
-                            onCategoryDeselect = onCategoryDeselect,
-                            modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
-                            availableCategories = availableCategories,
                             shouldShowApproximately = shouldShowApproximately,
+                            sharedContentState = SharedElementKey.Income,
                         )
                     }
+                }
+
+                EXPENSES -> {
+                    DetailedFinanceSection(
+                        amount = expenses,
+                        graphData = graphData,
+                        transactionFilter = transactionFilter,
+                        currency = currency,
+                        subtitleRes = localesR.string.expenses,
+                        onBackClick = {
+                            onFinanceTypeUpdate(NOT_SET)
+                            onDateTypeUpdate(ALL)
+                        },
+                        onDateTypeUpdate = onDateTypeUpdate,
+                        onSelectedDateUpdate = onSelectedDateUpdate,
+                        onCategorySelect = onCategorySelect,
+                        onCategoryDeselect = onCategoryDeselect,
+                        modifier = Modifier.fillMaxWidth(),
+                        animatedVisibilityScope = this@AnimatedContent,
+                        availableCategories = availableCategories,
+                        shouldShowApproximately = shouldShowApproximately,
+                        sharedContentState = SharedElementKey.Expenses,
+                    )
+                }
+
+                INCOME -> {
+                    DetailedFinanceSection(
+                        amount = income,
+                        graphData = graphData,
+                        transactionFilter = transactionFilter,
+                        currency = currency,
+                        subtitleRes = localesR.string.income_plural,
+                        onBackClick = {
+                            onFinanceTypeUpdate(NOT_SET)
+                            onDateTypeUpdate(ALL)
+                        },
+                        onDateTypeUpdate = onDateTypeUpdate,
+                        onSelectedDateUpdate = onSelectedDateUpdate,
+                        onCategorySelect = onCategorySelect,
+                        onCategoryDeselect = onCategoryDeselect,
+                        modifier = Modifier.fillMaxWidth(),
+                        animatedVisibilityScope = this@AnimatedContent,
+                        availableCategories = availableCategories,
+                        shouldShowApproximately = shouldShowApproximately,
+                        sharedContentState = SharedElementKey.Income,
+                    )
                 }
             }
         }
@@ -213,65 +215,73 @@ fun FinancePanel(
     ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
-private fun SharedTransitionScope.FinanceCard(
+private fun FinanceCard(
     amount: BigDecimal,
     currency: Currency,
     @StringRes subtitleRes: Int,
     indicatorProgress: Float,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedContentState: SharedElementKey,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
     shouldShowApproximately: Boolean = false,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
-        onClick = onClick,
-        enabled = enabled,
-    ) {
-        Column(
-            modifier = Modifier.padding(top = 12.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+    with(LocalSharedTransitionScope.current) {
+        OutlinedCard(
+            modifier = modifier,
+            shape = RoundedCornerShape(20.dp),
+            onClick = onClick,
+            enabled = enabled,
         ) {
-            AnimatedAmount(
-                targetState = amount,
-                label = "FinanceCardTitle",
-                modifier = Modifier.sharedBounds(
-                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+            Column(
+                modifier = Modifier.padding(
+                    top = 12.dp,
+                    bottom = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp
                 ),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Text(
-                    text = it.formatAmount(
-                        currency = currency,
-                        withApproximately = shouldShowApproximately,
+                AnimatedAmount(
+                    targetState = amount,
+                    label = "FinanceCardTitle",
+                    modifier = Modifier.sharedBounds(
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        sharedContentState = rememberSharedContentState(sharedContentState),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                     ),
-                    style = MaterialTheme.typography.titleMedium,
+                ) {
+                    Text(
+                        text = it.formatAmount(
+                            currency = currency,
+                            withApproximately = shouldShowApproximately,
+                        ),
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Text(
+                    text = stringResource(subtitleRes),
+                    style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.sharedBounds(
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        sharedContentState = rememberSharedContentState(subtitleRes),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                LinearProgressIndicator(
+                    progress = { if (enabled) indicatorProgress else 0f },
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.secondary,
                 )
             }
-            Text(
-                text = stringResource(subtitleRes),
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.sharedBounds(
-                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState(subtitleRes),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            LinearProgressIndicator(
-                progress = { if (enabled) indicatorProgress else 0f },
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.secondary,
-            )
         }
     }
 }
@@ -282,7 +292,7 @@ private fun SharedTransitionScope.FinanceCard(
     ExperimentalMaterial3Api::class,
 )
 @Composable
-private fun SharedTransitionScope.DetailedFinanceSection(
+private fun DetailedFinanceSection(
     amount: BigDecimal,
     availableCategories: List<Category>,
     graphData: Map<Int, BigDecimal>,
@@ -295,102 +305,105 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedContentState: SharedElementKey,
     modifier: Modifier = Modifier,
     shouldShowApproximately: Boolean = false,
 ) {
-    BackHandler { onBackClick() }
-    Column(modifier) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
-        ) {
-            FilterDateTypeSelectorRow(
-                transactionFilter = transactionFilter,
-                onDateTypeUpdate = onDateTypeUpdate,
+    with(LocalSharedTransitionScope.current) {
+        BackHandler { onBackClick() }
+        Column(modifier) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .widthIn(max = 500.dp)
-                    .weight(1f, false),
-            )
-            CsOutlinedIconButton(
-                onClick = onBackClick,
-                icon = CsIcons.Outlined.Close,
-                contentDescription = stringResource(localesR.string.close),
-                modifier = Modifier.padding(start = 12.dp),
-            )
-        }
-        AnimatedVisibility(
-            visible = transactionFilter.dateType != WEEK,
-            enter = fadeIn() + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
-        ) {
-            FilterBySelectedDateTypeRow(
-                onSelectedDateUpdate = onSelectedDateUpdate,
-                transactionFilter = transactionFilter,
-                modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
-            )
-        }
-        AnimatedAmount(
-            targetState = amount,
-            label = "DetailedFinanceCard",
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
-                .sharedBounds(
-                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                ),
-        ) {
+                    .fillMaxWidth()
+                    .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+            ) {
+                FilterDateTypeSelectorRow(
+                    transactionFilter = transactionFilter,
+                    onDateTypeUpdate = onDateTypeUpdate,
+                    modifier = Modifier
+                        .widthIn(max = 500.dp)
+                        .weight(1f, false),
+                )
+                CsOutlinedIconButton(
+                    onClick = onBackClick,
+                    icon = CsIcons.Outlined.Close,
+                    contentDescription = stringResource(localesR.string.close),
+                    modifier = Modifier.padding(start = 12.dp),
+                )
+            }
+            AnimatedVisibility(
+                visible = transactionFilter.dateType != WEEK,
+                enter = fadeIn() + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
+            ) {
+                FilterBySelectedDateTypeRow(
+                    onSelectedDateUpdate = onSelectedDateUpdate,
+                    transactionFilter = transactionFilter,
+                    modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+                )
+            }
+            AnimatedAmount(
+                targetState = amount,
+                label = "DetailedFinanceCard",
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp)
+                    .sharedBounds(
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        sharedContentState = rememberSharedContentState(sharedContentState),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+                    ),
+            ) {
+                Text(
+                    text = amount.formatAmount(
+                        currency = currency,
+                        withApproximately = shouldShowApproximately,
+                    ),
+                    style = MaterialTheme.typography.headlineLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
             Text(
-                text = amount.formatAmount(
-                    currency = currency,
-                    withApproximately = shouldShowApproximately,
-                ),
-                style = MaterialTheme.typography.headlineLarge,
+                text = stringResource(subtitleRes),
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp)
+                    .sharedBounds(
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        sharedContentState = rememberSharedContentState(subtitleRes),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
+                    ),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-        }
-        Text(
-            text = stringResource(subtitleRes),
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
-                .sharedBounds(
-                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    sharedContentState = rememberSharedContentState(subtitleRes),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
-                ),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        if (graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
-            val modelProducer = remember { CartesianChartModelProducer() }
-            LaunchedEffect(graphData) {
-                modelProducer.runTransaction {
-                    if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
-                    lineSeries { series(graphData.keys, graphData.values) }
+            if (graphData.isNotEmpty() && transactionFilter.financeType != NOT_SET) {
+                val modelProducer = remember { CartesianChartModelProducer() }
+                LaunchedEffect(graphData) {
+                    modelProducer.runTransaction {
+                        if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
+                        lineSeries { series(graphData.keys, graphData.values) }
+                    }
                 }
+                FinanceGraph(
+                    transactionFilter = transactionFilter,
+                    modelProducer = modelProducer,
+                    currency = currency,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                )
             }
-            FinanceGraph(
-                transactionFilter = transactionFilter,
-                modelProducer = modelProducer,
-                currency = currency,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-            )
-        }
-        if (transactionFilter.financeType != NOT_SET) {
-            CategorySelectionRow(
-                availableCategories = availableCategories,
-                selectedCategories = transactionFilter.selectedCategories,
-                onCategorySelect = onCategorySelect,
-                onCategoryDeselect = onCategoryDeselect,
-                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
-            )
+            if (transactionFilter.financeType != NOT_SET) {
+                CategorySelectionRow(
+                    availableCategories = availableCategories,
+                    selectedCategories = transactionFilter.selectedCategories,
+                    onCategorySelect = onCategorySelect,
+                    onCategoryDeselect = onCategoryDeselect,
+                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                )
+            }
         }
     }
 }
@@ -465,7 +478,7 @@ private fun FilterBySelectedDateTypeRow(
     }
 }
 
-fun getFinanceProgress(
+private fun getFinanceProgress(
     value: BigDecimal,
     sumOfIncomeAndExpenses: BigDecimal,
 ): Float {
@@ -475,7 +488,7 @@ fun getFinanceProgress(
 
 @Preview
 @Composable
-fun FinancePanelDefaultPreview(
+private fun FinancePanelDefaultPreview(
     @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
     transactionsCategories: List<TransactionWithCategory>,
 ) {
@@ -507,7 +520,7 @@ fun FinancePanelDefaultPreview(
 
 @Preview
 @Composable
-fun FinancePanelOpenedPreview(
+private fun FinancePanelOpenedPreview(
     @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
     transactionsCategories: List<TransactionWithCategory>,
 ) {

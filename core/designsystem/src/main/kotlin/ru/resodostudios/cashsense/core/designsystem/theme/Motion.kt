@@ -19,6 +19,6 @@ val MotionScheme.sharedElementTransitionSpec: BoundsTransform
             initialBounds: Rect,
             targetBounds: Rect,
         ): FiniteAnimationSpec<Rect> {
-            return this@sharedElementTransitionSpec.slowSpatialSpec()
+            return this@sharedElementTransitionSpec.defaultSpatialSpec()
         }
     }
