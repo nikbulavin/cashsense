@@ -2,8 +2,11 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -104,6 +107,8 @@ class CsAppState(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = InAppUpdateResult.NotAvailable,
         )
+
+    var hideFab by mutableStateOf(false)
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         trace("Navigation: ${topLevelDestination.name}") {

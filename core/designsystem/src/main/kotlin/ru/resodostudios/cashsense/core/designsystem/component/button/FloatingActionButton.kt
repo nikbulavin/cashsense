@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.designsystem.component
+package ru.resodostudios.cashsense.core.designsystem.component.button
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size

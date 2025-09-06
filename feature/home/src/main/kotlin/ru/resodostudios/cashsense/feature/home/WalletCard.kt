@@ -13,12 +13,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -37,20 +44,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WalletCard(
     userWallet: UserWallet,
@@ -59,8 +71,6 @@ fun WalletCard(
     onWalletClick: (String) -> Unit,
     onNewTransactionClick: (String) -> Unit,
     onTransferClick: (String) -> Unit,
-    onEditClick: (String) -> Unit,
-    onDeleteClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
 ) {
@@ -107,36 +117,92 @@ fun WalletCard(
                 expenses = expenses,
                 income = income,
                 currency = userWallet.currency,
-                isPrimary = userWallet.isPrimary,
                 modifier = Modifier.padding(top = 8.dp),
+                isPrimary = userWallet.isPrimary,
             )
         }
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 12.dp)
-                .fillMaxWidth(),
-        ) {
-            Button(
-                onClick = { onNewTransactionClick(userWallet.id) },
-            ) {
-                Text(
-                    text = stringResource(localesR.string.add_transaction),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+        val addTransactionText = stringResource(localesR.string.add_transaction)
+        val addTransferText = stringResource(localesR.string.transfer)
+        ButtonGroup(
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 16.dp),
+            overflowIndicator = { menuState ->
+                CsIconButton(
+                    onClick = {
+                        if (menuState.isExpanded) {
+                            menuState.dismiss()
+                        } else {
+                            menuState.show()
+                        }
+                    },
+                    icon = CsIcons.Outlined.MoreVert,
+                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                 )
             }
-            WalletDropdownMenu(
-                onTransferClick = { onTransferClick(userWallet.id) },
-                onEditClick = { onEditClick(userWallet.id) },
-                onDeleteClick = { onDeleteClick(userWallet.id) },
-            )
+        ) {
+            customItem(
+                buttonGroupContent = {
+                    Button(
+                        onClick = { onNewTransactionClick(userWallet.id) },
+                        shapes = ButtonDefaults.shapes(),
+                    ) {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Add,
+                            contentDescription = addTransactionText,
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(
+                            text = addTransactionText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+            ) { state ->
+                DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Add,
+                            contentDescription = null,
+                        )
+                    },
+                    text = { Text(addTransactionText) },
+                    onClick = {
+                        onNewTransactionClick(userWallet.id)
+                        state.dismiss()
+                    }
+                )
+            }
+            customItem(
+                buttonGroupContent = {
+                    CsOutlinedIconButton(
+                        onClick = { onTransferClick(userWallet.id) },
+                        icon = CsIcons.Outlined.SendMoney,
+                        contentDescription = addTransferText,
+                    )
+                }
+            ) { state ->
+                DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Add,
+                            contentDescription = null,
+                        )
+                    },
+                    text = { Text(addTransferText) },
+                    onClick = {
+                        onTransferClick(userWallet.id)
+                        state.dismiss()
+                    }
+                )
+            }
         }
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun TagsSection(
     expenses: BigDecimal,
@@ -151,10 +217,11 @@ private fun TagsSection(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = modifier.animateContentSize(),
         ) {
+            val animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
             AnimatedVisibility(
                 visible = isPrimary,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
+                enter = fadeIn() + scaleIn(animationSpec),
+                exit = fadeOut() + scaleOut(animationSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsTag(
@@ -164,8 +231,8 @@ private fun TagsSection(
             }
             AnimatedVisibility(
                 visible = expenses.signum() > 0,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
+                enter = fadeIn() + scaleIn(animationSpec),
+                exit = fadeOut() + scaleOut(animationSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsAnimatedTag(
@@ -177,8 +244,8 @@ private fun TagsSection(
             }
             AnimatedVisibility(
                 visible = income.signum() > 0,
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut(),
+                enter = fadeIn() + scaleIn(animationSpec),
+                exit = fadeOut() + scaleOut(animationSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsAnimatedTag(
@@ -257,9 +324,9 @@ fun WalletCardPreview() {
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },
-                onEditClick = { _ -> },
-                onDeleteClick = { _ -> },
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .width(500.dp),
             )
         }
     }

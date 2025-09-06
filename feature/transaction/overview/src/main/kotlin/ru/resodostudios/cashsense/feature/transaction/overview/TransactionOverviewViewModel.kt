@@ -35,6 +35,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
@@ -42,6 +43,7 @@ import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.time.Instant
 
 @HiltViewModel
 class TransactionOverviewViewModel @Inject constructor(
@@ -165,7 +167,7 @@ class TransactionOverviewViewModel @Inject constructor(
             selectedTransactionCategory = selectedTransactionId?.let { id ->
                 transactions.find { it.transaction.id == id }
             },
-            transactionsCategories = transactions,
+            transactionsCategories = transactions.groupByDate(),
         )
     }
         .flowOn(defaultDispatcher)
@@ -286,6 +288,6 @@ sealed interface TransactionOverviewUiState {
 
     data class Success(
         val selectedTransactionCategory: TransactionWithCategory?,
-        val transactionsCategories: List<TransactionWithCategory>,
+        val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
     ) : TransactionOverviewUiState
 }

@@ -11,7 +11,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -19,17 +19,15 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,13 +46,15 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaMonth
-import ru.resodostudios.cashsense.core.designsystem.component.CsFilledTonalIconButton
-import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
@@ -79,7 +79,10 @@ import java.util.Currency
 import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 fun FinancePanel(
     availableCategories: List<Category>,
@@ -100,15 +103,14 @@ fun FinancePanel(
         modifier = modifier.animateContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+        val slowAnimationSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
         SharedTransitionLayout {
             AnimatedContent(
                 targetState = transactionFilter.financeType,
                 label = "FinancePanel",
                 transitionSpec = {
-                    (fadeIn(animationSpec = tween(220, delayMillis = 90)) + scaleIn(
-                        initialScale = 0.92f,
-                        animationSpec = tween(220, delayMillis = 90),
-                    )) togetherWith fadeOut(snap())
+                    fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
                 },
             ) { financeType ->
                 when (financeType) {
@@ -121,12 +123,12 @@ fun FinancePanel(
                             val expensesProgress by animateFloatAsState(
                                 targetValue = getFinanceProgress(expenses, income + expenses),
                                 label = "ExpensesProgress",
-                                animationSpec = tween(durationMillis = 400),
+                                animationSpec = slowAnimationSpec,
                             )
                             val incomeProgress by animateFloatAsState(
                                 targetValue = getFinanceProgress(income, income + expenses),
                                 label = "IncomeProgress",
-                                animationSpec = tween(durationMillis = 400),
+                                animationSpec = slowAnimationSpec,
                             )
                             FinanceCard(
                                 amount = expenses,
@@ -206,7 +208,10 @@ fun FinancePanel(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 private fun SharedTransitionScope.FinanceCard(
     amount: BigDecimal,
@@ -233,6 +238,7 @@ private fun SharedTransitionScope.FinanceCard(
                 targetState = amount,
                 label = "FinanceCardTitle",
                 modifier = Modifier.sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
@@ -254,14 +260,17 @@ private fun SharedTransitionScope.FinanceCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             LinearProgressIndicator(
                 progress = { if (enabled) indicatorProgress else 0f },
                 modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.secondary,
             )
         }
     }
@@ -269,6 +278,7 @@ private fun SharedTransitionScope.FinanceCard(
 
 @OptIn(
     ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalMaterial3Api::class,
 )
 @Composable
@@ -301,17 +311,20 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                 transactionFilter = transactionFilter,
                 onDateTypeUpdate = onDateTypeUpdate,
                 modifier = Modifier
-                    .defaultMinSize(minWidth = 400.dp)
+                    .widthIn(max = 500.dp)
                     .weight(1f, false),
             )
-            CsFilledTonalIconButton(
+            CsOutlinedIconButton(
                 onClick = onBackClick,
                 icon = CsIcons.Outlined.Close,
                 contentDescription = stringResource(localesR.string.close),
                 modifier = Modifier.padding(start = 12.dp),
             )
         }
-        AnimatedVisibility(transactionFilter.dateType != WEEK) {
+        AnimatedVisibility(
+            visible = transactionFilter.dateType != WEEK,
+            enter = fadeIn() + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
+        ) {
             FilterBySelectedDateTypeRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,
@@ -324,6 +337,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState("$amount/$subtitleRes"),
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
@@ -334,7 +348,7 @@ private fun SharedTransitionScope.DetailedFinanceSection(
                     currency = currency,
                     withApproximately = shouldShowApproximately,
                 ),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -344,11 +358,13 @@ private fun SharedTransitionScope.DetailedFinanceSection(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
                 .sharedBounds(
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     sharedContentState = rememberSharedContentState(subtitleRes),
                     animatedVisibilityScope = animatedVisibilityScope,
                     resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                 ),
             style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -379,35 +395,21 @@ private fun SharedTransitionScope.DetailedFinanceSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FilterDateTypeSelectorRow(
     transactionFilter: TransactionFilter,
     onDateTypeUpdate: (DateType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dateTypes = listOf(
-        stringResource(localesR.string.week),
-        stringResource(localesR.string.month),
-        stringResource(localesR.string.year),
+    val dateTypes = listOf(localesR.string.week, localesR.string.month, localesR.string.year)
+
+    CsConnectedButtonGroup(
+        selectedIndex = transactionFilter.dateType.ordinal,
+        options = dateTypes,
+        onClick = { onDateTypeUpdate(DateType.entries[it]) },
+        modifier = modifier,
     )
-    SingleChoiceSegmentedButtonRow(modifier) {
-        dateTypes.forEachIndexed { index, label ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = dateTypes.size,
-                ),
-                onClick = { onDateTypeUpdate(DateType.entries[index]) },
-                selected = transactionFilter.dateType == DateType.entries[index],
-            ) {
-                Text(
-                    text = label,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

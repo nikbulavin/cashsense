@@ -43,7 +43,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
-import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFloatingActionButton
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
@@ -111,7 +111,7 @@ fun CsApp(
                     icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
                     onClick = {
                         when (currentTopLevelDestination) {
-                            HOME -> appState.navController.navigateToWalletDialog()
+                            HOME -> if (!appState.hideFab) appState.navController.navigateToWalletDialog()
                             CATEGORIES -> appState.navController.navigateToCategoryDialog()
                             SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
                             SETTINGS -> {}
@@ -119,7 +119,7 @@ fun CsApp(
                     },
                     modifier = Modifier
                         .animateFloatingActionButton(
-                            visible = currentTopLevelDestination != SETTINGS,
+                            visible = currentTopLevelDestination != SETTINGS && !appState.hideFab,
                             alignment = Alignment.BottomEnd,
                         ),
                 )
@@ -151,6 +151,7 @@ fun CsApp(
                         if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
                             previousDestination = currentTopLevelDestination
                         }
+                        if (destination != HOME) appState.hideFab = false
                         appState.navigateToTopLevelDestination(destination)
                     },
                 )
@@ -183,6 +184,7 @@ fun CsApp(
         ) { innerPadding ->
             CsNavHost(
                 appState = appState,
+                navigationSuiteType = navigationSuiteType,
                 onShowSnackbar = { message, action ->
                     snackbarHostState.showSnackbar(
                         message = message,

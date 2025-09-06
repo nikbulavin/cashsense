@@ -36,6 +36,7 @@ kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.9.0"
 ksp = "2.2.10-2.0.2"
 ktor = "3.2.3"
+leakcanaryAndroid = "2.14"
 lottie = "6.6.7"
 playAppUpdate = "2.1.0"
 playReview = "2.0.2"
@@ -104,6 +105,7 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp" }
 ktor-client-resources = { group = "io.ktor", name = "ktor-client-resources" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 play-app-update = { group = "com.google.android.play", name = "app-update", version.ref = "playAppUpdate" }
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
