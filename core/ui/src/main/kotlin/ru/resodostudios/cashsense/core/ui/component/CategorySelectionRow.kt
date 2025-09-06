@@ -73,10 +73,9 @@ private fun CategoryChip(
             )
         },
         leadingIcon = {
+            val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
             AnimatedIcon(
-                targetState = selected,
-                baseIcon = CsIcons.Outlined.Check,
-                targetIcon = StoredIcon.asImageVector(category.iconId),
+                icon = icon,
                 iconSize = FilterChipDefaults.IconSize,
             )
         },

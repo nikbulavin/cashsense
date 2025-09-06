@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearProgressIndicator
@@ -47,9 +46,9 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaMonth
-import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
-import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedIconButton
-import ru.resodostudios.cashsense.core.designsystem.component.CsTonalToggleButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
@@ -403,31 +402,14 @@ private fun FilterDateTypeSelectorRow(
     onDateTypeUpdate: (DateType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dateTypes = listOf(
-        localesR.string.week,
-        localesR.string.month,
-        localesR.string.year,
-    )
+    val dateTypes = listOf(localesR.string.week, localesR.string.month, localesR.string.year)
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+    CsConnectedButtonGroup(
+        selectedIndex = transactionFilter.dateType.ordinal,
+        options = dateTypes,
+        onClick = { onDateTypeUpdate(DateType.entries[it]) },
         modifier = modifier,
-    ) {
-        dateTypes.forEachIndexed { index, label ->
-            val checked = transactionFilter.dateType == DateType.entries[index]
-            CsTonalToggleButton(
-                checked = checked,
-                titleRes = label,
-                onCheckedChange = { onDateTypeUpdate(DateType.entries[index]) },
-                shapes = when (index) {
-                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                    dateTypes.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                },
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

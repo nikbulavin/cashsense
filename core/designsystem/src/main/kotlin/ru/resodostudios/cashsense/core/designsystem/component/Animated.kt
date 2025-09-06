@@ -19,38 +19,28 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnimatedIcon(
-    targetState: Boolean,
-    baseIcon: ImageVector,
-    targetIcon: ImageVector,
+    icon: ImageVector,
     modifier: Modifier = Modifier,
     label: String = "AnimatedIcon",
-    baseContentDescription: String? = null,
-    targetContentDescription: String? = null,
+    contentDescription: String? = null,
     iconSize: Dp = 24.dp,
 ) {
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+
     AnimatedContent(
-        targetState = targetState,
+        targetState = icon,
         label = label,
         transitionSpec = {
-            fadeIn(effectsSpec) + scaleIn(spatialSpec, 0.6f) togetherWith
-                    fadeOut(effectsSpec) + scaleOut(spatialSpec, 0.6f)
+            fadeIn(effectsSpec) + scaleIn(spatialSpec, initialScale = 0.6f) togetherWith
+                    fadeOut(effectsSpec) + scaleOut(spatialSpec, targetScale = 0.6f)
         },
         modifier = modifier,
-    ) { state ->
-        if (state) {
-            Icon(
-                imageVector = baseIcon,
-                contentDescription = baseContentDescription,
-                modifier = Modifier.size(iconSize),
-            )
-        } else {
-            Icon(
-                imageVector = targetIcon,
-                contentDescription = targetContentDescription,
-                modifier = Modifier.size(iconSize),
-            )
-        }
+    ) { iconToDisplay ->
+        Icon(
+            imageVector = iconToDisplay,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(iconSize),
+        )
     }
 }

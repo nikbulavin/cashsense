@@ -43,12 +43,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsConnectedButtonGroup
-import ru.resodostudios.cashsense.core.designsystem.component.CsTonalToggleButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
@@ -223,7 +224,8 @@ private fun TransactionTypeChoiceRow(
 ) {
     CsConnectedButtonGroup(
         selectedIndex = transactionState.transactionType.ordinal,
-        options = listOf(stringResource(localesR.string.expense), stringResource(localesR.string.income_singular)),
+        options = listOf(localesR.string.expense, localesR.string.income_singular),
+        checkedIcon = CsIcons.Outlined.Check,
         uncheckedIcons = listOf(CsIcons.Outlined.TrendingDown, CsIcons.Outlined.TrendingUp),
         onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[it])) },
         modifier = Modifier.fillMaxWidth(),
@@ -237,7 +239,8 @@ private fun TransactionStatusChoiceRow(
 ) {
     CsConnectedButtonGroup(
         selectedIndex = transactionState.status.ordinal,
-        options = listOf(stringResource(localesR.string.completed), stringResource(localesR.string.pending)),
+        options = listOf(localesR.string.completed, localesR.string.pending),
+        checkedIcon = CsIcons.Outlined.Check,
         uncheckedIcons = listOf(CsIcons.Outlined.CheckCircle, CsIcons.Outlined.Pending),
         onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[it])) },
         modifier = Modifier.fillMaxWidth(),

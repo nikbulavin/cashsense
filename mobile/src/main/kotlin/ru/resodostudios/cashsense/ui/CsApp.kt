@@ -43,7 +43,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
-import ru.resodostudios.cashsense.core.designsystem.component.CsFloatingActionButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFloatingActionButton
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
