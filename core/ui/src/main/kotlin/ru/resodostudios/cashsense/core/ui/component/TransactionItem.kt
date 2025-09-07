@@ -1,10 +1,12 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
@@ -63,6 +66,8 @@ internal fun TransactionItem(
         StoredIcon.asImageVector(iconId) to title
     }
 
+    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+
     Column(modifier = modifier) {
         CsListItemEmphasized(
             headlineContent = {
@@ -80,15 +85,15 @@ internal fun TransactionItem(
                 )
             },
             trailingContent = {
-                val animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+                val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     AnimatedVisibility(
                         visible = transaction.ignored,
-                        enter = fadeIn() + scaleIn(animationSpec),
-                        exit = fadeOut() + scaleOut(animationSpec),
+                        enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                        exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.errorContainer,
@@ -106,8 +111,8 @@ internal fun TransactionItem(
                     }
                     AnimatedVisibility(
                         visible = transaction.status == PENDING,
-                        enter = fadeIn() + scaleIn(animationSpec),
-                        exit = fadeOut() + scaleOut(animationSpec),
+                        enter = fadeIn() + scaleIn(spatialSpec),
+                        exit = fadeOut() + scaleOut(spatialSpec),
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -135,7 +140,12 @@ internal fun TransactionItem(
                 containerColor = Color.Transparent,
             ),
         )
-        AnimatedVisibility(selected) {
+        val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+        AnimatedVisibility(
+            visible = selected,
+            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(2.dp),
