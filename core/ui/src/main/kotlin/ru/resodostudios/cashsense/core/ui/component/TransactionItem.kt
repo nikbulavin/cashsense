@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
+import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
@@ -56,9 +57,10 @@ internal fun TransactionItem(
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    onIgnoreToggle: (Boolean) -> Unit = {},
     onRepeatClick: (String) -> Unit = {},
-    onEdit: (String) -> Unit = {},
-    onDelete: () -> Unit = {},
+    onEditClick: (String) -> Unit = {},
+    onDeleteClick: () -> Unit = {},
 ) {
     val (icon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
@@ -154,6 +156,25 @@ internal fun TransactionItem(
                 modifier = Modifier.padding(16.dp),
             ) {
                 CsListItemEmphasized(
+                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Block,
+                            contentDescription = null,
+                        )
+                    },
+                    trailingContent = {
+                        CsSwitch(
+                            checked = transaction.ignored,
+                            onCheckedChange = onIgnoreToggle,
+                        )
+                    },
+                    colors = ListItemDefaults.colors().copy(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    shape = ListItemPositionShapes.First,
+                )
+                CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.repeat)) },
                     leadingContent = {
                         Icon(
@@ -165,7 +186,7 @@ internal fun TransactionItem(
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),
-                    shape = ListItemPositionShapes.First,
+                    shape = ListItemPositionShapes.Middle,
                 )
                 CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.edit)) },
@@ -175,7 +196,7 @@ internal fun TransactionItem(
                             contentDescription = null,
                         )
                     },
-                    onClick = { onEdit(transaction.id) },
+                    onClick = { onEditClick(transaction.id) },
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),
@@ -189,7 +210,7 @@ internal fun TransactionItem(
                             contentDescription = null,
                         )
                     },
-                    onClick = onDelete,
+                    onClick = onDeleteClick,
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),

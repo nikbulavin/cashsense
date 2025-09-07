@@ -98,7 +98,7 @@ fun WalletScreen(
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
         updateTransactionId = viewModel::updateTransactionId,
-        onUpdateTransactionIgnoring = viewModel::updateTransactionIgnoring,
+        onTransactionIgnoreToggle = viewModel::updateTransactionIgnoring,
         onTransactionDelete = viewModel::deleteTransaction,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
@@ -128,7 +128,7 @@ private fun WalletScreen(
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     updateTransactionId: (String?) -> Unit = {},
-    onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
+    onTransactionIgnoreToggle: (Boolean) -> Unit = {},
     onTransactionDelete: () -> Unit = {},
 ) {
     when (walletState) {
@@ -177,13 +177,14 @@ private fun WalletScreen(
                             transactionsCategories = walletState.transactionsCategories,
                             onClick = updateTransactionId,
                             selectedTransaction = walletState.selectedTransactionCategory,
+                            onIgnoreToggle = onTransactionIgnoreToggle,
                             onRepeatClick = { transactionId ->
                                 navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
                             },
-                            onEdit = { transactionId ->
+                            onEditClick = { transactionId ->
                                 navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
                             },
-                            onDelete = onTransactionDelete,
+                            onDeleteClick = onTransactionDelete,
                         )
                     }
                     WalletToolbar(
