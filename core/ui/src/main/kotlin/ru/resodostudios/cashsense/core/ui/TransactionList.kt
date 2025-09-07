@@ -33,6 +33,7 @@ fun LazyListScope.transactions(
     transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
     onClick: (String?) -> Unit,
     selectedTransaction: TransactionWithCategory? = null,
+    onEdit: (String) -> Unit = {},
     onDelete: () -> Unit = {},
 ) {
     if (transactionsCategories.isNotEmpty()) {
@@ -71,6 +72,7 @@ fun LazyListScope.transactions(
                             placementSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
                         ),
                     selected = selected,
+                    onEdit = onEdit,
                     onDelete = onDelete,
                 )
                 if (index != transactionGroup.value.lastIndex) Spacer(Modifier.height(2.dp))

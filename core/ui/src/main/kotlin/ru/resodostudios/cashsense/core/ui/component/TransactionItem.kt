@@ -27,9 +27,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
+import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -50,6 +52,7 @@ internal fun TransactionItem(
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    onEdit: (String) -> Unit = {},
     onDelete: () -> Unit = {},
 ) {
     val (icon, categoryTitle) = if (transaction.transferId != null) {
@@ -139,6 +142,20 @@ internal fun TransactionItem(
                 modifier = Modifier.padding(16.dp),
             ) {
                 CsListItemEmphasized(
+                    headlineContent = { Text(stringResource(localesR.string.edit)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Edit,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = { onEdit(transaction.id) },
+                    colors = ListItemDefaults.colors().copy(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    shape = ListItemPositionShapes.First,
+                )
+                CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
@@ -150,6 +167,7 @@ internal fun TransactionItem(
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),
+                    shape = ListItemPositionShapes.Last,
                 )
             }
         }

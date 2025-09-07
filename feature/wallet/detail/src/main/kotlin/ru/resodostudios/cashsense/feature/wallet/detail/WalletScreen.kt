@@ -177,6 +177,9 @@ private fun WalletScreen(
                             transactionsCategories = walletState.transactionsCategories,
                             onClick = updateTransactionId,
                             selectedTransaction = walletState.selectedTransactionCategory,
+                            onEdit = { transactionId ->
+                                navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
+                            },
                             onDelete = onTransactionDelete,
                         )
                     }
