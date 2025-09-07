@@ -177,6 +177,9 @@ private fun WalletScreen(
                             transactionsCategories = walletState.transactionsCategories,
                             onClick = updateTransactionId,
                             selectedTransaction = walletState.selectedTransactionCategory,
+                            onRepeatClick = { transactionId ->
+                                navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
+                            },
                             onEdit = { transactionId ->
                                 navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
                             },

@@ -33,6 +33,7 @@ fun LazyListScope.transactions(
     transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
     onClick: (String?) -> Unit,
     selectedTransaction: TransactionWithCategory? = null,
+    onRepeatClick: (String) -> Unit = {},
     onEdit: (String) -> Unit = {},
     onDelete: () -> Unit = {},
 ) {

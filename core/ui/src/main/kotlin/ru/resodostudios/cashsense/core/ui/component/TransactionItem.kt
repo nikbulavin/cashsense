@@ -36,6 +36,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
@@ -55,6 +56,7 @@ internal fun TransactionItem(
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    onRepeatClick: (String) -> Unit = {},
     onEdit: (String) -> Unit = {},
     onDelete: () -> Unit = {},
 ) {
@@ -152,6 +154,20 @@ internal fun TransactionItem(
                 modifier = Modifier.padding(16.dp),
             ) {
                 CsListItemEmphasized(
+                    headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Redo,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = { onRepeatClick(transaction.id) },
+                    colors = ListItemDefaults.colors().copy(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    shape = ListItemPositionShapes.First,
+                )
+                CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
@@ -163,7 +179,7 @@ internal fun TransactionItem(
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),
-                    shape = ListItemPositionShapes.First,
+                    shape = ListItemPositionShapes.Middle,
                 )
                 CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.delete)) },
