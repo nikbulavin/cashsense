@@ -178,7 +178,7 @@ class TransactionOverviewViewModel @Inject constructor(
             initialValue = TransactionOverviewUiState.Loading,
         )
 
-    fun updateTransactionId(id: String) {
+    fun updateTransactionId(id: String?) {
         selectedTransactionIdState.value = id
     }
 

@@ -1,5 +1,7 @@
 package ru.resodostudios.cashsense.core.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -9,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -28,7 +31,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.transactions(
     transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
-    onTransactionClick: (String) -> Unit,
+    onClick: (String?) -> Unit,
+    selectedTransaction: TransactionWithCategory? = null,
+    onDelete: () -> Unit = {},
 ) {
     if (transactionsCategories.isNotEmpty()) {
         transactionsCategories.forEach { transactionGroup ->
@@ -52,17 +57,21 @@ fun LazyListScope.transactions(
                     index == transactionGroup.value.lastIndex -> ListItemPositionShapes.Last
                     else -> ListItemPositionShapes.Middle
                 }
+                val selected = selectedTransaction?.transaction?.id == transactionCategory.transaction.id
                 TransactionItem(
                     transaction = transactionCategory.transaction,
                     category = transactionCategory.category,
                     currency = transactionCategory.transaction.currency,
-                    onClick = onTransactionClick,
-                    shape = shape,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
+                        .clip(shape)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                        .clickable { onClick(if (selected) null else transactionCategory.transaction.id) }
                         .animateItem(
                             placementSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
                         ),
+                    selected = selected,
+                    onDelete = onDelete,
                 )
                 if (index != transactionGroup.value.lastIndex) Spacer(Modifier.height(2.dp))
             }

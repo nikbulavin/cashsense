@@ -45,7 +45,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -68,7 +67,6 @@ import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterPro
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
-import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -101,7 +99,7 @@ fun WalletScreen(
         navigateToTransactionDialog = navigateToTransactionDialog,
         updateTransactionId = viewModel::updateTransactionId,
         onUpdateTransactionIgnoring = viewModel::updateTransactionIgnoring,
-        onDeleteTransaction = viewModel::deleteTransaction,
+        onTransactionDelete = viewModel::deleteTransaction,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
@@ -129,45 +127,13 @@ private fun WalletScreen(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    updateTransactionId: (String) -> Unit = {},
+    updateTransactionId: (String?) -> Unit = {},
     onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
-    onDeleteTransaction: () -> Unit = {},
+    onTransactionDelete: () -> Unit = {},
 ) {
     when (walletState) {
         WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
-            var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
-            var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
-
-            if (showTransactionBottomSheet && walletState.selectedTransactionCategory != null) {
-                TransactionBottomSheet(
-                    transactionCategory = walletState.selectedTransactionCategory,
-                    currency = walletState.userWallet.currency,
-                    onDismiss = { showTransactionBottomSheet = false },
-                    onIgnoreClick = onUpdateTransactionIgnoring,
-                    onRepeatClick = { transactionId ->
-                        navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
-                    },
-                    onEdit = { transactionId ->
-                        navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
-                    },
-                    onDelete = { showTransactionDeletionDialog = true },
-                )
-            }
-            if (showTransactionDeletionDialog) {
-                CsAlertDialog(
-                    titleRes = localesR.string.permanently_delete,
-                    confirmButtonTextRes = localesR.string.delete,
-                    dismissButtonTextRes = localesR.string.cancel,
-                    icon = CsIcons.Outlined.Delete,
-                    onConfirm = {
-                        onDeleteTransaction()
-                        showTransactionDeletionDialog = false
-                    },
-                    onDismiss = { showTransactionDeletionDialog = false },
-                )
-            }
-
             Scaffold(
                 topBar = {
                     WalletTopBar(
@@ -209,10 +175,9 @@ private fun WalletScreen(
                         }
                         transactions(
                             transactionsCategories = walletState.transactionsCategories,
-                            onTransactionClick = {
-                                updateTransactionId(it)
-                                showTransactionBottomSheet = true
-                            },
+                            onClick = updateTransactionId,
+                            selectedTransaction = walletState.selectedTransactionCategory,
+                            onDelete = onTransactionDelete,
                         )
                     }
                     WalletToolbar(

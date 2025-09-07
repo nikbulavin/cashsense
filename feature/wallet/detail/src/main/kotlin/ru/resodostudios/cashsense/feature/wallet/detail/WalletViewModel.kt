@@ -102,7 +102,7 @@ class WalletViewModel @AssistedInject constructor(
             initialValue = WalletUiState.Loading,
         )
 
-    fun updateTransactionId(id: String) {
+    fun updateTransactionId(id: String?) {
         selectedTransactionIdState.value = id
     }
 

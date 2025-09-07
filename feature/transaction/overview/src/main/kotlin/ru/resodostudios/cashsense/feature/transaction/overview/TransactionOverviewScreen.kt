@@ -80,7 +80,7 @@ private fun TransactionOverviewScreen(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    updateTransactionId: (String) -> Unit = {},
+    updateTransactionId: (String?) -> Unit = {},
     onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
     onDeleteTransaction: () -> Unit = {},
 ) {
@@ -146,7 +146,7 @@ private fun TransactionOverviewScreen(
                     )
                     transactions(
                         transactionsCategories = transactionOverviewState.transactionsCategories,
-                        onTransactionClick = {
+                        onClick = {
                             updateTransactionId(it)
                             showTransactionBottomSheet = true
                         },

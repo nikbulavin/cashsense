@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -95,6 +96,9 @@ fun CsListItemEmphasized(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    ),
 ) {
     ListItem(
         headlineContent = headlineContent,
@@ -107,9 +111,7 @@ fun CsListItemEmphasized(
         supportingContent = supportingContent,
         leadingContent = leadingContent,
         trailingContent = trailingContent,
-        colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
+        colors = colors,
     )
 }
 
