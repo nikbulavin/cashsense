@@ -54,6 +54,9 @@ fun CsToggableListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    ),
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     ListItem(
@@ -80,9 +83,7 @@ fun CsToggableListItem(
         supportingContent = supportingContent,
         leadingContent = leadingContent,
         trailingContent = trailingContent,
-        colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        ),
+        colors = colors,
     )
 }
 
