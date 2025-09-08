@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -42,10 +43,13 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
+import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import java.time.format.FormatStyle
 import java.util.Currency
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -71,7 +75,8 @@ internal fun TransactionItem(
         StoredIcon.asImageVector(iconId) to title
     }
 
-    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+    val motionScheme = MaterialTheme.motionScheme
+    val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
 
     Column(modifier = modifier) {
         CsListItemEmphasized(
@@ -90,10 +95,10 @@ internal fun TransactionItem(
                 )
             },
             trailingContent = {
-                val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+                val spatialSpec = motionScheme.defaultSpatialSpec<Float>()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.animateContentSize(motionScheme.defaultSpatialSpec()),
                 ) {
                     AnimatedVisibility(
                         visible = transaction.ignored,
@@ -122,6 +127,7 @@ internal fun TransactionItem(
                         Surface(
                             color = MaterialTheme.colorScheme.tertiaryContainer,
                             shape = MaterialShapes.Clover4Leaf.toShape(),
+                            modifier = Modifier.padding(start = 8.dp),
                         ) {
                             Icon(
                                 imageVector = CsIcons.Outlined.Pending,
@@ -132,6 +138,20 @@ internal fun TransactionItem(
                                 tint = MaterialTheme.colorScheme.onTertiaryContainer,
                             )
                         }
+                    }
+                    AnimatedVisibility(
+                        visible = selected,
+                        enter = fadeIn() + scaleIn(spatialSpec),
+                        exit = fadeOut() + scaleOut(spatialSpec),
+                    ) {
+                        Text(
+                            text = transaction.timestamp.formatDate(
+                                DateFormatType.TIME,
+                                FormatStyle.SHORT,
+                            ),
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier.padding(start = 8.dp),
+                        )
                     }
                 }
             },
@@ -145,7 +165,7 @@ internal fun TransactionItem(
                 containerColor = Color.Transparent,
             ),
         )
-        val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+        val spatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
         AnimatedVisibility(
             visible = selected,
             enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
