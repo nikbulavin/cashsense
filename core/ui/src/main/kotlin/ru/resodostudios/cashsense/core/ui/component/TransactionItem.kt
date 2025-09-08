@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
+import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
@@ -155,7 +156,9 @@ internal fun TransactionItem(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 modifier = Modifier.padding(16.dp),
             ) {
-                CsListItemEmphasized(
+                CsToggableListItem(
+                    checked = transaction.ignored,
+                    onCheckedChange = onIgnoreToggle,
                     headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
                     leadingContent = {
                         Icon(
@@ -166,11 +169,11 @@ internal fun TransactionItem(
                     trailingContent = {
                         CsSwitch(
                             checked = transaction.ignored,
-                            onCheckedChange = onIgnoreToggle,
+                            onCheckedChange = null,
                         )
                     },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     ),
                     shape = ListItemPositionShapes.First,
                 )
@@ -184,7 +187,7 @@ internal fun TransactionItem(
                     },
                     onClick = { onRepeatClick(transaction.id) },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     ),
                     shape = ListItemPositionShapes.Middle,
                 )
@@ -198,7 +201,7 @@ internal fun TransactionItem(
                     },
                     onClick = { onEditClick(transaction.id) },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     ),
                     shape = ListItemPositionShapes.Middle,
                 )
@@ -212,7 +215,7 @@ internal fun TransactionItem(
                     },
                     onClick = onDeleteClick,
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     ),
                     shape = ListItemPositionShapes.Last,
                 )
