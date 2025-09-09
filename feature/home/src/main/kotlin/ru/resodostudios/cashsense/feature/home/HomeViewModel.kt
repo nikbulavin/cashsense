@@ -103,7 +103,6 @@ class HomeViewModel @Inject constructor(
                         TotalBalanceUiState.Shown(
                             amount = totalBalance,
                             userCurrency = userCurrency,
-                            shouldShowBadIndicator = totalIncome < totalExpenses.abs(),
                             shouldShowApproximately = shouldShowApproximately,
                         )
                     }
@@ -164,7 +163,6 @@ sealed interface TotalBalanceUiState {
     data class Shown(
         val amount: BigDecimal,
         val userCurrency: Currency,
-        val shouldShowBadIndicator: Boolean,
         val shouldShowApproximately: Boolean,
     ) : TotalBalanceUiState
 }

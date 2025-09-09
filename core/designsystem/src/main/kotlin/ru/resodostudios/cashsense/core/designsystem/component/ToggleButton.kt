@@ -1,7 +1,8 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -40,8 +41,8 @@ fun CsTonalToggleButton(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.padding(ToggleButtonDefaults.IconSpacing),
         )
+        Spacer(Modifier.width(ToggleButtonDefaults.IconSpacing))
         Text(
             text = stringResource(titleRes),
             maxLines = 1,
