@@ -137,7 +137,7 @@ fun WalletCard(
                     icon = CsIcons.Outlined.MoreVert,
                     contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                 )
-            }
+            },
         ) {
             customItem(
                 buttonGroupContent = {
@@ -169,7 +169,7 @@ fun WalletCard(
                     onClick = {
                         onNewTransactionClick(userWallet.id)
                         state.dismiss()
-                    }
+                    },
                 )
             }
             customItem(
@@ -179,12 +179,12 @@ fun WalletCard(
                         icon = CsIcons.Outlined.SendMoney,
                         contentDescription = addTransferText,
                     )
-                }
+                },
             ) { state ->
                 DropdownMenuItem(
                     leadingIcon = {
                         Icon(
-                            imageVector = CsIcons.Outlined.Add,
+                            imageVector = CsIcons.Outlined.SendMoney,
                             contentDescription = null,
                         )
                     },
@@ -192,7 +192,7 @@ fun WalletCard(
                     onClick = {
                         onTransferClick(userWallet.id)
                         state.dismiss()
-                    }
+                    },
                 )
             }
         }
