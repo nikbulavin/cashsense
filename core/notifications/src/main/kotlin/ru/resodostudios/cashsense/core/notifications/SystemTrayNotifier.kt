@@ -113,15 +113,13 @@ private fun Context.createSubscriptionNotification(
  * Ensures that a notification channel is present if applicable
  */
 private fun Context.ensureNotificationChannelExists() {
-
     val channel = NotificationChannel(
         SUBSCRIPTIONS_NOTIFICATION_CHANNEL_ID,
-        getString(localesR.string.subscriptions_notification_channel_name),
+        getString(localesR.string.subscriptions_title),
         NotificationManager.IMPORTANCE_DEFAULT,
     ).apply {
         description = getString(localesR.string.subscriptions_notification_channel_description)
     }
-    // Register the channel with the system
     NotificationManagerCompat.from(this).createNotificationChannel(channel)
 }
 

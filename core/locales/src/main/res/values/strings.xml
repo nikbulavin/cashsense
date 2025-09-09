@@ -86,7 +86,6 @@
     <string name="subscription_deleted">Subscription deleted</string>
     <string name="subscriptions_empty">Nothing in Subscriptions</string>
     <string name="subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
-    <string name="subscriptions_notification_channel_name">Subscription reminders</string>
     <string name="subscriptions_notification_content_text">You need to pay %1$s for a subscription on %2$s</string>
     <string name="subscriptions_title">Subscriptions</string>
     <string name="theme">Theme</string>
