@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,7 +46,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
@@ -124,7 +124,7 @@ fun WalletCard(
         val addTransactionText = stringResource(localesR.string.add_transaction)
         val addTransferText = stringResource(localesR.string.transfer)
         ButtonGroup(
-            modifier = Modifier.padding(start = 16.dp, end = 8.dp, bottom = 12.dp, top = 16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp, top = 16.dp),
             overflowIndicator = { menuState ->
                 CsIconButton(
                     onClick = {
@@ -148,6 +148,7 @@ fun WalletCard(
                         Icon(
                             imageVector = CsIcons.Outlined.Add,
                             contentDescription = addTransactionText,
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
                         )
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(
@@ -174,11 +175,22 @@ fun WalletCard(
             }
             customItem(
                 buttonGroupContent = {
-                    CsOutlinedIconButton(
+                    OutlinedButton(
                         onClick = { onTransferClick(userWallet.id) },
-                        icon = CsIcons.Outlined.SendMoney,
-                        contentDescription = addTransferText,
-                    )
+                        shapes = ButtonDefaults.shapes(),
+                    ) {
+                        Icon(
+                            imageVector = CsIcons.Outlined.SendMoney,
+                            contentDescription = addTransactionText,
+                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(
+                            text = addTransferText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 },
             ) { state ->
                 DropdownMenuItem(
