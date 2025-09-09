@@ -193,7 +193,7 @@ internal fun TransactionItem(
                         )
                     },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
                     shape = ListItemPositionShapes.First,
                 )
@@ -207,7 +207,7 @@ internal fun TransactionItem(
                     },
                     onClick = { onRepeatClick(transaction.id) },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
                     shape = ListItemPositionShapes.Middle,
                 )
@@ -221,7 +221,7 @@ internal fun TransactionItem(
                     },
                     onClick = { onEditClick(transaction.id) },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
                     shape = ListItemPositionShapes.Middle,
                 )
@@ -235,7 +235,7 @@ internal fun TransactionItem(
                     },
                     onClick = onDeleteClick,
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
                     shape = ListItemPositionShapes.Last,
                 )

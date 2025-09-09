@@ -68,7 +68,7 @@ fun LazyListScope.transactions(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clip(shape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
                         .clickable { onClick(if (selected) null else transactionCategory.transaction.id) }
                         .animateItem(
                             placementSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
