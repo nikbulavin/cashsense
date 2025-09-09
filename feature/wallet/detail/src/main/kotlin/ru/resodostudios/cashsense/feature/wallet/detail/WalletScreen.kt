@@ -98,7 +98,6 @@ fun WalletScreen(
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
         updateTransactionId = viewModel::updateTransactionId,
-        onTransactionIgnoreToggle = viewModel::updateTransactionIgnoring,
         onTransactionDelete = viewModel::deleteTransaction,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
@@ -128,7 +127,6 @@ private fun WalletScreen(
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     updateTransactionId: (String?) -> Unit = {},
-    onTransactionIgnoreToggle: (Boolean) -> Unit = {},
     onTransactionDelete: () -> Unit = {},
 ) {
     when (walletState) {
@@ -177,7 +175,6 @@ private fun WalletScreen(
                             transactionsCategories = walletState.transactionsCategories,
                             onClick = updateTransactionId,
                             selectedTransaction = walletState.selectedTransactionCategory,
-                            onIgnoreToggle = onTransactionIgnoreToggle,
                             onRepeatClick = { transactionId ->
                                 navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
                             },

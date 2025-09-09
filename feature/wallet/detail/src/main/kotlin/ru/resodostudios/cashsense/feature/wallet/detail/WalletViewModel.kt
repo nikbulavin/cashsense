@@ -120,17 +120,6 @@ class WalletViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateTransactionIgnoring(ignored: Boolean) {
-        viewModelScope.launch {
-            selectedTransactionIdState.value?.let { id ->
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
-                    .first()
-                val transaction = transactionCategory.transaction.copy(ignored = ignored)
-                transactionsRepository.upsertTransaction(transaction)
-            }
-        }
-    }
-
     fun setPrimaryWalletId(id: String, isPrimary: Boolean) {
         viewModelScope.launch {
             userDataRepository.setPrimaryWallet(id, isPrimary)

@@ -31,8 +31,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
-import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
-import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
@@ -62,7 +60,6 @@ internal fun TransactionItem(
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    onIgnoreToggle: (Boolean) -> Unit = {},
     onRepeatClick: (String) -> Unit = {},
     onEditClick: (String) -> Unit = {},
     onDeleteClick: () -> Unit = {},
@@ -176,27 +173,6 @@ internal fun TransactionItem(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 modifier = Modifier.padding(16.dp),
             ) {
-                CsToggableListItem(
-                    checked = transaction.ignored,
-                    onCheckedChange = onIgnoreToggle,
-                    headlineContent = { Text(stringResource(localesR.string.transaction_ignore)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Block,
-                            contentDescription = null,
-                        )
-                    },
-                    trailingContent = {
-                        CsSwitch(
-                            checked = transaction.ignored,
-                            onCheckedChange = null,
-                        )
-                    },
-                    colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    ),
-                    shape = ListItemPositionShapes.First,
-                )
                 CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.repeat)) },
                     leadingContent = {
@@ -209,7 +185,7 @@ internal fun TransactionItem(
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
-                    shape = ListItemPositionShapes.Middle,
+                    shape = ListItemPositionShapes.First,
                 )
                 CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.edit)) },
