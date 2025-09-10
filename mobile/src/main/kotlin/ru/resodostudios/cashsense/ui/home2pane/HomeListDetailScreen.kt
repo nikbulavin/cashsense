@@ -325,7 +325,7 @@ internal fun HomeListDetailScreen(
                                             scaffoldNavigator.navigateBack()
                                         }
                                     },
-                                    onTransactionClick = navigateToTransactionDialog,
+                                    navigateToTransactionDialog = navigateToTransactionDialog,
                                 )
                             }
 
