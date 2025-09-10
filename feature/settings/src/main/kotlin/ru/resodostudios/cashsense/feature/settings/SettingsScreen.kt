@@ -357,7 +357,10 @@ private fun LazyListScope.appearance(
                                 0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                 themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            }
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors().copy(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            ),
                         ) {
                             Icon(
                                 imageVector = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
