@@ -173,34 +173,37 @@ internal fun TransactionItem(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 modifier = Modifier.padding(16.dp),
             ) {
-                CsListItemEmphasized(
-                    headlineContent = { Text(stringResource(localesR.string.repeat)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Redo,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = { onRepeatClick(transaction.id) },
-                    colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    ),
-                    shape = ListItemPositionShapes.First,
-                )
-                CsListItemEmphasized(
-                    headlineContent = { Text(stringResource(localesR.string.edit)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Edit,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = { onEditClick(transaction.id) },
-                    colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    ),
-                    shape = ListItemPositionShapes.Middle,
-                )
+                val isTransfer = transaction.transferId != null
+                if (!isTransfer) {
+                    CsListItemEmphasized(
+                        headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Redo,
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = { onRepeatClick(transaction.id) },
+                        colors = ListItemDefaults.colors().copy(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        ),
+                        shape = ListItemPositionShapes.First,
+                    )
+                    CsListItemEmphasized(
+                        headlineContent = { Text(stringResource(localesR.string.edit)) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Edit,
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = { onEditClick(transaction.id) },
+                        colors = ListItemDefaults.colors().copy(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        ),
+                        shape = ListItemPositionShapes.Middle,
+                    )
+                }
                 CsListItemEmphasized(
                     headlineContent = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
@@ -213,7 +216,7 @@ internal fun TransactionItem(
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
-                    shape = ListItemPositionShapes.Last,
+                    shape = if (isTransfer) ListItemPositionShapes.Single else ListItemPositionShapes.Last,
                 )
             }
         }
