@@ -8,11 +8,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
@@ -22,20 +26,29 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Description
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.KeyboardArrowDown
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.KeyboardArrowUp
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
@@ -52,7 +65,7 @@ import java.util.Currency
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun TransactionItem(
     transaction: Transaction,
@@ -72,8 +85,10 @@ internal fun TransactionItem(
         StoredIcon.asImageVector(iconId) to title
     }
 
-    val motionScheme = MaterialTheme.motionScheme
-    val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
+    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+    val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+    val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+
 
     Column(modifier = modifier) {
         CsListItemEmphasized(
@@ -92,15 +107,14 @@ internal fun TransactionItem(
                 )
             },
             trailingContent = {
-                val spatialSpec = motionScheme.defaultSpatialSpec<Float>()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.animateContentSize(motionScheme.defaultSpatialSpec()),
+                    modifier = Modifier.animateContentSize(intSizeSpatialSpec),
                 ) {
                     AnimatedVisibility(
                         visible = transaction.ignored,
-                        enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
-                        exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
+                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.errorContainer,
@@ -118,8 +132,8 @@ internal fun TransactionItem(
                     }
                     AnimatedVisibility(
                         visible = transaction.status == PENDING,
-                        enter = fadeIn() + scaleIn(spatialSpec),
-                        exit = fadeOut() + scaleOut(spatialSpec),
+                        enter = fadeIn() + scaleIn(floatSpatialSpec),
+                        exit = fadeOut() + scaleOut(floatSpatialSpec),
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -138,8 +152,8 @@ internal fun TransactionItem(
                     }
                     AnimatedVisibility(
                         visible = selected,
-                        enter = fadeIn() + scaleIn(spatialSpec),
-                        exit = fadeOut() + scaleOut(spatialSpec),
+                        enter = fadeIn() + scaleIn(floatSpatialSpec),
+                        exit = fadeOut() + scaleOut(floatSpatialSpec),
                     ) {
                         Text(
                             text = transaction.timestamp.formatDate(
@@ -162,17 +176,33 @@ internal fun TransactionItem(
                 containerColor = Color.Transparent,
             ),
         )
-        val spatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
         AnimatedVisibility(
             visible = selected,
-            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
-            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
+            enter = fadeIn(effectsSpec) + expandVertically(intSizeSpatialSpec),
+            exit = fadeOut(effectsSpec) + shrinkVertically(intSizeSpatialSpec),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(2.dp),
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             ) {
+                AnimatedVisibility(
+                    visible = !transaction.description.isNullOrBlank(),
+                    enter = fadeIn() + scaleIn(floatSpatialSpec),
+                    exit = fadeOut() + scaleOut(floatSpatialSpec),
+                ) {
+                    var expanded by remember { mutableStateOf(false) }
+                    DescriptionListItem(
+                        expanded = expanded,
+                        transaction = transaction,
+                        modifier = Modifier
+                            .padding(bottom = 6.dp)
+                            .clip(ListItemPositionShapes.Single)
+                            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                            .clickable { expanded = !expanded },
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
+                }
                 val isTransfer = transaction.transferId != null
                 if (!isTransfer) {
                     CsListItemEmphasized(
@@ -219,6 +249,49 @@ internal fun TransactionItem(
                     shape = if (isTransfer) ListItemPositionShapes.Single else ListItemPositionShapes.Last,
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun DescriptionListItem(
+    expanded: Boolean,
+    transaction: Transaction,
+    modifier: Modifier = Modifier,
+) {
+    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+    val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+    Column(
+        modifier = modifier,
+    ) {
+        CsListItemEmphasized(
+            headlineContent = { Text(stringResource(localesR.string.description)) },
+            leadingContent = {
+                Icon(
+                    imageVector = CsIcons.Outlined.Description,
+                    contentDescription = null,
+                )
+            },
+            trailingContent = {
+                AnimatedIcon(
+                    icon = if (expanded) CsIcons.Outlined.KeyboardArrowUp else CsIcons.Outlined.KeyboardArrowDown,
+                    contentDescription = stringResource(if (expanded) localesR.string.show_less else localesR.string.show_more),
+                )
+            },
+            colors = ListItemDefaults.colors().copy(
+                containerColor = Color.Transparent,
+            ),
+        )
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(effectsSpec) + expandVertically(intSizeSpatialSpec),
+            exit = fadeOut(effectsSpec) + shrinkVertically(intSizeSpatialSpec),
+        ) {
+            Text(
+                text = transaction.description.toString(),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+            )
         }
     }
 }
