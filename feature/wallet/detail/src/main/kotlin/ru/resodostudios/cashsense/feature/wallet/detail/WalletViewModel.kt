@@ -35,11 +35,13 @@ import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
+import kotlin.time.Instant
 
 @HiltViewModel(assistedFactory = WalletViewModel.Factory::class)
 class WalletViewModel @AssistedInject constructor(
@@ -88,7 +90,7 @@ class WalletViewModel @AssistedInject constructor(
             selectedTransactionCategory = selectedTransactionId?.let { id ->
                 filterableTransactions.transactionsCategories.find { it.transaction.id == id }
             },
-            transactionsCategories = filterableTransactions.transactionsCategories,
+            transactionsCategories = filterableTransactions.transactionsCategories.groupByDate(),
             availableCategories = filterableTransactions.availableCategories,
         )
     }
@@ -100,7 +102,7 @@ class WalletViewModel @AssistedInject constructor(
             initialValue = WalletUiState.Loading,
         )
 
-    fun updateTransactionId(id: String) {
+    fun updateTransactionId(id: String?) {
         selectedTransactionIdState.value = id
     }
 
@@ -114,17 +116,6 @@ class WalletViewModel @AssistedInject constructor(
                 } else {
                     transactionsRepository.deleteTransaction(id)
                 }
-            }
-        }
-    }
-
-    fun updateTransactionIgnoring(ignored: Boolean) {
-        viewModelScope.launch {
-            selectedTransactionIdState.value?.let { id ->
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
-                    .first()
-                val transaction = transactionCategory.transaction.copy(ignored = ignored)
-                transactionsRepository.upsertTransaction(transaction)
             }
         }
     }
@@ -211,7 +202,7 @@ sealed interface WalletUiState {
         val transactionFilter: TransactionFilter,
         val userWallet: UserWallet,
         val selectedTransactionCategory: TransactionWithCategory?,
-        val transactionsCategories: List<TransactionWithCategory>,
+        val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
         val income: BigDecimal,

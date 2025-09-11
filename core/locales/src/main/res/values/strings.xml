@@ -57,7 +57,6 @@
     <string name="ok">OK</string>
     <string name="payment_date">Payment date</string>
     <string name="pending">Pending</string>
-    <string name="permanently_delete">Permanently delete?</string>
     <string name="previous_date">Previous date</string>
     <string name="primary">Primary</string>
     <string name="primary_icon_description">Make primary</string>
@@ -86,7 +85,6 @@
     <string name="subscription_deleted">Subscription deleted</string>
     <string name="subscriptions_empty">Nothing in Subscriptions</string>
     <string name="subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
-    <string name="subscriptions_notification_channel_name">Subscription reminders</string>
     <string name="subscriptions_notification_content_text">You need to pay %1$s for a subscription on %2$s</string>
     <string name="subscriptions_title">Subscriptions</string>
     <string name="theme">Theme</string>
@@ -97,10 +95,12 @@
     <string name="title">Title</string>
     <string name="to_wallet">To wallet</string>
     <string name="total_balance">Total balance</string>
+    <string name="transaction_deleted">Transaction deleted</string>
     <string name="transaction_ignore">Ignore in calculations</string>
     <string name="transaction_shortcut_long_label">Add a new transaction</string>
     <string name="transactions_empty">Nothing in Transactions</string>
     <string name="transfer">Transfer</string>
+    <string name="transfer_deleted">Transfer deleted</string>
     <string name="transfers">Transfers</string>
     <string name="uncategorized">Uncategorized</string>
     <string name="undo">Undo</string>

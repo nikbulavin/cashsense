@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Apparel
@@ -69,11 +70,10 @@ fun IconPickerDropdownMenu(
             onClick = {
                 onClick()
                 expanded = true
-            }
+            },
         ) {
-            Icon(
-                imageVector = currentIcon,
-                contentDescription = null,
+            AnimatedIcon(
+                icon = currentIcon,
             )
         }
         DropdownMenu(
@@ -86,7 +86,7 @@ fun IconPickerDropdownMenu(
                         onClick = {
                             onSelectedIconClick(icon.storedId)
                             expanded = false
-                        }
+                        },
                     ) {
                         Icon(
                             imageVector = icon.imageVector,
