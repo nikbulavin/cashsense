@@ -89,7 +89,6 @@ internal fun TransactionItem(
     val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
 
-
     Column(modifier = modifier) {
         CsListItemEmphasized(
             headlineContent = {

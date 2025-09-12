@@ -60,6 +60,7 @@ fun LazyListScope.transactions(
                     else -> ListItemPositionShapes.Middle
                 }
                 val selected = selectedTransaction?.transaction?.id == transactionCategory.transaction.id
+                val motionScheme = MaterialTheme.motionScheme
                 TransactionItem(
                     transaction = transactionCategory.transaction,
                     category = transactionCategory.category,
@@ -70,7 +71,9 @@ fun LazyListScope.transactions(
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
                         .clickable { onClick(if (selected) null else transactionCategory.transaction.id) }
                         .animateItem(
-                            placementSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
+                            fadeInSpec = motionScheme.defaultEffectsSpec(),
+                            fadeOutSpec = motionScheme.defaultEffectsSpec(),
+                            placementSpec = motionScheme.defaultSpatialSpec(),
                         ),
                     selected = selected,
                     onRepeatClick = onRepeatClick,
