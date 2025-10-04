@@ -31,17 +31,17 @@ fun AnimatedAmount(
     color: Color = Color.Unspecified,
     withApproximatelySign: Boolean = false,
 ) {
-    val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
-    val fadeAnimationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+    val slideAnimSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
+    val fadeAnimSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     AnimatedContent(
         targetState = amount,
         transitionSpec = {
             if (amount > initialState) {
-                (slideInVertically(animationSpec) { -it } + fadeIn())
-                    .togetherWith(slideOutVertically { it } + fadeOut(fadeAnimationSpec))
+                slideInVertically(slideAnimSpec) { -it } + fadeIn(fadeAnimSpec) togetherWith
+                        slideOutVertically { it } + fadeOut(fadeAnimSpec)
             } else {
-                (slideInVertically(animationSpec) { it } + fadeIn())
-                    .togetherWith(slideOutVertically { -it } + fadeOut(fadeAnimationSpec))
+                slideInVertically(slideAnimSpec) { it } + fadeIn(fadeAnimSpec) togetherWith
+                        slideOutVertically { -it } + fadeOut(fadeAnimSpec)
             }
         },
         label = label,
