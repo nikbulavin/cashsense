@@ -69,7 +69,6 @@ import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
@@ -203,18 +202,11 @@ internal fun HomeScreen(
                         ) { state ->
                             if (state is TotalBalanceUiState.Shown) {
                                 AnimatedAmount(
-                                    targetState = state.amount,
+                                    amount = state.amount,
+                                    currency = state.userCurrency,
                                     label = "TotalBalanceAnimatedAmount",
-                                ) {
-                                    Text(
-                                        text = state.amount.formatAmount(
-                                            currency = state.userCurrency,
-                                            withApproximately = state.shouldShowApproximately,
-                                        ),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
+                                    withApproximatelySign = state.shouldShowApproximately,
+                                )
                             } else {
                                 LinearWavyProgressIndicator(
                                     modifier = Modifier

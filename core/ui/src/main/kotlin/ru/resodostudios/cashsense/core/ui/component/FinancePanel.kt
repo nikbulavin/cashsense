@@ -69,7 +69,6 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -244,7 +243,8 @@ private fun FinanceCard(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 AnimatedAmount(
-                    targetState = amount,
+                    amount = amount,
+                    currency = currency,
                     label = "FinanceCardTitle",
                     modifier = Modifier.sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -252,17 +252,9 @@ private fun FinanceCard(
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                     ),
-                ) {
-                    Text(
-                        text = it.formatAmount(
-                            currency = currency,
-                            withApproximately = shouldShowApproximately,
-                        ),
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                    withApproximatelySign = shouldShowApproximately,
+                    style = MaterialTheme.typography.titleMedium,
+                )
                 Text(
                     text = stringResource(subtitleRes),
                     style = MaterialTheme.typography.labelMedium,
@@ -344,7 +336,8 @@ private fun DetailedFinanceSection(
                 )
             }
             AnimatedAmount(
-                targetState = amount,
+                amount = amount,
+                currency = currency,
                 label = "DetailedFinanceCard",
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)
@@ -354,17 +347,9 @@ private fun DetailedFinanceSection(
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.ScaleToBounds(),
                     ),
-            ) {
-                Text(
-                    text = amount.formatAmount(
-                        currency = currency,
-                        withApproximately = shouldShowApproximately,
-                    ),
-                    style = MaterialTheme.typography.headlineLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+                withApproximatelySign = shouldShowApproximately,
+                style = MaterialTheme.typography.headlineLarge,
+            )
             Text(
                 text = stringResource(subtitleRes),
                 modifier = Modifier

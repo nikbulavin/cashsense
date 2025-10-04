@@ -56,7 +56,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.util.Currency
@@ -103,16 +102,11 @@ fun WalletCard(
                 style = MaterialTheme.typography.titleLarge,
             )
             AnimatedAmount(
-                targetState = userWallet.currentBalance,
+                amount = userWallet.currentBalance,
+                currency = userWallet.currency,
                 label = "WalletBalance",
-            ) {
-                Text(
-                    text = it.formatAmount(userWallet.currency),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
+                style = MaterialTheme.typography.bodyLarge,
+            )
             TagsSection(
                 expenses = expenses,
                 income = income,
@@ -303,16 +297,11 @@ private fun CsAnimatedTag(
                 )
             }
             AnimatedAmount(
-                targetState = amount,
+                amount = amount,
+                currency = currency,
                 label = "Tag",
-            ) {
-                Text(
-                    text = it.formatAmount(currency),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
 }

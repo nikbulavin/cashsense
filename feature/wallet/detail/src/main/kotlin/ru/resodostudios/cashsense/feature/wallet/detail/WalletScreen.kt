@@ -70,7 +70,6 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
@@ -305,16 +304,11 @@ private fun WalletTopBar(
         },
         subtitle = {
             AnimatedAmount(
-                targetState = userWallet.currentBalance,
+                amount = userWallet.currentBalance,
+                currency = userWallet.currency,
                 label = "WalletBalance",
-            ) {
-                Text(
-                    text = it.formatAmount(userWallet.currency),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         },
         navigationIcon = {
             if (showNavigationIcon) {

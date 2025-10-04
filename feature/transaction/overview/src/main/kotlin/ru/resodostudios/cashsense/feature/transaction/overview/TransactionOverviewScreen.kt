@@ -31,7 +31,6 @@ import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -148,20 +147,13 @@ private fun TopBar(
                 },
                 subtitle = {
                     AnimatedAmount(
-                        targetState = financePanelUiState.totalBalance,
+                        amount = financePanelUiState.totalBalance,
                         label = "TotalBalance",
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = financePanelUiState.totalBalance.formatAmount(
-                                currency = financePanelUiState.userCurrency,
-                                withApproximately = financePanelUiState.shouldShowApproximately,
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                        currency = financePanelUiState.userCurrency,
+                        withApproximatelySign = financePanelUiState.shouldShowApproximately,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 },
                 navigationIcon = {
                     if (shouldShowNavigationIcon) {
