@@ -67,6 +67,7 @@ fun SubscriptionCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),

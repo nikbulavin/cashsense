@@ -106,6 +106,7 @@ fun WalletCard(
                 currency = userWallet.currency,
                 label = "WalletBalance",
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             TagsSection(
                 expenses = expenses,
