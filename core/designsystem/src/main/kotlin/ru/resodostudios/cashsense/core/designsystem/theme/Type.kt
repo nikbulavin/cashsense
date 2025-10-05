@@ -11,9 +11,9 @@ import androidx.compose.ui.text.style.LineHeightStyle.Trim
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
 
-internal val robotoSlabFontFamily = FontFamily(
-    Font(resId = R.font.roboto_slab_regular),
-    Font(resId = R.font.roboto_slab_medium, weight = FontWeight.Medium),
+internal val robotoSerifFontFamily = FontFamily(
+    Font(resId = R.font.roboto_serif_regular),
+    Font(resId = R.font.roboto_serif_medium, weight = FontWeight.Medium),
 )
 internal val poppinsFontFamily = FontFamily(
     Font(resId = R.font.poppins_regular),
@@ -26,49 +26,49 @@ internal val csTypography = Typography(
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     displayMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     displaySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 36.sp,
         lineHeight = 44.sp,
         letterSpacing = 0.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     headlineLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     headlineMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     headlineSmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     titleLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Center,
             trim = Trim.None,
@@ -79,7 +79,7 @@ internal val csTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
         lineHeightStyle = LineHeightStyle(
             alignment = Alignment.Bottom,
             trim = Trim.LastLineBottom,
@@ -90,7 +90,7 @@ internal val csTypography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = robotoSlabFontFamily,
+        fontFamily = robotoSerifFontFamily,
     ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
