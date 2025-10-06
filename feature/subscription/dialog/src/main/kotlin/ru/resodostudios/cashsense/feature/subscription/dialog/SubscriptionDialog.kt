@@ -196,7 +196,7 @@ fun SubscriptionDialog(
                 )
             }
         }
-        LaunchedEffect(Unit) {
+        LaunchedEffect(subscriptionDialogState.id) {
             if (subscriptionDialogState.id.isEmpty()) {
                 focusRequester.requestFocus()
             }

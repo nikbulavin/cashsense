@@ -207,7 +207,7 @@ private fun TransactionDialog(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            LaunchedEffect(Unit) {
+            LaunchedEffect(transactionDialogState.amount) {
                 if (transactionDialogState.amount.isEmpty()) {
                     amountTextField.requestFocus()
                 }
