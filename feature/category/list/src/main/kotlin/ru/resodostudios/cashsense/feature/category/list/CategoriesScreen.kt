@@ -3,7 +3,7 @@ package ru.resodostudios.cashsense.feature.category.list
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridCells.Adaptive
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -32,6 +32,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
+import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Empty
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
@@ -54,6 +55,7 @@ internal fun CategoriesScreen(
         onShowSnackbar = onShowSnackbar,
         onUpdateCategoryId = viewModel::updateCategoryId,
         deleteCategory = viewModel::deleteCategory,
+        shouldDisplayUndoCategory = viewModel.shouldDisplayUndoCategory,
         undoCategoryRemoval = viewModel::undoCategoryRemoval,
         clearUndoState = viewModel::clearUndoState,
     )
@@ -67,6 +69,7 @@ internal fun CategoriesScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onUpdateCategoryId: (String) -> Unit,
     deleteCategory: (String) -> Unit = {},
+    shouldDisplayUndoCategory: Boolean = false,
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
@@ -85,6 +88,23 @@ internal fun CategoriesScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
+        val categoryDeletedMessage = stringResource(localesR.string.category_deleted)
+        val undoText = stringResource(localesR.string.undo)
+
+        LaunchedEffect(shouldDisplayUndoCategory) {
+            if (shouldDisplayUndoCategory) {
+                val snackBarResult = onShowSnackbar(categoryDeletedMessage, undoText)
+                if (snackBarResult) {
+                    undoCategoryRemoval()
+                } else {
+                    clearUndoState()
+                }
+            }
+        }
+        LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+            clearUndoState()
+        }
+
         when (categoriesState) {
             Loading -> {
                 LoadingState(
@@ -94,56 +114,39 @@ internal fun CategoriesScreen(
                 )
             }
 
+            Empty -> {
+                EmptyState(
+                    messageRes = localesR.string.categories_empty,
+                    animationRes = R.raw.anim_categories_empty,
+                    modifier = Modifier.padding(innerPadding),
+                )
+            }
+
             is Success -> {
-                val categoryDeletedMessage = stringResource(localesR.string.category_deleted)
-                val undoText = stringResource(localesR.string.undo)
+                var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
 
-                LaunchedEffect(categoriesState.shouldDisplayUndoCategory) {
-                    if (categoriesState.shouldDisplayUndoCategory) {
-                        val snackBarResult = onShowSnackbar(categoryDeletedMessage, undoText)
-                        if (snackBarResult) {
-                            undoCategoryRemoval()
-                        } else {
-                            clearUndoState()
-                        }
-                    }
+                LazyVerticalGrid(
+                    columns = Adaptive(300.dp),
+                    contentPadding = PaddingValues(
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = innerPadding.calculateBottomPadding() + 110.dp,
+                    ),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    categories(
+                        categories = categoriesState.categories,
+                        onCategoryClick = {
+                            onUpdateCategoryId(it)
+                            showCategoryBottomSheet = true
+                        },
+                    )
                 }
-                LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-                    clearUndoState()
-                }
-
-                if (categoriesState.categories.isNotEmpty()) {
-                    var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
-
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(300.dp),
-                        contentPadding = PaddingValues(
-                            top = innerPadding.calculateTopPadding(),
-                            bottom = innerPadding.calculateBottomPadding() + 110.dp,
-                        ),
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        categories(
-                            categoriesState = categoriesState,
-                            onCategoryClick = {
-                                onUpdateCategoryId(it)
-                                showCategoryBottomSheet = true
-                            },
-                        )
-                    }
-                    if (showCategoryBottomSheet && categoriesState.selectedCategory != null) {
-                        CategoryBottomSheet(
-                            category = categoriesState.selectedCategory!!,
-                            onDismiss = { showCategoryBottomSheet = false },
-                            onEdit = onEditCategory,
-                            onDelete = deleteCategory,
-                        )
-                    }
-                } else {
-                    EmptyState(
-                        messageRes = localesR.string.categories_empty,
-                        animationRes = R.raw.anim_categories_empty,
-                        modifier = Modifier.padding(innerPadding),
+                if (showCategoryBottomSheet && categoriesState.selectedCategory != null) {
+                    CategoryBottomSheet(
+                        category = categoriesState.selectedCategory!!,
+                        onDismiss = { showCategoryBottomSheet = false },
+                        onEdit = onEditCategory,
+                        onDelete = deleteCategory,
                     )
                 }
             }
@@ -153,23 +156,18 @@ internal fun CategoriesScreen(
 }
 
 private fun LazyGridScope.categories(
-    categoriesState: CategoriesUiState,
+    categories: List<Category>,
     onCategoryClick: (String) -> Unit,
 ) {
-    when (categoriesState) {
-        Loading -> Unit
-        is Success -> {
-            items(
-                items = categoriesState.categories,
-                key = { it.id!! },
-            ) { category ->
-                CategoryItem(
-                    category = category,
-                    onClick = onCategoryClick,
-                    modifier = Modifier.animateItem(),
-                )
-            }
-        }
+    items(
+        items = categories,
+        key = { it.id!! },
+    ) { category ->
+        CategoryItem(
+            category = category,
+            onClick = onCategoryClick,
+            modifier = Modifier.animateItem(),
+        )
     }
 }
 
@@ -185,7 +183,6 @@ private fun CategoriesScreenPreview(
                 onShowSnackbar = { _, _ -> false },
                 onEditCategory = {},
                 categoriesState = Success(
-                    shouldDisplayUndoCategory = false,
                     categories = categories,
                     selectedCategory = null,
                 ),

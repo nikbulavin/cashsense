@@ -165,7 +165,7 @@ private fun TransactionDialog(
                 )
                 CategoryDropdownMenu(
                     currentCategory = transactionDialogState.category,
-                    categoriesState = categoriesState,
+                    categories = if (categoriesState is Success) categoriesState.categories else emptyList(),
                     onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
                 )
                 TransactionStatusChoiceRow(
@@ -251,86 +251,81 @@ private fun TransactionStatusChoiceRow(
 @Composable
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
-    categoriesState: CategoriesUiState,
+    categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
-    when (categoriesState) {
-        Loading -> Unit
-        is Success -> {
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
-                    readOnly = true,
-                    value = currentCategory?.title ?: stringResource(localesR.string.none),
-                    onValueChange = {},
-                    label = { Text(stringResource(localesR.string.category_title)) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+            readOnly = true,
+            value = currentCategory?.title ?: stringResource(localesR.string.none),
+            onValueChange = {},
+            label = { Text(stringResource(localesR.string.category_title)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            leadingIcon = {
+                Icon(
+                    imageVector = StoredIcon.asImageVector(iconId),
+                    contentDescription = null,
+                )
+            },
+            singleLine = true,
+            enabled = categories.isNotEmpty(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(localesR.string.none),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                onClick = {
+                    onCategoryClick(Category())
+                    iconId = 0
+                    expanded = false
+                },
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                leadingIcon = {
+                    Icon(
+                        imageVector = CsIcons.Outlined.Category,
+                        contentDescription = null,
+                    )
+                },
+            )
+            categories.forEach { category ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = category.title.toString(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    onClick = {
+                        onCategoryClick(category)
+                        iconId = category.iconId ?: 0
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = StoredIcon.asImageVector(iconId),
+                            imageVector = StoredIcon.asImageVector(category.iconId),
                             contentDescription = null,
                         )
                     },
-                    singleLine = true,
-                    enabled = categoriesState.categories.isNotEmpty(),
                 )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = stringResource(localesR.string.none),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        onClick = {
-                            onCategoryClick(Category())
-                            iconId = 0
-                            expanded = false
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Category,
-                                contentDescription = null,
-                            )
-                        },
-                    )
-                    categoriesState.categories.forEach { category ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = category.title.toString(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            onClick = {
-                                onCategoryClick(category)
-                                iconId = category.iconId ?: 0
-                                expanded = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = StoredIcon.asImageVector(category.iconId),
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-                    }
-                }
             }
         }
     }
