@@ -16,7 +16,6 @@
   <string name="required">*requerido</string>
   <string name="none">Ninguno</string>
   <string name="amount">Cantidad</string>
-  <string name="subscriptions_notification_channel_name">Recordatorios de suscripciones</string>
   <string name="subscriptions_notification_channel_description">Recordatorios de suscripciones por vencer</string>
   <string name="subscriptions_notification_content_text">Necesitas pagar %1$s por una suscripción el %2$s</string>
   <string name="new_category">Nueva categoría</string>
