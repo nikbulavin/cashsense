@@ -16,7 +16,6 @@
   <string name="required">*必須</string>
   <string name="none">なし</string>
   <string name="amount">金額</string>
-  <string name="subscriptions_notification_channel_name">サブスクリプションのリマインダー</string>
   <string name="subscriptions_notification_channel_description">期限切れのサブスクリプションのリマインダー</string>
   <string name="subscriptions_notification_content_text">%2$s にサブスクリプションの支払いで %1$s が必要です</string>
   <string name="new_category">新しいカテゴリー</string>
