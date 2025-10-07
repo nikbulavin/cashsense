@@ -16,7 +16,6 @@
   <string name="required">*obligatoire</string>
   <string name="none">Aucun</string>
   <string name="amount">Montant</string>
-  <string name="subscriptions_notification_channel_name">Rappels d\'abonnement</string>
   <string name="subscriptions_notification_channel_description">Rappels des abonnements qui expirent</string>
   <string name="subscriptions_notification_content_text">Vous devez payer %1$s pour un abonnement le %2$s</string>
   <string name="new_category">Nouvelle catégorie</string>

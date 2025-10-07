@@ -16,7 +16,6 @@
   <string name="required">*தேவை</string>
   <string name="none">எதுவுமில்லை</string>
   <string name="amount">தொகை</string>
-  <string name="subscriptions_notification_channel_name">சந்தா நினைவூட்டல்கள்</string>
   <string name="subscriptions_notification_channel_description">காலாவதியாகும் சந்தாக்களின் நினைவூட்டல்கள்</string>
   <string name="subscriptions_notification_content_text">%2$s சந்தாவிற்கு நீங்கள் %1$s செலுத்த வேண்டும்</string>
   <string name="new_category">புதிய வகை</string>

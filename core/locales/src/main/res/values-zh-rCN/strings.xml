@@ -16,7 +16,6 @@
   <string name="required">*必填</string>
   <string name="none">无</string>
   <string name="amount">金额</string>
-  <string name="subscriptions_notification_channel_name">订阅提醒</string>
   <string name="subscriptions_notification_channel_description">订阅到期提醒</string>
   <string name="subscriptions_notification_content_text">您需要支付 %1$s 才能订阅 %2$s</string>
   <string name="new_category">新建类别</string>

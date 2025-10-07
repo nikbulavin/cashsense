@@ -16,7 +16,6 @@
   <string name="required">*आवश्यक</string>
   <string name="none">कोई नहीं</string>
   <string name="amount">राशि</string>
-  <string name="subscriptions_notification_channel_name">सदस्यता अनुस्मारक</string>
   <string name="subscriptions_notification_channel_description">समाप्त हो रही सदस्यताओं के अनुस्मारक</string>
   <string name="subscriptions_notification_content_text">%2$s को %1$s की सदस्यता के लिए भुगतान करना होगा</string>
   <string name="new_category">नई श्रेणी</string>
