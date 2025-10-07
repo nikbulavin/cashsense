@@ -16,7 +16,6 @@
   <string name="required">*مطلوب</string>
   <string name="none">لا شيء</string>
   <string name="amount">المبلغ</string>
-  <string name="subscriptions_notification_channel_name">تذكيرات الاشتراك</string>
   <string name="subscriptions_notification_channel_description">تذكيرات باشتراكاتك التي تنتهي قريبًا</string>
   <string name="subscriptions_notification_content_text">عليك دفع %1$s لاشتراكك في %2$s</string>
   <string name="new_category">فئة جديدة</string>
