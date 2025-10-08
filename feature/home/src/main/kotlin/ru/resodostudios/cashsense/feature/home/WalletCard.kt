@@ -123,7 +123,7 @@ fun WalletCard(
             overflowIndicator = { menuState ->
                 CsIconButton(
                     onClick = {
-                        if (menuState.isExpanded) {
+                        if (menuState.isShowing) {
                             menuState.dismiss()
                         } else {
                             menuState.show()
