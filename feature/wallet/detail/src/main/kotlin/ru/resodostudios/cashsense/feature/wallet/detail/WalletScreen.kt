@@ -96,7 +96,7 @@ fun WalletScreen(
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        updateTransactionId = viewModel::updateTransactionId,
+        onTransactionSelect = viewModel::updateSelectedTransaction,
         onTransactionDelete = viewModel::deleteTransaction,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
@@ -125,7 +125,7 @@ private fun WalletScreen(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    updateTransactionId: (String?) -> Unit = {},
+    onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
     onTransactionDelete: () -> Unit = {},
 ) {
     when (walletState) {
@@ -172,8 +172,8 @@ private fun WalletScreen(
                         }
                         transactions(
                             transactionsCategories = walletState.transactionsCategories,
-                            onClick = updateTransactionId,
-                            selectedTransaction = walletState.selectedTransactionCategory,
+                            onClick = onTransactionSelect,
+                            selectedTransaction = walletState.selectedTransaction,
                             onRepeatClick = { transactionId ->
                                 navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
                             },
@@ -379,7 +379,7 @@ private fun WalletScreenPopulatedPreview(
                     isPrimary = true,
                     currentBalance = BigDecimal(57500),
                 ),
-                selectedTransactionCategory = null,
+                selectedTransaction = null,
                 transactionsCategories = transactionsCategories.groupByDate(),
                 availableCategories = emptyList(),
                 expenses = BigDecimal(495.90),
@@ -422,7 +422,7 @@ private fun WalletScreenEmptyPreview() {
                     isPrimary = true,
                     currentBalance = BigDecimal(57500),
                 ),
-                selectedTransactionCategory = null,
+                selectedTransaction = null,
                 transactionsCategories = emptyMap(),
                 availableCategories = emptyList(),
                 expenses = BigDecimal(495.90),

@@ -31,7 +31,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun LazyListScope.transactions(
     transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
-    onClick: (String?) -> Unit,
+    onClick: (TransactionWithCategory?) -> Unit,
     selectedTransaction: TransactionWithCategory? = null,
     onRepeatClick: (String) -> Unit = {},
     onEditClick: (String) -> Unit = {},
@@ -69,7 +69,7 @@ fun LazyListScope.transactions(
                         .padding(horizontal = 16.dp)
                         .clip(shape)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        .clickable { onClick(if (selected) null else transactionCategory.transaction.id) }
+                        .clickable { onClick(if (selected) null else transactionCategory) }
                         .animateItem(
                             fadeInSpec = motionScheme.defaultEffectsSpec(),
                             fadeOutSpec = motionScheme.defaultEffectsSpec(),

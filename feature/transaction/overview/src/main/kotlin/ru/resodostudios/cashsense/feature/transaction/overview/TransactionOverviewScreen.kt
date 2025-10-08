@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -55,7 +56,7 @@ fun TransactionOverviewScreen(
         transactionOverviewState = transactionOverviewState,
         navigateToTransactionDialog = navigateToTransactionDialog,
         onTransactionDelete = viewModel::deleteTransaction,
-        onTransactionSelect = viewModel::updateTransactionId,
+        onTransactionSelect = viewModel::updateSelectedTransaction,
     )
 }
 
@@ -73,7 +74,7 @@ private fun TransactionOverviewScreen(
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onTransactionDelete: () -> Unit = {},
-    onTransactionSelect: (String?) -> Unit = {},
+    onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
 ) {
     when (transactionOverviewState) {
         TransactionOverviewUiState.Loading -> LoadingState(Modifier.fillMaxSize())
@@ -102,9 +103,9 @@ private fun TransactionOverviewScreen(
                         onCategorySelect = onCategorySelect,
                         onCategoryDeselect = onCategoryDeselect,
                     )
-                    val transaction = transactionOverviewState.selectedTransactionCategory?.transaction
+                    val transaction = transactionOverviewState.selectedTransaction?.transaction
                     transactions(
-                        selectedTransaction = transactionOverviewState.selectedTransactionCategory,
+                        selectedTransaction = transactionOverviewState.selectedTransaction,
                         transactionsCategories = transactionOverviewState.transactionsCategories,
                         onClick = onTransactionSelect,
                         onRepeatClick = { transactionId ->

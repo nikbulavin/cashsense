@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -12,7 +15,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -30,6 +32,7 @@ import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
@@ -52,6 +55,9 @@ class WalletViewModel @AssistedInject constructor(
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
+    var shouldDisplayUndoTransaction by mutableStateOf(false)
+    private var lastRemovedTransaction: Transaction? = null
+
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
             selectedCategories = emptySet(),
@@ -61,13 +67,13 @@ class WalletViewModel @AssistedInject constructor(
         )
     )
 
-    private val selectedTransactionIdState = MutableStateFlow<String?>(null)
+    private val selectedTransactionState = MutableStateFlow<TransactionWithCategory?>(null)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         getExtendedUserWallet.invoke(walletId),
         transactionFilterState,
-        selectedTransactionIdState,
-    ) { extendedUserWallet, transactionFilter, selectedTransactionId ->
+        selectedTransactionState,
+    ) { extendedUserWallet, transactionFilter, selectedTransaction ->
         val filterableTransactions = extendedUserWallet.transactionsWithCategories
             .applyTransactionFilter(transactionFilter)
 
@@ -87,9 +93,7 @@ class WalletViewModel @AssistedInject constructor(
             expenses = expenses.sumOf { it.transaction.amount }.abs(),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
-            selectedTransactionCategory = selectedTransactionId?.let { id ->
-                filterableTransactions.transactionsCategories.find { it.transaction.id == id }
-            },
+            selectedTransaction = selectedTransaction,
             transactionsCategories = filterableTransactions.transactionsCategories.groupByDate(),
             availableCategories = filterableTransactions.availableCategories,
         )
@@ -102,19 +106,17 @@ class WalletViewModel @AssistedInject constructor(
             initialValue = WalletUiState.Loading,
         )
 
-    fun updateTransactionId(id: String?) {
-        selectedTransactionIdState.value = id
+    fun updateSelectedTransaction(transaction: TransactionWithCategory?) {
+        selectedTransactionState.value = transaction
     }
 
     fun deleteTransaction() {
         viewModelScope.launch {
-            selectedTransactionIdState.value?.let { id ->
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
-                    .first()
-                if (transactionCategory.transaction.transferId != null) {
-                    transactionsRepository.deleteTransfer(transactionCategory.transaction.transferId!!)
+            selectedTransactionState.value?.let { selectedTransaction ->
+                if (selectedTransaction.transaction.transferId != null) {
+                    transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
                 } else {
-                    transactionsRepository.deleteTransaction(id)
+                    transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
                 }
             }
         }
@@ -201,7 +203,7 @@ sealed interface WalletUiState {
     data class Success(
         val transactionFilter: TransactionFilter,
         val userWallet: UserWallet,
-        val selectedTransactionCategory: TransactionWithCategory?,
+        val selectedTransaction: TransactionWithCategory?,
         val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
