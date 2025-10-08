@@ -4,10 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -56,7 +55,6 @@ private fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
     val hapticFeedback = LocalHapticFeedback.current
 
     FilterChip(
@@ -75,12 +73,13 @@ private fun CategoryChip(
             )
         },
         leadingIcon = {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = modifier.size(FilterChipDefaults.IconSize),
+            val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
+            AnimatedIcon(
+                icon = icon,
+                iconSize = FilterChipDefaults.IconSize,
             )
-        }
+        },
+        modifier = modifier,
     )
 }
 

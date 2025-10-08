@@ -2,9 +2,12 @@ package ru.resodostudios.cashsense.core.ui.component
 
 import android.text.Layout
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -38,6 +41,7 @@ import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
+import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
@@ -175,6 +179,7 @@ fun FinanceGraph(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun rememberMarker(
     valueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter.default(),
@@ -192,21 +197,18 @@ private fun rememberMarker(
         padding = insets(8.dp, 4.dp),
         background = labelBackground,
     )
-    val indicatorFrontComponent =
-        rememberShapeComponent(fill(MaterialTheme.colorScheme.surface), CorneredShape.Pill)
-    val indicatorCenterComponent = rememberShapeComponent(shape = CorneredShape.Pill)
-    val indicatorRearComponent = rememberShapeComponent(shape = CorneredShape.Pill)
-    val indicator = LayeredComponent(
-        back = indicatorRearComponent,
-        front = LayeredComponent(
-            back = indicatorCenterComponent,
-            front = indicatorFrontComponent,
-            padding = insets(5.dp),
-        ),
-        padding = insets(10.dp),
+
+    val indicatorRearShape = MaterialShapes.Cookie7Sided.toShape().toVicoShape()
+    val indicatorCenterShape = MaterialShapes.Clover4Leaf.toShape().toVicoShape()
+
+    val indicatorFrontComponent = rememberShapeComponent(
+        fill = fill(MaterialTheme.colorScheme.surface),
+        shape = CorneredShape.Pill,
     )
+
     val guideline = rememberAxisGuidelineComponent()
-    return remember(label, valueFormatter, indicator, showIndicator, guideline) {
+
+    return remember(label, valueFormatter, showIndicator, guideline) {
         object :
             DefaultCartesianMarker(
                 label = label,
@@ -216,12 +218,12 @@ private fun rememberMarker(
                         LayeredComponent(
                             back = ShapeComponent(
                                 Fill(ColorUtils.setAlphaComponent(color, 38)),
-                                CorneredShape.Pill,
+                                indicatorRearShape,
                             ),
                             front = LayeredComponent(
                                 back = ShapeComponent(
                                     fill = Fill(color),
-                                    shape = CorneredShape.Pill,
+                                    shape = indicatorCenterShape,
                                     shadow = Shadow(radiusDp = 12f, color = color),
                                 ),
                                 front = indicatorFrontComponent,

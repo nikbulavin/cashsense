@@ -3,6 +3,8 @@ package ru.resodostudios.cashsense.core.designsystem.component
 import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +17,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsAlertDialog(
     @StringRes titleRes: Int,
@@ -46,6 +49,7 @@ fun CsAlertDialog(
         confirmButton = {
             val hapticFeedback = LocalHapticFeedback.current
             Button(
+                shapes = ButtonDefaults.shapes(),
                 onClick = {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                     onConfirm()
@@ -56,7 +60,10 @@ fun CsAlertDialog(
             }
         },
         dismissButton = {
-            TextButton(onDismiss) {
+            TextButton(
+                onClick = onDismiss,
+                shapes = ButtonDefaults.shapes(),
+            ) {
                 Text(stringResource(dismissButtonTextRes))
             }
         },

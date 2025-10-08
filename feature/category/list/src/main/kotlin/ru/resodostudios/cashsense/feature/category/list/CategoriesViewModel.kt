@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.category.list
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,20 +26,23 @@ class CategoriesViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
 ) : ViewModel() {
 
-    private val shouldDisplayUndoCategoryState = MutableStateFlow(false)
-    private val lastRemovedCategoryState = MutableStateFlow<Pair<Category, List<String>>?>(null)
+    var shouldDisplayUndoCategory by mutableStateOf(false)
+    private var lastRemovedCategory: Pair<Category, List<String>>? = null
+
     private val selectedCategoryIdState = MutableStateFlow<String?>(null)
 
     val categoriesUiState: StateFlow<CategoriesUiState> = combine(
-        shouldDisplayUndoCategoryState,
         categoriesRepository.getCategories(),
         selectedCategoryIdState,
-    ) { shouldDisplayUndoCategory, categories, selectedCategoryId ->
-        CategoriesUiState.Success(
-            shouldDisplayUndoCategory = shouldDisplayUndoCategory,
-            categories = categories,
-            selectedCategory = categories.find { it.id == selectedCategoryId },
-        )
+    ) { categories, selectedCategoryId ->
+        if (categories.isEmpty()) {
+             CategoriesUiState.Empty
+        } else {
+            CategoriesUiState.Success(
+                categories = categories,
+                selectedCategory = categories.find { it.id == selectedCategoryId },
+            )
+        }
     }
         .stateIn(
             scope = viewModelScope,
@@ -54,15 +60,15 @@ class CategoriesViewModel @Inject constructor(
             val transactionIds = transactionsRepository.getTransactionCategoryCrossRefs(id)
                 .first()
                 .map { it.transactionId }
-            lastRemovedCategoryState.value = Pair(category, transactionIds)
+            lastRemovedCategory = category to transactionIds
             categoriesRepository.deleteCategory(id)
-            shouldDisplayUndoCategoryState.value = true
+            shouldDisplayUndoCategory = true
         }
     }
 
     fun undoCategoryRemoval() {
         viewModelScope.launch {
-            lastRemovedCategoryState.value?.let {
+            lastRemovedCategory?.let {
                 categoriesRepository.upsertCategory(it.first)
                 it.second.forEach { transactionId ->
                     it.first.id?.let { categoryId ->
@@ -79,7 +85,7 @@ class CategoriesViewModel @Inject constructor(
     }
 
     fun clearUndoState() {
-        lastRemovedCategoryState.value = null
-        shouldDisplayUndoCategoryState.value = false
+        lastRemovedCategory = null
+        shouldDisplayUndoCategory = false
     }
 }

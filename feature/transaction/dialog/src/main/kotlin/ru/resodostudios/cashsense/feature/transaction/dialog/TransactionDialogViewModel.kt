@@ -69,7 +69,7 @@ class TransactionDialogViewModel @Inject constructor(
 
     val categoriesUiState: StateFlow<CategoriesUiState> =
         categoriesRepository.getCategories()
-            .map { Success(false, it, null) }
+            .map { Success(it, null) }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),

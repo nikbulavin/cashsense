@@ -9,16 +9,24 @@ import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,8 +36,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -38,18 +48,24 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
+import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SettingsBackupRestore
@@ -128,8 +144,13 @@ private fun SettingsScreen(
 
             is Success -> {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = innerPadding,
+                    contentPadding = PaddingValues(
+                        top = 16.dp + innerPadding.calculateTopPadding(),
+                        bottom = 16.dp + innerPadding.calculateBottomPadding(),
+                        start = 16.dp,
+                        end = 16.dp,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     general(
                         settings = settingsState.settings,
@@ -160,12 +181,12 @@ private fun SettingsScreen(
 private fun SectionTitle(
     text: String,
     modifier: Modifier = Modifier,
-    topPadding: Dp = 32.dp,
+    topPadding: Dp = 30.dp,
 ) {
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
-        modifier = modifier.padding(top = topPadding, bottom = 16.dp, start = 16.dp, end = 16.dp),
+        modifier = modifier.padding(top = topPadding, bottom = 12.dp, start = 8.dp),
         color = MaterialTheme.colorScheme.primary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -210,13 +231,14 @@ private fun LazyListScope.general(
     item {
         SectionTitle(
             text = stringResource(localesR.string.settings_general),
-            topPadding = 10.dp,
+            topPadding = 8.dp,
         )
     }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.First,
             headlineContent = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
@@ -239,7 +261,8 @@ private fun LazyListScope.general(
     item {
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.Middle,
             headlineContent = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
@@ -262,6 +285,7 @@ private fun LazyListScope.general(
     }
     item {
         CsToggableListItem(
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.show_total_balance)) },
             supportingContent = { Text(stringResource(localesR.string.show_total_balance_description)) },
             leadingContent = {
@@ -282,6 +306,7 @@ private fun LazyListScope.general(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.appearance(
     settings: UserEditableSettings,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
@@ -290,14 +315,8 @@ private fun LazyListScope.appearance(
 ) {
     item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
-        val themeOptions = listOf(
-            stringResource(localesR.string.theme_system_default),
-            stringResource(localesR.string.theme_light),
-            stringResource(localesR.string.theme_dark),
-        )
-        var showThemeDialog by rememberSaveable { mutableStateOf(false) }
-
-        CsListItem(
+        CsListItemEmphasized(
+            shape = if (supportDynamicColor) ListItemPositionShapes.First else ListItemPositionShapes.Single,
             headlineContent = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
@@ -305,22 +324,59 @@ private fun LazyListScope.appearance(
                     contentDescription = null,
                 )
             },
-            supportingContent = { Text(themeOptions.elementAt(settings.darkThemeConfig.ordinal)) },
-            onClick = { showThemeDialog = true },
-        )
+            trailingContent = {
+                val themeOptions = listOf(
+                    stringResource(localesR.string.theme_system_default),
+                    stringResource(localesR.string.theme_light),
+                    stringResource(localesR.string.theme_dark),
+                )
+                val uncheckedIcons = listOf(
+                    CsIcons.Outlined.Android,
+                    CsIcons.Outlined.LightMode,
+                    CsIcons.Outlined.DarkMode,
+                )
+                val checkedIcons = listOf(
+                    CsIcons.Outlined.Android,
+                    CsIcons.Filled.LightMode,
+                    CsIcons.Filled.DarkMode,
+                )
+                val selectedIndex = settings.darkThemeConfig.ordinal
+                val hapticFeedback = LocalHapticFeedback.current
 
-        if (showThemeDialog) {
-            ThemeDialog(
-                themeConfig = settings.darkThemeConfig,
-                themeOptions = themeOptions,
-                onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
-                onDismiss = { showThemeDialog = false },
-            )
-        }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    themeOptions.forEachIndexed { index, label ->
+                        ToggleButton(
+                            checked = selectedIndex == index,
+                            onCheckedChange = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
+                            },
+                            shapes = when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors().copy(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            ),
+                        ) {
+                            Icon(
+                                imageVector = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
+                                contentDescription = label,
+                                modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                            )
+                        }
+                    }
+                }
+            }
+        )
     }
     item {
         AnimatedVisibility(supportDynamicColor) {
             CsToggableListItem(
+                shape = ListItemPositionShapes.Last,
                 headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
@@ -355,7 +411,8 @@ private fun LazyListScope.backupAndRestore(
             }
         val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
         val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.First,
             headlineContent = { Text(stringResource(localesR.string.backup)) },
             leadingContent = {
                 Icon(
@@ -380,7 +437,8 @@ private fun LazyListScope.backupAndRestore(
             ) {
                 it?.let { onDataImport(it, true) }
             }
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.restore)) },
             leadingContent = {
                 Icon(
@@ -408,7 +466,8 @@ private fun LazyListScope.about(
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.First,
             headlineContent = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
@@ -429,7 +488,8 @@ private fun LazyListScope.about(
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.Middle,
             headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
@@ -447,7 +507,8 @@ private fun LazyListScope.about(
         )
     }
     item {
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.Middle,
             headlineContent = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
@@ -468,7 +529,8 @@ private fun LazyListScope.about(
             ""
         }
 
-        CsListItem(
+        CsListItemEmphasized(
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {

@@ -5,21 +5,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +32,6 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -47,11 +43,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsTonalToggleButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
@@ -96,6 +94,7 @@ internal fun TransactionDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TransactionDialog(
     transactionDialogState: TransactionDialogUiState,
@@ -166,7 +165,7 @@ private fun TransactionDialog(
                 )
                 CategoryDropdownMenu(
                     currentCategory = transactionDialogState.category,
-                    categoriesState = categoriesState,
+                    categories = if (categoriesState is Success) categoriesState.categories else emptyList(),
                     onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
                 )
                 TransactionStatusChoiceRow(
@@ -223,40 +222,14 @@ private fun TransactionTypeChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    val transactionTypes = listOf(
-        stringResource(localesR.string.expense) to CsIcons.Outlined.TrendingDown,
-        stringResource(localesR.string.income_singular) to CsIcons.Outlined.TrendingUp,
+    CsConnectedButtonGroup(
+        selectedIndex = transactionState.transactionType.ordinal,
+        options = listOf(localesR.string.expense, localesR.string.income_singular),
+        checkedIcon = CsIcons.Outlined.Check,
+        uncheckedIcons = listOf(CsIcons.Outlined.TrendingDown, CsIcons.Outlined.TrendingUp),
+        onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[it])) },
+        modifier = Modifier.fillMaxWidth(),
     )
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-        transactionTypes.forEachIndexed { index, transactionType ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = transactionTypes.size,
-                ),
-                onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[index])) },
-                selected = transactionState.transactionType == TransactionType.entries[index],
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = transactionState.transactionType == TransactionType.entries[index]) {
-                        Icon(
-                            imageVector = transactionType.second,
-                            contentDescription = null,
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                        )
-                    }
-                },
-                colors = SegmentedButtonDefaults.colors(
-                    inactiveContainerColor = Color.Transparent,
-                ),
-            ) {
-                Text(
-                    text = transactionType.first,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -264,126 +237,95 @@ private fun TransactionStatusChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    val statusTypes = listOf(
-        stringResource(localesR.string.completed) to CsIcons.Outlined.CheckCircle,
-        stringResource(localesR.string.pending) to CsIcons.Outlined.Pending,
+    CsConnectedButtonGroup(
+        selectedIndex = transactionState.status.ordinal,
+        options = listOf(localesR.string.completed, localesR.string.pending),
+        checkedIcon = CsIcons.Outlined.Check,
+        uncheckedIcons = listOf(CsIcons.Outlined.CheckCircle, CsIcons.Outlined.Pending),
+        onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[it])) },
+        modifier = Modifier.fillMaxWidth(),
     )
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-        statusTypes.forEachIndexed { index, statusType ->
-            SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = statusTypes.size,
-                ),
-                onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[index])) },
-                selected = transactionState.status == StatusType.entries[index],
-                icon = {
-                    SegmentedButtonDefaults.Icon(active = transactionState.status == StatusType.entries[index]) {
-                        Icon(
-                            imageVector = statusType.second,
-                            contentDescription = null,
-                            modifier = Modifier.size(SegmentedButtonDefaults.IconSize),
-                        )
-                    }
-                },
-                colors = SegmentedButtonDefaults.colors(
-                    inactiveContainerColor = Color.Transparent,
-                ),
-            ) {
-                Text(
-                    text = statusType.first,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
-    categoriesState: CategoriesUiState,
+    categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
-    when (categoriesState) {
-        Loading -> Unit
-        is Success -> {
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
-                    readOnly = true,
-                    value = currentCategory?.title ?: stringResource(localesR.string.none),
-                    onValueChange = {},
-                    label = { Text(stringResource(localesR.string.category_title)) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+            readOnly = true,
+            value = currentCategory?.title ?: stringResource(localesR.string.none),
+            onValueChange = {},
+            label = { Text(stringResource(localesR.string.category_title)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            leadingIcon = {
+                Icon(
+                    imageVector = StoredIcon.asImageVector(iconId),
+                    contentDescription = null,
+                )
+            },
+            singleLine = true,
+            enabled = categories.isNotEmpty(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = stringResource(localesR.string.none),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                onClick = {
+                    onCategoryClick(Category())
+                    iconId = 0
+                    expanded = false
+                },
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                leadingIcon = {
+                    Icon(
+                        imageVector = CsIcons.Outlined.Category,
+                        contentDescription = null,
+                    )
+                },
+            )
+            categories.forEach { category ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = category.title.toString(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    onClick = {
+                        onCategoryClick(category)
+                        iconId = category.iconId ?: 0
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = StoredIcon.asImageVector(iconId),
+                            imageVector = StoredIcon.asImageVector(category.iconId),
                             contentDescription = null,
                         )
                     },
-                    singleLine = true,
-                    enabled = categoriesState.categories.isNotEmpty(),
                 )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = stringResource(localesR.string.none),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        onClick = {
-                            onCategoryClick(Category())
-                            iconId = 0
-                            expanded = false
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Category,
-                                contentDescription = null,
-                            )
-                        },
-                    )
-                    categoriesState.categories.forEach { category ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = category.title.toString(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            onClick = {
-                                onCategoryClick(category)
-                                iconId = category.iconId ?: 0
-                                expanded = false
-                            },
-                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = StoredIcon.asImageVector(category.iconId),
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-                    }
-                }
             }
         }
     }

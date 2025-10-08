@@ -1,0 +1,38 @@
+package ru.resodostudios.cashsense.core.designsystem.icon.outlined
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
+import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+
+val CsIcons.Outlined.KeyboardArrowUp: ImageVector
+    get() {
+        if (_KeyboardArrowUp != null) {
+            return _KeyboardArrowUp!!
+        }
+        _KeyboardArrowUp = ImageVector.Builder(
+            name = "Outlined.KeyboardArrowUp",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 960f,
+            viewportHeight = 960f,
+        ).apply {
+            path(fill = SolidColor(Color.Black)) {
+                moveTo(480f, 432f)
+                lineTo(296f, 616f)
+                lineTo(240f, 560f)
+                lineTo(480f, 320f)
+                lineTo(720f, 560f)
+                lineTo(664f, 616f)
+                lineTo(480f, 432f)
+                close()
+            }
+        }.build()
+
+        return _KeyboardArrowUp!!
+    }
+
+@Suppress("ObjectPropertyName")
+private var _KeyboardArrowUp: ImageVector? = null

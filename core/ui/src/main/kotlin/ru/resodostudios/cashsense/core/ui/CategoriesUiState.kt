@@ -6,8 +6,9 @@ sealed interface CategoriesUiState {
 
     data object Loading : CategoriesUiState
 
+    data object Empty : CategoriesUiState
+
     data class Success(
-        val shouldDisplayUndoCategory: Boolean,
         val categories: List<Category>,
         val selectedCategory: Category?,
     ) : CategoriesUiState

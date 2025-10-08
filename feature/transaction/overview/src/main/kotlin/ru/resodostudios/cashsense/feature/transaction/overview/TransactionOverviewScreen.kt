@@ -14,37 +14,31 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
-import ru.resodostudios.cashsense.core.ui.component.TransactionBottomSheet
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 fun TransactionOverviewScreen(
     shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
-    onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
 ) {
     val financePanelUiState by viewModel.financePanelUiState.collectAsStateWithLifecycle()
@@ -53,7 +47,6 @@ fun TransactionOverviewScreen(
     TransactionOverviewScreen(
         shouldShowNavigationIcon = shouldShowNavigationIcon,
         onBackClick = onBackClick,
-        onTransactionClick = onTransactionClick,
         financePanelUiState = financePanelUiState,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
@@ -61,9 +54,9 @@ fun TransactionOverviewScreen(
         onCategorySelect = viewModel::addToSelectedCategories,
         onCategoryDeselect = viewModel::removeFromSelectedCategories,
         transactionOverviewState = transactionOverviewState,
-        updateTransactionId = viewModel::updateTransactionId,
-        onUpdateTransactionIgnoring = viewModel::updateTransactionIgnoring,
-        onDeleteTransaction = viewModel::deleteTransaction,
+        navigateToTransactionDialog = navigateToTransactionDialog,
+        onTransactionDelete = viewModel::deleteTransaction,
+        onTransactionSelect = viewModel::updateSelectedTransaction,
     )
 }
 
@@ -79,47 +72,13 @@ private fun TransactionOverviewScreen(
     onSelectedDateUpdate: (Int) -> Unit,
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
-    onTransactionClick: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    updateTransactionId: (String) -> Unit = {},
-    onUpdateTransactionIgnoring: (Boolean) -> Unit = {},
-    onDeleteTransaction: () -> Unit = {},
+    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    onTransactionDelete: () -> Unit = {},
+    onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
 ) {
     when (transactionOverviewState) {
         TransactionOverviewUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is TransactionOverviewUiState.Success -> {
-            var showTransactionBottomSheet by rememberSaveable { mutableStateOf(false) }
-            var showTransactionDeletionDialog by rememberSaveable { mutableStateOf(false) }
-
-            if (showTransactionBottomSheet && transactionOverviewState.selectedTransactionCategory != null) {
-                val transaction = transactionOverviewState.selectedTransactionCategory.transaction
-                TransactionBottomSheet(
-                    transactionCategory = transactionOverviewState.selectedTransactionCategory,
-                    currency = transactionOverviewState.selectedTransactionCategory.transaction.currency,
-                    onDismiss = { showTransactionBottomSheet = false },
-                    onIgnoreClick = onUpdateTransactionIgnoring,
-                    onRepeatClick = { transactionId ->
-                        onTransactionClick(transaction.walletOwnerId, transactionId, true)
-                    },
-                    onEdit = { transactionId ->
-                        onTransactionClick(transaction.walletOwnerId, transactionId, false)
-                    },
-                    onDelete = { showTransactionDeletionDialog = true },
-                )
-            }
-            if (showTransactionDeletionDialog) {
-                CsAlertDialog(
-                    titleRes = localesR.string.permanently_delete,
-                    confirmButtonTextRes = localesR.string.delete,
-                    dismissButtonTextRes = localesR.string.cancel,
-                    icon = CsIcons.Outlined.Delete,
-                    onConfirm = {
-                        onDeleteTransaction()
-                        showTransactionDeletionDialog = false
-                    },
-                    onDismiss = { showTransactionDeletionDialog = false },
-                )
-            }
-
             Scaffold(
                 topBar = {
                     TopBar(
@@ -144,12 +103,18 @@ private fun TransactionOverviewScreen(
                         onCategorySelect = onCategorySelect,
                         onCategoryDeselect = onCategoryDeselect,
                     )
+                    val transaction = transactionOverviewState.selectedTransaction?.transaction
                     transactions(
+                        selectedTransaction = transactionOverviewState.selectedTransaction,
                         transactionsCategories = transactionOverviewState.transactionsCategories,
-                        onTransactionClick = {
-                            updateTransactionId(it)
-                            showTransactionBottomSheet = true
+                        onClick = onTransactionSelect,
+                        onRepeatClick = { transactionId ->
+                            transaction?.walletOwnerId?.let { navigateToTransactionDialog(it, transactionId, true) }
                         },
+                        onEditClick = { transactionId ->
+                            transaction?.walletOwnerId?.let { navigateToTransactionDialog(it, transactionId, false) }
+                        },
+                        onDeleteClick = onTransactionDelete,
                     )
                 }
             }
@@ -183,20 +148,13 @@ private fun TopBar(
                 },
                 subtitle = {
                     AnimatedAmount(
-                        targetState = financePanelUiState.totalBalance,
+                        amount = financePanelUiState.totalBalance,
                         label = "TotalBalance",
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = financePanelUiState.totalBalance.formatAmount(
-                                currency = financePanelUiState.userCurrency,
-                                withApproximately = financePanelUiState.shouldShowApproximately,
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                        currency = financePanelUiState.userCurrency,
+                        withApproximatelySign = financePanelUiState.shouldShowApproximately,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 },
                 navigationIcon = {
                     if (shouldShowNavigationIcon) {

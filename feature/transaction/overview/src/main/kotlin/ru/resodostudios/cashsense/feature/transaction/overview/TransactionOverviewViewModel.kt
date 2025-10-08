@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -35,6 +34,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
@@ -42,6 +42,7 @@ import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.time.Instant
 
 @HiltViewModel
 class TransactionOverviewViewModel @Inject constructor(
@@ -62,7 +63,7 @@ class TransactionOverviewViewModel @Inject constructor(
         )
     )
 
-    private val selectedTransactionIdState = MutableStateFlow<String?>(null)
+    private val selectedTransactionState = MutableStateFlow<TransactionWithCategory?>(null)
 
     val financePanelUiState: StateFlow<FinancePanelUiState> = combine(
         walletRepository.getDistinctCurrencies(),
@@ -153,8 +154,8 @@ class TransactionOverviewViewModel @Inject constructor(
     val transactionOverviewUiState: StateFlow<TransactionOverviewUiState> = combine(
         getExtendedUserWallets.invoke(),
         transactionFilterState,
-        selectedTransactionIdState,
-    ) { extendedUserWallets, transactionFilter, selectedTransactionId ->
+        selectedTransactionState,
+    ) { extendedUserWallets, transactionFilter, selectedTransaction ->
         val transactions = extendedUserWallets
             .flatMap { it.transactionsWithCategories }
             .sortedByDescending { it.transaction.timestamp }
@@ -162,10 +163,8 @@ class TransactionOverviewViewModel @Inject constructor(
             .transactionsCategories
 
         TransactionOverviewUiState.Success(
-            selectedTransactionCategory = selectedTransactionId?.let { id ->
-                transactions.find { it.transaction.id == id }
-            },
-            transactionsCategories = transactions,
+            selectedTransaction = selectedTransaction,
+            transactionsCategories = transactions.groupByDate(),
         )
     }
         .flowOn(defaultDispatcher)
@@ -176,31 +175,18 @@ class TransactionOverviewViewModel @Inject constructor(
             initialValue = TransactionOverviewUiState.Loading,
         )
 
-    fun updateTransactionId(id: String) {
-        selectedTransactionIdState.value = id
+    fun updateSelectedTransaction(transaction: TransactionWithCategory?) {
+        selectedTransactionState.value = transaction
     }
 
     fun deleteTransaction() {
         viewModelScope.launch {
-            selectedTransactionIdState.value?.let { id ->
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
-                    .first()
-                if (transactionCategory.transaction.transferId != null) {
-                    transactionsRepository.deleteTransfer(transactionCategory.transaction.transferId!!)
+            selectedTransactionState.value?.let { selectedTransaction ->
+                if (selectedTransaction.transaction.transferId != null) {
+                    transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
                 } else {
-                    transactionsRepository.deleteTransaction(id)
+                    transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
                 }
-            }
-        }
-    }
-
-    fun updateTransactionIgnoring(ignored: Boolean) {
-        viewModelScope.launch {
-            selectedTransactionIdState.value?.let { id ->
-                val transactionCategory = transactionsRepository.getTransactionWithCategory(id)
-                    .first()
-                val transaction = transactionCategory.transaction.copy(ignored = ignored)
-                transactionsRepository.upsertTransaction(transaction)
             }
         }
     }
@@ -285,7 +271,7 @@ sealed interface TransactionOverviewUiState {
     data object Loading : TransactionOverviewUiState
 
     data class Success(
-        val selectedTransactionCategory: TransactionWithCategory?,
-        val transactionsCategories: List<TransactionWithCategory>,
+        val selectedTransaction: TransactionWithCategory?,
+        val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
     ) : TransactionOverviewUiState
 }

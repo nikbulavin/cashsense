@@ -69,7 +69,6 @@ import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
@@ -82,8 +81,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 fun HomeScreen(
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
-    onEditWallet: (String) -> Unit,
-    onDeleteWallet: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
@@ -104,8 +101,6 @@ fun HomeScreen(
             onWalletClick(it)
         },
         onTransfer = onTransfer,
-        onEditWallet = onEditWallet,
-        onDeleteWallet = onDeleteWallet,
         onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
         onShowSnackbar = onShowSnackbar,
@@ -128,8 +123,6 @@ internal fun HomeScreen(
     totalBalanceState: TotalBalanceUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
-    onEditWallet: (String) -> Unit,
-    onDeleteWallet: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean,
     onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
@@ -209,18 +202,11 @@ internal fun HomeScreen(
                         ) { state ->
                             if (state is TotalBalanceUiState.Shown) {
                                 AnimatedAmount(
-                                    targetState = state.amount,
+                                    amount = state.amount,
+                                    currency = state.userCurrency,
                                     label = "TotalBalanceAnimatedAmount",
-                                ) {
-                                    Text(
-                                        text = state.amount.formatAmount(
-                                            currency = state.userCurrency,
-                                            withApproximately = state.shouldShowApproximately,
-                                        ),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
+                                    withApproximatelySign = state.shouldShowApproximately,
+                                )
                             } else {
                                 LinearWavyProgressIndicator(
                                     modifier = Modifier
@@ -257,11 +243,6 @@ internal fun HomeScreen(
                             onWalletClick = onWalletClick,
                             onTransactionCreate = onTransactionCreate,
                             onTransferClick = onTransfer,
-                            onEditClick = onEditWallet,
-                            onDeleteClick = { walletId ->
-                                onDeleteWallet(walletId)
-                                onWalletClick(null)
-                            },
                             highlightSelectedWallet = highlightSelectedWallet,
                         )
                     }
@@ -278,8 +259,6 @@ private fun LazyStaggeredGridScope.wallets(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onTransferClick: (String) -> Unit,
-    onEditClick: (String) -> Unit,
-    onDeleteClick: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
 ) {
     items(
@@ -312,8 +291,6 @@ private fun LazyStaggeredGridScope.wallets(
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
-            onEditClick = onEditClick,
-            onDeleteClick = onDeleteClick,
             modifier = Modifier.animateItem(),
             selected = selected,
         )
@@ -370,8 +347,6 @@ fun HomeScreenLoadingPreview() {
                 totalBalanceState = TotalBalanceUiState.Loading,
                 onWalletClick = {},
                 onTransfer = {},
-                onEditWallet = {},
-                onDeleteWallet = {},
                 onTransactionCreate = {},
                 highlightSelectedWallet = false,
             )
@@ -389,8 +364,6 @@ fun HomeScreenEmptyPreview() {
                 totalBalanceState = TotalBalanceUiState.NotShown,
                 onWalletClick = {},
                 onTransfer = {},
-                onEditWallet = {},
-                onDeleteWallet = {},
                 onTransactionCreate = {},
                 highlightSelectedWallet = false,
             )
@@ -418,8 +391,6 @@ fun HomeScreenPopulatedPreview(
                 ),
                 onWalletClick = {},
                 onTransfer = {},
-                onEditWallet = {},
-                onDeleteWallet = {},
                 onTransactionCreate = {},
                 highlightSelectedWallet = false,
             )
