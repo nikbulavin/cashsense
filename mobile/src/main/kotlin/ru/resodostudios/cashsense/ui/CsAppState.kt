@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,7 +12,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import androidx.tracing.trace
@@ -22,19 +22,10 @@ import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
-import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
-import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
-import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
-import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettings
-import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionDialogRoute
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
-import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.TransactionDialogRoute
-import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
-import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
@@ -70,26 +61,23 @@ class CsAppState(
     coroutineScope: CoroutineScope,
     val navController: NavHostController,
 ) {
+    private val previousDestination = mutableStateOf<NavDestination?>(null)
+
     val currentDestination: NavDestination?
-        @Composable get() = navController.currentBackStackEntryAsState().value?.destination
+        @Composable get() {
+            val currentEntry = navController.currentBackStackEntryFlow.collectAsState(null)
+            return currentEntry.value?.destination.also { destination ->
+                if (destination != null) previousDestination.value = destination
+            } ?: previousDestination.value
+        }
 
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() {
-            with(currentDestination) {
-                if (this?.hasRoute<HomeRoute>() == true ||
-                    this?.hasRoute<WalletDialogRoute>() == true ||
-                    this?.hasRoute<TransferDialogRoute>() == true ||
-                    this?.hasRoute<TransactionDialogRoute>() == true
-                ) return HOME
-                if (this?.hasRoute<CategoriesRoute>() == true ||
-                    this?.hasRoute<CategoryDialogRoute>() == true
-                ) return CATEGORIES
-                if (this?.hasRoute<SubscriptionsRoute>() == true ||
-                    this?.hasRoute<SubscriptionDialogRoute>() == true
-                ) return SUBSCRIPTIONS
-                if (this?.hasRoute<SettingsRoute>() == true) return SETTINGS
+            return TopLevelDestination.entries.find { topLevelDestination ->
+                topLevelDestination.routes.any { routeClass ->
+                    currentDestination?.hasRoute(routeClass) == true
+                }
             }
-            return null
         }
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries

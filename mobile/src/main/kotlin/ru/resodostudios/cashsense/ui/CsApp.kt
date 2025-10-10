@@ -111,7 +111,7 @@ fun CsApp(
                     icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
                     onClick = {
                         when (currentTopLevelDestination) {
-                            HOME -> if (!appState.hideFab) appState.navController.navigateToWalletDialog()
+                            HOME -> appState.navController.navigateToWalletDialog()
                             CATEGORIES -> appState.navController.navigateToCategoryDialog()
                             SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
                             SETTINGS -> {}
