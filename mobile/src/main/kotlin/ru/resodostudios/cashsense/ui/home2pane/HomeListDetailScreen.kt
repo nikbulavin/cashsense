@@ -348,6 +348,7 @@ internal fun HomeListDetailScreen(
                                     },
                                     showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
                                     navigateToTransactionDialog = navigateToTransactionDialog,
+                                    onShowSnackbar = onShowSnackbar,
                                     viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory>(
                                         key = route.walletId,
                                     ) { factory ->

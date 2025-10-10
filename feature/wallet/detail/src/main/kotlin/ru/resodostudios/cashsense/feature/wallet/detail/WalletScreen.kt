@@ -32,6 +32,7 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,6 +45,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
@@ -72,6 +75,8 @@ import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Loading
+import ru.resodostudios.cashsense.feature.wallet.detail.WalletUiState.Success
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -83,6 +88,7 @@ fun WalletScreen(
     onDeleteClick: (String) -> Unit,
     showNavigationIcon: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
@@ -102,7 +108,11 @@ fun WalletScreen(
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
         onCategorySelect = viewModel::addToSelectedCategories,
-        onCategoryDeselect = viewModel::removeFromSelectedCategories
+        onCategoryDeselect = viewModel::removeFromSelectedCategories,
+        onShowSnackbar = onShowSnackbar,
+        shouldDisplayUndoTransaction = viewModel.shouldDisplayUndoTransaction,
+        undoTransactionRemoval = viewModel::undoTransactionRemoval,
+        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -125,12 +135,33 @@ private fun WalletScreen(
     onCategorySelect: (Category) -> Unit,
     onCategoryDeselect: (Category) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
     onTransactionDelete: () -> Unit = {},
+    shouldDisplayUndoTransaction: Boolean = false,
+    undoTransactionRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
+    val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
+    val undoText = stringResource(localesR.string.undo)
+
+    LaunchedEffect(shouldDisplayUndoTransaction) {
+        if (shouldDisplayUndoTransaction) {
+            val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
+            if (snackBarResult) {
+                undoTransactionRemoval()
+            } else {
+                clearUndoState()
+            }
+        }
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        clearUndoState()
+    }
+
     when (walletState) {
-        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-        is WalletUiState.Success -> {
+        Loading -> LoadingState(Modifier.fillMaxSize())
+        is Success -> {
             Scaffold(
                 topBar = {
                     WalletTopBar(
@@ -175,10 +206,18 @@ private fun WalletScreen(
                             onClick = onTransactionSelect,
                             selectedTransaction = walletState.selectedTransaction,
                             onRepeatClick = { transactionId ->
-                                navigateToTransactionDialog(walletState.userWallet.id, transactionId, true)
+                                navigateToTransactionDialog(
+                                    walletState.userWallet.id,
+                                    transactionId,
+                                    true,
+                                )
                             },
                             onEditClick = { transactionId ->
-                                navigateToTransactionDialog(walletState.userWallet.id, transactionId, false)
+                                navigateToTransactionDialog(
+                                    walletState.userWallet.id,
+                                    transactionId,
+                                    false,
+                                )
                             },
                             onDeleteClick = onTransactionDelete,
                         )
@@ -364,7 +403,7 @@ private fun WalletScreenPopulatedPreview(
 ) {
     CsTheme {
         WalletScreen(
-            walletState = WalletUiState.Success(
+            walletState = Success(
                 transactionFilter = TransactionFilter(
                     selectedCategories = emptySet(),
                     financeType = FinanceType.NOT_SET,
@@ -398,6 +437,7 @@ private fun WalletScreenPopulatedPreview(
             onCategorySelect = {},
             onCategoryDeselect = {},
             navigateToTransactionDialog = { _, _, _ -> },
+            onShowSnackbar = { _, _ -> false },
         )
     }
 }
@@ -407,7 +447,7 @@ private fun WalletScreenPopulatedPreview(
 private fun WalletScreenEmptyPreview() {
     CsTheme {
         WalletScreen(
-            walletState = WalletUiState.Success(
+            walletState = Success(
                 transactionFilter = TransactionFilter(
                     selectedCategories = emptySet(),
                     financeType = FinanceType.NOT_SET,
@@ -441,6 +481,7 @@ private fun WalletScreenEmptyPreview() {
             onCategorySelect = {},
             onCategoryDeselect = {},
             navigateToTransactionDialog = { _, _, _ -> },
+            onShowSnackbar = { _, _ -> false },
         )
     }
 }

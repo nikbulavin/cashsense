@@ -32,7 +32,7 @@ import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
@@ -56,7 +56,7 @@ class WalletViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     var shouldDisplayUndoTransaction by mutableStateOf(false)
-    private var lastRemovedTransaction: Transaction? = null
+    private var lastRemovedTransaction: TransactionWithCategory? = null
 
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
@@ -112,6 +112,7 @@ class WalletViewModel @AssistedInject constructor(
 
     fun deleteTransaction() {
         viewModelScope.launch {
+            lastRemovedTransaction = selectedTransactionState.value
             selectedTransactionState.value?.let { selectedTransaction ->
                 if (selectedTransaction.transaction.transferId != null) {
                     transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
@@ -119,6 +120,8 @@ class WalletViewModel @AssistedInject constructor(
                     transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
                 }
             }
+            selectedTransactionState.value = null
+            shouldDisplayUndoTransaction = true
         }
     }
 
@@ -186,6 +189,27 @@ class WalletViewModel @AssistedInject constructor(
 
             ALL, WEEK -> {}
         }
+    }
+
+    fun undoTransactionRemoval() {
+        viewModelScope.launch {
+            lastRemovedTransaction?.let {
+                transactionsRepository.upsertTransaction(it.transaction)
+                if (it.category?.id != null) {
+                    val crossRef = TransactionCategoryCrossRef(
+                        transactionId = it.transaction.id,
+                        categoryId = it.category?.id!!,
+                    )
+                    transactionsRepository.upsertTransactionCategoryCrossRef(crossRef)
+                }
+            }
+            clearUndoState()
+        }
+    }
+
+    fun clearUndoState() {
+        lastRemovedTransaction = null
+        shouldDisplayUndoTransaction = false
     }
 
     @AssistedFactory
