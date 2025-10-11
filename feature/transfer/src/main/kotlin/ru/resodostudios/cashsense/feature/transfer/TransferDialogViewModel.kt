@@ -17,6 +17,7 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
@@ -103,9 +104,7 @@ class TransferDialogViewModel @Inject constructor(
 
     fun saveTransfer(state: TransferDialogUiState) {
         appScope.launch {
-            state.asTransfer().forEach {
-                transactionsRepository.upsertTransaction(it)
-            }
+            transactionsRepository.upsertTransfer(state.asTransfer())
         }
     }
 
@@ -186,37 +185,39 @@ data class TransferWallet(
     val currency: Currency? = null,
 )
 
-fun TransferDialogUiState.asTransfer(): List<TransactionWithCategory> {
+fun TransferDialogUiState.asTransfer(): Transfer {
     val transferId = Uuid.random()
-    val withdrawalAmount = BigDecimal(amount)
-
-    val withdrawalTransaction = Transaction(
-        id = Uuid.random().toHexString(),
-        walletOwnerId = sendingWallet.id,
-        description = null,
-        amount = withdrawalAmount.negate(),
-        timestamp = date,
-        status = StatusType.COMPLETED,
-        ignored = true,
-        transferId = transferId,
-        currency = getUsdCurrency(),
+    val withdrawalTransaction = TransactionWithCategory(
+        transaction = Transaction(
+            id = Uuid.random().toHexString(),
+            walletOwnerId = sendingWallet.id,
+            description = null,
+            amount = BigDecimal(amount).negate(),
+            timestamp = date,
+            status = StatusType.COMPLETED,
+            ignored = true,
+            transferId = transferId,
+            currency = getUsdCurrency(),
+        ),
+        category = null,
     )
-    val depositTransaction = Transaction(
-        id = Uuid.random().toHexString(),
-        walletOwnerId = receivingWallet.id,
-        description = null,
-        amount = BigDecimal(convertedAmount),
-        timestamp = date,
-        status = StatusType.COMPLETED,
-        ignored = true,
-        transferId = transferId,
-        currency = getUsdCurrency(),
+    val depositTransaction = TransactionWithCategory(
+        transaction = Transaction(
+            id = Uuid.random().toHexString(),
+            walletOwnerId = receivingWallet.id,
+            description = null,
+            amount = BigDecimal(convertedAmount),
+            timestamp = date,
+            status = StatusType.COMPLETED,
+            ignored = true,
+            transferId = transferId,
+            currency = getUsdCurrency(),
+        ),
+        category = null,
     )
 
-    return listOf(withdrawalTransaction, depositTransaction).map {
-        TransactionWithCategory(
-            transaction = it,
-            category = null,
-        )
-    }
+    return Transfer(
+        withdrawalTransaction = withdrawalTransaction,
+        depositTransaction = depositTransaction,
+    )
 }

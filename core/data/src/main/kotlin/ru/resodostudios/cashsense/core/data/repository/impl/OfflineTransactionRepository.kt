@@ -9,6 +9,7 @@ import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRe
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transfer
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 
@@ -44,6 +45,11 @@ internal class OfflineTransactionRepository @Inject constructor(
 
     override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) {
         dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())
+    }
+
+    override suspend fun upsertTransfer(transfer: Transfer) {
+        dao.upsertTransaction(transfer.withdrawalTransaction.transaction.asEntity())
+        dao.upsertTransaction(transfer.depositTransaction.transaction.asEntity())
     }
 
     override suspend fun deleteTransfer(uuid: Uuid) = dao.deleteTransfer(uuid)
