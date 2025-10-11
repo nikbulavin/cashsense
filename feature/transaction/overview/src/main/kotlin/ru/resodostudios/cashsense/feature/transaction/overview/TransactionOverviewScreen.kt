@@ -51,8 +51,7 @@ fun TransactionOverviewScreen(
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
-        onCategorySelect = viewModel::addToSelectedCategories,
-        onCategoryDeselect = viewModel::removeFromSelectedCategories,
+        onCategoryFilterUpdate = viewModel::updateSelectedCategories,
         transactionOverviewState = transactionOverviewState,
         navigateToTransactionDialog = navigateToTransactionDialog,
         onTransactionDelete = viewModel::deleteTransaction,
@@ -70,8 +69,7 @@ private fun TransactionOverviewScreen(
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onTransactionDelete: () -> Unit = {},
     onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
@@ -100,8 +98,7 @@ private fun TransactionOverviewScreen(
                         onDateTypeUpdate = onDateTypeUpdate,
                         onFinanceTypeUpdate = onFinanceTypeUpdate,
                         onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategorySelect = onCategorySelect,
-                        onCategoryDeselect = onCategoryDeselect,
+                        onCategoryFilterUpdate = onCategoryFilterUpdate,
                     )
                     val transaction = transactionOverviewState.selectedTransaction?.transaction
                     transactions(
@@ -176,8 +173,7 @@ private fun LazyListScope.header(
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
 ) {
     when (financePanelUiState) {
         FinancePanelUiState.Loading -> item {
@@ -201,8 +197,7 @@ private fun LazyListScope.header(
                     onDateTypeUpdate = onDateTypeUpdate,
                     onFinanceTypeUpdate = onFinanceTypeUpdate,
                     onSelectedDateUpdate = onSelectedDateUpdate,
-                    onCategorySelect = onCategorySelect,
-                    onCategoryDeselect = onCategoryDeselect,
+                    onCategoryFilterUpdate = onCategoryFilterUpdate,
                     modifier = Modifier.fillMaxWidth(),
                     shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )

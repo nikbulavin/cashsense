@@ -191,18 +191,14 @@ class TransactionOverviewViewModel @Inject constructor(
         }
     }
 
-    fun addToSelectedCategories(category: Category) {
+    fun updateSelectedCategories(category: Category, selected: Boolean) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = it.selectedCategories + category,
-            )
-        }
-    }
-
-    fun removeFromSelectedCategories(category: Category) {
-        transactionFilterState.update {
-            it.copy(
-                selectedCategories = it.selectedCategories - category,
+                selectedCategories = if (selected) {
+                    it.selectedCategories + category
+                } else {
+                    it.selectedCategories - category
+                },
             )
         }
     }
