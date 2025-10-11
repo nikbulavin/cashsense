@@ -24,7 +24,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
@@ -100,20 +100,11 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction(state: TransactionDialogUiState, activity: Activity) {
         appScope.launch {
-            val transaction = state.asTransaction(transactionDestination.walletId)
-            val transactionCategoryCrossRef = state.category?.id
-                ?.let {
-                    TransactionCategoryCrossRef(
-                        transactionId = transaction.id,
-                        categoryId = it,
-                    )
-                }
-
-            transactionsRepository.upsertTransaction(transaction)
-            transactionsRepository.deleteTransactionCategoryCrossRef(transaction.id)
-            if (transactionCategoryCrossRef != null) {
-                transactionsRepository.upsertTransactionCategoryCrossRef(transactionCategoryCrossRef)
-            }
+            val transactionWithCategory = TransactionWithCategory(
+                transaction = state.asTransaction(transactionDestination.walletId),
+                category = state.category,
+            )
+            transactionsRepository.upsertTransaction(transactionWithCategory)
             inAppReviewManager.openReviewDialog(activity)
         }
     }

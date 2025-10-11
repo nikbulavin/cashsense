@@ -15,7 +15,6 @@ import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
@@ -67,16 +66,7 @@ class Home2PaneViewModel @Inject constructor(
                     userDataRepository.setPrimaryWallet(wallet.id, true)
                 }
                 it.transactionsWithCategories.forEach { transactionWithCategory ->
-                    transactionsRepository.upsertTransaction(transactionWithCategory.transaction)
-                    if (transactionWithCategory.category != null) {
-                        transactionWithCategory.category?.id?.let { categoryId ->
-                            val crossRef = TransactionCategoryCrossRef(
-                                transactionId = transactionWithCategory.transaction.id,
-                                categoryId = categoryId,
-                            )
-                            transactionsRepository.upsertTransactionCategoryCrossRef(crossRef)
-                        }
-                    }
+                    transactionsRepository.upsertTransaction(transactionWithCategory)
                 }
             }
             clearUndoState()

@@ -16,6 +16,7 @@ import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
@@ -185,7 +186,7 @@ data class TransferWallet(
     val currency: Currency? = null,
 )
 
-fun TransferDialogUiState.asTransfer(): List<Transaction> {
+fun TransferDialogUiState.asTransfer(): List<TransactionWithCategory> {
     val transferId = Uuid.random()
     val withdrawalAmount = BigDecimal(amount)
 
@@ -212,5 +213,10 @@ fun TransferDialogUiState.asTransfer(): List<Transaction> {
         currency = getUsdCurrency(),
     )
 
-    return listOf(withdrawalTransaction, depositTransaction)
+    return listOf(withdrawalTransaction, depositTransaction).map {
+        TransactionWithCategory(
+            transaction = it,
+            category = null,
+        )
+    }
 }

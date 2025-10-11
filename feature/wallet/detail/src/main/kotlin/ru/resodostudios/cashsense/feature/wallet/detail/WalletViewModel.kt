@@ -32,7 +32,6 @@ import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
-import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
@@ -194,14 +193,7 @@ class WalletViewModel @AssistedInject constructor(
     fun undoTransactionRemoval() {
         viewModelScope.launch {
             lastRemovedTransaction?.let {
-                transactionsRepository.upsertTransaction(it.transaction)
-                if (it.category?.id != null) {
-                    val crossRef = TransactionCategoryCrossRef(
-                        transactionId = it.transaction.id,
-                        categoryId = it.category?.id!!,
-                    )
-                    transactionsRepository.upsertTransactionCategoryCrossRef(crossRef)
-                }
+                transactionsRepository.upsertTransaction(it)
             }
             clearUndoState()
         }

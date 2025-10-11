@@ -7,7 +7,6 @@ import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import javax.inject.Inject
@@ -27,17 +26,23 @@ internal class OfflineTransactionRepository @Inject constructor(
 
     override fun getTransactionsCount(): Flow<Int> = dao.getTransactionsCount()
 
-    override suspend fun upsertTransaction(transaction: Transaction) =
-        dao.upsertTransaction(transaction.asEntity())
+    override suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory) {
+        dao.upsertTransaction(transactionWithCategory.transaction.asEntity())
+        dao.deleteTransactionCategoryCrossRef(transactionWithCategory.transaction.id)
+        if (transactionWithCategory.category != null) {
+            val crossRef = TransactionCategoryCrossRefEntity(
+                transactionId = transactionWithCategory.transaction.id,
+                categoryId = transactionWithCategory.category?.id!!,
+            )
+            dao.upsertTransactionCategoryCrossRef(crossRef)
+        }
+    }
 
     override suspend fun deleteTransaction(id: String) =
         dao.deleteTransaction(id)
 
     override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) =
         dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())
-
-    override suspend fun deleteTransactionCategoryCrossRef(transactionId: String) =
-        dao.deleteTransactionCategoryCrossRef(transactionId)
 
     override suspend fun deleteTransfer(uuid: Uuid) =
         dao.deleteTransfer(uuid)
