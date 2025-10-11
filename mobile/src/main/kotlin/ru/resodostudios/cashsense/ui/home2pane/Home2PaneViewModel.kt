@@ -48,7 +48,8 @@ class Home2PaneViewModel @Inject constructor(
         viewModelScope.launch {
             lastRemovedWalletState.value = getExtendedUserWallet.invoke(walletId).first()
             _shouldDisplayUndoWalletState.value = true
-            walletsRepository.deleteWalletWithTransactions(walletId)
+            walletsRepository.deleteWallet(walletId)
+            onWalletSelect(null)
         }
     }
 

@@ -48,7 +48,7 @@ class TransferDialogViewModel @Inject constructor(
     private fun loadTransfer(walletId: String) {
         viewModelScope.launch {
             _transferDialogState.update { TransferDialogUiState(isLoading = true) }
-            val transferWallets = walletsRepository.getWalletsWithTransactionsAndCategories()
+            val transferWallets = walletsRepository.getExtendedWallets()
                 .first()
                 .map { extendedWallet ->
                     val currentBalance = extendedWallet.transactionsWithCategories

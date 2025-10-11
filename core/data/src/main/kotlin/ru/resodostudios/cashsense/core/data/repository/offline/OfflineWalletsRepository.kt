@@ -23,11 +23,11 @@ internal class OfflineWalletsRepository @Inject constructor(
         walletDao.getWalletEntity(id)
             .map { it.asExternalModel() }
 
-    override fun getWalletWithTransactionsAndCategories(walletId: String): Flow<ExtendedWallet> =
+    override fun getExtendedWallet(walletId: String): Flow<ExtendedWallet> =
         walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId)
             .map { it.asExternalModel() }
 
-    override fun getWalletsWithTransactionsAndCategories(): Flow<List<ExtendedWallet>> =
+    override fun getExtendedWallets(): Flow<List<ExtendedWallet>> =
         walletDao.getWalletWithTransactionsAndCategoriesEntities()
             .map { it.map(PopulatedWallet::asExternalModel) }
 
@@ -35,7 +35,7 @@ internal class OfflineWalletsRepository @Inject constructor(
 
     override suspend fun upsertWallet(wallet: Wallet) = walletDao.upsertWallet(wallet.asEntity())
 
-    override suspend fun deleteWalletWithTransactions(id: String) {
+    override suspend fun deleteWallet(id: String) {
         walletDao.deleteWallet(id)
         val userData = csPreferencesDataSource.userData.first()
         if (id == userData.primaryWalletId) {

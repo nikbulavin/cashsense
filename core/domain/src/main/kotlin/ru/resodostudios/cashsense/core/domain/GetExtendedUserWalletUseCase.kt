@@ -14,7 +14,7 @@ class GetExtendedUserWalletUseCase @Inject constructor(
 ) {
 
     operator fun invoke(walletId: String): Flow<ExtendedUserWallet> = combine(
-        walletsRepository.getWalletWithTransactionsAndCategories(walletId),
+        walletsRepository.getExtendedWallet(walletId),
         userDataRepository.userData,
     ) { extendedWallet, userData ->
         val currentBalance = extendedWallet.transactionsWithCategories

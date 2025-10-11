@@ -16,8 +16,9 @@ internal class OfflineTransactionRepository @Inject constructor(
     private val dao: TransactionDao,
 ) : TransactionsRepository {
 
-    override fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory> =
-        dao.getTransactionWithCategoryEntity(transactionId).map { it.asExternalModel() }
+    override fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory> {
+        return dao.getTransactionWithCategoryEntity(transactionId).map { it.asExternalModel() }
+    }
 
     override fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRef>> =
         dao.getTransactionCategoryCrossRefs(categoryId).map {
@@ -38,12 +39,11 @@ internal class OfflineTransactionRepository @Inject constructor(
         }
     }
 
-    override suspend fun deleteTransaction(id: String) =
-        dao.deleteTransaction(id)
+    override suspend fun deleteTransaction(id: String) = dao.deleteTransaction(id)
 
-    override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) =
+    override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) {
         dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())
+    }
 
-    override suspend fun deleteTransfer(uuid: Uuid) =
-        dao.deleteTransfer(uuid)
+    override suspend fun deleteTransfer(uuid: Uuid) = dao.deleteTransfer(uuid)
 }

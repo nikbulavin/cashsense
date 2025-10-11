@@ -69,7 +69,7 @@ class WalletDialogViewModel @Inject constructor(
                 userDataRepository.userData.first().primaryWalletId
             }
             val walletTransactions = async {
-                walletsRepository.getWalletWithTransactionsAndCategories(id).first()
+                walletsRepository.getExtendedWallet(id).first()
             }
             val wallet = walletTransactions.await().wallet
             val isCurrencyEditable = walletTransactions.await().transactionsWithCategories.isEmpty()

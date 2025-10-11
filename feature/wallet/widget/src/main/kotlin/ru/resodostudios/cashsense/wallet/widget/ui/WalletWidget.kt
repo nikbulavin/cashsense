@@ -61,13 +61,13 @@ class WalletWidget : GlanceAppWidget() {
         val walletsRepository = walletsEntryPoint.walletsRepository()
 
         val initialWallets = withContext(Dispatchers.IO) {
-            walletsRepository.getWalletsWithTransactionsAndCategories()
+            walletsRepository.getExtendedWallets()
                 .first()
                 .sortedByDescending { it.wallet.id }
         }
 
         provideContent {
-            val wallets by walletsRepository.getWalletsWithTransactionsAndCategories()
+            val wallets by walletsRepository.getExtendedWallets()
                 .collectAsState(initialWallets)
 
             CsGlanceTheme {

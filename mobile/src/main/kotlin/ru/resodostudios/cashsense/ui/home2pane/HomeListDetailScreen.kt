@@ -154,11 +154,11 @@ internal fun HomeListDetailScreen(
     onDeleteWallet: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
+    navigationSuiteType: NavigationSuiteType,
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
     hideFab: (Boolean) -> Unit = {},
-    navigationSuiteType: NavigationSuiteType,
 ) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
@@ -342,7 +342,6 @@ internal fun HomeListDetailScreen(
                                         coroutineScope.launch {
                                             scaffoldNavigator.navigateBack()
                                         }
-                                        onWalletSelect(null)
                                         walletRoute = WalletPlaceholderRoute
                                         onDeleteWallet(it)
                                     },
