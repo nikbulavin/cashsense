@@ -31,10 +31,10 @@ internal class OfflineTransactionRepository @Inject constructor(
     override suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory) {
         dao.upsertTransaction(transactionWithCategory.transaction.asEntity())
         dao.deleteTransactionCategoryCrossRef(transactionWithCategory.transaction.id)
-        if (transactionWithCategory.category != null) {
+        transactionWithCategory.category?.id?.let { categoryId ->
             val crossRef = TransactionCategoryCrossRefEntity(
                 transactionId = transactionWithCategory.transaction.id,
-                categoryId = transactionWithCategory.category?.id!!,
+                categoryId = categoryId,
             )
             dao.upsertTransactionCategoryCrossRef(crossRef)
         }
