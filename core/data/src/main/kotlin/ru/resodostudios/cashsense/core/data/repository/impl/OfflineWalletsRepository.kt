@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.repository.offline
+package ru.resodostudios.cashsense.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -19,17 +19,20 @@ internal class OfflineWalletsRepository @Inject constructor(
     private val csPreferencesDataSource: CsPreferencesDataSource,
 ) : WalletsRepository {
 
-    override fun getWallet(id: String): Flow<Wallet> =
-        walletDao.getWalletEntity(id)
+    override fun getWallet(id: String): Flow<Wallet> {
+        return walletDao.getWalletEntity(id)
             .map { it.asExternalModel() }
+    }
 
-    override fun getExtendedWallet(walletId: String): Flow<ExtendedWallet> =
-        walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId)
+    override fun getExtendedWallet(walletId: String): Flow<ExtendedWallet> {
+        return walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId)
             .map { it.asExternalModel() }
+    }
 
-    override fun getExtendedWallets(): Flow<List<ExtendedWallet>> =
-        walletDao.getWalletWithTransactionsAndCategoriesEntities()
+    override fun getExtendedWallets(): Flow<List<ExtendedWallet>> {
+        return walletDao.getWalletWithTransactionsAndCategoriesEntities()
             .map { it.map(PopulatedWallet::asExternalModel) }
+    }
 
     override fun getDistinctCurrencies(): Flow<List<Currency>> = walletDao.getDistinctCurrencies()
 

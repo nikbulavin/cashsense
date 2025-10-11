@@ -6,16 +6,16 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
-import ru.resodostudios.cashsense.core.data.repository.OfflineFirstCurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.data.repository.offline.OfflineCategoriesRepository
-import ru.resodostudios.cashsense.core.data.repository.offline.OfflineSubscriptionsRepository
-import ru.resodostudios.cashsense.core.data.repository.offline.OfflineTransactionRepository
-import ru.resodostudios.cashsense.core.data.repository.offline.OfflineUserDataRepository
-import ru.resodostudios.cashsense.core.data.repository.offline.OfflineWalletsRepository
+import ru.resodostudios.cashsense.core.data.repository.impl.OfflineCategoriesRepository
+import ru.resodostudios.cashsense.core.data.repository.impl.OfflineFirstCurrencyConversionRepository
+import ru.resodostudios.cashsense.core.data.repository.impl.OfflineSubscriptionsRepository
+import ru.resodostudios.cashsense.core.data.repository.impl.OfflineTransactionRepository
+import ru.resodostudios.cashsense.core.data.repository.impl.OfflineUserDataRepository
+import ru.resodostudios.cashsense.core.data.repository.impl.OfflineWalletsRepository
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManagerImpl
 import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
@@ -33,56 +33,56 @@ internal abstract class DataModule {
 
     @Binds
     internal abstract fun bindsCategoriesRepository(
-        categoriesRepository: OfflineCategoriesRepository,
+        impl: OfflineCategoriesRepository,
     ): CategoriesRepository
 
     @Binds
     internal abstract fun bindsCurrencyConversionRepository(
-        currencyConversionRepository: OfflineFirstCurrencyConversionRepository,
+        impl: OfflineFirstCurrencyConversionRepository,
     ): CurrencyConversionRepository
 
     @Binds
     internal abstract fun bindsTransactionsRepository(
-        transactionsRepository: OfflineTransactionRepository,
+        impl: OfflineTransactionRepository,
     ): TransactionsRepository
 
     @Binds
     internal abstract fun bindsWalletsRepository(
-        walletsRepository: OfflineWalletsRepository,
+        impl: OfflineWalletsRepository,
     ): WalletsRepository
 
     @Binds
     internal abstract fun bindsSubscriptionsRepository(
-        subscriptionsRepository: OfflineSubscriptionsRepository,
+        impl: OfflineSubscriptionsRepository,
     ): SubscriptionsRepository
 
     @Binds
     internal abstract fun bindsUserDataRepository(
-        userDataRepository: OfflineUserDataRepository,
+        impl: OfflineUserDataRepository,
     ): UserDataRepository
 
     @Binds
     internal abstract fun bindsTimeZoneMonitor(
-        timeZoneMonitor: TimeZoneBroadcastMonitor,
+        impl: TimeZoneBroadcastMonitor,
     ): TimeZoneMonitor
 
     @Binds
     internal abstract fun bindsNotificationAlarmScheduler(
-        reminderScheduler: ReminderSchedulerImpl,
+        impl: ReminderSchedulerImpl,
     ): ReminderScheduler
 
     @Binds
     internal abstract fun bindsInAppUpdateManager(
-        inAppUpdateManager: InAppUpdateManagerImpl,
+        impl: InAppUpdateManagerImpl,
     ): InAppUpdateManager
 
     @Binds
     internal abstract fun bindsInAppReviewManager(
-        inAppReviewManager: InAppReviewManagerImpl,
+        impl: InAppReviewManagerImpl,
     ): InAppReviewManager
 
     @Binds
     internal abstract fun bindsAppLocaleManager(
-        appLocaleManager: AppLocaleManagerImpl,
+        impl: AppLocaleManagerImpl,
     ): AppLocaleManager
 }

@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.repository.offline
+package ru.resodostudios.cashsense.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,13 +17,14 @@ internal class OfflineTransactionRepository @Inject constructor(
 ) : TransactionsRepository {
 
     override fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory> {
-        return dao.getTransactionWithCategoryEntity(transactionId).map { it.asExternalModel() }
+        return dao.getTransactionWithCategoryEntity(transactionId)
+            .map { it.asExternalModel() }
     }
 
-    override fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRef>> =
-        dao.getTransactionCategoryCrossRefs(categoryId).map {
-            it.map(TransactionCategoryCrossRefEntity::asExternalModel)
-        }
+    override fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRef>> {
+        return dao.getTransactionCategoryCrossRefs(categoryId)
+            .map { it.map { crossRef -> crossRef.asExternalModel() } }
+    }
 
     override fun getTransactionsCount(): Flow<Int> = dao.getTransactionsCount()
 
