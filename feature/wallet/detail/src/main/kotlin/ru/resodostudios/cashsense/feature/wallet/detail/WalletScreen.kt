@@ -111,6 +111,8 @@ fun WalletScreen(
         onShowSnackbar = onShowSnackbar,
         shouldDisplayUndoTransaction = viewModel.shouldDisplayUndoTransaction,
         undoTransactionRemoval = viewModel::undoTransactionRemoval,
+        shouldDisplayUndoTransfer = viewModel.shouldDisplayUndoTransfer,
+        undoTransferRemoval = viewModel::undoTransferRemoval,
         clearUndoState = viewModel::clearUndoState,
     )
 }
@@ -138,19 +140,24 @@ private fun WalletScreen(
     onTransactionDelete: () -> Unit = {},
     shouldDisplayUndoTransaction: Boolean = false,
     undoTransactionRemoval: () -> Unit = {},
+    shouldDisplayUndoTransfer: Boolean = false,
+    undoTransferRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
     val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
+    val transferDeletedMessage = stringResource(localesR.string.transfer_deleted)
     val undoText = stringResource(localesR.string.undo)
 
     LaunchedEffect(shouldDisplayUndoTransaction) {
         if (shouldDisplayUndoTransaction) {
             val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
-            if (snackBarResult) {
-                undoTransactionRemoval()
-            } else {
-                clearUndoState()
-            }
+            if (snackBarResult) undoTransactionRemoval() else clearUndoState()
+        }
+    }
+    LaunchedEffect(shouldDisplayUndoTransfer) {
+        if (shouldDisplayUndoTransfer) {
+            val snackBarResult = onShowSnackbar(transferDeletedMessage, undoText)
+            if (snackBarResult) undoTransferRemoval() else clearUndoState()
         }
     }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) {

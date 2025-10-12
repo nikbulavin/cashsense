@@ -201,7 +201,6 @@ internal fun HomeListDetailScreen(
 
     if (scaffoldNavigator.isDetailPaneVisible()) hideFab(true) else hideFab(false)
 
-
     fun onWalletClickShowDetailPane(walletId: String?) {
         onWalletSelect(walletId)
         if (walletId != null) {
@@ -326,6 +325,7 @@ internal fun HomeListDetailScreen(
                                         }
                                     },
                                     navigateToTransactionDialog = navigateToTransactionDialog,
+                                    onShowSnackbar = onShowSnackbar,
                                 )
                             }
 

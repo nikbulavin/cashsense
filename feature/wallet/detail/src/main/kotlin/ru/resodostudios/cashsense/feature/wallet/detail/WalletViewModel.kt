@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -34,6 +35,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
@@ -56,6 +58,9 @@ class WalletViewModel @AssistedInject constructor(
 
     var shouldDisplayUndoTransaction by mutableStateOf(false)
     private var lastRemovedTransaction: TransactionWithCategory? = null
+
+    var shouldDisplayUndoTransfer by mutableStateOf(false)
+    private var lastRemovedTransfer: Transfer? = null
 
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
@@ -111,16 +116,22 @@ class WalletViewModel @AssistedInject constructor(
 
     fun deleteTransaction() {
         viewModelScope.launch {
-            lastRemovedTransaction = selectedTransactionState.value
             selectedTransactionState.value?.let { selectedTransaction ->
                 if (selectedTransaction.transaction.transferId != null) {
+                    val depositTransaction = transactionsRepository.getTransfer(
+                        selectedTransaction.transaction.transferId!!,
+                        selectedTransaction.transaction.walletOwnerId,
+                    ).first().depositTransaction
+                    lastRemovedTransfer = Transfer(selectedTransaction, depositTransaction)
                     transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
+                    shouldDisplayUndoTransfer = true
                 } else {
+                    lastRemovedTransaction = selectedTransactionState.value
                     transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
+                    shouldDisplayUndoTransaction = true
                 }
             }
             selectedTransactionState.value = null
-            shouldDisplayUndoTransaction = true
         }
     }
 
@@ -195,9 +206,20 @@ class WalletViewModel @AssistedInject constructor(
         }
     }
 
+    fun undoTransferRemoval() {
+        viewModelScope.launch {
+            lastRemovedTransfer?.let {
+                transactionsRepository.upsertTransfer(it)
+            }
+            clearUndoState()
+        }
+    }
+
     fun clearUndoState() {
         lastRemovedTransaction = null
+        lastRemovedTransfer = null
         shouldDisplayUndoTransaction = false
+        shouldDisplayUndoTransfer = false
     }
 
     @AssistedFactory
