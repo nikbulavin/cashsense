@@ -1,5 +1,9 @@
 package ru.resodostudios.cashsense.feature.transaction.overview
 
+import androidx.annotation.IntRange
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -32,6 +37,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
@@ -53,6 +59,12 @@ class TransactionOverviewViewModel @Inject constructor(
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
+
+    var shouldDisplayUndoTransaction by mutableStateOf(false)
+    private var lastRemovedTransaction: TransactionWithCategory? = null
+
+    var shouldDisplayUndoTransfer by mutableStateOf(false)
+    private var lastRemovedTransfer: Transfer? = null
 
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
@@ -183,26 +195,31 @@ class TransactionOverviewViewModel @Inject constructor(
         viewModelScope.launch {
             selectedTransactionState.value?.let { selectedTransaction ->
                 if (selectedTransaction.transaction.transferId != null) {
+                    val depositTransaction = transactionsRepository.getTransfer(
+                        selectedTransaction.transaction.transferId!!,
+                        selectedTransaction.transaction.walletOwnerId,
+                    ).first().depositTransaction
+                    lastRemovedTransfer = Transfer(selectedTransaction, depositTransaction)
                     transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
+                    shouldDisplayUndoTransfer = true
                 } else {
+                    lastRemovedTransaction = selectedTransactionState.value
                     transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
+                    shouldDisplayUndoTransaction = true
                 }
             }
+            selectedTransactionState.value = null
         }
     }
 
-    fun addToSelectedCategories(category: Category) {
+    fun updateSelectedCategories(category: Category, selected: Boolean) {
         transactionFilterState.update {
             it.copy(
-                selectedCategories = it.selectedCategories + category,
-            )
-        }
-    }
-
-    fun removeFromSelectedCategories(category: Category) {
-        transactionFilterState.update {
-            it.copy(
-                selectedCategories = it.selectedCategories - category,
+                selectedCategories = if (selected) {
+                    it.selectedCategories + category
+                } else {
+                    it.selectedCategories - category
+                },
             )
         }
     }
@@ -225,7 +242,7 @@ class TransactionOverviewViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedDate(dateOffset: Int) {
+    fun updateSelectedDate(@IntRange(from = -1, to = 1) dateOffset: Int) {
         when (transactionFilterState.value.dateType) {
             MONTH -> {
                 transactionFilterState.update {
@@ -245,6 +262,31 @@ class TransactionOverviewViewModel @Inject constructor(
 
             ALL, WEEK -> {}
         }
+    }
+
+    fun undoTransactionRemoval() {
+        viewModelScope.launch {
+            lastRemovedTransaction?.let {
+                transactionsRepository.upsertTransaction(it)
+            }
+            clearUndoState()
+        }
+    }
+
+    fun undoTransferRemoval() {
+        viewModelScope.launch {
+            lastRemovedTransfer?.let {
+                transactionsRepository.upsertTransfer(it)
+            }
+            clearUndoState()
+        }
+    }
+
+    fun clearUndoState() {
+        lastRemovedTransaction = null
+        lastRemovedTransfer = null
+        shouldDisplayUndoTransaction = false
+        shouldDisplayUndoTransfer = false
     }
 }
 

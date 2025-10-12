@@ -9,13 +9,13 @@ interface WalletsRepository {
 
     fun getWallet(id: String): Flow<Wallet>
 
-    fun getWalletWithTransactionsAndCategories(walletId: String): Flow<ExtendedWallet>
+    fun getExtendedWallet(walletId: String): Flow<ExtendedWallet>
 
-    fun getWalletsWithTransactionsAndCategories(): Flow<List<ExtendedWallet>>
+    fun getExtendedWallets(): Flow<List<ExtendedWallet>>
 
     fun getDistinctCurrencies(): Flow<List<Currency>>
 
     suspend fun upsertWallet(wallet: Wallet)
 
-    suspend fun deleteWalletWithTransactions(id: String)
+    suspend fun deleteWallet(id: String)
 }

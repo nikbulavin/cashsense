@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -111,7 +110,7 @@ fun CsApp(
                     icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
                     onClick = {
                         when (currentTopLevelDestination) {
-                            HOME -> if (!appState.hideFab) appState.navController.navigateToWalletDialog()
+                            HOME -> appState.navController.navigateToWalletDialog()
                             CATEGORIES -> appState.navController.navigateToCategoryDialog()
                             SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
                             SETTINGS -> {}
@@ -170,7 +169,7 @@ fun CsApp(
                             if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
                                 currentTopLevelDestination != SETTINGS
                             ) {
-                                Modifier.padding(bottom = 100.dp)
+                                Modifier.padding(bottom = appState.snackbarBottomPadding)
                             } else {
                                 Modifier
                             },

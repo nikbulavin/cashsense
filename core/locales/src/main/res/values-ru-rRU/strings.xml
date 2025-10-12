@@ -111,4 +111,6 @@
   <string name="close">Закрыть</string>
   <string name="next_date">Следующая дата</string>
   <string name="previous_date">Предыдущая дата</string>
+  <string name="transaction_deleted">Транзакция удалена</string>
+  <string name="transfer_deleted">Перевод удалён</string>
 </resources>

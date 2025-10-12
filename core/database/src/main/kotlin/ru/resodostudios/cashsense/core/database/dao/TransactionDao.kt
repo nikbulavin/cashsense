@@ -23,6 +23,9 @@ interface TransactionDao {
     @Query("SELECT count(*) FROM transactions")
     fun getTransactionsCount(): Flow<Int>
 
+    @Query("SELECT * FROM transactions WHERE transfer_id = :transferId")
+    fun getTransfer(transferId: Uuid): Flow<List<TransactionEntity>>
+
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)
 

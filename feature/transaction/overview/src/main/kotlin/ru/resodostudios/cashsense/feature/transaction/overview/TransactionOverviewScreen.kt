@@ -13,12 +13,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -39,6 +42,7 @@ fun TransactionOverviewScreen(
     shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
 ) {
     val financePanelUiState by viewModel.financePanelUiState.collectAsStateWithLifecycle()
@@ -51,12 +55,17 @@ fun TransactionOverviewScreen(
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
-        onCategorySelect = viewModel::addToSelectedCategories,
-        onCategoryDeselect = viewModel::removeFromSelectedCategories,
+        onCategoryFilterUpdate = viewModel::updateSelectedCategories,
         transactionOverviewState = transactionOverviewState,
         navigateToTransactionDialog = navigateToTransactionDialog,
         onTransactionDelete = viewModel::deleteTransaction,
         onTransactionSelect = viewModel::updateSelectedTransaction,
+        onShowSnackbar = onShowSnackbar,
+        shouldDisplayUndoTransaction = viewModel.shouldDisplayUndoTransaction,
+        undoTransactionRemoval = viewModel::undoTransactionRemoval,
+        shouldDisplayUndoTransfer = viewModel.shouldDisplayUndoTransfer,
+        undoTransferRemoval = viewModel::undoTransferRemoval,
+        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -70,12 +79,37 @@ private fun TransactionOverviewScreen(
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionDelete: () -> Unit = {},
     onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
+    shouldDisplayUndoTransaction: Boolean = false,
+    undoTransactionRemoval: () -> Unit = {},
+    shouldDisplayUndoTransfer: Boolean = false,
+    undoTransferRemoval: () -> Unit = {},
+    clearUndoState: () -> Unit = {},
 ) {
+    val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
+    val transferDeletedMessage = stringResource(localesR.string.transfer_deleted)
+    val undoText = stringResource(localesR.string.undo)
+
+    LaunchedEffect(shouldDisplayUndoTransaction) {
+        if (shouldDisplayUndoTransaction) {
+            val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
+            if (snackBarResult) undoTransactionRemoval() else clearUndoState()
+        }
+    }
+    LaunchedEffect(shouldDisplayUndoTransfer) {
+        if (shouldDisplayUndoTransfer) {
+            val snackBarResult = onShowSnackbar(transferDeletedMessage, undoText)
+            if (snackBarResult) undoTransferRemoval() else clearUndoState()
+        }
+    }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        clearUndoState()
+    }
+
     when (transactionOverviewState) {
         TransactionOverviewUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is TransactionOverviewUiState.Success -> {
@@ -100,8 +134,7 @@ private fun TransactionOverviewScreen(
                         onDateTypeUpdate = onDateTypeUpdate,
                         onFinanceTypeUpdate = onFinanceTypeUpdate,
                         onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategorySelect = onCategorySelect,
-                        onCategoryDeselect = onCategoryDeselect,
+                        onCategoryFilterUpdate = onCategoryFilterUpdate,
                     )
                     val transaction = transactionOverviewState.selectedTransaction?.transaction
                     transactions(
@@ -176,8 +209,7 @@ private fun LazyListScope.header(
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
 ) {
     when (financePanelUiState) {
         FinancePanelUiState.Loading -> item {
@@ -201,8 +233,7 @@ private fun LazyListScope.header(
                     onDateTypeUpdate = onDateTypeUpdate,
                     onFinanceTypeUpdate = onFinanceTypeUpdate,
                     onSelectedDateUpdate = onSelectedDateUpdate,
-                    onCategorySelect = onCategorySelect,
-                    onCategoryDeselect = onCategoryDeselect,
+                    onCategoryFilterUpdate = onCategoryFilterUpdate,
                     modifier = Modifier.fillMaxWidth(),
                     shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )

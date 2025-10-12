@@ -94,8 +94,7 @@ fun FinancePanel(
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     shouldShowApproximately: Boolean = false,
 ) {
@@ -172,8 +171,7 @@ fun FinancePanel(
                         },
                         onDateTypeUpdate = onDateTypeUpdate,
                         onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategorySelect = onCategorySelect,
-                        onCategoryDeselect = onCategoryDeselect,
+                        onCategoryFilterUpdate = onCategoryFilterUpdate,
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
@@ -195,8 +193,7 @@ fun FinancePanel(
                         },
                         onDateTypeUpdate = onDateTypeUpdate,
                         onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategorySelect = onCategorySelect,
-                        onCategoryDeselect = onCategoryDeselect,
+                        onCategoryFilterUpdate = onCategoryFilterUpdate,
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
@@ -294,8 +291,7 @@ private fun DetailedFinanceSection(
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedContentState: SharedElementKey,
     modifier: Modifier = Modifier,
@@ -384,8 +380,7 @@ private fun DetailedFinanceSection(
                 CategorySelectionRow(
                     availableCategories = availableCategories,
                     selectedCategories = transactionFilter.selectedCategories,
-                    onCategorySelect = onCategorySelect,
-                    onCategoryDeselect = onCategoryDeselect,
+                    onCategoryFilterUpdate = onCategoryFilterUpdate,
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
                 )
             }
@@ -496,8 +491,7 @@ private fun FinancePanelDefaultPreview(
                 onDateTypeUpdate = {},
                 onFinanceTypeUpdate = {},
                 onSelectedDateUpdate = {},
-                onCategorySelect = {},
-                onCategoryDeselect = {},
+                onCategoryFilterUpdate = { _ , _ -> },
             )
         }
     }
@@ -534,8 +528,7 @@ private fun FinancePanelOpenedPreview(
                 onDateTypeUpdate = {},
                 onFinanceTypeUpdate = {},
                 onSelectedDateUpdate = {},
-                onCategorySelect = {},
-                onCategoryDeselect = {},
+                onCategoryFilterUpdate = { _ , _ -> },
             )
         }
     }

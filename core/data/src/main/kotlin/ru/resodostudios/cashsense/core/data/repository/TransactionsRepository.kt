@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transfer
 import kotlin.uuid.Uuid
 
 interface TransactionsRepository {
@@ -14,13 +14,15 @@ interface TransactionsRepository {
 
     fun getTransactionsCount(): Flow<Int>
 
-    suspend fun upsertTransaction(transaction: Transaction)
+    fun getTransfer(transferId: Uuid, senderWalletId: String): Flow<Transfer>
+
+    suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory)
 
     suspend fun deleteTransaction(id: String)
 
     suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef)
 
-    suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
+    suspend fun upsertTransfer(transfer: Transfer)
 
     suspend fun deleteTransfer(uuid: Uuid)
 }

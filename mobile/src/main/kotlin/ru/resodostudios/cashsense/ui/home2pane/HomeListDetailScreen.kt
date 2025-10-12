@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,9 +83,10 @@ fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
-    hideFab: (Boolean) -> Unit = {},
     navigationSuiteType: NavigationSuiteType,
     nestedDestinations: NavGraphBuilder.() -> Unit,
+    hideFab: (Boolean) -> Unit = {},
+    updateSnackbarBottomPadding: (Dp) -> Unit = {},
 ) {
     navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
         composable<HomeRoute>(
@@ -99,6 +101,7 @@ fun NavGraphBuilder.homeListDetailScreen(
                 navigateToTransactionDialog = navigateToTransactionDialog,
                 navigateToWalletDialog = navigateToWalletDialog,
                 hideFab = hideFab,
+                updateSnackbarBottomPadding = updateSnackbarBottomPadding,
                 navigationSuiteType = navigationSuiteType,
             )
         }
@@ -114,6 +117,7 @@ internal fun HomeListDetailScreen(
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
     hideFab: (Boolean) -> Unit = {},
+    updateSnackbarBottomPadding: (Dp) -> Unit = {},
     navigationSuiteType: NavigationSuiteType,
     viewModel: Home2PaneViewModel = hiltViewModel(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
@@ -135,6 +139,7 @@ internal fun HomeListDetailScreen(
         undoWalletRemoval = viewModel::undoWalletRemoval,
         clearUndoState = viewModel::clearUndoState,
         hideFab = hideFab,
+        updateSnackbarBottomPadding = updateSnackbarBottomPadding,
         navigationSuiteType = navigationSuiteType,
     )
 }
@@ -154,11 +159,12 @@ internal fun HomeListDetailScreen(
     onDeleteWallet: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     windowAdaptiveInfo: WindowAdaptiveInfo,
+    navigationSuiteType: NavigationSuiteType,
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
     hideFab: (Boolean) -> Unit = {},
-    navigationSuiteType: NavigationSuiteType,
+    updateSnackbarBottomPadding: (Dp) -> Unit = {},
 ) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
@@ -199,8 +205,7 @@ internal fun HomeListDetailScreen(
         }
     }
 
-    if (scaffoldNavigator.isDetailPaneVisible()) hideFab(true) else hideFab(false)
-
+    hideFab(scaffoldNavigator.isDetailPaneVisible())
 
     fun onWalletClickShowDetailPane(walletId: String?) {
         onWalletSelect(walletId)
@@ -254,6 +259,11 @@ internal fun HomeListDetailScreen(
                             }
                         },
                 ) {
+                    if (!scaffoldNavigator.isDetailPaneVisible() ||
+                        (scaffoldNavigator.isListPaneVisible() && scaffoldNavigator.isDetailPaneVisible())
+                    ) {
+                        updateSnackbarBottomPadding(100.dp)
+                    }
                     HomeScreen(
                         onWalletClick = ::onWalletClickShowDetailPane,
                         onTransfer = onTransfer,
@@ -309,15 +319,18 @@ internal fun HomeListDetailScreen(
                             }
                         },
                 ) {
-                    val fastAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+                    val animSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
                     AnimatedContent(
                         targetState = walletRoute,
                         transitionSpec = {
-                            fadeIn() + scaleIn(fastAnimationSpec, 0.92f) togetherWith fadeOut(snap())
+                            fadeIn() + scaleIn(animSpec, 0.92f) togetherWith fadeOut(snap())
                         },
                     ) { route ->
                         when (route) {
                             is TransactionOverviewRoute -> {
+                                if (!scaffoldNavigator.isListPaneVisible()) {
+                                    updateSnackbarBottomPadding(0.dp)
+                                }
                                 TransactionOverviewScreen(
                                     shouldShowNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
                                     onBackClick = {
@@ -326,10 +339,14 @@ internal fun HomeListDetailScreen(
                                         }
                                     },
                                     navigateToTransactionDialog = navigateToTransactionDialog,
+                                    onShowSnackbar = onShowSnackbar,
                                 )
                             }
 
                             is WalletRoute -> {
+                                if (!scaffoldNavigator.isListPaneVisible()) {
+                                    updateSnackbarBottomPadding(84.dp)
+                                }
                                 WalletScreen(
                                     onBackClick = {
                                         coroutineScope.launch {
@@ -342,12 +359,12 @@ internal fun HomeListDetailScreen(
                                         coroutineScope.launch {
                                             scaffoldNavigator.navigateBack()
                                         }
-                                        onWalletSelect(null)
                                         walletRoute = WalletPlaceholderRoute
                                         onDeleteWallet(it)
                                     },
                                     showNavigationIcon = !scaffoldNavigator.isListPaneVisible(),
                                     navigateToTransactionDialog = navigateToTransactionDialog,
+                                    onShowSnackbar = onShowSnackbar,
                                     viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory>(
                                         key = route.walletId,
                                     ) { factory ->

@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -40,7 +40,7 @@ internal fun LicensesScreen(
         },
         modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
-        val libraries by rememberLibraries(R.raw.aboutlibraries)
+        val libraries by produceLibraries(R.raw.aboutlibraries)
         LibrariesContainer(
             libraries = libraries,
             contentPadding = paddingValues,

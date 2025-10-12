@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.repository
+package ru.resodostudios.cashsense.core.data.repository.impl
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.resodostudios.cashsense.core.data.model.asEntity
+import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.CurrencyExchangeRate

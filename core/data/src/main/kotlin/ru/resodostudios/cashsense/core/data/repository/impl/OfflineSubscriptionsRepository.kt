@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.data.repository.offline
+package ru.resodostudios.cashsense.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

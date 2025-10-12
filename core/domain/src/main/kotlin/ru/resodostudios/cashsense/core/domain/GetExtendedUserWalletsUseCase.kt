@@ -14,7 +14,7 @@ class GetExtendedUserWalletsUseCase @Inject constructor(
 ) {
 
     operator fun invoke(): Flow<List<ExtendedUserWallet>> = combine(
-        walletsRepository.getWalletsWithTransactionsAndCategories(),
+        walletsRepository.getExtendedWallets(),
         userDataRepository.userData,
     ) { extendedWallets, userData ->
         extendedWallets

@@ -27,8 +27,7 @@ import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 fun CategorySelectionRow(
     availableCategories: List<Category>,
     selectedCategories: Set<Category>,
-    onCategorySelect: (Category) -> Unit,
-    onCategoryDeselect: (Category) -> Unit,
+    onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
@@ -40,9 +39,7 @@ fun CategorySelectionRow(
             CategoryChip(
                 selected = selected,
                 category = category,
-                onClick = {
-                    if (selected) onCategoryDeselect(category) else onCategorySelect(category)
-                },
+                onClick = { onCategoryFilterUpdate(category, !selected) },
             )
         }
     }
@@ -94,8 +91,7 @@ private fun CategorySelectorRowPreview(
             CategorySelectionRow(
                 availableCategories = categories,
                 selectedCategories = setOf(categories.first()),
-                onCategorySelect = {},
-                onCategoryDeselect = {},
+                onCategoryFilterUpdate = { _, _ -> },
                 modifier = Modifier.padding(16.dp),
             )
         }
