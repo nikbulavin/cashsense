@@ -29,6 +29,25 @@ internal class OfflineTransactionRepository @Inject constructor(
 
     override fun getTransactionsCount(): Flow<Int> = dao.getTransactionsCount()
 
+    override fun getTransfer(transferId: Uuid, senderWalletId: String): Flow<Transfer> {
+        return dao.getTransfer(transferId)
+            .map { it.map { transaction -> transaction.asExternalModel() } }
+            .map { transferTransactions ->
+                val withdrawalTransaction = TransactionWithCategory(
+                    transaction = transferTransactions.find { it.walletOwnerId == senderWalletId }!!,
+                    category = null,
+                )
+                val depositTransaction = TransactionWithCategory(
+                    transaction = transferTransactions.find { it.walletOwnerId != senderWalletId }!!,
+                    category = null,
+                )
+                Transfer(
+                    withdrawalTransaction = withdrawalTransaction,
+                    depositTransaction = depositTransaction,
+                )
+            }
+    }
+
     override suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory) {
         dao.upsertTransaction(transactionWithCategory.transaction.asEntity())
         dao.deleteTransactionCategoryCrossRef(transactionWithCategory.transaction.id)

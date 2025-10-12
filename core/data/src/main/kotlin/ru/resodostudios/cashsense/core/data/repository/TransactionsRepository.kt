@@ -14,6 +14,8 @@ interface TransactionsRepository {
 
     fun getTransactionsCount(): Flow<Int>
 
+    fun getTransfer(transferId: Uuid, senderWalletId: String): Flow<Transfer>
+
     suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory)
 
     suspend fun deleteTransaction(id: String)
