@@ -89,7 +89,6 @@
   <string name="uncategorized">வகைப்படுத்தப்படாதது</string>
   <string name="show_more">மேலும் காண்பிக்கவும்</string>
   <string name="show_less">குறைவாக காண்பிக்கவும்</string>
-  <string name="permanently_delete">நிரந்தரமாக நீக்கவா?</string>
   <string name="from_wallet">பணப்பையிலிருந்து</string>
   <string name="to_wallet">பணப்பைக்கு</string>
   <string name="converted_amount">மாற்றிய மொத்தம்</string>

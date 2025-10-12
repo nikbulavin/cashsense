@@ -89,7 +89,6 @@
   <string name="uncategorized">Без категории</string>
   <string name="show_more">показать больше</string>
   <string name="show_less">показать меньше</string>
-  <string name="permanently_delete">Удалить навсегда?</string>
   <string name="from_wallet">С кошелька</string>
   <string name="to_wallet">На кошелёк</string>
   <string name="converted_amount">Конвертированная сумма</string>

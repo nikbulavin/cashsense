@@ -89,7 +89,6 @@
   <string name="uncategorized">분류되지 않음</string>
   <string name="show_more">더 보기</string>
   <string name="show_less">간단히 보기</string>
-  <string name="permanently_delete">영구적으로 삭제하시겠습니까?</string>
   <string name="from_wallet">지갑에서</string>
   <string name="to_wallet">지갑으로</string>
   <string name="converted_amount">변환된 금액</string>
