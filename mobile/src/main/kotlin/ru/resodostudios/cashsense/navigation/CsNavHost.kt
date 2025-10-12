@@ -54,6 +54,7 @@ fun CsNavHost(
             navigateToWalletDialog = navController::navigateToWalletDialog,
             onShowSnackbar = onShowSnackbar,
             hideFab = { appState.hideFab = it },
+            updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
             navigationSuiteType = navigationSuiteType,
             nestedDestinations = {
                 walletDialog(navController::navigateUp)

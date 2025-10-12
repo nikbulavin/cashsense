@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -97,6 +98,7 @@ class CsAppState(
         )
 
     var hideFab by mutableStateOf(false)
+    var snackbarBottomPadding by mutableStateOf(100.dp)
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         trace("Navigation: ${topLevelDestination.name}") {
@@ -109,10 +111,22 @@ class CsAppState(
             }
 
             when (topLevelDestination) {
-                HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
-                CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
-                SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
-                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
+                HOME -> {
+                    navController.navigateToHome(navOptions = topLevelNavOptions)
+                    snackbarBottomPadding = 100.dp
+                }
+                CATEGORIES -> {
+                    navController.navigateToCategories(topLevelNavOptions)
+                    snackbarBottomPadding = 100.dp
+                }
+                SUBSCRIPTIONS -> {
+                    navController.navigateToSubscriptions(topLevelNavOptions)
+                    snackbarBottomPadding = 100.dp
+                }
+                SETTINGS -> {
+                    navController.navigateToSettings(topLevelNavOptions)
+                    snackbarBottomPadding = 0.dp
+                }
             }
         }
     }
