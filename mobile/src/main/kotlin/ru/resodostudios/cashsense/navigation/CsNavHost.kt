@@ -1,11 +1,11 @@
 package ru.resodostudios.cashsense.navigation
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,6 +29,7 @@ import ru.resodostudios.cashsense.ui.CsAppState
 import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
 import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsNavHost(
     appState: CsAppState,
@@ -37,15 +38,17 @@ fun CsNavHost(
     modifier: Modifier = Modifier,
 ) {
     val navController = appState.navController
+    val motionScheme = MaterialTheme.motionScheme
 
     NavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
         modifier = modifier,
-        enterTransition = { slideInVertically(spring(Spring.DampingRatioLowBouncy)) { it / 24 } + fadeIn() },
+        enterTransition = {
+            slideInVertically(motionScheme.fastSpatialSpec()) { it / 32 } +
+                    fadeIn(motionScheme.fastEffectsSpec())
+        },
         exitTransition = { fadeOut(snap()) },
-        popEnterTransition = { slideInVertically(spring(Spring.DampingRatioLowBouncy)) { it / 24 } + fadeIn() },
-        popExitTransition = { fadeOut(snap()) },
     ) {
         homeListDetailScreen(
             onEditWallet = navController::navigateToWalletDialog,
