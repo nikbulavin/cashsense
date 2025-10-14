@@ -3,12 +3,17 @@ package ru.resodostudios.cashsense.navigation
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.categoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
@@ -39,16 +44,50 @@ fun CsNavHost(
 ) {
     val navController = appState.navController
     val motionScheme = MaterialTheme.motionScheme
+    val topLevelDestinations = appState.topLevelDestinations
 
     NavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
         modifier = modifier,
         enterTransition = {
-            slideInVertically(motionScheme.fastSpatialSpec()) { it / 32 } +
-                    fadeIn(motionScheme.fastEffectsSpec())
+            val isTopLevelNav = isTopLevelNavigation(initialState, targetState, topLevelDestinations)
+
+            if (isTopLevelNav) {
+                val initialIndex = getTopLevelIndex(initialState.destination, topLevelDestinations)
+                val targetIndex = getTopLevelIndex(targetState.destination, topLevelDestinations)
+
+                if (initialIndex != -1 && targetIndex != -1) {
+                    val isNavigatingToTheRight = targetIndex > initialIndex
+                    slideInHorizontally(motionScheme.fastSpatialSpec()) {
+                        if (isNavigatingToTheRight) it else -it
+                    } + fadeIn(motionScheme.fastEffectsSpec())
+                } else {
+                    defaultEnterTransition()
+                }
+            } else {
+                defaultEnterTransition()
+            }
         },
-        exitTransition = { fadeOut(snap()) },
+        exitTransition = {
+            val isTopLevelNav = isTopLevelNavigation(initialState, targetState, topLevelDestinations)
+
+            if (isTopLevelNav) {
+                val initialIndex = getTopLevelIndex(initialState.destination, topLevelDestinations)
+                val targetIndex = getTopLevelIndex(targetState.destination, topLevelDestinations)
+
+                if (initialIndex != -1 && targetIndex != -1) {
+                    val isNavigatingToTheRight = targetIndex > initialIndex
+                    slideOutHorizontally(motionScheme.fastSpatialSpec()) {
+                        if (isNavigatingToTheRight) -it else it
+                    } + fadeOut(motionScheme.fastEffectsSpec())
+                } else {
+                    defaultExitTransition()
+                }
+            } else {
+                defaultExitTransition()
+            }
+        },
     ) {
         homeListDetailScreen(
             onEditWallet = navController::navigateToWalletDialog,
@@ -81,3 +120,27 @@ fun CsNavHost(
         )
     }
 }
+
+private fun isTopLevelNavigation(
+    initialState: NavBackStackEntry,
+    targetState: NavBackStackEntry,
+    topLevelDestinations: List<TopLevelDestination>,
+): Boolean {
+    val initialIsTopLevel =
+        topLevelDestinations.any { it.routes.any { route -> initialState.destination.hasRoute(route) } }
+    val targetIsTopLevel =
+        topLevelDestinations.any { it.routes.any { route -> targetState.destination.hasRoute(route) } }
+    return initialIsTopLevel && targetIsTopLevel
+}
+
+private fun getTopLevelIndex(
+    destination: NavDestination,
+    topLevelDestinations: List<TopLevelDestination>,
+): Int {
+    return topLevelDestinations.indexOfFirst { topLevelDestination ->
+        topLevelDestination.routes.any { route -> destination.hasRoute(route) }
+    }
+}
+
+private fun defaultEnterTransition() = slideInVertically { it / 32 } + fadeIn()
+private fun defaultExitTransition() = fadeOut(snap())
