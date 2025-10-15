@@ -51,7 +51,8 @@ fun CsNavHost(
         startDestination = HomeListDetailRoute,
         modifier = modifier,
         enterTransition = {
-            val isTopLevelNav = isTopLevelNavigation(initialState, targetState, topLevelDestinations)
+            val isTopLevelNav =
+                isTopLevelNavigation(initialState, targetState, topLevelDestinations)
 
             if (isTopLevelNav) {
                 val initialIndex = getTopLevelIndex(initialState.destination, topLevelDestinations)
@@ -60,7 +61,7 @@ fun CsNavHost(
                 if (initialIndex != -1 && targetIndex != -1) {
                     val isNavigatingToTheRight = targetIndex > initialIndex
                     slideInHorizontally(motionScheme.fastSpatialSpec()) {
-                        if (isNavigatingToTheRight) it else -it
+                        (if (isNavigatingToTheRight) it else -it) / 4
                     } + fadeIn(motionScheme.fastEffectsSpec())
                 } else {
                     defaultEnterTransition()
@@ -70,7 +71,8 @@ fun CsNavHost(
             }
         },
         exitTransition = {
-            val isTopLevelNav = isTopLevelNavigation(initialState, targetState, topLevelDestinations)
+            val isTopLevelNav =
+                isTopLevelNavigation(initialState, targetState, topLevelDestinations)
 
             if (isTopLevelNav) {
                 val initialIndex = getTopLevelIndex(initialState.destination, topLevelDestinations)
@@ -79,7 +81,7 @@ fun CsNavHost(
                 if (initialIndex != -1 && targetIndex != -1) {
                     val isNavigatingToTheRight = targetIndex > initialIndex
                     slideOutHorizontally(motionScheme.fastSpatialSpec()) {
-                        if (isNavigatingToTheRight) -it else it
+                        (if (isNavigatingToTheRight) -it else it) / 4
                     } + fadeOut(motionScheme.fastEffectsSpec())
                 } else {
                     defaultExitTransition()
@@ -116,7 +118,13 @@ fun CsNavHost(
         )
         settingsScreen(
             onLicensesClick = navController::navigateToLicenses,
-            nestedGraphs = { licensesScreen(navController::navigateUp) },
+            motionScheme = motionScheme,
+            nestedGraphs = {
+                licensesScreen(
+                    motionScheme = motionScheme,
+                    onBackClick = navController::navigateUp,
+                )
+            },
         )
     }
 }
