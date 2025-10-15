@@ -1,10 +1,8 @@
 package ru.resodostudios.cashsense.navigation
 
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -150,5 +148,5 @@ private fun getTopLevelIndex(
     }
 }
 
-private fun defaultEnterTransition() = slideInVertically { it / 32 } + fadeIn()
-private fun defaultExitTransition() = fadeOut(snap())
+private fun defaultEnterTransition() = fadeIn()
+private fun defaultExitTransition() = fadeOut()
