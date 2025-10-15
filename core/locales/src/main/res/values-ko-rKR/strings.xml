@@ -111,6 +111,6 @@
   <string name="close">닫기</string>
   <string name="next_date">다음 날짜</string>
   <string name="previous_date">이전 날짜</string>
-  <string name="transaction_deleted">Transaction deleted</string>
-  <string name="transfer_deleted">Transfer deleted</string>
+  <string name="transaction_deleted">거래가 삭제되었습니다</string>
+  <string name="transfer_deleted">삭제된 전송</string>
 </resources>
