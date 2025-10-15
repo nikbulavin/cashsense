@@ -111,6 +111,6 @@
   <string name="close">Schließen</string>
   <string name="next_date">Nächstes Datum</string>
   <string name="previous_date">Vorheriges Datum</string>
-  <string name="transaction_deleted">Transaction deleted</string>
-  <string name="transfer_deleted">Transfer deleted</string>
+  <string name="transaction_deleted">Transaktion gelöscht</string>
+  <string name="transfer_deleted">Übertragung gelöscht</string>
 </resources>
