@@ -111,4 +111,6 @@
   <string name="close">Fermer</string>
   <string name="next_date">Date suivante</string>
   <string name="previous_date">Date précédente</string>
+  <string name="transaction_deleted">Transaction supprimée</string>
+  <string name="transfer_deleted">Transfert supprimé</string>
 </resources>
