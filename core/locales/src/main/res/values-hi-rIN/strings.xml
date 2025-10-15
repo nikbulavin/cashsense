@@ -111,6 +111,6 @@
   <string name="close">बंद करें</string>
   <string name="next_date">अगली तिथि</string>
   <string name="previous_date">पिछली तिथि</string>
-  <string name="transaction_deleted">Transaction deleted</string>
-  <string name="transfer_deleted">Transfer deleted</string>
+  <string name="transaction_deleted">लेनदेन हटाया गया</string>
+  <string name="transfer_deleted">स्थानांतरण हटाया गया</string>
 </resources>
