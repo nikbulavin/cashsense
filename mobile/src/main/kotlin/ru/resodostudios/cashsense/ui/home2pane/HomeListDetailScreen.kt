@@ -32,6 +32,7 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldPredictiv
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -205,7 +206,10 @@ internal fun HomeListDetailScreen(
         }
     }
 
-    hideFab(scaffoldNavigator.isDetailPaneVisible())
+    val shouldHideFab = scaffoldNavigator.isDetailPaneVisible()
+    LaunchedEffect(shouldHideFab) {
+        hideFab(shouldHideFab)
+    }
 
     fun onWalletClickShowDetailPane(walletId: String?) {
         onWalletSelect(walletId)
