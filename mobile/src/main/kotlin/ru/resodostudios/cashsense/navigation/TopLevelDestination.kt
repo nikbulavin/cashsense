@@ -6,11 +6,11 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Settings
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Home
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesBaseRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -54,6 +54,7 @@ enum class TopLevelDestination(
         unselectedIcon = CsIcons.Outlined.Home,
         iconTextId = localesR.string.home_title,
         fabConfig = FabConfig(
+            icon = CsIcons.Outlined.Wallet,
             title = localesR.string.new_wallet,
         ),
         routes = setOf(
@@ -69,6 +70,7 @@ enum class TopLevelDestination(
         unselectedIcon = CsIcons.Outlined.Category,
         iconTextId = localesR.string.categories_title,
         fabConfig = FabConfig(
+            icon = CsIcons.Outlined.Category,
             title = localesR.string.new_category,
         ),
         routes = setOf(
@@ -82,6 +84,7 @@ enum class TopLevelDestination(
         unselectedIcon = CsIcons.Outlined.Autorenew,
         iconTextId = localesR.string.subscriptions_title,
         fabConfig = FabConfig(
+            icon = CsIcons.Outlined.Autorenew,
             title = localesR.string.new_subscription,
         ),
         routes = setOf(
@@ -102,6 +105,6 @@ enum class TopLevelDestination(
 }
 
 data class FabConfig(
+    val icon: ImageVector,
     @StringRes val title: Int,
-    val icon: ImageVector = CsIcons.Outlined.Add,
 )

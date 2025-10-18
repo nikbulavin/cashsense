@@ -107,7 +107,6 @@ class CsAppState(
     val navigationSuiteType =
         NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
-    var shouldShowFab by mutableStateOf(false)
     val defaultSnackbarBottomPadding = when (navigationSuiteType) {
         NavigationSuiteType.NavigationRail -> 0.dp
         else -> 76.dp
