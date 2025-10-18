@@ -266,7 +266,9 @@ internal fun HomeListDetailScreen(
                     if (!scaffoldNavigator.isDetailPaneVisible() ||
                         (scaffoldNavigator.isListPaneVisible() && scaffoldNavigator.isDetailPaneVisible())
                     ) {
-                        updateSnackbarBottomPadding(100.dp)
+                        updateSnackbarBottomPadding(
+                            if (navigationSuiteType == NavigationSuiteType.NavigationRail) 100.dp else 76.dp
+                        )
                     }
                     HomeScreen(
                         onWalletClick = ::onWalletClickShowDetailPane,

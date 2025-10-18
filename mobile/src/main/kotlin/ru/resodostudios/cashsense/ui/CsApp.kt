@@ -19,11 +19,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
@@ -55,7 +52,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun CsApp(
     appState: CsAppState,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
@@ -94,8 +90,6 @@ fun CsApp(
             else -> {}
         }
     }
-
-    val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     NavigationSuiteScaffold(
         primaryActionContent = {
@@ -153,7 +147,7 @@ fun CsApp(
                 )
             }
         },
-        navigationSuiteType = navigationSuiteType,
+        navigationSuiteType = appState.navigationSuiteType,
         navigationItemVerticalArrangement = Arrangement.Center,
     ) {
         Scaffold(
@@ -163,7 +157,7 @@ fun CsApp(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
-                            if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
+                            if (appState.navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
                                 currentTopLevelDestination != SETTINGS
                             ) {
                                 Modifier.padding(bottom = appState.snackbarBottomPadding)
@@ -180,7 +174,7 @@ fun CsApp(
         ) { innerPadding ->
             CsNavHost(
                 appState = appState,
-                navigationSuiteType = navigationSuiteType,
+                navigationSuiteType = appState.navigationSuiteType,
                 onShowSnackbar = { message, action ->
                     snackbarHostState.showSnackbar(
                         message = message,
