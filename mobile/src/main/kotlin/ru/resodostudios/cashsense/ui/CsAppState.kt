@@ -97,7 +97,7 @@ class CsAppState(
             initialValue = InAppUpdateResult.NotAvailable,
         )
 
-    var hideFab by mutableStateOf(false)
+    var shouldShowFab by mutableStateOf(false)
     var snackbarBottomPadding by mutableStateOf(100.dp)
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {

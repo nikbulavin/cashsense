@@ -86,7 +86,7 @@ fun NavGraphBuilder.homeListDetailScreen(
     navigateToWalletDialog: () -> Unit,
     navigationSuiteType: NavigationSuiteType,
     nestedDestinations: NavGraphBuilder.() -> Unit,
-    hideFab: (Boolean) -> Unit = {},
+    updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
 ) {
     navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
@@ -101,7 +101,7 @@ fun NavGraphBuilder.homeListDetailScreen(
                 onShowSnackbar = onShowSnackbar,
                 navigateToTransactionDialog = navigateToTransactionDialog,
                 navigateToWalletDialog = navigateToWalletDialog,
-                hideFab = hideFab,
+                updateFabVisibility = updateFabVisibility,
                 updateSnackbarBottomPadding = updateSnackbarBottomPadding,
                 navigationSuiteType = navigationSuiteType,
             )
@@ -117,7 +117,7 @@ internal fun HomeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
-    hideFab: (Boolean) -> Unit = {},
+    updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
     navigationSuiteType: NavigationSuiteType,
     viewModel: Home2PaneViewModel = hiltViewModel(),
@@ -139,7 +139,7 @@ internal fun HomeListDetailScreen(
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
         undoWalletRemoval = viewModel::undoWalletRemoval,
         clearUndoState = viewModel::clearUndoState,
-        hideFab = hideFab,
+        updateFabVisibility = updateFabVisibility,
         updateSnackbarBottomPadding = updateSnackbarBottomPadding,
         navigationSuiteType = navigationSuiteType,
     )
@@ -164,16 +164,15 @@ internal fun HomeListDetailScreen(
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
-    hideFab: (Boolean) -> Unit = {},
+    updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
 ) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
         initialDestinationHistory = listOfNotNull(
             ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List),
-            ThreePaneScaffoldDestinationItem<Any>(ListDetailPaneScaffoldRole.Detail).takeIf {
-                selectedWalletId != null
-            },
+            ThreePaneScaffoldDestinationItem<Any>(ListDetailPaneScaffoldRole.Detail)
+                .takeIf { selectedWalletId != null },
         ),
     )
     val paneExpansionState = rememberPaneExpansionState(
@@ -206,9 +205,9 @@ internal fun HomeListDetailScreen(
         }
     }
 
-    val shouldHideFab = scaffoldNavigator.isDetailPaneVisible()
-    LaunchedEffect(shouldHideFab) {
-        hideFab(shouldHideFab)
+    val shouldShowFab = !scaffoldNavigator.isDetailPaneVisible()
+    LaunchedEffect(shouldShowFab) {
+        updateFabVisibility(shouldShowFab)
     }
 
     fun onWalletClickShowDetailPane(walletId: String?) {
@@ -271,9 +270,7 @@ internal fun HomeListDetailScreen(
                     HomeScreen(
                         onWalletClick = ::onWalletClickShowDetailPane,
                         onTransfer = onTransfer,
-                        onTransactionCreate = {
-                            navigateToTransactionDialog(it, null, false)
-                        },
+                        onTransactionCreate = { navigateToTransactionDialog(it, null, false) },
                         highlightSelectedWallet = scaffoldNavigator.isDetailPaneVisible(),
                         onShowSnackbar = onShowSnackbar,
                         shouldDisplayUndoWallet = shouldDisplayUndoWallet,

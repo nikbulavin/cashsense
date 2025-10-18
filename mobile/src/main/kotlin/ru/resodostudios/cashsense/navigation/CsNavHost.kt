@@ -95,7 +95,7 @@ fun CsNavHost(
             navigateToTransactionDialog = navController::navigateToTransactionDialog,
             navigateToWalletDialog = navController::navigateToWalletDialog,
             onShowSnackbar = onShowSnackbar,
-            hideFab = { appState.hideFab = it },
+            updateFabVisibility = { appState.shouldShowFab = it },
             updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
             navigationSuiteType = navigationSuiteType,
             nestedDestinations = {

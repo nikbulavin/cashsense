@@ -28,10 +28,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -98,27 +95,25 @@ fun CsApp(
         }
     }
 
-    var previousDestination by remember { mutableStateOf(HOME) }
-
     val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     NavigationSuiteScaffold(
         primaryActionContent = {
-            if (currentTopLevelDestination != null) {
+            if (currentTopLevelDestination?.fabConfig != null) {
                 CsFloatingActionButton(
-                    contentDescriptionRes = currentTopLevelDestination.fabTitle ?: previousDestination.fabTitle!!,
-                    icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
+                    contentDescriptionRes = currentTopLevelDestination.fabConfig.title,
+                    icon = currentTopLevelDestination.fabConfig.icon,
                     onClick = {
                         when (currentTopLevelDestination) {
                             HOME -> appState.navController.navigateToWalletDialog()
                             CATEGORIES -> appState.navController.navigateToCategoryDialog()
                             SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
-                            SETTINGS -> {}
+                            else -> {}
                         }
                     },
                     modifier = Modifier
                         .animateFloatingActionButton(
-                            visible = currentTopLevelDestination != SETTINGS && !appState.hideFab,
+                            visible = appState.shouldShowFab,
                             alignment = Alignment.BottomEnd,
                         ),
                 )
@@ -147,10 +142,7 @@ fun CsApp(
                         )
                     },
                     onClick = {
-                        if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
-                            previousDestination = currentTopLevelDestination
-                        }
-                        if (destination != HOME) appState.hideFab = false
+                        if (destination != HOME) appState.shouldShowFab = true
                         appState.navigateToTopLevelDestination(destination)
                     },
                 )
