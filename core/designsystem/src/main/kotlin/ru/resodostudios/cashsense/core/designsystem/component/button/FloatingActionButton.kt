@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.designsystem.component.button
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumFloatingActionButton
 import androidx.compose.runtime.Composable
@@ -14,6 +15,25 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsFloatingActionButton(
+    @StringRes contentDescriptionRes: Int,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
+    FloatingActionButton(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = stringResource(contentDescriptionRes),
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun CsMediumFloatingActionButton(
     @StringRes contentDescriptionRes: Int,
     icon: ImageVector,
     modifier: Modifier = Modifier,

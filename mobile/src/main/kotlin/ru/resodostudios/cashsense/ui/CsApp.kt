@@ -112,6 +112,11 @@ fun CsApp(
                         }
                     },
                     modifier = Modifier
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(
+                                WindowInsetsSides.Horizontal,
+                            ),
+                        )
                         .animateFloatingActionButton(
                             visible = appState.shouldShowFab,
                             alignment = Alignment.BottomEnd,

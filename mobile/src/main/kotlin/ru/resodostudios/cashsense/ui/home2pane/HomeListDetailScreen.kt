@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFloatingActionButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsMediumFloatingActionButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
@@ -279,21 +280,31 @@ internal fun HomeListDetailScreen(
                         onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
                     )
                     if (scaffoldNavigator.isDetailPaneVisible() && scaffoldNavigator.isListPaneVisible()) {
-                        CsFloatingActionButton(
-                            contentDescriptionRes = localesR.string.new_wallet,
-                            icon = CsIcons.Outlined.Wallet,
-                            onClick = navigateToWalletDialog,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(bottom = 16.dp, end = 16.dp)
-                                .then(
-                                    if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
-                                        Modifier.navigationBarsPadding()
-                                    } else {
-                                        Modifier
-                                    },
-                                ),
-                        )
+                        val fabModifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = 16.dp, end = 16.dp)
+                            .then(
+                                if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
+                                    Modifier.navigationBarsPadding()
+                                } else {
+                                    Modifier
+                                },
+                            )
+                        if (navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                            CsMediumFloatingActionButton(
+                                contentDescriptionRes = localesR.string.new_wallet,
+                                icon = CsIcons.Outlined.Wallet,
+                                onClick = navigateToWalletDialog,
+                                modifier = fabModifier,
+                            )
+                        } else {
+                            CsFloatingActionButton(
+                                contentDescriptionRes = localesR.string.new_wallet,
+                                icon = CsIcons.Outlined.Wallet,
+                                onClick = navigateToWalletDialog,
+                                modifier = fabModifier,
+                            )
+                        }
                     }
                 }
             }
