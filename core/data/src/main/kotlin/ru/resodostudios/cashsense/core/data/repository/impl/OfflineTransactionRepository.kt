@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.map
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
-import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
@@ -49,15 +48,10 @@ internal class OfflineTransactionRepository @Inject constructor(
     }
 
     override suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory) {
-        dao.upsertTransaction(transactionWithCategory.transaction.asEntity())
-        dao.deleteTransactionCategoryCrossRef(transactionWithCategory.transaction.id)
-        transactionWithCategory.category?.id?.let { categoryId ->
-            val crossRef = TransactionCategoryCrossRefEntity(
-                transactionId = transactionWithCategory.transaction.id,
-                categoryId = categoryId,
-            )
-            dao.upsertTransactionCategoryCrossRef(crossRef)
-        }
+        dao.upsertTransactionWithCategory(
+            transaction = transactionWithCategory.transaction.asEntity(),
+            category = transactionWithCategory.category?.asEntity(),
+        )
     }
 
     override suspend fun deleteTransaction(id: String) = dao.deleteTransaction(id)
