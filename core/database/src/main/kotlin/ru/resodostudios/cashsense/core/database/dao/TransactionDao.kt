@@ -24,9 +24,6 @@ interface TransactionDao {
     @Query("SELECT count(*) FROM transactions")
     fun getTransactionsCount(): Flow<Int>
 
-    @Query("SELECT * FROM transactions WHERE transfer_id = :transferId")
-    fun getTransfer(transferId: Uuid): Flow<List<TransactionEntity>>
-
     @Upsert
     suspend fun upsertTransaction(transaction: TransactionEntity)
 
@@ -51,6 +48,18 @@ interface TransactionDao {
 
     @Query("DELETE FROM transactions_categories WHERE transaction_id = :transactionId")
     suspend fun deleteTransactionCategoryCrossRef(transactionId: String)
+
+    @Query("SELECT * FROM transactions WHERE transfer_id = :transferId")
+    fun getTransfer(transferId: Uuid): Flow<List<TransactionEntity>>
+
+    @Transaction
+    suspend fun upsertTransfer(
+        withdrawalTransaction: TransactionEntity,
+        depositTransaction: TransactionEntity,
+    ) {
+        upsertTransaction(withdrawalTransaction)
+        upsertTransaction(depositTransaction)
+    }
 
     @Query("DELETE FROM transactions WHERE transfer_id = :uuid")
     suspend fun deleteTransfer(uuid: Uuid)

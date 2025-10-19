@@ -61,8 +61,10 @@ internal class OfflineTransactionRepository @Inject constructor(
     }
 
     override suspend fun upsertTransfer(transfer: Transfer) {
-        dao.upsertTransaction(transfer.withdrawalTransaction.transaction.asEntity())
-        dao.upsertTransaction(transfer.depositTransaction.transaction.asEntity())
+        dao.upsertTransfer(
+            withdrawalTransaction = transfer.withdrawalTransaction.transaction.asEntity(),
+            depositTransaction = transfer.depositTransaction.transaction.asEntity(),
+        )
     }
 
     override suspend fun deleteTransfer(uuid: Uuid) = dao.deleteTransfer(uuid)
