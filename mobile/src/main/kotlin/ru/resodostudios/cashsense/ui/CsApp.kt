@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -29,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -129,21 +132,6 @@ fun CsApp(
         navigationItemVerticalArrangement = Arrangement.Center,
     ) {
         Scaffold(
-            floatingActionButton = {
-                if (currentTopLevelDestination != SETTINGS) {
-                    FabMenu(
-                        visible = shouldShowFab,
-                        onMenuItemClick = { fabItem ->
-                            when (fabItem) {
-                                WALLET -> appState.navController.navigateToWalletDialog()
-                                CATEGORY -> appState.navController.navigateToCategoryDialog()
-                                SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
-                            }
-                        },
-                        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
-                    )
-                }
-            },
             snackbarHost = {
                 SnackbarHost(
                     hostState = snackbarHostState,
@@ -165,19 +153,8 @@ fun CsApp(
                 testTagsAsResourceId = true
             },
         ) { innerPadding ->
-            CsNavHost(
-                appState = appState,
-                navigationSuiteType = appState.navigationSuiteType,
-                onShowSnackbar = { message, action ->
-                    snackbarHostState.showSnackbar(
-                        message = message,
-                        actionLabel = action,
-                        duration = Short,
-                    ) == ActionPerformed
-                },
-                updateFabVisibility = { shouldShowFab = it },
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
                     .windowInsetsPadding(
@@ -185,7 +162,36 @@ fun CsApp(
                             WindowInsetsSides.Horizontal,
                         ),
                     ),
-            )
+            ) {
+                CsNavHost(
+                    appState = appState,
+                    navigationSuiteType = appState.navigationSuiteType,
+                    onShowSnackbar = { message, action ->
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            actionLabel = action,
+                            duration = Short,
+                        ) == ActionPerformed
+                    },
+                    updateFabVisibility = { shouldShowFab = it },
+                    modifier = Modifier.fillMaxSize(),
+                )
+                if (currentTopLevelDestination != SETTINGS) {
+                    FabMenu(
+                        visible = shouldShowFab,
+                        onMenuItemClick = { fabItem ->
+                            when (fabItem) {
+                                WALLET -> appState.navController.navigateToWalletDialog()
+                                CATEGORY -> appState.navController.navigateToCategoryDialog()
+                                SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .windowInsetsPadding(WindowInsets.systemBars),
+                    )
+                }
+            }
         }
     }
 }
