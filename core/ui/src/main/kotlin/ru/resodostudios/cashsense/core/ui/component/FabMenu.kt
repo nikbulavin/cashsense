@@ -8,6 +8,7 @@ import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
@@ -53,6 +55,7 @@ fun FabMenu(
     visible: Boolean,
     onMenuItemClick: (FabMenuItem) -> Unit,
     modifier: Modifier = Modifier,
+    toggleContainerSize: (Float) -> Dp = ToggleFloatingActionButtonDefaults.containerSize(),
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -83,6 +86,7 @@ fun FabMenu(
                     .focusRequester(focusRequester),
                 checked = expanded,
                 onCheckedChange = { expanded = !expanded },
+                containerSize = toggleContainerSize,
             ) {
                 val imageVector by remember {
                     derivedStateOf {

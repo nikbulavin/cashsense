@@ -21,6 +21,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
@@ -189,6 +190,11 @@ fun CsApp(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .windowInsetsPadding(WindowInsets.systemBars),
+                        toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                            ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                        } else {
+                            ToggleFloatingActionButtonDefaults.containerSize()
+                        },
                     )
                 }
             }

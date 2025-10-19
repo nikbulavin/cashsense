@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
@@ -309,6 +310,11 @@ internal fun HomeListDetailScreen(
                                         Modifier
                                     },
                                 ),
+                            toggleContainerSize = if (navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                                ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                            } else {
+                                ToggleFloatingActionButtonDefaults.containerSize()
+                            },
                         )
                     }
                 }
