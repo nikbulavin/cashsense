@@ -34,7 +34,7 @@ data class TransactionEntity(
     val status: StatusType,
     @ColumnInfo(defaultValue = "0")
     val ignored: Boolean,
-    @ColumnInfo(name = "transfer_id")
+    @ColumnInfo(name = "transfer_id", index = true)
     val transferId: Uuid?,
 )
 
