@@ -56,6 +56,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -205,24 +207,24 @@ fun CsApp(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FabMenu(
+private fun FabMenu(
     fabVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val focusRequester = remember { FocusRequester() }
-
     var fabMenuExpanded by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
-
+    val focusRequester = remember { FocusRequester() }
+    val items = listOf(
+        CsIcons.Outlined.Wallet to stringResource(localesR.string.new_wallet),
+        CsIcons.Outlined.Category to stringResource(localesR.string.new_category),
+        CsIcons.Outlined.Autorenew to stringResource(localesR.string.new_subscription),
+    )
     val closeText = stringResource(localesR.string.close)
+    val toggleMenuText = stringResource(localesR.string.toggle_menu)
+    val expandedText = stringResource(localesR.string.expanded)
+    val collapsedText = stringResource(localesR.string.collapsed)
 
-    val items =
-        listOf(
-            CsIcons.Outlined.Wallet to stringResource(localesR.string.new_wallet),
-            CsIcons.Outlined.Category to stringResource(localesR.string.new_category),
-            CsIcons.Outlined.Autorenew to stringResource(localesR.string.new_subscription),
-        )
+    BackHandler(fabMenuExpanded) { fabMenuExpanded = false }
 
     FloatingActionButtonMenu(
         modifier = modifier,
@@ -232,8 +234,8 @@ fun FabMenu(
                 modifier = Modifier
                     .semantics {
                         traversalIndex = -1f
-                        stateDescription = if (fabMenuExpanded) "Expanded" else "Collapsed"
-                        contentDescription = "Toggle menu"
+                        stateDescription = if (fabMenuExpanded) expandedText else collapsedText
+                        contentDescription = toggleMenuText
                     }
                     .animateFloatingActionButton(
                         visible = fabVisible || fabMenuExpanded,
@@ -295,13 +297,16 @@ fun FabMenu(
                 onClick = { fabMenuExpanded = false },
                 icon = {
                     Icon(
-                        item.first,
+                        imageVector = item.first,
                         contentDescription = null,
                     )
                 },
                 text = {
                     Text(
                         text = item.second,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
             )
