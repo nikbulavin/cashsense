@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.settings
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
@@ -523,11 +522,7 @@ private fun LazyListScope.about(
         val context = LocalContext.current
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         val versionName = packageInfo?.versionName ?: "?.?.?"
-        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            "(${packageInfo?.longVersionCode})"
-        } else {
-            ""
-        }
+        val versionCode = "(${packageInfo?.longVersionCode})"
 
         CsListItemEmphasized(
             shape = ListItemPositionShapes.Last,
