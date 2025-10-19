@@ -10,10 +10,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
@@ -32,6 +32,7 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldPredictiv
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,10 +53,11 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsFloatingActionButton
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.FabMenu
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
@@ -83,9 +85,11 @@ fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
+    navigateToCategoryDialog: () -> Unit,
+    navigateToSubscriptionDialog: () -> Unit,
     navigationSuiteType: NavigationSuiteType,
     nestedDestinations: NavGraphBuilder.() -> Unit,
-    hideFab: (Boolean) -> Unit = {},
+    updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
 ) {
     navigation<HomeListDetailRoute>(startDestination = HomeRoute()) {
@@ -100,7 +104,9 @@ fun NavGraphBuilder.homeListDetailScreen(
                 onShowSnackbar = onShowSnackbar,
                 navigateToTransactionDialog = navigateToTransactionDialog,
                 navigateToWalletDialog = navigateToWalletDialog,
-                hideFab = hideFab,
+                navigateToCategoryDialog = navigateToCategoryDialog,
+                navigateToSubscriptionDialog = navigateToSubscriptionDialog,
+                updateFabVisibility = updateFabVisibility,
                 updateSnackbarBottomPadding = updateSnackbarBottomPadding,
                 navigationSuiteType = navigationSuiteType,
             )
@@ -116,7 +122,9 @@ internal fun HomeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
-    hideFab: (Boolean) -> Unit = {},
+    navigateToCategoryDialog: () -> Unit,
+    navigateToSubscriptionDialog: () -> Unit,
+    updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
     navigationSuiteType: NavigationSuiteType,
     viewModel: Home2PaneViewModel = hiltViewModel(),
@@ -129,6 +137,8 @@ internal fun HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         navigateToTransactionDialog = navigateToTransactionDialog,
         navigateToWalletDialog = navigateToWalletDialog,
+        navigateToCategoryDialog = navigateToCategoryDialog,
+        navigateToSubscriptionDialog = navigateToSubscriptionDialog,
         onWalletSelect = viewModel::onWalletSelect,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
@@ -138,7 +148,7 @@ internal fun HomeListDetailScreen(
         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
         undoWalletRemoval = viewModel::undoWalletRemoval,
         clearUndoState = viewModel::clearUndoState,
-        hideFab = hideFab,
+        updateFabVisibility = updateFabVisibility,
         updateSnackbarBottomPadding = updateSnackbarBottomPadding,
         navigationSuiteType = navigationSuiteType,
     )
@@ -153,6 +163,8 @@ internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
+    navigateToCategoryDialog: () -> Unit,
+    navigateToSubscriptionDialog: () -> Unit,
     onWalletSelect: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -163,16 +175,15 @@ internal fun HomeListDetailScreen(
     shouldDisplayUndoWallet: Boolean = false,
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
-    hideFab: (Boolean) -> Unit = {},
+    updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
 ) {
     val scaffoldNavigator = rememberListDetailPaneScaffoldNavigator(
         scaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo),
         initialDestinationHistory = listOfNotNull(
             ThreePaneScaffoldDestinationItem(ListDetailPaneScaffoldRole.List),
-            ThreePaneScaffoldDestinationItem<Any>(ListDetailPaneScaffoldRole.Detail).takeIf {
-                selectedWalletId != null
-            },
+            ThreePaneScaffoldDestinationItem<Any>(ListDetailPaneScaffoldRole.Detail)
+                .takeIf { selectedWalletId != null },
         ),
     )
     val paneExpansionState = rememberPaneExpansionState(
@@ -205,7 +216,10 @@ internal fun HomeListDetailScreen(
         }
     }
 
-    hideFab(scaffoldNavigator.isDetailPaneVisible())
+    val shouldShowFab = !scaffoldNavigator.isDetailPaneVisible()
+    LaunchedEffect(shouldShowFab) {
+        updateFabVisibility(shouldShowFab)
+    }
 
     fun onWalletClickShowDetailPane(walletId: String?) {
         onWalletSelect(walletId)
@@ -262,14 +276,14 @@ internal fun HomeListDetailScreen(
                     if (!scaffoldNavigator.isDetailPaneVisible() ||
                         (scaffoldNavigator.isListPaneVisible() && scaffoldNavigator.isDetailPaneVisible())
                     ) {
-                        updateSnackbarBottomPadding(100.dp)
+                        updateSnackbarBottomPadding(
+                            if (navigationSuiteType == NavigationSuiteType.NavigationRail) 100.dp else 76.dp
+                        )
                     }
                     HomeScreen(
                         onWalletClick = ::onWalletClickShowDetailPane,
                         onTransfer = onTransfer,
-                        onTransactionCreate = {
-                            navigateToTransactionDialog(it, null, false)
-                        },
+                        onTransactionCreate = { navigateToTransactionDialog(it, null, false) },
                         highlightSelectedWallet = scaffoldNavigator.isDetailPaneVisible(),
                         onShowSnackbar = onShowSnackbar,
                         shouldDisplayUndoWallet = shouldDisplayUndoWallet,
@@ -278,13 +292,17 @@ internal fun HomeListDetailScreen(
                         onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
                     )
                     if (scaffoldNavigator.isDetailPaneVisible() && scaffoldNavigator.isListPaneVisible()) {
-                        CsFloatingActionButton(
-                            contentDescriptionRes = localesR.string.new_wallet,
-                            icon = CsIcons.Outlined.Wallet,
-                            onClick = navigateToWalletDialog,
+                        FabMenu(
+                            visible = true,
+                            onMenuItemClick = { fabMenuItem ->
+                                when (fabMenuItem) {
+                                    WALLET -> navigateToWalletDialog()
+                                    CATEGORY -> navigateToCategoryDialog()
+                                    SUBSCRIPTION -> navigateToSubscriptionDialog()
+                                }
+                            },
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .padding(bottom = 16.dp, end = 16.dp)
                                 .then(
                                     if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
                                         Modifier.navigationBarsPadding()
@@ -292,6 +310,11 @@ internal fun HomeListDetailScreen(
                                         Modifier
                                     },
                                 ),
+                            toggleContainerSize = if (navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                                ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                            } else {
+                                ToggleFloatingActionButtonDefaults.containerSize()
+                            },
                         )
                     }
                 }

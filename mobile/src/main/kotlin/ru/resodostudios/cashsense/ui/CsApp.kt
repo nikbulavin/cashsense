@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.ui
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -19,18 +21,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.animateFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,15 +42,16 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsFloatingActionButton
+import ru.resodostudios.cashsense.core.ui.component.FabMenu
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -58,11 +59,11 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun CsApp(
     appState: CsAppState,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
     val currentTopLevelDestination = appState.currentTopLevelDestination
+    var shouldShowFab by rememberSaveable { mutableStateOf(true) }
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
 
@@ -98,32 +99,7 @@ fun CsApp(
         }
     }
 
-    var previousDestination by remember { mutableStateOf(HOME) }
-
-    val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
-
     NavigationSuiteScaffold(
-        primaryActionContent = {
-            if (currentTopLevelDestination != null) {
-                CsFloatingActionButton(
-                    contentDescriptionRes = currentTopLevelDestination.fabTitle ?: previousDestination.fabTitle!!,
-                    icon = currentTopLevelDestination.fabIcon ?: previousDestination.fabIcon!!,
-                    onClick = {
-                        when (currentTopLevelDestination) {
-                            HOME -> appState.navController.navigateToWalletDialog()
-                            CATEGORIES -> appState.navController.navigateToCategoryDialog()
-                            SUBSCRIPTIONS -> appState.navController.navigateToSubscriptionDialog()
-                            SETTINGS -> {}
-                        }
-                    },
-                    modifier = Modifier
-                        .animateFloatingActionButton(
-                            visible = currentTopLevelDestination != SETTINGS && !appState.hideFab,
-                            alignment = Alignment.BottomEnd,
-                        ),
-                )
-            }
-        },
         navigationItems = {
             appState.topLevelDestinations.forEach { destination ->
                 val selected = currentDestination.isRouteInHierarchy(destination.baseRoute)
@@ -147,16 +123,13 @@ fun CsApp(
                         )
                     },
                     onClick = {
-                        if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
-                            previousDestination = currentTopLevelDestination
-                        }
-                        if (destination != HOME) appState.hideFab = false
+                        if (destination != HOME) shouldShowFab = true
                         appState.navigateToTopLevelDestination(destination)
                     },
                 )
             }
         },
-        navigationSuiteType = navigationSuiteType,
+        navigationSuiteType = appState.navigationSuiteType,
         navigationItemVerticalArrangement = Arrangement.Center,
     ) {
         Scaffold(
@@ -166,7 +139,7 @@ fun CsApp(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
-                            if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
+                            if (appState.navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
                                 currentTopLevelDestination != SETTINGS
                             ) {
                                 Modifier.padding(bottom = appState.snackbarBottomPadding)
@@ -181,18 +154,8 @@ fun CsApp(
                 testTagsAsResourceId = true
             },
         ) { innerPadding ->
-            CsNavHost(
-                appState = appState,
-                navigationSuiteType = navigationSuiteType,
-                onShowSnackbar = { message, action ->
-                    snackbarHostState.showSnackbar(
-                        message = message,
-                        actionLabel = action,
-                        duration = Short,
-                    ) == ActionPerformed
-                },
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
                     .windowInsetsPadding(
@@ -200,7 +163,41 @@ fun CsApp(
                             WindowInsetsSides.Horizontal,
                         ),
                     ),
-            )
+            ) {
+                CsNavHost(
+                    appState = appState,
+                    navigationSuiteType = appState.navigationSuiteType,
+                    onShowSnackbar = { message, action ->
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            actionLabel = action,
+                            duration = Short,
+                        ) == ActionPerformed
+                    },
+                    updateFabVisibility = { shouldShowFab = it },
+                    modifier = Modifier.fillMaxSize(),
+                )
+                if (currentTopLevelDestination != SETTINGS) {
+                    FabMenu(
+                        visible = shouldShowFab,
+                        onMenuItemClick = { fabItem ->
+                            when (fabItem) {
+                                WALLET -> appState.navController.navigateToWalletDialog()
+                                CATEGORY -> appState.navController.navigateToCategoryDialog()
+                                SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .windowInsetsPadding(WindowInsets.systemBars),
+                        toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                            ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                        } else {
+                            ToggleFloatingActionButtonDefaults.containerSize()
+                        },
+                    )
+                }
+            }
         }
     }
 }

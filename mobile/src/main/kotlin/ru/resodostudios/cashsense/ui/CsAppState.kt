@@ -1,5 +1,9 @@
 package ru.resodostudios.cashsense.ui
 
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +43,7 @@ fun rememberCsAppState(
     inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ): CsAppState {
 
     return remember(
@@ -51,6 +56,7 @@ fun rememberCsAppState(
             inAppUpdateManager = inAppUpdateManager,
             coroutineScope = coroutineScope,
             navController = navController,
+            windowAdaptiveInfo = windowAdaptiveInfo,
         )
     }
 }
@@ -61,6 +67,7 @@ class CsAppState(
     inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope,
     val navController: NavHostController,
+    val windowAdaptiveInfo: WindowAdaptiveInfo,
 ) {
     private val previousDestination = mutableStateOf<NavDestination?>(null)
 
@@ -97,8 +104,14 @@ class CsAppState(
             initialValue = InAppUpdateResult.NotAvailable,
         )
 
-    var hideFab by mutableStateOf(false)
-    var snackbarBottomPadding by mutableStateOf(100.dp)
+    val navigationSuiteType =
+        NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
+
+    val defaultSnackbarBottomPadding = when (navigationSuiteType) {
+        NavigationSuiteType.NavigationRail -> 0.dp
+        else -> 76.dp
+    }
+    var snackbarBottomPadding by mutableStateOf(defaultSnackbarBottomPadding)
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         trace("Navigation: ${topLevelDestination.name}") {
@@ -111,23 +124,14 @@ class CsAppState(
             }
 
             when (topLevelDestination) {
-                HOME -> {
-                    navController.navigateToHome(navOptions = topLevelNavOptions)
-                    snackbarBottomPadding = 100.dp
-                }
-                CATEGORIES -> {
-                    navController.navigateToCategories(topLevelNavOptions)
-                    snackbarBottomPadding = 100.dp
-                }
-                SUBSCRIPTIONS -> {
-                    navController.navigateToSubscriptions(topLevelNavOptions)
-                    snackbarBottomPadding = 100.dp
-                }
-                SETTINGS -> {
-                    navController.navigateToSettings(topLevelNavOptions)
-                    snackbarBottomPadding = 0.dp
-                }
+                HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
+                CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
+                SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
+                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
             }
+
+            snackbarBottomPadding =
+                if (topLevelDestination == SETTINGS) 0.dp else defaultSnackbarBottomPadding
         }
     }
 }

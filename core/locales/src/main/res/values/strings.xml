@@ -16,6 +16,7 @@
     <string name="category_title">Category</string>
     <string name="choose_wallet">Choose a wallet</string>
     <string name="close">Close</string>
+    <string name="collapsed">Collapsed</string>
     <string name="completed">Completed</string>
     <string name="converted_amount">Converted amount</string>
     <string name="currency">Currency</string>
@@ -30,6 +31,7 @@
     <string name="edit_transaction">Edit transaction</string>
     <string name="edit_wallet">Edit wallet</string>
     <string name="exchange_rate">Exchange rate</string>
+    <string name="expanded">Expanded</string>
     <string name="expense">Expense</string>
     <string name="expenses">Expenses</string>
     <string name="feedback">Feedback</string>
@@ -94,6 +96,7 @@
     <string name="time">Time</string>
     <string name="title">Title</string>
     <string name="to_wallet">To wallet</string>
+    <string name="toggle_menu">Toggle menu</string>
     <string name="total_balance">Total balance</string>
     <string name="transaction_deleted">Transaction deleted</string>
     <string name="transaction_ignore">Ignore in calculations</string>

@@ -38,6 +38,7 @@ fun CsNavHost(
     appState: CsAppState,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigationSuiteType: NavigationSuiteType,
+    updateFabVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navController = appState.navController
@@ -94,8 +95,10 @@ fun CsNavHost(
             onTransfer = navController::navigateToTransferDialog,
             navigateToTransactionDialog = navController::navigateToTransactionDialog,
             navigateToWalletDialog = navController::navigateToWalletDialog,
+            navigateToCategoryDialog = navController::navigateToCategoryDialog,
+            navigateToSubscriptionDialog = navController::navigateToSubscriptionDialog,
             onShowSnackbar = onShowSnackbar,
-            hideFab = { appState.hideFab = it },
+            updateFabVisibility = updateFabVisibility,
             updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
             navigationSuiteType = navigationSuiteType,
             nestedDestinations = {
