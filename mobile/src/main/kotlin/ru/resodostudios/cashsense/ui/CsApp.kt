@@ -39,6 +39,12 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
+import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
@@ -127,6 +133,13 @@ fun CsApp(
                 if (currentTopLevelDestination != SETTINGS) {
                     FabMenu(
                         visible = shouldShowFab,
+                        onMenuItemClick = { fabItem ->
+                            when (fabItem) {
+                                WALLET -> appState.navController.navigateToWalletDialog()
+                                CATEGORY -> appState.navController.navigateToCategoryDialog()
+                                SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
+                            }
+                        },
                         modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
                     )
                 }

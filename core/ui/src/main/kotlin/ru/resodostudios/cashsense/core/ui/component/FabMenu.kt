@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -49,16 +51,13 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun FabMenu(
     visible: Boolean,
+    onMenuItemClick: (FabMenuItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     val focusRequester = remember { FocusRequester() }
-    val items = listOf(
-        CsIcons.Outlined.Wallet to stringResource(localesR.string.new_wallet),
-        CsIcons.Outlined.Category to stringResource(localesR.string.new_category),
-        CsIcons.Outlined.Autorenew to stringResource(localesR.string.new_subscription),
-    )
+    val items = FabMenuItem.entries
     val closeText = stringResource(localesR.string.close)
     val toggleMenuText = stringResource(localesR.string.toggle_menu)
     val expandedText = stringResource(localesR.string.expanded)
@@ -134,16 +133,19 @@ fun FabMenu(
                                 Modifier
                             }
                         ),
-                onClick = { expanded = false },
+                onClick = {
+                    onMenuItemClick(item)
+                    expanded = false
+                },
                 icon = {
                     Icon(
-                        imageVector = item.first,
+                        imageVector = item.icon,
                         contentDescription = null,
                     )
                 },
                 text = {
                     Text(
-                        text = item.second,
+                        text = stringResource(item.titleRes),
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -152,4 +154,22 @@ fun FabMenu(
             )
         }
     }
+}
+
+enum class FabMenuItem(
+    val icon: ImageVector,
+    @StringRes val titleRes: Int,
+) {
+    WALLET(
+        icon = CsIcons.Outlined.Wallet,
+        titleRes = localesR.string.new_wallet,
+    ),
+    CATEGORY(
+        icon = CsIcons.Outlined.Category,
+        titleRes = localesR.string.new_category,
+    ),
+    SUBSCRIPTION(
+        icon = CsIcons.Outlined.Autorenew,
+        titleRes = localesR.string.new_subscription,
+    ),
 }
