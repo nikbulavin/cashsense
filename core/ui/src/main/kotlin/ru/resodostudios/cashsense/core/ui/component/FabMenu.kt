@@ -99,40 +99,39 @@ fun FabMenu(
     ) {
         items.forEachIndexed { index, item ->
             FloatingActionButtonMenuItem(
-                modifier =
-                    Modifier
-                        .semantics {
-                            isTraversalGroup = true
-                            if (index == items.size - 1) {
-                                customActions =
-                                    listOf(
-                                        CustomAccessibilityAction(
-                                            label = closeText,
-                                            action = {
-                                                expanded = false
-                                                true
-                                            },
-                                        )
+                modifier = Modifier
+                    .semantics {
+                        isTraversalGroup = true
+                        if (index == items.size - 1) {
+                            customActions =
+                                listOf(
+                                    CustomAccessibilityAction(
+                                        label = closeText,
+                                        action = {
+                                            expanded = false
+                                            true
+                                        },
                                     )
-                            }
+                                )
                         }
-                        .then(
-                            if (index == 0) {
-                                Modifier.onKeyEvent {
-                                    if (
-                                        it.type == KeyEventType.KeyDown &&
-                                        (it.key == Key.DirectionUp ||
-                                                (it.isShiftPressed && it.key == Key.Tab))
-                                    ) {
-                                        focusRequester.requestFocus()
-                                        return@onKeyEvent true
-                                    }
-                                    return@onKeyEvent false
+                    }
+                    .then(
+                        if (index == 0) {
+                            Modifier.onKeyEvent {
+                                if (
+                                    it.type == KeyEventType.KeyDown &&
+                                    (it.key == Key.DirectionUp ||
+                                            (it.isShiftPressed && it.key == Key.Tab))
+                                ) {
+                                    focusRequester.requestFocus()
+                                    return@onKeyEvent true
                                 }
-                            } else {
-                                Modifier
+                                return@onKeyEvent false
                             }
-                        ),
+                        } else {
+                            Modifier
+                        }
+                    ),
                 onClick = {
                     onMenuItemClick(item)
                     expanded = false

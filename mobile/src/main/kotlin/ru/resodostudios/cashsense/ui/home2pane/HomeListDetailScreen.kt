@@ -10,7 +10,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -53,11 +52,11 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsFloatingActionButton
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsMediumFloatingActionButton
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
+import ru.resodostudios.cashsense.core.ui.component.FabMenu
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
@@ -85,6 +84,8 @@ fun NavGraphBuilder.homeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
+    navigateToCategoryDialog: () -> Unit,
+    navigateToSubscriptionDialog: () -> Unit,
     navigationSuiteType: NavigationSuiteType,
     nestedDestinations: NavGraphBuilder.() -> Unit,
     updateFabVisibility: (Boolean) -> Unit = {},
@@ -102,6 +103,8 @@ fun NavGraphBuilder.homeListDetailScreen(
                 onShowSnackbar = onShowSnackbar,
                 navigateToTransactionDialog = navigateToTransactionDialog,
                 navigateToWalletDialog = navigateToWalletDialog,
+                navigateToCategoryDialog = navigateToCategoryDialog,
+                navigateToSubscriptionDialog = navigateToSubscriptionDialog,
                 updateFabVisibility = updateFabVisibility,
                 updateSnackbarBottomPadding = updateSnackbarBottomPadding,
                 navigationSuiteType = navigationSuiteType,
@@ -118,6 +121,8 @@ internal fun HomeListDetailScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
+    navigateToCategoryDialog: () -> Unit,
+    navigateToSubscriptionDialog: () -> Unit,
     updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
     navigationSuiteType: NavigationSuiteType,
@@ -131,6 +136,8 @@ internal fun HomeListDetailScreen(
         selectedWalletId = selectedWalletId,
         navigateToTransactionDialog = navigateToTransactionDialog,
         navigateToWalletDialog = navigateToWalletDialog,
+        navigateToCategoryDialog = navigateToCategoryDialog,
+        navigateToSubscriptionDialog = navigateToSubscriptionDialog,
         onWalletSelect = viewModel::onWalletSelect,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
@@ -155,6 +162,8 @@ internal fun HomeListDetailScreen(
     selectedWalletId: String?,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
+    navigateToCategoryDialog: () -> Unit,
+    navigateToSubscriptionDialog: () -> Unit,
     onWalletSelect: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -282,31 +291,25 @@ internal fun HomeListDetailScreen(
                         onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
                     )
                     if (scaffoldNavigator.isDetailPaneVisible() && scaffoldNavigator.isListPaneVisible()) {
-                        val fabModifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(bottom = 16.dp, end = 16.dp)
-                            .then(
-                                if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
-                                    Modifier.navigationBarsPadding()
-                                } else {
-                                    Modifier
-                                },
-                            )
-                        if (navigationSuiteType == NavigationSuiteType.NavigationRail) {
-                            CsMediumFloatingActionButton(
-                                contentDescriptionRes = localesR.string.new_wallet,
-                                icon = CsIcons.Outlined.Wallet,
-                                onClick = navigateToWalletDialog,
-                                modifier = fabModifier,
-                            )
-                        } else {
-                            CsFloatingActionButton(
-                                contentDescriptionRes = localesR.string.new_wallet,
-                                icon = CsIcons.Outlined.Wallet,
-                                onClick = navigateToWalletDialog,
-                                modifier = fabModifier,
-                            )
-                        }
+                        FabMenu(
+                            visible = true,
+                            onMenuItemClick = { fabMenuItem ->
+                                when (fabMenuItem) {
+                                    WALLET -> navigateToWalletDialog()
+                                    CATEGORY -> navigateToCategoryDialog()
+                                    SUBSCRIPTION -> navigateToSubscriptionDialog()
+                                }
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .then(
+                                    if (navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact) {
+                                        Modifier.navigationBarsPadding()
+                                    } else {
+                                        Modifier
+                                    },
+                                ),
+                        )
                     }
                 }
             }

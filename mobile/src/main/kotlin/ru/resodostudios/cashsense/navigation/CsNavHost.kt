@@ -95,6 +95,8 @@ fun CsNavHost(
             onTransfer = navController::navigateToTransferDialog,
             navigateToTransactionDialog = navController::navigateToTransactionDialog,
             navigateToWalletDialog = navController::navigateToWalletDialog,
+            navigateToCategoryDialog = navController::navigateToCategoryDialog,
+            navigateToSubscriptionDialog = navController::navigateToSubscriptionDialog,
             onShowSnackbar = onShowSnackbar,
             updateFabVisibility = updateFabVisibility,
             updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
