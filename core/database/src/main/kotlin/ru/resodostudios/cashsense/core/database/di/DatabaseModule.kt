@@ -20,9 +20,9 @@ internal object DatabaseModule {
     fun providesCsDatabase(
         @ApplicationContext context: Context,
     ): CsDatabase = Room.databaseBuilder(
-        context,
-        CsDatabase::class.java,
-        "cs-database",
+        context = context,
+        klass = CsDatabase::class.java,
+        name = "cs-database",
     ).build()
 
     @Provides

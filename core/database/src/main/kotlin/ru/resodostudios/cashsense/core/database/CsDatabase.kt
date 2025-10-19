@@ -30,7 +30,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         TransactionCategoryCrossRefEntity::class,
         WalletEntity::class,
     ],
-    version = 10,
+    version = 11,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
@@ -41,6 +41,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         AutoMigration(from = 7, to = 8),
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10, spec = DatabaseMigrations.Schema9to10::class),
+        AutoMigration(from = 10, to = 11),
     ],
     exportSchema = true,
 )
