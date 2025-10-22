@@ -106,13 +106,13 @@ fun CsApp(
                 NavigationSuiteItem(
                     selected = selected,
                     icon = {
-                        val navItemIcon = if (selected) {
+                        val icon = if (selected) {
                             destination.selectedIcon
                         } else {
                             destination.unselectedIcon
                         }
                         Icon(
-                            imageVector = navItemIcon,
+                            imageVector = icon,
                             contentDescription = null,
                         )
                     },
@@ -177,7 +177,7 @@ fun CsApp(
                     updateFabVisibility = { shouldShowFab = it },
                     modifier = Modifier.fillMaxSize(),
                 )
-                if (currentTopLevelDestination != SETTINGS) {
+                if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
                     FabMenu(
                         visible = shouldShowFab,
                         onMenuItemClick = { fabItem ->
