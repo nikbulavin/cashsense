@@ -16,12 +16,12 @@ internal class InAppReviewManagerImpl @Inject constructor(
     private val reviewManager = ReviewManagerFactory.create(context)
 
     override suspend fun openReviewDialog(activity: Activity) {
-        val isTransactionsEnough = transactionsRepository.getTransactionsCount().first() >= 15
+        val transactionsCount = transactionsRepository.getTransactionsCount().first()
+        if (transactionsCount < MIN_TRANSACTIONS_FOR_REVIEW) return
         reviewManager.requestReviewFlow().addOnCompleteListener { request ->
-            if (request.isSuccessful && isTransactionsEnough) {
-                val reviewInfo = request.result
-                reviewManager.launchReviewFlow(activity, reviewInfo)
-            }
+            if (request.isSuccessful) reviewManager.launchReviewFlow(activity, request.result)
         }
     }
 }
+
+private const val MIN_TRANSACTIONS_FOR_REVIEW = 15
