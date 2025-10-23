@@ -131,8 +131,8 @@ internal fun TransactionItem(
                     }
                     AnimatedVisibility(
                         visible = transaction.status == PENDING,
-                        enter = fadeIn() + scaleIn(floatSpatialSpec),
-                        exit = fadeOut() + scaleOut(floatSpatialSpec),
+                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -151,8 +151,8 @@ internal fun TransactionItem(
                     }
                     AnimatedVisibility(
                         visible = selected,
-                        enter = fadeIn() + scaleIn(floatSpatialSpec),
-                        exit = fadeOut() + scaleOut(floatSpatialSpec),
+                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                     ) {
                         Text(
                             text = transaction.timestamp.formatDate(
@@ -187,8 +187,8 @@ internal fun TransactionItem(
             ) {
                 AnimatedVisibility(
                     visible = !transaction.description.isNullOrBlank(),
-                    enter = fadeIn() + scaleIn(floatSpatialSpec),
-                    exit = fadeOut() + scaleOut(floatSpatialSpec),
+                    enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                    exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                 ) {
                     var expanded by remember { mutableStateOf(false) }
                     DescriptionListItem(
