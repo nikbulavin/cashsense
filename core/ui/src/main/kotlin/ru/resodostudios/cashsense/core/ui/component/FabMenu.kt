@@ -24,12 +24,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
@@ -72,6 +74,7 @@ fun FabMenu(
         modifier = modifier,
         expanded = expanded,
         button = {
+            val hapticFeedback = LocalHapticFeedback.current
             ToggleFloatingActionButton(
                 modifier = Modifier
                     .semantics {
@@ -85,7 +88,12 @@ fun FabMenu(
                     )
                     .focusRequester(focusRequester),
                 checked = expanded,
-                onCheckedChange = { expanded = !expanded },
+                onCheckedChange = { checked ->
+                    hapticFeedback.performHapticFeedback(
+                        if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                    )
+                    expanded = checked
+                },
                 containerSize = toggleContainerSize,
             ) {
                 val imageVector by remember {
