@@ -14,7 +14,7 @@ internal class InAppReviewManagerImpl @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
 ) : InAppReviewManager {
 
-    private val reviewManager = ReviewManagerFactory.create(context)
+    private val reviewManager by lazy { ReviewManagerFactory.create(context) }
 
     override suspend fun openReviewDialog(activity: Activity) {
         val transactionsCount = transactionsRepository.getTransactionsCount().first()
