@@ -9,10 +9,8 @@ import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class ShortcutsModule {
+internal interface ShortcutsModule {
 
     @Binds
-    internal abstract fun bindsShortcutManager(
-        shortcutManager: DynamicShortcutManager,
-    ): ShortcutManager
+    fun bindsShortcutManager(impl: DynamicShortcutManager): ShortcutManager
 }

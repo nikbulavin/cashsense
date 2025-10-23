@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.core.shortcuts)
 
     implementation(libs.androidx.appcompat)
+    implementation(libs.kotlinx.coroutines.playServices)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)
