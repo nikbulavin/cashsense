@@ -9,10 +9,8 @@ import ru.resodostudios.cashsense.core.notifications.SystemTrayNotifier
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class NotificationsModule {
+internal interface NotificationsModule {
 
     @Binds
-    internal abstract fun bindsNotifier(
-        notifier: SystemTrayNotifier,
-    ): Notifier
+    fun bindsNotifier(impl: SystemTrayNotifier): Notifier
 }

@@ -29,60 +29,38 @@ import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class DataModule {
+internal interface DataModule {
 
     @Binds
-    internal abstract fun bindsCategoriesRepository(
-        impl: OfflineCategoriesRepository,
-    ): CategoriesRepository
+    fun bindsCategoriesRepository(impl: OfflineCategoriesRepository): CategoriesRepository
 
     @Binds
-    internal abstract fun bindsCurrencyConversionRepository(
-        impl: OfflineFirstCurrencyConversionRepository,
-    ): CurrencyConversionRepository
+    fun bindsCurrencyConversionRepository(impl: OfflineFirstCurrencyConversionRepository): CurrencyConversionRepository
 
     @Binds
-    internal abstract fun bindsTransactionsRepository(
-        impl: OfflineTransactionRepository,
-    ): TransactionsRepository
+    fun bindsTransactionsRepository(impl: OfflineTransactionRepository): TransactionsRepository
 
     @Binds
-    internal abstract fun bindsWalletsRepository(
-        impl: OfflineWalletsRepository,
-    ): WalletsRepository
+    fun bindsWalletsRepository(impl: OfflineWalletsRepository): WalletsRepository
 
     @Binds
-    internal abstract fun bindsSubscriptionsRepository(
-        impl: OfflineSubscriptionsRepository,
-    ): SubscriptionsRepository
+    fun bindsSubscriptionsRepository(impl: OfflineSubscriptionsRepository): SubscriptionsRepository
 
     @Binds
-    internal abstract fun bindsUserDataRepository(
-        impl: OfflineUserDataRepository,
-    ): UserDataRepository
+    fun bindsUserDataRepository(impl: OfflineUserDataRepository): UserDataRepository
 
     @Binds
-    internal abstract fun bindsTimeZoneMonitor(
-        impl: TimeZoneBroadcastMonitor,
-    ): TimeZoneMonitor
+    fun bindsTimeZoneMonitor(impl: TimeZoneBroadcastMonitor): TimeZoneMonitor
 
     @Binds
-    internal abstract fun bindsNotificationAlarmScheduler(
-        impl: ReminderSchedulerImpl,
-    ): ReminderScheduler
+    fun bindsNotificationAlarmScheduler(impl: ReminderSchedulerImpl): ReminderScheduler
 
     @Binds
-    internal abstract fun bindsInAppUpdateManager(
-        impl: InAppUpdateManagerImpl,
-    ): InAppUpdateManager
+    fun bindsInAppUpdateManager(impl: InAppUpdateManagerImpl): InAppUpdateManager
 
     @Binds
-    internal abstract fun bindsInAppReviewManager(
-        impl: InAppReviewManagerImpl,
-    ): InAppReviewManager
+    fun bindsInAppReviewManager(impl: InAppReviewManagerImpl): InAppReviewManager
 
     @Binds
-    internal abstract fun bindsAppLocaleManager(
-        impl: AppLocaleManagerImpl,
-    ): AppLocaleManager
+    fun bindsAppLocaleManager(impl: AppLocaleManagerImpl): AppLocaleManager
 }

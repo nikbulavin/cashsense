@@ -9,10 +9,8 @@ import ru.resodostudios.cashsense.core.network.ktor.KtorCsNetwork
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class NetworkDataModule {
+internal interface NetworkDataModule {
 
     @Binds
-    internal abstract fun bindsCsNetworkDataSource(
-        csNetworkDataSource: KtorCsNetwork
-    ): CsNetworkDataSource
+    fun bindsCsNetworkDataSource(impl: KtorCsNetwork): CsNetworkDataSource
 }
