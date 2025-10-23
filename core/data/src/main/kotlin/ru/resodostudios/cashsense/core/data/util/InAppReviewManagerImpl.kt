@@ -20,8 +20,7 @@ internal class InAppReviewManagerImpl @Inject constructor(
         val transactionsCount = transactionsRepository.getTransactionsCount().first()
         if (transactionsCount < MIN_TRANSACTIONS_FOR_REVIEW) return
         runCatching {
-            val reviewInfo = reviewManager.requestReviewFlow().await()
-            reviewManager.launchReviewFlow(activity, reviewInfo)
+            reviewManager.launchReviewFlow(activity, reviewManager.requestReviewFlow().await())
         }
     }
 }
