@@ -1,10 +1,13 @@
 package ru.resodostudios.cashsense.feature.category.list
 
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 
@@ -12,10 +15,15 @@ import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 internal fun CategoryItem(
     category: Category,
     modifier: Modifier = Modifier,
-    onClick: ((String) -> Unit)? = null,
 ) {
-    CsListItem(
-        headlineContent = { Text(category.title.toString()) },
+    CsListItemEmphasized(
+        headlineContent = {
+            Text(
+                text = category.title.toString(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
         leadingContent = {
             Icon(
                 imageVector = StoredIcon.asImageVector(category.iconId),
@@ -23,10 +31,8 @@ internal fun CategoryItem(
             )
         },
         modifier = modifier,
-        onClick = if (onClick != null) {
-            { onClick(category.id.toString()) }
-        } else {
-            null
-        },
+        colors = ListItemDefaults.colors().copy(
+            containerColor = Color.Transparent,
+        ),
     )
 }

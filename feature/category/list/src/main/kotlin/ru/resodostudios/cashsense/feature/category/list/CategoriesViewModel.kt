@@ -21,7 +21,7 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoriesViewModel @Inject constructor(
+internal class CategoriesViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
     private val transactionsRepository: TransactionsRepository,
 ) : ViewModel() {

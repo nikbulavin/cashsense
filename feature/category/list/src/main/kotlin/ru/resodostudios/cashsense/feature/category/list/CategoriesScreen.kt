@@ -1,12 +1,11 @@
 package ru.resodostudios.cashsense.feature.category.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells.Adaptive
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -63,7 +62,7 @@ internal fun CategoriesScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CategoriesScreen(
+private fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
@@ -130,8 +129,12 @@ internal fun CategoriesScreen(
                     contentPadding = PaddingValues(
                         top = innerPadding.calculateTopPadding(),
                         bottom = innerPadding.calculateBottomPadding() + 110.dp,
+                        start = 16.dp,
+                        end = 16.dp,
                     ),
                     modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     categories(
                         categories = categoriesState.categories,
@@ -153,22 +156,6 @@ internal fun CategoriesScreen(
         }
     }
     TrackScreenViewEvent(screenName = "Categories")
-}
-
-private fun LazyGridScope.categories(
-    categories: List<Category>,
-    onCategoryClick: (String) -> Unit,
-) {
-    items(
-        items = categories,
-        key = { it.id!! },
-    ) { category ->
-        CategoryItem(
-            category = category,
-            onClick = onCategoryClick,
-            modifier = Modifier.animateItem(),
-        )
-    }
 }
 
 @Preview
