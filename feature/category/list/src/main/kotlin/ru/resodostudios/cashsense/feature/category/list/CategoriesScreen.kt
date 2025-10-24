@@ -52,7 +52,7 @@ internal fun CategoriesScreen(
         categoriesState = categoriesState,
         onEditCategory = onEditCategory,
         onShowSnackbar = onShowSnackbar,
-        onUpdateCategoryId = viewModel::updateCategoryId,
+        onCategorySelect = viewModel::updateSelectedCategory,
         deleteCategory = viewModel::deleteCategory,
         shouldDisplayUndoCategory = viewModel.shouldDisplayUndoCategory,
         undoCategoryRemoval = viewModel::undoCategoryRemoval,
@@ -66,7 +66,7 @@ private fun CategoriesScreen(
     categoriesState: CategoriesUiState,
     onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onUpdateCategoryId: (String) -> Unit,
+    onCategorySelect: (Category?) -> Unit,
     deleteCategory: (String) -> Unit = {},
     shouldDisplayUndoCategory: Boolean = false,
     undoCategoryRemoval: () -> Unit = {},
@@ -138,10 +138,8 @@ private fun CategoriesScreen(
                 ) {
                     categories(
                         categories = categoriesState.categories,
-                        onCategoryClick = {
-                            onUpdateCategoryId(it)
-                            showCategoryBottomSheet = true
-                        },
+                        onCategoryClick = onCategorySelect,
+                        selectedCategory = categoriesState.selectedCategory,
                     )
                 }
                 if (showCategoryBottomSheet && categoriesState.selectedCategory != null) {
@@ -173,7 +171,7 @@ private fun CategoriesScreenPreview(
                     categories = categories,
                     selectedCategory = null,
                 ),
-                onUpdateCategoryId = {},
+                onCategorySelect = {},
             )
         }
     }

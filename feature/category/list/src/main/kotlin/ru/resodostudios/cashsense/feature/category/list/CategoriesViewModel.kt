@@ -29,18 +29,18 @@ internal class CategoriesViewModel @Inject constructor(
     var shouldDisplayUndoCategory by mutableStateOf(false)
     private var lastRemovedCategory: Pair<Category, List<String>>? = null
 
-    private val selectedCategoryIdState = MutableStateFlow<String?>(null)
+    private val selectedCategoryState = MutableStateFlow<Category?>(null)
 
     val categoriesUiState: StateFlow<CategoriesUiState> = combine(
         categoriesRepository.getCategories(),
-        selectedCategoryIdState,
+        selectedCategoryState,
     ) { categories, selectedCategoryId ->
         if (categories.isEmpty()) {
              CategoriesUiState.Empty
         } else {
             CategoriesUiState.Success(
                 categories = categories,
-                selectedCategory = categories.find { it.id == selectedCategoryId },
+                selectedCategory = categories.find { it == selectedCategoryId },
             )
         }
     }
@@ -50,8 +50,8 @@ internal class CategoriesViewModel @Inject constructor(
             initialValue = CategoriesUiState.Loading,
         )
 
-    fun updateCategoryId(id: String) {
-        selectedCategoryIdState.value = id
+    fun updateSelectedCategory(category: Category?) {
+        selectedCategoryState.value = category
     }
 
     fun deleteCategory(id: String) {
