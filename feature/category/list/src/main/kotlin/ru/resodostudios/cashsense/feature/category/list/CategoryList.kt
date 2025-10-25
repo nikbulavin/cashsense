@@ -35,6 +35,7 @@ internal fun LazyGridScope.categories(
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .clickable { onCategoryClick(if (selected) null else category) }
                 .animateItem(),
+            selected = selected,
         )
     }
 }
