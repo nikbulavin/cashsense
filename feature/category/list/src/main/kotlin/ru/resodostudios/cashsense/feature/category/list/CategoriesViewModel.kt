@@ -63,6 +63,7 @@ internal class CategoriesViewModel @Inject constructor(
             lastRemovedCategory = category to transactionIds
             categoriesRepository.deleteCategory(id)
             shouldDisplayUndoCategory = true
+            updateSelectedCategory(null)
         }
     }
 

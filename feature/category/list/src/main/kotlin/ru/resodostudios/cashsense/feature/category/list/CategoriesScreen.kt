@@ -13,9 +13,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -50,10 +47,10 @@ internal fun CategoriesScreen(
 
     CategoriesScreen(
         categoriesState = categoriesState,
-        onEditCategory = onEditCategory,
+        onCategoryEdit = onEditCategory,
         onShowSnackbar = onShowSnackbar,
         onCategorySelect = viewModel::updateSelectedCategory,
-        deleteCategory = viewModel::deleteCategory,
+        onCategoryDelete = viewModel::deleteCategory,
         shouldDisplayUndoCategory = viewModel.shouldDisplayUndoCategory,
         undoCategoryRemoval = viewModel::undoCategoryRemoval,
         clearUndoState = viewModel::clearUndoState,
@@ -64,10 +61,10 @@ internal fun CategoriesScreen(
 @Composable
 private fun CategoriesScreen(
     categoriesState: CategoriesUiState,
-    onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onCategorySelect: (Category?) -> Unit,
-    deleteCategory: (String) -> Unit = {},
+    onCategoryEdit: (String) -> Unit,
+    onCategoryDelete: (String) -> Unit,
     shouldDisplayUndoCategory: Boolean = false,
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
@@ -122,8 +119,6 @@ private fun CategoriesScreen(
             }
 
             is Success -> {
-                var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
-
                 LazyVerticalGrid(
                     columns = Adaptive(300.dp),
                     contentPadding = PaddingValues(
@@ -140,14 +135,8 @@ private fun CategoriesScreen(
                         categories = categoriesState.categories,
                         onCategoryClick = onCategorySelect,
                         selectedCategory = categoriesState.selectedCategory,
-                    )
-                }
-                if (showCategoryBottomSheet && categoriesState.selectedCategory != null) {
-                    CategoryBottomSheet(
-                        category = categoriesState.selectedCategory!!,
-                        onDismiss = { showCategoryBottomSheet = false },
-                        onEdit = onEditCategory,
-                        onDelete = deleteCategory,
+                        onCategoryEdit = onCategoryEdit,
+                        onCategoryDelete = onCategoryDelete,
                     )
                 }
             }
@@ -166,12 +155,13 @@ private fun CategoriesScreenPreview(
         Surface {
             CategoriesScreen(
                 onShowSnackbar = { _, _ -> false },
-                onEditCategory = {},
                 categoriesState = Success(
                     categories = categories,
                     selectedCategory = null,
                 ),
                 onCategorySelect = {},
+                onCategoryEdit = {},
+                onCategoryDelete = {},
             )
         }
     }

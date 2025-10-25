@@ -37,7 +37,7 @@ internal fun CategoryItem(
     modifier: Modifier = Modifier,
     selected: Boolean = false,
     onEditClick: (String) -> Unit = {},
-    onDeleteClick: () -> Unit = {},
+    onDeleteClick: (String) -> Unit = {},
 ) {
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
@@ -93,7 +93,7 @@ internal fun CategoryItem(
                             contentDescription = null,
                         )
                     },
-                    onClick = onDeleteClick,
+                    onClick = { category.id?.let { onDeleteClick(it) } },
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),

@@ -13,6 +13,8 @@ import ru.resodostudios.cashsense.core.model.data.Category
 internal fun LazyGridScope.categories(
     categories: List<Category>,
     onCategoryClick: (Category?) -> Unit,
+    onCategoryEdit: (String) -> Unit,
+    onCategoryDelete: (String) -> Unit,
     selectedCategory: Category? = null,
 ) {
     itemsIndexed(
@@ -36,6 +38,8 @@ internal fun LazyGridScope.categories(
                 .clickable { onCategoryClick(if (selected) null else category) }
                 .animateItem(),
             selected = selected,
+            onEditClick = onCategoryEdit,
+            onDeleteClick = onCategoryDelete,
         )
     }
 }

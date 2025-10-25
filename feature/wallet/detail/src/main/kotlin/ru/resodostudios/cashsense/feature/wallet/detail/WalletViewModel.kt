@@ -131,7 +131,7 @@ class WalletViewModel @AssistedInject constructor(
                     shouldDisplayUndoTransaction = true
                 }
             }
-            selectedTransactionState.value = null
+            updateSelectedTransaction(null)
         }
     }
 
