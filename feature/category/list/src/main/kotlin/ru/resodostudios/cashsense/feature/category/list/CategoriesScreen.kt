@@ -1,12 +1,11 @@
 package ru.resodostudios.cashsense.feature.category.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells.Adaptive
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -14,9 +13,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -51,10 +47,10 @@ internal fun CategoriesScreen(
 
     CategoriesScreen(
         categoriesState = categoriesState,
-        onEditCategory = onEditCategory,
+        onCategoryEdit = onEditCategory,
         onShowSnackbar = onShowSnackbar,
-        onUpdateCategoryId = viewModel::updateCategoryId,
-        deleteCategory = viewModel::deleteCategory,
+        onCategorySelect = viewModel::updateSelectedCategory,
+        onCategoryDelete = viewModel::deleteCategory,
         shouldDisplayUndoCategory = viewModel.shouldDisplayUndoCategory,
         undoCategoryRemoval = viewModel::undoCategoryRemoval,
         clearUndoState = viewModel::clearUndoState,
@@ -63,12 +59,12 @@ internal fun CategoriesScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CategoriesScreen(
+private fun CategoriesScreen(
     categoriesState: CategoriesUiState,
-    onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onUpdateCategoryId: (String) -> Unit,
-    deleteCategory: (String) -> Unit = {},
+    onCategorySelect: (Category?) -> Unit,
+    onCategoryEdit: (String) -> Unit,
+    onCategoryDelete: (String) -> Unit,
     shouldDisplayUndoCategory: Boolean = false,
     undoCategoryRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
@@ -123,52 +119,30 @@ internal fun CategoriesScreen(
             }
 
             is Success -> {
-                var showCategoryBottomSheet by rememberSaveable { mutableStateOf(false) }
-
                 LazyVerticalGrid(
                     columns = Adaptive(300.dp),
                     contentPadding = PaddingValues(
                         top = innerPadding.calculateTopPadding(),
                         bottom = innerPadding.calculateBottomPadding() + 110.dp,
+                        start = 16.dp,
+                        end = 16.dp,
                     ),
                     modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     categories(
                         categories = categoriesState.categories,
-                        onCategoryClick = {
-                            onUpdateCategoryId(it)
-                            showCategoryBottomSheet = true
-                        },
-                    )
-                }
-                if (showCategoryBottomSheet && categoriesState.selectedCategory != null) {
-                    CategoryBottomSheet(
-                        category = categoriesState.selectedCategory!!,
-                        onDismiss = { showCategoryBottomSheet = false },
-                        onEdit = onEditCategory,
-                        onDelete = deleteCategory,
+                        onCategoryClick = onCategorySelect,
+                        selectedCategory = categoriesState.selectedCategory,
+                        onCategoryEdit = onCategoryEdit,
+                        onCategoryDelete = onCategoryDelete,
                     )
                 }
             }
         }
     }
     TrackScreenViewEvent(screenName = "Categories")
-}
-
-private fun LazyGridScope.categories(
-    categories: List<Category>,
-    onCategoryClick: (String) -> Unit,
-) {
-    items(
-        items = categories,
-        key = { it.id!! },
-    ) { category ->
-        CategoryItem(
-            category = category,
-            onClick = onCategoryClick,
-            modifier = Modifier.animateItem(),
-        )
-    }
 }
 
 @Preview
@@ -181,12 +155,13 @@ private fun CategoriesScreenPreview(
         Surface {
             CategoriesScreen(
                 onShowSnackbar = { _, _ -> false },
-                onEditCategory = {},
                 categoriesState = Success(
                     categories = categories,
                     selectedCategory = null,
                 ),
-                onUpdateCategoryId = {},
+                onCategorySelect = {},
+                onCategoryEdit = {},
+                onCategoryDelete = {},
             )
         }
     }

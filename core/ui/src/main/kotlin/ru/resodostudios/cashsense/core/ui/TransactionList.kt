@@ -59,7 +59,7 @@ fun LazyListScope.transactions(
                     index == transactionGroup.value.lastIndex -> ListItemPositionShapes.Last
                     else -> ListItemPositionShapes.Middle
                 }
-                val selected = selectedTransaction?.transaction?.id == transactionCategory.transaction.id
+                val selected = selectedTransaction == transactionCategory
                 val motionScheme = MaterialTheme.motionScheme
                 TransactionItem(
                     transaction = transactionCategory.transaction,

@@ -21,7 +21,7 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoriesViewModel @Inject constructor(
+internal class CategoriesViewModel @Inject constructor(
     private val categoriesRepository: CategoriesRepository,
     private val transactionsRepository: TransactionsRepository,
 ) : ViewModel() {
@@ -29,18 +29,18 @@ class CategoriesViewModel @Inject constructor(
     var shouldDisplayUndoCategory by mutableStateOf(false)
     private var lastRemovedCategory: Pair<Category, List<String>>? = null
 
-    private val selectedCategoryIdState = MutableStateFlow<String?>(null)
+    private val selectedCategoryState = MutableStateFlow<Category?>(null)
 
     val categoriesUiState: StateFlow<CategoriesUiState> = combine(
         categoriesRepository.getCategories(),
-        selectedCategoryIdState,
+        selectedCategoryState,
     ) { categories, selectedCategoryId ->
         if (categories.isEmpty()) {
              CategoriesUiState.Empty
         } else {
             CategoriesUiState.Success(
                 categories = categories,
-                selectedCategory = categories.find { it.id == selectedCategoryId },
+                selectedCategory = categories.find { it == selectedCategoryId },
             )
         }
     }
@@ -50,8 +50,8 @@ class CategoriesViewModel @Inject constructor(
             initialValue = CategoriesUiState.Loading,
         )
 
-    fun updateCategoryId(id: String) {
-        selectedCategoryIdState.value = id
+    fun updateSelectedCategory(category: Category?) {
+        selectedCategoryState.value = category
     }
 
     fun deleteCategory(id: String) {
@@ -63,6 +63,7 @@ class CategoriesViewModel @Inject constructor(
             lastRemovedCategory = category to transactionIds
             categoriesRepository.deleteCategory(id)
             shouldDisplayUndoCategory = true
+            updateSelectedCategory(null)
         }
     }
 
