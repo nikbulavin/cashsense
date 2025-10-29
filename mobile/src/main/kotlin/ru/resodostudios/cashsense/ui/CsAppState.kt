@@ -22,6 +22,7 @@ import androidx.navigation.navOptions
 import androidx.tracing.trace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
@@ -36,6 +37,7 @@ import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun rememberCsAppState(
@@ -43,7 +45,7 @@ fun rememberCsAppState(
     inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
 ): CsAppState {
 
     return remember(
@@ -93,14 +95,14 @@ class CsAppState(
     val currentTimeZone = timeZoneMonitor.currentTimeZone
         .stateIn(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = TimeZone.currentSystemDefault(),
         )
 
     val inAppUpdateResult = inAppUpdateManager.inAppUpdateResult
         .stateIn(
             scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = InAppUpdateResult.NotAvailable,
         )
 
@@ -108,7 +110,7 @@ class CsAppState(
         NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
     val defaultSnackbarBottomPadding = when (navigationSuiteType) {
-        NavigationSuiteType.NavigationRail -> 0.dp
+        NavigationSuiteType.NavigationRail -> 110.dp
         else -> 76.dp
     }
     var snackbarBottomPadding by mutableStateOf(defaultSnackbarBottomPadding)
