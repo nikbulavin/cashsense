@@ -81,8 +81,8 @@ internal val csTypography = Typography(
         letterSpacing = 0.15.sp,
         fontFamily = robotoSerifFontFamily,
         lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Bottom,
-            trim = Trim.LastLineBottom,
+            alignment = Alignment.Center,
+            trim = Trim.None,
         ),
     ),
     titleSmall = TextStyle(
