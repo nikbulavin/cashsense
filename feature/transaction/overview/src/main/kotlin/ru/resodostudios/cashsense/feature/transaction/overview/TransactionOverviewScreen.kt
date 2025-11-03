@@ -23,6 +23,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -69,7 +72,7 @@ fun TransactionOverviewScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class)
 @Composable
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
@@ -113,6 +116,8 @@ private fun TransactionOverviewScreen(
     when (transactionOverviewState) {
         TransactionOverviewUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is TransactionOverviewUiState.Success -> {
+            val hazeState = rememberHazeState()
+            val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
             Scaffold(
                 topBar = {
                     TopBar(
@@ -140,6 +145,8 @@ private fun TransactionOverviewScreen(
                     transactions(
                         selectedTransaction = transactionOverviewState.selectedTransaction,
                         transactionsCategories = transactionOverviewState.transactionsCategories,
+                        hazeState = hazeState,
+                        hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,
                         onRepeatClick = { transactionId ->
                             transaction?.walletOwnerId?.let { navigateToTransactionDialog(it, transactionId, true) }
