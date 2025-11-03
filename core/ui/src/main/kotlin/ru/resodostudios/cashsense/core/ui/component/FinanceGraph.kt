@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.graphics.ColorUtils
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
@@ -101,7 +100,8 @@ fun FinanceGraph(
         when (transactionFilter.dateType) {
             YEAR -> Month(x.toInt().coerceIn(1, 12)).toJavaMonth().getDisplayName(textStyle, locale)
             MONTH -> x.toInt().toString()
-            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).toJavaDayOfWeek().getDisplayName(textStyle, locale)
+            ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).toJavaDayOfWeek()
+                .getDisplayName(textStyle, locale)
         }
     }
 
@@ -112,19 +112,23 @@ fun FinanceGraph(
 
             override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
                 super.onUpdated(marker, targets)
-                val target = targets.first() as LineCartesianLayerMarkerTarget
+                val target = targets.firstOrNull() as? LineCartesianLayerMarkerTarget ?: return
                 val markerIndex = target.points.last().entry.x.toInt()
 
                 if (markerIndex != xTarget) {
-                    xTarget = 0
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                    xTarget = markerIndex
                 }
             }
 
             override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-                val target = targets.first() as LineCartesianLayerMarkerTarget
+                val target = targets.firstOrNull() as? LineCartesianLayerMarkerTarget ?: return
                 xTarget = target.points.last().entry.x.toInt()
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+            }
+
+            override fun onHidden(marker: CartesianMarker) {
+                xTarget = 0
             }
         }
     }
@@ -188,10 +192,14 @@ private fun rememberMarker(
     val labelBackground = rememberShapeComponent(
         fill = fill(MaterialTheme.colorScheme.surfaceContainer),
         shape = markerCorneredShape(CorneredShape.Corner.Rounded),
-        shadow = shadow(radius = 4.dp, y = 2.dp),
+        shadow = shadow(
+            radius = 4.dp,
+            y = 2.dp,
+            color = MaterialTheme.colorScheme.inverseSurface.copy(0.35f),
+        ),
     )
     val label = rememberTextComponent(
-        textSize = 14.sp,
+        textSize = MaterialTheme.typography.bodyMedium.fontSize,
         color = MaterialTheme.colorScheme.onSurface,
         textAlignment = Layout.Alignment.ALIGN_CENTER,
         padding = insets(8.dp, 4.dp),

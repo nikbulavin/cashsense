@@ -53,10 +53,10 @@ fun LazyListScope.transactions(
                 key = { _, transactionCategory -> transactionCategory.transaction.id },
                 contentType = { _, _ -> "Transaction" }
             ) { index, transactionCategory ->
-                val shape = when {
-                    index == 0 && transactionGroup.value.size == 1 -> ListItemPositionShapes.Single
-                    index == 0 -> ListItemPositionShapes.First
-                    index == transactionGroup.value.lastIndex -> ListItemPositionShapes.Last
+                val shape = when (index) {
+                    0 if transactionGroup.value.size == 1 -> ListItemPositionShapes.Single
+                    0 -> ListItemPositionShapes.First
+                    transactionGroup.value.lastIndex -> ListItemPositionShapes.Last
                     else -> ListItemPositionShapes.Middle
                 }
                 val selected = selectedTransaction == transactionCategory
@@ -100,7 +100,6 @@ fun List<TransactionWithCategory>.groupByDate(
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ): Map<Instant, List<TransactionWithCategory>> {
     return this
-        .asSequence()
         .groupBy {
             it.transaction.timestamp
                 .toLocalDateTime(timeZone).date

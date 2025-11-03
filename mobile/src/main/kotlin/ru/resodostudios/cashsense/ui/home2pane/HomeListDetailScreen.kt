@@ -189,9 +189,9 @@ internal fun HomeListDetailScreen(
     val paneExpansionState = rememberPaneExpansionState(
         anchors = listOf(
             PaneExpansionAnchor.Proportion(0f),
-            PaneExpansionAnchor.Proportion(0.35f),
+            PaneExpansionAnchor.Proportion(0.4f),
             PaneExpansionAnchor.Proportion(0.5f),
-            PaneExpansionAnchor.Proportion(0.65f),
+            PaneExpansionAnchor.Proportion(0.6f),
             PaneExpansionAnchor.Proportion(1f),
         ),
     )
