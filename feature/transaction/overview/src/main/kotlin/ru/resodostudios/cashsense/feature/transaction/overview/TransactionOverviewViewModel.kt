@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -48,6 +49,7 @@ import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @HiltViewModel
@@ -159,7 +161,7 @@ class TransactionOverviewViewModel @Inject constructor(
         .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = FinancePanelUiState.Loading,
         )
 
@@ -183,7 +185,7 @@ class TransactionOverviewViewModel @Inject constructor(
         .catch { TransactionOverviewUiState.Loading }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = TransactionOverviewUiState.Loading,
         )
 
