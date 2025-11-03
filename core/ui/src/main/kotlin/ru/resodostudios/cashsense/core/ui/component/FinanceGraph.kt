@@ -112,19 +112,23 @@ fun FinanceGraph(
 
             override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
                 super.onUpdated(marker, targets)
-                val target = targets.first() as LineCartesianLayerMarkerTarget
+                val target = targets.firstOrNull() as? LineCartesianLayerMarkerTarget ?: return
                 val markerIndex = target.points.last().entry.x.toInt()
 
                 if (markerIndex != xTarget) {
-                    xTarget = 0
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                    xTarget = markerIndex
                 }
             }
 
             override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-                val target = targets.first() as LineCartesianLayerMarkerTarget
+                val target = targets.firstOrNull() as? LineCartesianLayerMarkerTarget ?: return
                 xTarget = target.points.last().entry.x.toInt()
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+            }
+
+            override fun onHidden(marker: CartesianMarker) {
+                xTarget = 0
             }
         }
     }
