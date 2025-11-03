@@ -22,10 +22,10 @@ internal fun LazyGridScope.categories(
         key = { _, category -> category.id!! },
         contentType = { _, _ -> "Category" },
     ) { index, category ->
-        val shape = when {
-            index == 0 && categories.size == 1 -> ListItemPositionShapes.Single
-            index == 0 -> ListItemPositionShapes.First
-            index == categories.lastIndex -> ListItemPositionShapes.Last
+        val shape = when (index) {
+            0 if categories.size == 1 -> ListItemPositionShapes.Single
+            0 -> ListItemPositionShapes.First
+            categories.lastIndex -> ListItemPositionShapes.Last
             else -> ListItemPositionShapes.Middle
         }
         val selected = category == selectedCategory
