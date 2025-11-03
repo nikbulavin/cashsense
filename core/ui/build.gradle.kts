@@ -15,6 +15,9 @@ dependencies {
 
     implementation(projects.core.common)
 
+    api(libs.haze)
+    api(libs.haze.materials)
+
     implementation(libs.androidx.activity.compose)
     implementation(libs.lottie.compose)
     implementation(libs.vico.compose)
