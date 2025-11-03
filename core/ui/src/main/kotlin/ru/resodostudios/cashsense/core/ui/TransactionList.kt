@@ -8,11 +8,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
@@ -28,9 +36,11 @@ import java.time.format.FormatStyle
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalHazeApi::class)
 fun LazyListScope.transactions(
     transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
+    hazeState: HazeState,
+    hazeStyle: HazeStyle,
     onClick: (TransactionWithCategory?) -> Unit,
     selectedTransaction: TransactionWithCategory? = null,
     onRepeatClick: (String) -> Unit = {},
@@ -44,7 +54,16 @@ fun LazyListScope.transactions(
             ) {
                 CsTag(
                     text = transactionGroup.key.formatDate(DateFormatType.DATE, FormatStyle.MEDIUM),
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    color = Color.Transparent,
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp)
+                        .clip(CircleShape)
+                        .hazeEffect(hazeState, hazeStyle) {
+                            blurEnabled = true
+                            blurRadius = 10.dp
+                            noiseFactor = 0.1f
+                            inputScale = HazeInputScale.Auto
+                        },
                 )
             }
             item { Spacer(Modifier.height(16.dp)) }
@@ -66,6 +85,7 @@ fun LazyListScope.transactions(
                     category = transactionCategory.category,
                     currency = transactionCategory.transaction.currency,
                     modifier = Modifier
+                        .hazeSource(hazeState)
                         .padding(horizontal = 16.dp)
                         .clip(shape)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)

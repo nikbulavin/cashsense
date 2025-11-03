@@ -24,6 +24,7 @@ fun CsTag(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
+    textColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
     icon: ImageVector? = null,
 ) {
     Surface(
@@ -53,6 +54,7 @@ fun CsTag(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelLarge,
+                color = textColor,
             )
         }
     }

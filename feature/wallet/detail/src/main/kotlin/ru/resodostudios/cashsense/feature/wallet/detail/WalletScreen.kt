@@ -48,6 +48,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -120,6 +123,7 @@ fun WalletScreen(
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalHazeMaterialsApi::class,
 )
 @Composable
 private fun WalletScreen(
@@ -178,6 +182,8 @@ private fun WalletScreen(
                 },
             ) { paddingValues ->
                 var expanded by rememberSaveable { mutableStateOf(true) }
+                val hazeState = rememberHazeState()
+                val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
 
                 Box(modifier = Modifier.padding(paddingValues)) {
                     LazyColumn(
@@ -207,6 +213,8 @@ private fun WalletScreen(
                         }
                         transactions(
                             transactionsCategories = walletState.transactionsCategories,
+                            hazeState = hazeState,
+                            hazeStyle = hazeStyle,
                             onClick = onTransactionSelect,
                             selectedTransaction = walletState.selectedTransaction,
                             onRepeatClick = { transactionId ->
