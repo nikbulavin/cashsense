@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.BakeryDining
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 
 @Composable
@@ -35,12 +37,7 @@ fun CsTag(
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(
-                start = 8.dp,
-                top = 4.dp,
-                end = 8.dp,
-                bottom = 4.dp,
-            )
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             if (icon != null) {
                 Icon(
@@ -64,6 +61,17 @@ fun CsTag(
 @Composable
 private fun TagPreview() {
     CsTheme {
-        CsTag(text = "TAG Tag")
+        CsTag(text = "Bakeries")
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun TagWithIconPreview() {
+    CsTheme {
+        CsTag(
+            text = "Bakeries",
+            icon = CsIcons.Outlined.BakeryDining,
+        )
     }
 }
