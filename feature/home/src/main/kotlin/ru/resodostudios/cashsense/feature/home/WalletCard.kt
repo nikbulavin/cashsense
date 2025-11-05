@@ -62,7 +62,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun WalletCard(
+internal fun WalletCard(
     userWallet: UserWallet,
     expenses: BigDecimal,
     income: BigDecimal,
