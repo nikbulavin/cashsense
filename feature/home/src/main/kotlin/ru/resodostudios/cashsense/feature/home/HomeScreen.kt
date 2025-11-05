@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -179,8 +179,14 @@ internal fun HomeScreen(
                         modifier = Modifier
                             .zIndex(1f)
                             .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                            .clip(
+                                MaterialTheme.shapes.extraLarge.copy(
+                                    topEnd = CornerSize(0.dp),
+                                    topStart = CornerSize(0.dp),
+                                )
+                            )
                             .hazeEffect(hazeState, hazeStyle) {
+                                blurEnabled = true
                                 inputScale = HazeInputScale.Auto
                                 blurRadius = 32.dp
                                 progressive = HazeProgressive.verticalGradient(
@@ -190,7 +196,10 @@ internal fun HomeScreen(
                             }
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(MaterialTheme.colorScheme.surface, Color.Transparent),
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.surface,
+                                        Color.Transparent
+                                    ),
                                 )
                             ),
                         topPadding = innerPadding.calculateTopPadding(),
@@ -309,7 +318,10 @@ private fun TotalBalanceCard(
         startY = 200f,
     )
     OutlinedCard(
-        shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+        shape = MaterialTheme.shapes.extraLarge.copy(
+            topEnd = CornerSize(0.dp),
+            topStart = CornerSize(0.dp),
+        ),
         border = BorderStroke(1.dp, borderBrush),
         modifier = modifier,
         onClick = onClick,
