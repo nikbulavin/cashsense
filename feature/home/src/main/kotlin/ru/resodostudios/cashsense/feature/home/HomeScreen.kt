@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,7 +12,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearWavyProgressIndicator
@@ -30,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -44,7 +41,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInputScale
-import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
@@ -153,7 +149,7 @@ internal fun HomeScreen(
     ) { innerPadding ->
         Box {
             val hazeState = rememberHazeState()
-            val hazeStyle = HazeMaterials.regular(MaterialTheme.colorScheme.surface)
+            val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surface)
 
             var totalBalanceShown by remember { mutableStateOf(false) }
 
@@ -166,31 +162,14 @@ internal fun HomeScreen(
                         onClick = onTotalBalanceClick,
                         modifier = Modifier
                             .zIndex(1f)
+                            .padding(innerPadding)
                             .padding(horizontal = 16.dp)
-                            .clip(
-                                MaterialTheme.shapes.extraLarge.copy(
-                                    topEnd = CornerSize(0.dp),
-                                    topStart = CornerSize(0.dp),
-                                )
-                            )
+                            .clip(MaterialTheme.shapes.extraLarge)
                             .hazeEffect(hazeState, hazeStyle) {
                                 blurEnabled = true
                                 inputScale = HazeInputScale.Auto
-                                blurRadius = 32.dp
-                                progressive = HazeProgressive.verticalGradient(
-                                    startIntensity = 1f,
-                                    endIntensity = 0.25f,
-                                )
-                            }
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        MaterialTheme.colorScheme.surface,
-                                        Color.Transparent
-                                    ),
-                                )
-                            ),
-                        topPadding = innerPadding.calculateTopPadding(),
+                                noiseFactor = 0f
+                            },
                     ) {
                         AnimatedContent(
                             targetState = totalBalanceState,
