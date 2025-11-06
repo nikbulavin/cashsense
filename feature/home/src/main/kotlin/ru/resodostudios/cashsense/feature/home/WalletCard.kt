@@ -81,8 +81,7 @@ internal fun WalletCard(
                 Modifier.dropShadow(
                     shape = shape,
                     shadow = Shadow(
-                        radius = 8.dp,
-                        spread = 2.dp,
+                        radius = 6.dp,
                         color = MaterialTheme.colorScheme.inverseSurface.copy(0.2f),
                     )
                 )
