@@ -28,9 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +48,7 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
@@ -166,13 +165,7 @@ internal fun HomeScreen(
                             .zIndex(1f)
                             .padding(innerPadding)
                             .padding(horizontal = 16.dp)
-                            .dropShadow(
-                                shape = MaterialTheme.shapes.extraLarge,
-                                shadow = Shadow(
-                                    radius = 6.dp,
-                                    color = MaterialTheme.colorScheme.inverseSurface.copy(0.2f),
-                                )
-                            )
+                            .dropShadow(MaterialTheme.shapes.extraLarge)
                             .clip(MaterialTheme.shapes.extraLarge)
                             .hazeEffect(hazeState, hazeStyle) {
                                 blurEnabled = true

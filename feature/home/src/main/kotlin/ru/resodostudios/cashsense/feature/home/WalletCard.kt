@@ -33,10 +33,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
@@ -53,6 +51,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -76,19 +75,7 @@ internal fun WalletCard(
     OutlinedCard(
         onClick = { onWalletClick(userWallet.id) },
         shape = shape,
-        modifier = modifier.then(
-            if (selected) {
-                Modifier.dropShadow(
-                    shape = shape,
-                    shadow = Shadow(
-                        radius = 6.dp,
-                        color = MaterialTheme.colorScheme.inverseSurface.copy(0.2f),
-                    )
-                )
-            } else {
-                Modifier
-            }
-        ),
+        modifier = modifier.then(if (selected) Modifier.dropShadow(shape) else Modifier),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
