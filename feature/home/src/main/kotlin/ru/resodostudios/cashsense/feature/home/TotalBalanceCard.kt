@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -9,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -61,17 +63,24 @@ internal fun TotalBalanceCard(
             trailingContent = financialHealth?.let {
                 {
                     val (icon, color) = when (it) {
-                        FinancialHealth.VERY_BAD -> CsIcons.Outlined.SentimentFrustrated to MaterialTheme.colorScheme.error
-                        FinancialHealth.BAD -> CsIcons.Outlined.SentimentSad to MaterialTheme.colorScheme.error
-                        FinancialHealth.NEUTRAL -> CsIcons.Outlined.SentimentNeutral to MaterialTheme.colorScheme.tertiary
-                        FinancialHealth.GOOD -> CsIcons.Outlined.SentimentCalm to MaterialTheme.colorScheme.primary
-                        FinancialHealth.VERY_GOOD -> CsIcons.Outlined.SentimentExcited to MaterialTheme.colorScheme.primary
+                        FinancialHealth.VERY_BAD -> CsIcons.Outlined.SentimentFrustrated to MaterialTheme.colorScheme.errorContainer
+                        FinancialHealth.BAD -> CsIcons.Outlined.SentimentSad to MaterialTheme.colorScheme.errorContainer
+                        FinancialHealth.NEUTRAL -> CsIcons.Outlined.SentimentNeutral to MaterialTheme.colorScheme.surfaceVariant
+                        FinancialHealth.GOOD -> CsIcons.Outlined.SentimentCalm to MaterialTheme.colorScheme.primaryContainer
+                        FinancialHealth.VERY_GOOD -> CsIcons.Outlined.SentimentExcited to MaterialTheme.colorScheme.primaryContainer
                     }
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = color,
-                    )
+                    Surface(
+                        shape = CircleShape,
+                        color = color,
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(4.dp),
+                        )
+                    }
                 }
             },
         )
