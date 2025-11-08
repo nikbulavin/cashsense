@@ -26,6 +26,7 @@ import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -106,6 +107,7 @@ class HomeViewModel @Inject constructor(
                             amount = totalBalance,
                             userCurrency = userCurrency,
                             shouldShowApproximately = shouldShowApproximately,
+                            financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs()),
                         )
                     }
                         .catch { emit(TotalBalanceUiState.NotShown) }
@@ -142,6 +144,20 @@ class HomeViewModel @Inject constructor(
     fun onWalletClick(walletId: String?) {
         savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
     }
+
+    private fun calculateFinancialHealth(income: BigDecimal, expenses: BigDecimal): FinancialHealth {
+        if (expenses == BigDecimal.ZERO) {
+            return if (income > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
+        }
+        val ratio = income.divide(expenses, 2, RoundingMode.HALF_UP).toDouble()
+        return when {
+            ratio < 0.5 -> FinancialHealth.VERY_BAD
+            ratio < 0.9 -> FinancialHealth.BAD
+            ratio < 1.1 -> FinancialHealth.NEUTRAL
+            ratio < 1.5 -> FinancialHealth.GOOD
+            else -> FinancialHealth.VERY_GOOD
+        }
+    }
 }
 
 sealed interface WalletsUiState {
@@ -166,6 +182,7 @@ sealed interface TotalBalanceUiState {
         val amount: BigDecimal,
         val userCurrency: Currency,
         val shouldShowApproximately: Boolean,
+        val financialHealth: FinancialHealth,
     ) : TotalBalanceUiState
 }
 
