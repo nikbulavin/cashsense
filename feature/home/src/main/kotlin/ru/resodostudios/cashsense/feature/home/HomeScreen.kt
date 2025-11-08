@@ -23,9 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -152,13 +150,9 @@ internal fun HomeScreen(
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surface)
 
-            var totalBalanceShown by remember { mutableStateOf(false) }
-
             when (totalBalanceState) {
-                TotalBalanceUiState.NotShown -> totalBalanceShown = false
+                TotalBalanceUiState.NotShown -> Unit
                 TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
-                    totalBalanceShown = true
-
                     TotalBalanceCard(
                         onClick = onTotalBalanceClick,
                         modifier = Modifier
@@ -172,35 +166,37 @@ internal fun HomeScreen(
                                 inputScale = HazeInputScale.Auto
                                 noiseFactor = 0f
                             },
-                    ) {
-                        AnimatedContent(
-                            targetState = totalBalanceState,
-                            label = "TotalBalanceState",
-                            modifier = Modifier.zIndex(1f),
-                        ) { state ->
-                            if (state is TotalBalanceUiState.Shown) {
-                                AnimatedAmount(
-                                    amount = state.amount,
-                                    currency = state.userCurrency,
-                                    label = "TotalBalanceAnimatedAmount",
-                                    withApproximatelySign = state.shouldShowApproximately,
-                                )
-                            } else {
-                                LinearWavyProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 8.dp, bottom = 6.dp),
-                                )
+                        headlineContent = {
+                            AnimatedContent(
+                                targetState = totalBalanceState,
+                                label = "TotalBalanceState",
+                                modifier = Modifier.zIndex(1f),
+                            ) { state ->
+                                if (state is TotalBalanceUiState.Shown) {
+                                    AnimatedAmount(
+                                        amount = state.amount,
+                                        currency = state.userCurrency,
+                                        label = "TotalBalanceAnimatedAmount",
+                                        withApproximatelySign = state.shouldShowApproximately,
+                                    )
+                                } else {
+                                    LinearWavyProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 8.dp, bottom = 6.dp),
+                                    )
+                                }
                             }
-                        }
-                    }
+                        },
+                        financialHealth = (totalBalanceState as? TotalBalanceUiState.Shown)?.financialHealth,
+                    )
                 }
             }
             when (walletsState) {
                 Loading -> LoadingState(Modifier.fillMaxSize())
                 Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
                 is Success -> {
-                    val topPadding by animateDpAsState(if (totalBalanceShown) 88.dp else 0.dp)
+                    val topPadding by animateDpAsState(if (totalBalanceState !is TotalBalanceUiState.NotShown) 88.dp else 0.dp)
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(300.dp),
                         verticalItemSpacing = 16.dp,
@@ -283,9 +279,9 @@ fun HomeScreenLoadingPreview() {
             HomeScreen(
                 walletsState = Loading,
                 totalBalanceState = TotalBalanceUiState.Loading,
-                onWalletClick = {},
-                onTransfer = {},
-                onTransactionCreate = {},
+                onWalletClick = { },
+                onTransfer = { },
+                onTransactionCreate = { },
                 highlightSelectedWallet = false,
             )
         }
@@ -300,9 +296,9 @@ fun HomeScreenEmptyPreview() {
             HomeScreen(
                 walletsState = Empty,
                 totalBalanceState = TotalBalanceUiState.NotShown,
-                onWalletClick = {},
-                onTransfer = {},
-                onTransactionCreate = {},
+                onWalletClick = { },
+                onTransfer = { },
+                onTransactionCreate = { },
                 highlightSelectedWallet = false,
             )
         }
@@ -326,10 +322,11 @@ fun HomeScreenPopulatedPreview(
                     amount = BigDecimal(5000),
                     userCurrency = getUsdCurrency(),
                     shouldShowApproximately = true,
+                    financialHealth = FinancialHealth.NEUTRAL,
                 ),
-                onWalletClick = {},
-                onTransfer = {},
-                onTransactionCreate = {},
+                onWalletClick = { },
+                onTransfer = { },
+                onTransactionCreate = { },
                 highlightSelectedWallet = false,
             )
         }
