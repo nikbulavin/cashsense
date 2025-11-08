@@ -1,12 +1,10 @@
 package ru.resodostudios.cashsense.feature.home
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -14,7 +12,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -48,7 +45,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -150,48 +146,21 @@ internal fun HomeScreen(
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surface)
 
-            when (totalBalanceState) {
-                TotalBalanceUiState.NotShown -> Unit
-                TotalBalanceUiState.Loading, is TotalBalanceUiState.Shown -> {
-                    TotalBalanceCard(
-                        onClick = onTotalBalanceClick,
-                        modifier = Modifier
-                            .zIndex(1f)
-                            .padding(innerPadding)
-                            .padding(horizontal = 16.dp)
-                            .dropShadow(MaterialTheme.shapes.extraLarge)
-                            .clip(MaterialTheme.shapes.extraLarge)
-                            .hazeEffect(hazeState, hazeStyle) {
-                                blurEnabled = true
-                                inputScale = HazeInputScale.Auto
-                                noiseFactor = 0f
-                            },
-                        headlineContent = {
-                            AnimatedContent(
-                                targetState = totalBalanceState,
-                                label = "TotalBalanceState",
-                                modifier = Modifier.zIndex(1f),
-                            ) { state ->
-                                if (state is TotalBalanceUiState.Shown) {
-                                    AnimatedAmount(
-                                        amount = state.amount,
-                                        currency = state.userCurrency,
-                                        label = "TotalBalanceAnimatedAmount",
-                                        withApproximatelySign = state.shouldShowApproximately,
-                                    )
-                                } else {
-                                    LinearWavyProgressIndicator(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 8.dp, bottom = 6.dp),
-                                    )
-                                }
-                            }
-                        },
-                        financialHealth = (totalBalanceState as? TotalBalanceUiState.Shown)?.financialHealth,
-                    )
-                }
-            }
+            TotalBalanceCard(
+                totalBalanceState = totalBalanceState,
+                onClick = onTotalBalanceClick,
+                modifier = Modifier
+                    .zIndex(1f)
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp)
+                    .dropShadow(MaterialTheme.shapes.extraLarge)
+                    .clip(MaterialTheme.shapes.extraLarge)
+                    .hazeEffect(hazeState, hazeStyle) {
+                        blurEnabled = true
+                        inputScale = HazeInputScale.Auto
+                        noiseFactor = 0f
+                    },
+            )
             when (walletsState) {
                 Loading -> LoadingState(Modifier.fillMaxSize())
                 Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
