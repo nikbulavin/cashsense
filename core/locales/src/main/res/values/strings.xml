@@ -35,6 +35,11 @@
     <string name="expense">Expense</string>
     <string name="expenses">Expenses</string>
     <string name="feedback">Feedback</string>
+    <string name="financial_health_very_bad">Very bad financial health</string>
+    <string name="financial_health_bad">Bad financial health</string>
+    <string name="financial_health_neutral">Neutral financial health</string>
+    <string name="financial_health_good">Good financial health</string>
+    <string name="financial_health_very_good">Very good financial health</string>
     <string name="from_wallet">From wallet</string>
     <string name="home_empty">Nothing in Wallets</string>
     <string name="home_title">Home</string>

@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -22,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -37,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
@@ -54,6 +51,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -63,7 +61,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun WalletCard(
+internal fun WalletCard(
     userWallet: UserWallet,
     expenses: BigDecimal,
     income: BigDecimal,
@@ -72,21 +70,12 @@ fun WalletCard(
     onTransferClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
 ) {
-    val border = if (selected) {
-        BorderStroke(
-            width = 2.dp,
-            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
-        )
-    } else {
-        CardDefaults.outlinedCardBorder()
-    }
-
     OutlinedCard(
         onClick = { onWalletClick(userWallet.id) },
-        shape = RoundedCornerShape(24.dp),
-        border = border,
-        modifier = modifier,
+        shape = shape,
+        modifier = modifier.then(if (selected) Modifier.dropShadow(shape) else Modifier),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -329,6 +318,34 @@ fun WalletCardPreview() {
                 modifier = Modifier
                     .padding(16.dp)
                     .width(500.dp),
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun WalletCardSelectedPreview() {
+    CsTheme {
+        Surface {
+            WalletCard(
+                userWallet = UserWallet(
+                    id = "",
+                    title = "Debit",
+                    initialBalance = BigDecimal(1499.99),
+                    currency = getUsdCurrency(),
+                    currentBalance = BigDecimal(2499.99),
+                    isPrimary = true,
+                ),
+                expenses = BigDecimal(200),
+                income = BigDecimal(800),
+                onWalletClick = {},
+                onNewTransactionClick = {},
+                onTransferClick = { _ -> },
+                modifier = Modifier
+                    .padding(16.dp)
+                    .width(500.dp),
+                selected = true,
             )
         }
     }
