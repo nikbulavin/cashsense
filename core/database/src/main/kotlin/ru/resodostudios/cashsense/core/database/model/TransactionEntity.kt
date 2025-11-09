@@ -19,7 +19,7 @@ import kotlin.uuid.Uuid
             parentColumns = ["id"],
             childColumns = ["wallet_owner_id"],
             onDelete = ForeignKey.CASCADE,
-        )
+        ),
     ],
 )
 data class TransactionEntity(
@@ -38,14 +38,16 @@ data class TransactionEntity(
     val transferId: Uuid?,
 )
 
-fun TransactionEntity.asExternalModel() = Transaction(
-    id = id,
-    walletOwnerId = walletOwnerId,
-    description = description,
-    amount = amount,
-    timestamp = timestamp,
-    status = status,
-    ignored = ignored,
-    transferId = transferId,
-    currency = Currency.getInstance("USD"),
-)
+fun TransactionEntity.asExternalModel(): Transaction {
+    return Transaction(
+        id = id,
+        walletOwnerId = walletOwnerId,
+        description = description,
+        amount = amount,
+        timestamp = timestamp,
+        status = status,
+        ignored = ignored,
+        transferId = transferId,
+        currency = Currency.getInstance("USD"),
+    )
+}

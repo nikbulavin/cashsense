@@ -23,9 +23,10 @@ data class CurrencyExchangeRateEntity(
     val timestamp: Instant,
 )
 
-fun CurrencyExchangeRateEntity.asExternalModel() =
-    CurrencyExchangeRate(
+fun CurrencyExchangeRateEntity.asExternalModel(): CurrencyExchangeRate {
+    return CurrencyExchangeRate(
         baseCurrency = baseCurrency,
         targetCurrency = targetCurrency,
         exchangeRate = exchangeRate,
     )
+}

@@ -20,7 +20,9 @@ data class PopulatedTransaction(
     val category: CategoryEntity?,
 )
 
-fun PopulatedTransaction.asExternalModel() = TransactionWithCategory(
-    transaction = transaction.asExternalModel(),
-    category = category?.asExternalModel(),
-)
+fun PopulatedTransaction.asExternalModel(): TransactionWithCategory {
+    return TransactionWithCategory(
+        transaction = transaction.asExternalModel(),
+        category = category?.asExternalModel(),
+    )
+}
