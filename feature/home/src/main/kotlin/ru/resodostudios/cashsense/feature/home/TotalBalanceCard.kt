@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
@@ -105,6 +108,7 @@ internal fun TotalBalanceCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FinancialHealthIcon(
     financialHealth: FinancialHealth,
@@ -114,7 +118,7 @@ private fun FinancialHealthIcon(
     val neutralColor = MaterialTheme.colorScheme.surfaceVariant
     val goodColor = MaterialTheme.colorScheme.primaryContainer
 
-    val (icon, color, contentDescription) = when (financialHealth) {
+    val (icon, targetColor, contentDescription) = when (financialHealth) {
         FinancialHealth.VERY_BAD -> Triple(
             CsIcons.Outlined.SentimentFrustrated,
             badColor,
@@ -145,13 +149,18 @@ private fun FinancialHealthIcon(
             localesR.string.financial_health_very_good,
         )
     }
+    val animatedColor by animateColorAsState(
+        targetValue = targetColor,
+        label = "FinancialHealthColor",
+        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+    )
     Surface(
         shape = CircleShape,
-        color = color,
+        color = animatedColor,
         modifier = modifier,
     ) {
-        Icon(
-            imageVector = icon,
+        AnimatedIcon(
+            icon = icon,
             contentDescription = stringResource(contentDescription),
             modifier = Modifier.padding(4.dp),
         )
