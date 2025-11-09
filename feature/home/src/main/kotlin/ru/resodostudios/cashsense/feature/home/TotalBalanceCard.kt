@@ -93,30 +93,68 @@ internal fun TotalBalanceCard(
                     },
                     trailingContent = (totalBalanceState as? TotalBalanceUiState.Shown)?.financialHealth?.let {
                         {
-                            val (icon, color) = when (it) {
-                                FinancialHealth.VERY_BAD -> CsIcons.Outlined.SentimentFrustrated to MaterialTheme.colorScheme.errorContainer
-                                FinancialHealth.BAD -> CsIcons.Outlined.SentimentSad to MaterialTheme.colorScheme.errorContainer
-                                FinancialHealth.NEUTRAL -> CsIcons.Outlined.SentimentNeutral to MaterialTheme.colorScheme.surfaceVariant
-                                FinancialHealth.GOOD -> CsIcons.Outlined.SentimentCalm to MaterialTheme.colorScheme.primaryContainer
-                                FinancialHealth.VERY_GOOD -> CsIcons.Outlined.SentimentExcited to MaterialTheme.colorScheme.primaryContainer
-                            }
-                            Surface(
-                                shape = CircleShape,
-                                color = color,
-                            ) {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                        .padding(4.dp),
-                                )
-                            }
+                            FinancialHealthIcon(
+                                financialHealth = it,
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                            )
                         }
                     },
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun FinancialHealthIcon(
+    financialHealth: FinancialHealth,
+    modifier: Modifier = Modifier,
+) {
+    val badColor = MaterialTheme.colorScheme.errorContainer
+    val neutralColor = MaterialTheme.colorScheme.surfaceVariant
+    val goodColor = MaterialTheme.colorScheme.primaryContainer
+
+    val (icon, color, contentDescription) = when (financialHealth) {
+        FinancialHealth.VERY_BAD -> Triple(
+            CsIcons.Outlined.SentimentFrustrated,
+            badColor,
+            localesR.string.financial_health_very_bad,
+        )
+
+        FinancialHealth.BAD -> Triple(
+            CsIcons.Outlined.SentimentSad,
+            badColor,
+            localesR.string.financial_health_bad,
+        )
+
+        FinancialHealth.NEUTRAL -> Triple(
+            CsIcons.Outlined.SentimentNeutral,
+            neutralColor,
+            localesR.string.financial_health_neutral,
+        )
+
+        FinancialHealth.GOOD -> Triple(
+            CsIcons.Outlined.SentimentCalm,
+            goodColor,
+            localesR.string.financial_health_good,
+        )
+
+        FinancialHealth.VERY_GOOD -> Triple(
+            CsIcons.Outlined.SentimentExcited,
+            goodColor,
+            localesR.string.financial_health_very_good,
+        )
+    }
+    Surface(
+        shape = CircleShape,
+        color = color,
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = stringResource(contentDescription),
+            modifier = Modifier.padding(4.dp),
+        )
     }
 }
 
