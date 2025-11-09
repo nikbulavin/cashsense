@@ -242,40 +242,6 @@ private fun LazyStaggeredGridScope.wallets(
 
 @Preview
 @Composable
-fun HomeScreenLoadingPreview() {
-    CsTheme {
-        Surface {
-            HomeScreen(
-                walletsState = Loading,
-                totalBalanceState = TotalBalanceUiState.Loading,
-                onWalletClick = { },
-                onTransfer = { },
-                onTransactionCreate = { },
-                highlightSelectedWallet = false,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun HomeScreenEmptyPreview() {
-    CsTheme {
-        Surface {
-            HomeScreen(
-                walletsState = Empty,
-                totalBalanceState = TotalBalanceUiState.NotShown,
-                onWalletClick = { },
-                onTransfer = { },
-                onTransactionCreate = { },
-                highlightSelectedWallet = false,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
 fun HomeScreenPopulatedPreview(
     @PreviewParameter(ExtendedUserWalletPreviewParameterProvider::class)
     extendedUserWallets: List<ExtendedUserWallet>,
