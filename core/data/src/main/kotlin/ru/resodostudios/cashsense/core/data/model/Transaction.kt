@@ -9,7 +9,7 @@ fun Transaction.asEntity() = TransactionEntity(
     amount = amount,
     timestamp = timestamp,
     description = description,
-    status = status,
+    completed = completed,
     ignored = ignored,
     transferId = transferId,
 )

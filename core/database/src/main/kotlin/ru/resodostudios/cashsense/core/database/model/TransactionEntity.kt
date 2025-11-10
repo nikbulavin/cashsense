@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
 import java.util.Currency
@@ -30,8 +29,8 @@ data class TransactionEntity(
     val description: String?,
     val amount: BigDecimal,
     val timestamp: Instant,
-    @ColumnInfo(defaultValue = "COMPLETED")
-    val status: StatusType,
+    @ColumnInfo(defaultValue = "1")
+    val completed: Boolean,
     @ColumnInfo(defaultValue = "0")
     val ignored: Boolean,
     @ColumnInfo(name = "transfer_id", index = true)
@@ -45,7 +44,7 @@ fun TransactionEntity.asExternalModel(): Transaction {
         description = description,
         amount = amount,
         timestamp = timestamp,
-        status = status,
+        completed = completed,
         ignored = ignored,
         transferId = transferId,
         currency = Currency.getInstance("USD"),

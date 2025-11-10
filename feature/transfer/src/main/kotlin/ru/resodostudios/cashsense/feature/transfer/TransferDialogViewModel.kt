@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Transfer
@@ -194,7 +193,7 @@ fun TransferDialogUiState.asTransfer(): Transfer {
             description = null,
             amount = BigDecimal(amount).negate(),
             timestamp = date,
-            status = StatusType.COMPLETED,
+            completed = true,
             ignored = true,
             transferId = transferId,
             currency = getUsdCurrency(),
@@ -208,7 +207,7 @@ fun TransferDialogUiState.asTransfer(): Transfer {
             description = null,
             amount = BigDecimal(convertedAmount),
             timestamp = date,
-            status = StatusType.COMPLETED,
+            completed = true,
             ignored = true,
             transferId = transferId,
             currency = getUsdCurrency(),

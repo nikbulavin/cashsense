@@ -22,8 +22,6 @@ import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.StatusType
-import ru.resodostudios.cashsense.core.model.data.StatusType.COMPLETED
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
@@ -36,10 +34,10 @@ import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEv
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCategory
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCompletionStatus
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCurrency
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionType
@@ -93,7 +91,7 @@ class TransactionDialogViewModel @Inject constructor(
             is UpdateDate -> updateDate(event.date)
             is UpdateAmount -> updateAmount(event.amount)
             is UpdateTransactionType -> updateTransactionType(event.type)
-            is UpdateStatus -> updateStatus(event.status)
+            is UpdateCompletionStatus -> updateCompletionState(event.completed)
             is UpdateCategory -> updateCategory(event.category)
             is UpdateDescription -> updateDescription(event.description)
             is UpdateTransactionIgnoring -> updateTransactionIgnoring(event.ignored)
@@ -145,9 +143,9 @@ class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun updateStatus(status: StatusType) {
+    private fun updateCompletionState(completed: Boolean) {
         _transactionDialogUiState.update {
-            it.copy(status = status)
+            it.copy(completed = completed)
         }
     }
 
@@ -199,7 +197,7 @@ class TransactionDialogViewModel @Inject constructor(
                     transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
                     date = date,
                     category = transactionCategory.category,
-                    status = transactionCategory.transaction.status,
+                    completed = transactionCategory.transaction.completed,
                     ignored = transactionCategory.transaction.ignored,
                     isLoading = false,
                     isTransfer = transactionCategory.transaction.transferId != null,
@@ -223,7 +221,7 @@ data class TransactionDialogUiState(
     val date: Instant = Clock.System.now(),
     val category: Category? = Category(),
     val transactionType: TransactionType = EXPENSE,
-    val status: StatusType = COMPLETED,
+    val completed: Boolean = true,
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
     val isTransfer: Boolean = false,
@@ -238,7 +236,7 @@ fun TransactionDialogUiState.asTransaction(walletId: String) =
             .toBigDecimal()
             .run { if (transactionType == EXPENSE) negate() else abs() },
         timestamp = date,
-        status = status,
+        completed = completed,
         ignored = ignored,
         transferId = null,
         currency = getUsdCurrency(),

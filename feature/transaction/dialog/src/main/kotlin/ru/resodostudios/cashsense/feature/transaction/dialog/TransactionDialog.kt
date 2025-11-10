@@ -56,7 +56,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.StatusType
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
@@ -71,9 +70,9 @@ import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateAmount
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCategory
+import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateCompletionStatus
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateDate
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateStatus
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.UpdateTransactionType
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -238,11 +237,11 @@ private fun TransactionStatusChoiceRow(
     transactionState: TransactionDialogUiState,
 ) {
     CsConnectedButtonGroup(
-        selectedIndex = transactionState.status.ordinal,
-        options = listOf(localesR.string.completed, localesR.string.pending),
+        selectedIndex = if (transactionState.completed) 1 else 0,
+        options = listOf(localesR.string.pending, localesR.string.completed),
         checkedIcon = CsIcons.Outlined.Check,
-        uncheckedIcons = listOf(CsIcons.Outlined.CheckCircle, CsIcons.Outlined.Pending),
-        onClick = { onTransactionEvent(UpdateStatus(StatusType.entries[it])) },
+        uncheckedIcons = listOf(CsIcons.Outlined.Pending, CsIcons.Outlined.CheckCircle),
+        onClick = { onTransactionEvent(UpdateCompletionStatus(it == 1)) },
         modifier = Modifier.fillMaxWidth(),
     )
 }

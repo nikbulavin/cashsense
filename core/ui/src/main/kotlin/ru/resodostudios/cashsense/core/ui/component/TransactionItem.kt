@@ -55,7 +55,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
-import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -130,7 +129,7 @@ internal fun TransactionItem(
                         }
                     }
                     AnimatedVisibility(
-                        visible = transaction.status == PENDING,
+                        visible = !transaction.completed,
                         enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
                         exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                     ) {
@@ -307,7 +306,7 @@ fun TransactionItemPreview() {
                     description = null,
                     amount = (-25).toBigDecimal(),
                     timestamp = Instant.parse("2024-09-13T14:20:00Z"),
-                    status = PENDING,
+                    completed = false,
                     ignored = true,
                     transferId = null,
                     currency = getUsdCurrency(),
