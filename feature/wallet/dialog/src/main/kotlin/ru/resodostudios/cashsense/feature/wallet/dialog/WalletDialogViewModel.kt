@@ -25,7 +25,7 @@ import javax.inject.Inject
 import kotlin.uuid.Uuid
 
 @HiltViewModel
-class WalletDialogViewModel @Inject constructor(
+internal class WalletDialogViewModel @Inject constructor(
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
     savedStateHandle: SavedStateHandle,
@@ -132,8 +132,8 @@ data class WalletDialogUiState(
     val isCurrencyEditable: Boolean = true,
 )
 
-fun WalletDialogUiState.asWallet() =
-    Wallet(
+fun WalletDialogUiState.asWallet(): Wallet {
+    return Wallet(
         id = id.ifBlank { Uuid.random().toHexString() },
         title = title,
         initialBalance = if (initialBalance.isBlank()) {
@@ -143,3 +143,4 @@ fun WalletDialogUiState.asWallet() =
         },
         currency = currency,
     )
+}
