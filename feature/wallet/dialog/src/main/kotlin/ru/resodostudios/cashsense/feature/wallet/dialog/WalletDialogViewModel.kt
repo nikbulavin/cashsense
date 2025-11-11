@@ -60,32 +60,32 @@ internal class WalletDialogViewModel @Inject constructor(
     private fun loadWallet(id: String) {
         viewModelScope.launch {
             _walletDialogState.update {
-                WalletDialogUiState(
-                    id = id,
-                    isLoading = true,
-                )
+                it.copy(id = id, isLoading = true)
             }
-            val primaryWalletId = async {
-                userDataRepository.userData.first().primaryWalletId
-            }
-            val walletTransactions = async {
-                walletsRepository.getExtendedWallet(id).first()
-            }
-            val wallet = walletTransactions.await().wallet
-            val isCurrencyEditable = walletTransactions.await().transactionsWithCategories.isEmpty()
+
+            val primaryWalletIdDeferred = async { userDataRepository.userData.first().primaryWalletId }
+            val extendedWalletDeferred = async { walletsRepository.getExtendedWallet(id).first() }
+
+            val primaryWalletId = primaryWalletIdDeferred.await()
+            val extendedWallet = extendedWalletDeferred.await()
+
+            val wallet = extendedWallet.wallet
+            val isCurrencyEditable = extendedWallet.transactionsWithCategories.isEmpty()
+
             _walletDialogState.update {
                 it.copy(
                     title = wallet.title,
                     initialBalance = wallet.initialBalance.toString(),
                     currency = wallet.currency,
-                    currentPrimaryWalletId = primaryWalletId.await(),
-                    isPrimary = primaryWalletId.await() == wallet.id,
+                    currentPrimaryWalletId = primaryWalletId,
+                    isPrimary = primaryWalletId == wallet.id,
                     isLoading = false,
                     isCurrencyEditable = isCurrencyEditable,
                 )
             }
         }
     }
+
 
     fun saveWallet(state: WalletDialogUiState) {
         appScope.launch {
