@@ -19,11 +19,6 @@ internal class OfflineWalletsRepository @Inject constructor(
     private val csPreferencesDataSource: CsPreferencesDataSource,
 ) : WalletsRepository {
 
-    override fun getWallet(id: String): Flow<Wallet> {
-        return walletDao.getWalletEntity(id)
-            .map { it.asExternalModel() }
-    }
-
     override fun getExtendedWallet(walletId: String): Flow<ExtendedWallet> {
         return walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId)
             .map { it.asExternalModel() }
