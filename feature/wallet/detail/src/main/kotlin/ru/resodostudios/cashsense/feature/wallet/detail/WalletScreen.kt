@@ -212,7 +212,7 @@ private fun WalletScreen(
                             )
                         }
                         transactions(
-                            transactionsCategories = walletState.transactionsCategories,
+                            groupedTransactions = walletState.groupedTransactions,
                             hazeState = hazeState,
                             hazeStyle = hazeStyle,
                             onClick = onTransactionSelect,
@@ -431,7 +431,7 @@ private fun WalletScreenPopulatedPreview(
                     currentBalance = BigDecimal(57500),
                 ),
                 selectedTransaction = null,
-                transactionsCategories = transactionsCategories.groupByDate(),
+                groupedTransactions = transactionsCategories.groupByDate(),
                 availableCategories = emptyList(),
                 expenses = BigDecimal(495.90),
                 income = BigDecimal(1000),
@@ -474,7 +474,7 @@ private fun WalletScreenEmptyPreview() {
                     currentBalance = BigDecimal(57500),
                 ),
                 selectedTransaction = null,
-                transactionsCategories = emptyMap(),
+                groupedTransactions = emptyMap(),
                 availableCategories = emptyList(),
                 expenses = BigDecimal(495.90),
                 income = BigDecimal(1000),

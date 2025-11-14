@@ -144,7 +144,7 @@ private fun TransactionOverviewScreen(
                     val transaction = transactionOverviewState.selectedTransaction?.transaction
                     transactions(
                         selectedTransaction = transactionOverviewState.selectedTransaction,
-                        transactionsCategories = transactionOverviewState.transactionsCategories,
+                        groupedTransactions = transactionOverviewState.transactionsCategories,
                         hazeState = hazeState,
                         hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,

@@ -38,7 +38,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalHazeApi::class)
 fun LazyListScope.transactions(
-    transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
+    groupedTransactions: Map<Instant, List<TransactionWithCategory>>,
     hazeState: HazeState,
     hazeStyle: HazeStyle,
     onClick: (TransactionWithCategory?) -> Unit,
@@ -47,8 +47,8 @@ fun LazyListScope.transactions(
     onEditClick: (String) -> Unit = {},
     onDeleteClick: () -> Unit = {},
 ) {
-    if (transactionsCategories.isNotEmpty()) {
-        transactionsCategories.forEach { transactionGroup ->
+    if (groupedTransactions.isNotEmpty()) {
+        groupedTransactions.forEach { transactionGroup ->
             stickyHeader(
                 contentType = "Date",
             ) {

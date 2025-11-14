@@ -100,7 +100,7 @@ class WalletViewModel @AssistedInject constructor(
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransaction = selectedTransaction,
-            transactionsCategories = filterableTransactions.transactionsCategories.groupByDate(),
+            groupedTransactions = filterableTransactions.transactionsCategories.groupByDate(),
             availableCategories = filterableTransactions.availableCategories,
         )
     }
@@ -240,7 +240,7 @@ sealed interface WalletUiState {
         val transactionFilter: TransactionFilter,
         val userWallet: UserWallet,
         val selectedTransaction: TransactionWithCategory?,
-        val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
+        val groupedTransactions: Map<Instant, List<TransactionWithCategory>>,
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
         val income: BigDecimal,
