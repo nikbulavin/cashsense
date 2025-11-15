@@ -19,11 +19,13 @@ internal class OfflineUserDataRepository @Inject constructor(
 
     override val userData: Flow<UserData> = csPreferencesDataSource.userData
 
-    override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) =
+    override suspend fun setDarkThemeConfig(darkThemeConfig: DarkThemeConfig) {
         csPreferencesDataSource.setDarkThemeConfig(darkThemeConfig)
+    }
 
-    override suspend fun setDynamicColorPreference(useDynamicColor: Boolean) =
+    override suspend fun setDynamicColorPreference(useDynamicColor: Boolean) {
         csPreferencesDataSource.setDynamicColorPreference(useDynamicColor)
+    }
 
     override suspend fun setPrimaryWallet(id: String, isPrimary: Boolean) {
         if (isPrimary) {
@@ -35,14 +37,17 @@ internal class OfflineUserDataRepository @Inject constructor(
         }
     }
 
-    override suspend fun setCurrency(currency: String) =
+    override suspend fun setCurrency(currency: String) {
         csPreferencesDataSource.setCurrency(currency)
+    }
 
-    override fun exportData(backupFileUri: Uri) =
+    override fun exportData(backupFileUri: Uri) {
         databaseTransferManager.export(backupFileUri)
+    }
 
-    override fun importData(backupFileUri: Uri, restart: Boolean) =
+    override fun importData(backupFileUri: Uri, restart: Boolean) {
         databaseTransferManager.import(backupFileUri, restart)
+    }
 
     override suspend fun setTotalBalancePreference(shouldShowTotalBalance: Boolean) {
         csPreferencesDataSource.setTotalBalancePreference(shouldShowTotalBalance)

@@ -21,7 +21,7 @@ internal class OfflineWalletsRepository @Inject constructor(
 
     override fun getExtendedWallet(walletId: String): Flow<ExtendedWallet> {
         return walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId)
-            .map { it.asExternalModel() }
+            .map(PopulatedWallet::asExternalModel)
     }
 
     override fun getExtendedWallets(): Flow<List<ExtendedWallet>> {

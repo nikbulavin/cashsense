@@ -53,7 +53,7 @@ internal interface DataModule {
     fun bindsTimeZoneMonitor(impl: TimeZoneBroadcastMonitor): TimeZoneMonitor
 
     @Binds
-    fun bindsNotificationAlarmScheduler(impl: ReminderSchedulerImpl): ReminderScheduler
+    fun bindsReminderScheduler(impl: ReminderSchedulerImpl): ReminderScheduler
 
     @Binds
     fun bindsInAppUpdateManager(impl: InAppUpdateManagerImpl): InAppUpdateManager
