@@ -9,10 +9,6 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.ANDROID
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.resources.Resources
 import io.ktor.client.request.accept
 import io.ktor.http.ContentType
@@ -39,11 +35,6 @@ internal object NetworkModule {
             install(HttpTimeout) {
                 requestTimeoutMillis = NETWORK_TIME_OUT
                 connectTimeoutMillis = NETWORK_TIME_OUT
-                socketTimeoutMillis = NETWORK_TIME_OUT
-            }
-            install(Logging) {
-                logger = Logger.ANDROID
-                level = LogLevel.BODY
             }
             install(Resources)
             defaultRequest {
