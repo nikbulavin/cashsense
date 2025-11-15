@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.core.model.data
 
 data class FilterableTransactions(
-    val transactionsCategories: List<TransactionWithCategory>,
+    val transactions: List<Transaction>,
     val availableCategories: List<Category>,
 )

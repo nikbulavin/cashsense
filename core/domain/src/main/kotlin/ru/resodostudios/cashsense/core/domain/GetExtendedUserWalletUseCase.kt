@@ -17,8 +17,8 @@ class GetExtendedUserWalletUseCase @Inject constructor(
         walletsRepository.getExtendedWallet(walletId),
         userDataRepository.userData,
     ) { extendedWallet, userData ->
-        val currentBalance = extendedWallet.transactionsWithCategories
-            .sumOf { it.transaction.amount }
+        val currentBalance = extendedWallet.transactions
+            .sumOf { it.amount }
             .plus(extendedWallet.wallet.initialBalance)
         ExtendedUserWallet(
             userWallet = UserWallet(
@@ -29,8 +29,7 @@ class GetExtendedUserWalletUseCase @Inject constructor(
                 currency = extendedWallet.wallet.currency,
                 isPrimary = extendedWallet.wallet.id == userData.primaryWalletId,
             ),
-            transactionsWithCategories = extendedWallet.transactionsWithCategories
-                .sortedByDescending { it.transaction.timestamp },
+            transactions = extendedWallet.transactions.sortedByDescending { it.timestamp },
         )
     }
 }

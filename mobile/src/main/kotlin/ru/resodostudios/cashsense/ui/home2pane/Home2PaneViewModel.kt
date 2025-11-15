@@ -66,7 +66,7 @@ class Home2PaneViewModel @Inject constructor(
                 if (it.userWallet.isPrimary) {
                     userDataRepository.setPrimaryWallet(wallet.id, true)
                 }
-                it.transactionsWithCategories.forEach { transactionWithCategory ->
+                it.transactions.forEach { transactionWithCategory ->
                     transactionsRepository.upsertTransaction(transactionWithCategory)
                 }
             }

@@ -24,7 +24,7 @@ class ExtendedUserWalletPreviewParameterProvider : PreviewParameterProvider<List
                         currency = getUsdCurrency(),
                         isPrimary = true,
                     ),
-                    transactionsWithCategories = emptyList(),
+                    transactions = emptyList(),
                 ),
                 ExtendedUserWallet(
                     userWallet = UserWallet(
@@ -35,7 +35,7 @@ class ExtendedUserWalletPreviewParameterProvider : PreviewParameterProvider<List
                         currency = getUsdCurrency(),
                         isPrimary = false,
                     ),
-                    transactionsWithCategories = emptyList(),
+                    transactions = emptyList(),
                 ),
             )
         )

@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.util.Currency
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -47,6 +47,7 @@ fun TransactionEntity.asExternalModel(): Transaction {
         completed = completed,
         ignored = ignored,
         transferId = transferId,
-        currency = Currency.getInstance("USD"),
+        currency = getUsdCurrency(),
+        category = null,
     )
 }

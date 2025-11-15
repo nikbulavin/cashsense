@@ -34,8 +34,8 @@ import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.model.data.UserWallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
@@ -59,7 +59,7 @@ class WalletViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     var shouldDisplayUndoTransaction by mutableStateOf(false)
-    private var lastRemovedTransaction: TransactionWithCategory? = null
+    private var lastRemovedTransaction: Transaction? = null
 
     var shouldDisplayUndoTransfer by mutableStateOf(false)
     private var lastRemovedTransfer: Transfer? = null
@@ -73,34 +73,33 @@ class WalletViewModel @AssistedInject constructor(
         )
     )
 
-    private val selectedTransactionState = MutableStateFlow<TransactionWithCategory?>(null)
+    private val selectedTransactionState = MutableStateFlow<Transaction?>(null)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
         getExtendedUserWallet.invoke(walletId),
         transactionFilterState,
         selectedTransactionState,
     ) { extendedUserWallet, transactionFilter, selectedTransaction ->
-        val filterableTransactions = extendedUserWallet.transactionsWithCategories
+        val filterableTransactions = extendedUserWallet.transactions
             .applyTransactionFilter(transactionFilter)
-
-        val filteredTransactions = filterableTransactions.transactionsCategories
+        val filteredTransactions = filterableTransactions.transactions
             .filter {
-                !it.transaction.ignored && if (transactionFilter.dateType == ALL) {
-                    it.transaction.timestamp.isInCurrentMonthAndYear()
+                !it.ignored && if (transactionFilter.dateType == ALL) {
+                    it.timestamp.isInCurrentMonthAndYear()
                 } else true
             }
-        val (expenses, income) = filteredTransactions.partition { it.transaction.amount.signum() < 0 }
+        val (expenses, income) = filteredTransactions.partition { it.amount.signum() < 0 }
 
         val graphData = filteredTransactions.getGraphData(transactionFilter.dateType)
 
         WalletUiState.Success(
             transactionFilter = transactionFilter,
-            income = income.sumOf { it.transaction.amount },
-            expenses = expenses.sumOf { it.transaction.amount }.abs(),
+            income = income.sumOf { it.amount },
+            expenses = expenses.sumOf { it.amount }.abs(),
             graphData = graphData,
             userWallet = extendedUserWallet.userWallet,
             selectedTransaction = selectedTransaction,
-            groupedTransactions = filterableTransactions.transactionsCategories.groupByDate(),
+            groupedTransactions = filterableTransactions.transactions.groupByDate(),
             availableCategories = filterableTransactions.availableCategories,
         )
     }
@@ -112,24 +111,24 @@ class WalletViewModel @AssistedInject constructor(
             initialValue = WalletUiState.Loading,
         )
 
-    fun updateSelectedTransaction(transaction: TransactionWithCategory?) {
+    fun updateSelectedTransaction(transaction: Transaction?) {
         selectedTransactionState.value = transaction
     }
 
     fun deleteTransaction() {
         viewModelScope.launch {
             selectedTransactionState.value?.let { selectedTransaction ->
-                if (selectedTransaction.transaction.transferId != null) {
+                if (selectedTransaction.transferId != null) {
                     val depositTransaction = transactionsRepository.getTransfer(
-                        selectedTransaction.transaction.transferId!!,
-                        selectedTransaction.transaction.walletOwnerId,
+                        selectedTransaction.transferId!!,
+                        selectedTransaction.walletOwnerId,
                     ).first().depositTransaction
                     lastRemovedTransfer = Transfer(selectedTransaction, depositTransaction)
-                    transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
+                    transactionsRepository.deleteTransfer(selectedTransaction.transferId!!)
                     shouldDisplayUndoTransfer = true
                 } else {
                     lastRemovedTransaction = selectedTransactionState.value
-                    transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
+                    transactionsRepository.deleteTransaction(selectedTransaction.id)
                     shouldDisplayUndoTransaction = true
                 }
             }
@@ -239,8 +238,8 @@ sealed interface WalletUiState {
     data class Success(
         val transactionFilter: TransactionFilter,
         val userWallet: UserWallet,
-        val selectedTransaction: TransactionWithCategory?,
-        val groupedTransactions: Map<Instant, List<TransactionWithCategory>>,
+        val selectedTransaction: Transaction?,
+        val groupedTransactions: Map<Instant, List<Transaction>>,
         val availableCategories: List<Category>,
         val expenses: BigDecimal,
         val income: BigDecimal,

@@ -23,7 +23,6 @@ import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
@@ -54,7 +53,7 @@ import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 @HiltViewModel
-class TransactionDialogViewModel @Inject constructor(
+internal class TransactionDialogViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val transactionsRepository: TransactionsRepository,
     categoriesRepository: CategoriesRepository,
@@ -100,11 +99,8 @@ class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction(state: TransactionDialogUiState, activity: Activity) {
         appScope.launch {
-            val transactionWithCategory = TransactionWithCategory(
-                transaction = state.asTransaction(transactionDestination.walletId),
-                category = state.category,
-            )
-            transactionsRepository.upsertTransaction(transactionWithCategory)
+            val transaction = state.asTransaction(transactionDestination.walletId, state.category)
+            transactionsRepository.upsertTransaction(transaction)
             inAppReviewManager.openReviewDialog(activity)
         }
     }
@@ -184,23 +180,23 @@ class TransactionDialogViewModel @Inject constructor(
                     isLoading = true,
                 )
             }
-            val transactionCategory = transactionsRepository.getTransactionWithCategory(id).first()
+            val transaction = transactionsRepository.getTransaction(id).first()
             val date = if (transactionDestination.repeated) {
                 Clock.System.now()
             } else {
-                transactionCategory.transaction.timestamp
+                transaction.timestamp
             }
             _transactionDialogUiState.update {
                 it.copy(
-                    description = transactionCategory.transaction.description ?: "",
-                    amount = transactionCategory.transaction.amount.abs().toString(),
-                    transactionType = if (transactionCategory.transaction.amount < ZERO) EXPENSE else INCOME,
+                    description = transaction.description ?: "",
+                    amount = transaction.amount.abs().toString(),
+                    transactionType = if (transaction.amount < ZERO) EXPENSE else INCOME,
                     date = date,
-                    category = transactionCategory.category,
-                    completed = transactionCategory.transaction.completed,
-                    ignored = transactionCategory.transaction.ignored,
+                    category = transaction.category,
+                    completed = transaction.completed,
+                    ignored = transaction.ignored,
                     isLoading = false,
-                    isTransfer = transactionCategory.transaction.transferId != null,
+                    isTransfer = transaction.transferId != null,
                 )
             }
         }
@@ -227,8 +223,8 @@ data class TransactionDialogUiState(
     val isTransfer: Boolean = false,
 )
 
-fun TransactionDialogUiState.asTransaction(walletId: String) =
-    Transaction(
+fun TransactionDialogUiState.asTransaction(walletId: String, category: Category?): Transaction {
+    return Transaction(
         id = transactionId.ifBlank { Uuid.random().toHexString() },
         walletOwnerId = walletId,
         description = description.ifBlank { null },
@@ -240,4 +236,6 @@ fun TransactionDialogUiState.asTransaction(walletId: String) =
         ignored = ignored,
         transferId = null,
         currency = getUsdCurrency(),
+        category = category,
     )
+}

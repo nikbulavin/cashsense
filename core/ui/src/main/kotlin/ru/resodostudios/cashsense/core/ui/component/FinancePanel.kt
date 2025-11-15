@@ -66,9 +66,9 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.EXPENSES
 import ru.resodostudios.cashsense.core.model.data.FinanceType.INCOME
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
-import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
+import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -469,12 +469,12 @@ private fun getFinanceProgress(
 @Preview
 @Composable
 private fun FinancePanelDefaultPreview(
-    @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
-    transactionsCategories: List<TransactionWithCategory>,
+    @PreviewParameter(TransactionPreviewParameterProvider::class)
+    transactions: List<Transaction>,
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories.mapNotNullTo(HashSet()) { it.category }
+            val categories = transactions.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
                 transactionFilter = TransactionFilter(
                     selectedCategories = categories.take(3).toSet(),
@@ -500,12 +500,12 @@ private fun FinancePanelDefaultPreview(
 @Preview
 @Composable
 private fun FinancePanelOpenedPreview(
-    @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
-    transactionsCategories: List<TransactionWithCategory>,
+    @PreviewParameter(TransactionPreviewParameterProvider::class)
+    transactions: List<Transaction>,
 ) {
     CsTheme {
         Surface {
-            val categories = transactionsCategories.mapNotNull { it.category }
+            val categories = transactions.mapNotNull { it.category }
             FinancePanel(
                 transactionFilter = TransactionFilter(
                     selectedCategories = categories.take(3).toSet(),

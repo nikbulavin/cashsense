@@ -68,7 +68,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun TransactionItem(
     transaction: Transaction,
-    category: Category?,
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
@@ -79,8 +78,8 @@ internal fun TransactionItem(
     val (icon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
     } else {
-        val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
-        val title = category?.title ?: stringResource(localesR.string.uncategorized)
+        val iconId = transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId
+        val title = transaction.category?.title ?: stringResource(localesR.string.uncategorized)
         StoredIcon.asImageVector(iconId) to title
     }
 
@@ -310,11 +309,11 @@ fun TransactionItemPreview() {
                     ignored = true,
                     transferId = null,
                     currency = getUsdCurrency(),
-                ),
-                category = Category(
-                    id = "1",
-                    title = "Fastfood",
-                    iconId = StoredIcon.FASTFOOD.storedId,
+                    category = Category(
+                        id = "1",
+                        title = "Fastfood",
+                        iconId = StoredIcon.FASTFOOD.storedId,
+                    ),
                 ),
                 currency = getUsdCurrency(),
             )

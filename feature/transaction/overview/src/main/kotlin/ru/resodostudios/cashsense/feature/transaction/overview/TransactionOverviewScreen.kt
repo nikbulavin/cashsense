@@ -32,7 +32,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -86,7 +86,7 @@ private fun TransactionOverviewScreen(
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionDelete: () -> Unit = {},
-    onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
+    onTransactionSelect: (Transaction?) -> Unit = {},
     shouldDisplayUndoTransaction: Boolean = false,
     undoTransactionRemoval: () -> Unit = {},
     shouldDisplayUndoTransfer: Boolean = false,
@@ -141,10 +141,10 @@ private fun TransactionOverviewScreen(
                         onSelectedDateUpdate = onSelectedDateUpdate,
                         onCategoryFilterUpdate = onCategoryFilterUpdate,
                     )
-                    val transaction = transactionOverviewState.selectedTransaction?.transaction
+                    val transaction = transactionOverviewState.selectedTransaction
                     transactions(
                         selectedTransaction = transactionOverviewState.selectedTransaction,
-                        groupedTransactions = transactionOverviewState.transactionsCategories,
+                        groupedTransactions = transactionOverviewState.groupedTransactions,
                         hazeState = hazeState,
                         hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,

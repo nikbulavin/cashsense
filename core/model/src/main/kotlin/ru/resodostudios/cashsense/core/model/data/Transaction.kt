@@ -15,4 +15,5 @@ data class Transaction(
     val ignored: Boolean,
     val transferId: Uuid?,
     val currency: Currency,
+    val category: Category?,
 )

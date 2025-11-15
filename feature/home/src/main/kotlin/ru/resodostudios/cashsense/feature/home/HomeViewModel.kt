@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
                                     ?: return@combine TotalBalanceUiState.NotShown
                             }
                             totalBalance += convertedBalance
-                            allTransactions.addAll(wallet.transactionsWithCategories.map { it.transaction })
+                            allTransactions.addAll(wallet.transactions)
                         }
 
                         val (totalExpenses, totalIncome) = allTransactions

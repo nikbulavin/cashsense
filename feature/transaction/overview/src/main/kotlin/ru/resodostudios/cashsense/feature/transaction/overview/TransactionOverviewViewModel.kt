@@ -36,8 +36,8 @@ import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
@@ -63,7 +63,7 @@ class TransactionOverviewViewModel @Inject constructor(
 ) : ViewModel() {
 
     var shouldDisplayUndoTransaction by mutableStateOf(false)
-    private var lastRemovedTransaction: TransactionWithCategory? = null
+    private var lastRemovedTransaction: Transaction? = null
 
     var shouldDisplayUndoTransfer by mutableStateOf(false)
     private var lastRemovedTransfer: Transfer? = null
@@ -77,7 +77,7 @@ class TransactionOverviewViewModel @Inject constructor(
         )
     )
 
-    private val selectedTransactionState = MutableStateFlow<TransactionWithCategory?>(null)
+    private val selectedTransactionState = MutableStateFlow<Transaction?>(null)
 
     val financePanelUiState: StateFlow<FinancePanelUiState> = combine(
         walletRepository.getDistinctCurrencies(),
@@ -104,13 +104,13 @@ class TransactionOverviewViewModel @Inject constructor(
                         .associate { it.baseCurrency to it.exchangeRate }
 
                     val filterableTransactions = wallets
-                        .flatMap { wallet -> wallet.transactionsWithCategories }
+                        .flatMap { wallet -> wallet.transactions }
                         .applyTransactionFilter(transactionFilter)
 
-                    val filteredTransactions = filterableTransactions.transactionsCategories
+                    val filteredTransactions = filterableTransactions.transactions
                         .filter {
-                            !it.transaction.ignored && if (transactionFilter.dateType == ALL) {
-                                it.transaction.timestamp.isInCurrentMonthAndYear()
+                            !it.ignored && if (transactionFilter.dateType == ALL) {
+                                it.timestamp.isInCurrentMonthAndYear()
                             } else true
                         }
 
@@ -123,8 +123,7 @@ class TransactionOverviewViewModel @Inject constructor(
                     }
 
                     val (expenses, income) = filteredTransactions
-                        .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transactionCategory ->
-                            val transaction = transactionCategory.transaction
+                        .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
                             val amount = transaction.amount
                             val currency = transaction.currency
 
@@ -171,14 +170,14 @@ class TransactionOverviewViewModel @Inject constructor(
         selectedTransactionState,
     ) { extendedUserWallets, transactionFilter, selectedTransaction ->
         val transactions = extendedUserWallets
-            .flatMap { it.transactionsWithCategories }
-            .sortedByDescending { it.transaction.timestamp }
+            .flatMap { it.transactions }
+            .sortedByDescending { it.timestamp }
             .applyTransactionFilter(transactionFilter)
-            .transactionsCategories
+            .transactions
 
         TransactionOverviewUiState.Success(
             selectedTransaction = selectedTransaction,
-            transactionsCategories = transactions.groupByDate(),
+            groupedTransactions = transactions.groupByDate(),
         )
     }
         .flowOn(defaultDispatcher)
@@ -189,24 +188,24 @@ class TransactionOverviewViewModel @Inject constructor(
             initialValue = TransactionOverviewUiState.Loading,
         )
 
-    fun updateSelectedTransaction(transaction: TransactionWithCategory?) {
+    fun updateSelectedTransaction(transaction: Transaction?) {
         selectedTransactionState.value = transaction
     }
 
     fun deleteTransaction() {
         viewModelScope.launch {
             selectedTransactionState.value?.let { selectedTransaction ->
-                if (selectedTransaction.transaction.transferId != null) {
+                if (selectedTransaction.transferId != null) {
                     val depositTransaction = transactionsRepository.getTransfer(
-                        selectedTransaction.transaction.transferId!!,
-                        selectedTransaction.transaction.walletOwnerId,
+                        selectedTransaction.transferId!!,
+                        selectedTransaction.walletOwnerId,
                     ).first().depositTransaction
                     lastRemovedTransfer = Transfer(selectedTransaction, depositTransaction)
-                    transactionsRepository.deleteTransfer(selectedTransaction.transaction.transferId!!)
+                    transactionsRepository.deleteTransfer(selectedTransaction.transferId!!)
                     shouldDisplayUndoTransfer = true
                 } else {
                     lastRemovedTransaction = selectedTransactionState.value
-                    transactionsRepository.deleteTransaction(selectedTransaction.transaction.id)
+                    transactionsRepository.deleteTransaction(selectedTransaction.id)
                     shouldDisplayUndoTransaction = true
                 }
             }
@@ -315,7 +314,7 @@ sealed interface TransactionOverviewUiState {
     data object Loading : TransactionOverviewUiState
 
     data class Success(
-        val selectedTransaction: TransactionWithCategory?,
-        val transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
+        val selectedTransaction: Transaction?,
+        val groupedTransactions: Map<Instant, List<Transaction>>,
     ) : TransactionOverviewUiState
 }

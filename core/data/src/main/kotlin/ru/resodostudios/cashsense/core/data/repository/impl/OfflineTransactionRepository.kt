@@ -6,8 +6,8 @@ import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.Transfer
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -16,7 +16,7 @@ internal class OfflineTransactionRepository @Inject constructor(
     private val dao: TransactionDao,
 ) : TransactionsRepository {
 
-    override fun getTransactionWithCategory(transactionId: String): Flow<TransactionWithCategory> {
+    override fun getTransaction(transactionId: String): Flow<Transaction> {
         return dao.getTransactionWithCategoryEntity(transactionId)
             .map { it.asExternalModel() }
     }
@@ -32,14 +32,8 @@ internal class OfflineTransactionRepository @Inject constructor(
         return dao.getTransfer(transferId)
             .map { it.map { transaction -> transaction.asExternalModel() } }
             .map { transferTransactions ->
-                val withdrawalTransaction = TransactionWithCategory(
-                    transaction = transferTransactions.find { it.walletOwnerId == senderWalletId }!!,
-                    category = null,
-                )
-                val depositTransaction = TransactionWithCategory(
-                    transaction = transferTransactions.find { it.walletOwnerId != senderWalletId }!!,
-                    category = null,
-                )
+                val withdrawalTransaction = transferTransactions.find { it.walletOwnerId == senderWalletId }!!
+                val depositTransaction = transferTransactions.find { it.walletOwnerId != senderWalletId }!!
                 Transfer(
                     withdrawalTransaction = withdrawalTransaction,
                     depositTransaction = depositTransaction,
@@ -47,10 +41,10 @@ internal class OfflineTransactionRepository @Inject constructor(
             }
     }
 
-    override suspend fun upsertTransaction(transactionWithCategory: TransactionWithCategory) {
+    override suspend fun upsertTransaction(transaction: Transaction) {
         dao.upsertTransactionWithCategory(
-            transaction = transactionWithCategory.transaction.asEntity(),
-            category = transactionWithCategory.category?.asEntity(),
+            transaction = transaction.asEntity(),
+            category = transaction.category?.asEntity(),
         )
     }
 
@@ -62,8 +56,8 @@ internal class OfflineTransactionRepository @Inject constructor(
 
     override suspend fun upsertTransfer(transfer: Transfer) {
         dao.upsertTransfer(
-            withdrawalTransaction = transfer.withdrawalTransaction.transaction.asEntity(),
-            depositTransaction = transfer.depositTransaction.transaction.asEntity(),
+            withdrawalTransaction = transfer.withdrawalTransaction.asEntity(),
+            depositTransaction = transfer.depositTransaction.asEntity(),
         )
     }
 

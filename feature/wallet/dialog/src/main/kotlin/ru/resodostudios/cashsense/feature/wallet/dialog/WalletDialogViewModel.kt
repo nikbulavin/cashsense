@@ -70,7 +70,7 @@ internal class WalletDialogViewModel @Inject constructor(
             val extendedWallet = extendedWalletDeferred.await()
 
             val wallet = extendedWallet.wallet
-            val isCurrencyEditable = extendedWallet.transactionsWithCategories.isEmpty()
+            val isCurrencyEditable = extendedWallet.transactions.isEmpty()
 
             _walletDialogState.update {
                 it.copy(

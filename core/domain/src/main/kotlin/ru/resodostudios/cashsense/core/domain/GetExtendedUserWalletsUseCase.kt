@@ -19,8 +19,8 @@ class GetExtendedUserWalletsUseCase @Inject constructor(
     ) { extendedWallets, userData ->
         extendedWallets
             .map { extendedWallet ->
-                val currentBalance = extendedWallet.transactionsWithCategories
-                    .sumOf { it.transaction.amount }
+                val currentBalance = extendedWallet.transactions
+                    .sumOf { it.amount }
                     .plus(extendedWallet.wallet.initialBalance)
                 ExtendedUserWallet(
                     userWallet = UserWallet(
@@ -31,7 +31,7 @@ class GetExtendedUserWalletsUseCase @Inject constructor(
                         currency = extendedWallet.wallet.currency,
                         isPrimary = extendedWallet.wallet.id == userData.primaryWalletId,
                     ),
-                    transactionsWithCategories = extendedWallet.transactionsWithCategories,
+                    transactions = extendedWallet.transactions,
                 )
             }
             .sortedByDescending { it.userWallet.id == userData.primaryWalletId }

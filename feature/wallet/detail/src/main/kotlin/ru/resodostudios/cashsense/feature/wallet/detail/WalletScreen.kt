@@ -66,10 +66,10 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 import ru.resodostudios.cashsense.core.model.data.UserWallet
-import ru.resodostudios.cashsense.core.ui.TransactionCategoryPreviewParameterProvider
+import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -140,7 +140,7 @@ private fun WalletScreen(
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onTransactionSelect: (TransactionWithCategory?) -> Unit = {},
+    onTransactionSelect: (Transaction?) -> Unit = {},
     onTransactionDelete: () -> Unit = {},
     shouldDisplayUndoTransaction: Boolean = false,
     undoTransactionRemoval: () -> Unit = {},
@@ -410,8 +410,8 @@ private fun PrimaryToggleButton(
 @PreviewLightDark
 @Composable
 private fun WalletScreenPopulatedPreview(
-    @PreviewParameter(TransactionCategoryPreviewParameterProvider::class)
-    transactionsCategories: List<TransactionWithCategory>,
+    @PreviewParameter(TransactionPreviewParameterProvider::class)
+    transactions: List<Transaction>,
 ) {
     CsTheme {
         WalletScreen(
@@ -431,7 +431,7 @@ private fun WalletScreenPopulatedPreview(
                     currentBalance = BigDecimal(57500),
                 ),
                 selectedTransaction = null,
-                groupedTransactions = transactionsCategories.groupByDate(),
+                groupedTransactions = transactions.groupByDate(),
                 availableCategories = emptyList(),
                 expenses = BigDecimal(495.90),
                 income = BigDecimal(1000),
