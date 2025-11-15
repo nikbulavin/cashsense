@@ -23,14 +23,18 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun providesHttpClient(): HttpClient {
+    fun providesNetworkJson(): Json = Json {
+        ignoreUnknownKeys = true
+    }
+
+    @Provides
+    @Singleton
+    fun providesHttpClient(
+        networkJson: Json,
+    ): HttpClient {
         return HttpClient(OkHttp) {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                    isLenient = true
-                })
+                json(networkJson)
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = NETWORK_TIME_OUT
