@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.util
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
@@ -25,7 +26,7 @@ fun List<Transaction>.applyTransactionFilter(transactionFilter: TransactionFilte
             when (transactionFilter.dateType) {
                 ALL -> true
                 WEEK -> it.timestamp.getZonedWeek() == getCurrentWeek()
-                MONTH -> matchesSelectedDate(it, transactionFilter)
+                MONTH -> matchesCurrentMonth(it, transactionFilter.selectedDate)
                 YEAR -> it.timestamp.getZonedYear() == transactionFilter.selectedDate.year
             }
         }
@@ -53,10 +54,10 @@ fun List<Transaction>.applyTransactionFilter(transactionFilter: TransactionFilte
     )
 }
 
-private fun matchesSelectedDate(
+private fun matchesCurrentMonth(
     transaction: Transaction,
-    transactionFilter: TransactionFilter,
+    selectedDate: LocalDate,
 ): Boolean {
-    return transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year
-            && transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.month.number
+    return transaction.timestamp.getZonedYear() == selectedDate.year
+            && transaction.timestamp.getZonedMonth() == selectedDate.month.number
 }
