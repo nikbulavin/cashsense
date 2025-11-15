@@ -17,7 +17,7 @@ internal class OfflineTransactionRepository @Inject constructor(
 ) : TransactionsRepository {
 
     override fun getTransaction(transactionId: String): Flow<Transaction> {
-        return dao.getTransactionEntity(transactionId)
+        return dao.getPopulatedTransaction(transactionId)
             .map { it.asExternalModel() }
     }
 
