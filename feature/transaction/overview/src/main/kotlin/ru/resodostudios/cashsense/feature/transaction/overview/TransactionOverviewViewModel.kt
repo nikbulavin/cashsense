@@ -172,8 +172,7 @@ class TransactionOverviewViewModel @Inject constructor(
         val transactions = extendedUserWallets
             .flatMap { it.transactions }
             .sortedByDescending { it.timestamp }
-            .applyTransactionFilter(transactionFilter)
-            .transactions
+            .applyTransactionFilter(transactionFilter).transactions
 
         TransactionOverviewUiState.Success(
             selectedTransaction = selectedTransaction,

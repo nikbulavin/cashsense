@@ -4,11 +4,18 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import java.util.Currency
 
 data class PopulatedTransaction(
     @Embedded
     val transaction: TransactionEntity,
+    @Relation(
+        parentColumn = "wallet_owner_id",
+        entityColumn = "id",
+        entity = WalletEntity::class,
+        projection = ["currency"],
+    )
+    val walletCurrency: Currency,
     @Relation(
         parentColumn = "id",
         entityColumn = "id",
@@ -31,7 +38,7 @@ fun PopulatedTransaction.asExternalModel(): Transaction {
         completed = transaction.completed,
         ignored = transaction.ignored,
         transferId = transaction.transferId,
-        currency = getUsdCurrency(),
+        currency = walletCurrency,
         category = category?.asExternalModel(),
     )
 }
