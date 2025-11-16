@@ -22,7 +22,7 @@ import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.appwidget.lazy.itemsIndexed
+import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -87,10 +87,10 @@ private fun WalletWidgetContent(
     ) {
         if (extendedWallets.isNotEmpty()) {
             LazyColumn {
-                itemsIndexed(
+                items(
                     items = extendedWallets,
-                    itemId = { _, extendedWallet -> extendedWallet.wallet.id.hashCode().toLong() },
-                ) { index, extendedWallet ->
+                    itemId = { it.wallet.id.hashCode().toLong() },
+                ) { extendedWallet ->
                     Column {
                         WalletItem(
                             context = context,
@@ -101,9 +101,10 @@ private fun WalletWidgetContent(
                             ),
                             onClick = openHomeScreen(context, extendedWallet.wallet.id),
                         )
-                        Spacer(GlanceModifier.height(if (index == extendedWallets.lastIndex) 12.dp else 4.dp))
+                        Spacer(GlanceModifier.height(4.dp))
                     }
                 }
+                item { Spacer(GlanceModifier.height(8.dp)) }
             }
         } else {
             Box(
@@ -134,7 +135,7 @@ private fun WalletItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
-            .cornerRadius(12.dp)
+            .cornerRadius(16.dp)
             .background(GlanceTheme.colors.secondaryContainer)
             .clickable(onClick),
     ) {
@@ -152,7 +153,7 @@ private fun WalletItem(
             Text(
                 text = currentBalance,
                 style = CsGlanceTypography.bodyMedium
-                    .copy(color = GlanceTheme.colors.onSecondaryContainer),
+                    .copy(color = GlanceTheme.colors.onSurfaceVariant),
                 maxLines = 1,
             )
         }
