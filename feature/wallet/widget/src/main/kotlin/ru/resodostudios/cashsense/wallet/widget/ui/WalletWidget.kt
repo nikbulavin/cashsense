@@ -36,10 +36,8 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
-import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
@@ -58,16 +56,12 @@ internal class WalletWidget : GlanceAppWidget() {
             context.applicationContext,
             WalletWidgetEntryPoint::class.java,
         )
-        val walletsRepository = walletsEntryPoint.walletsRepository()
+        val getExtendedUserWalletsUseCase = walletsEntryPoint.getExtendedUserWalletsUseCase()
 
-        val initialWallets = withContext(Dispatchers.IO) {
-            walletsRepository.getExtendedWallets()
-                .first()
-                .sortedByDescending { it.wallet.id }
-        }
+        val initialWallets = getExtendedUserWalletsUseCase().first()
 
         provideContent {
-            val extendedWallets by walletsRepository.getExtendedWallets().collectAsState(initialWallets)
+            val extendedWallets by getExtendedUserWalletsUseCase().collectAsState(initialWallets)
 
             CsGlanceTheme {
                 WalletWidgetContent(extendedWallets)
@@ -78,7 +72,7 @@ internal class WalletWidget : GlanceAppWidget() {
 
 @Composable
 private fun WalletWidgetContent(
-    extendedWallets: List<ExtendedWallet>,
+    extendedWallets: List<ExtendedUserWallet>,
 ) {
     val context = LocalContext.current
     Scaffold(
