@@ -204,17 +204,19 @@ private fun LazyStaggeredGridScope.wallets(
 ) {
     items(
         items = extendedUserWallets,
-        key = { it.userWallet.id },
+        key = { it.wallet.id },
         contentType = { "WalletCard" },
     ) { walletData ->
-        val selected = highlightSelectedWallet && walletData.userWallet.id == selectedWalletId
+        val selected = highlightSelectedWallet && walletData.wallet.id == selectedWalletId
         val (expenses, income) = walletData.transactions
             .asSequence()
             .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
             .partition { it.amount.signum() < 0 }
 
         WalletCard(
-            userWallet = walletData.userWallet,
+            wallet = walletData.wallet,
+            currentBalance = walletData.currentBalance,
+            isPrimary = walletData.isPrimary,
             expenses = expenses.sumOf { it.amount }.abs(),
             income = income.sumOf { it.amount },
             onWalletClick = onWalletClick,

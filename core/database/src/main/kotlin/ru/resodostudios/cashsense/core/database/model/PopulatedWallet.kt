@@ -16,8 +16,11 @@ data class PopulatedWallet(
 )
 
 fun PopulatedWallet.asExternalModel(): ExtendedWallet {
+    val transactions = transactions.map(PopulatedTransaction::asExternalModel)
+    val currentBalance = transactions.sumOf { it.amount } + wallet.initialBalance
     return ExtendedWallet(
         wallet = wallet.asExternalModel(),
-        transactions = transactions.map(PopulatedTransaction::asExternalModel),
+        transactions = transactions,
+        currentBalance = currentBalance,
     )
 }

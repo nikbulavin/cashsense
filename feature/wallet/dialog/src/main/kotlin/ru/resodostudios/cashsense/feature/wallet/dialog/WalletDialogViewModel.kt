@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -30,6 +30,7 @@ internal class WalletDialogViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
+    private val getExtendedUserWallet: GetExtendedUserWalletUseCase,
 ) : ViewModel() {
 
     private val walletDialogDestination: WalletDialogRoute = savedStateHandle.toRoute()
@@ -62,25 +63,15 @@ internal class WalletDialogViewModel @Inject constructor(
             _walletDialogState.update {
                 it.copy(id = id, isLoading = true)
             }
-
-            val primaryWalletIdDeferred = async { userDataRepository.userData.first().primaryWalletId }
-            val extendedWalletDeferred = async { walletsRepository.getExtendedWallet(id).first() }
-
-            val primaryWalletId = primaryWalletIdDeferred.await()
-            val extendedWallet = extendedWalletDeferred.await()
-
-            val wallet = extendedWallet.wallet
-            val isCurrencyEditable = extendedWallet.transactions.isEmpty()
-
+            val extendedUserWallet = getExtendedUserWallet.invoke(id).first()
             _walletDialogState.update {
                 it.copy(
-                    title = wallet.title,
-                    initialBalance = wallet.initialBalance.toString(),
-                    currency = wallet.currency,
-                    currentPrimaryWalletId = primaryWalletId,
-                    isPrimary = primaryWalletId == wallet.id,
+                    title = extendedUserWallet.wallet.title,
+                    initialBalance = extendedUserWallet.wallet.initialBalance.toString(),
+                    currency = extendedUserWallet.wallet.currency,
+                    isPrimary = extendedUserWallet.isPrimary,
                     isLoading = false,
-                    isCurrencyEditable = isCurrencyEditable,
+                    isCurrencyEditable = extendedUserWallet.transactions.isEmpty(),
                 )
             }
         }
@@ -125,7 +116,6 @@ data class WalletDialogUiState(
     val id: String = "",
     val title: String = "",
     val initialBalance: String = "",
-    val currentPrimaryWalletId: String = "",
     val currency: Currency = getUsdCurrency(),
     val isPrimary: Boolean = false,
     val isLoading: Boolean = false,

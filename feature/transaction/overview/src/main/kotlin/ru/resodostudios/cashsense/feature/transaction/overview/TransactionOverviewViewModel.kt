@@ -115,11 +115,11 @@ class TransactionOverviewViewModel @Inject constructor(
                         }
 
                     val totalBalance = wallets.sumOf {
-                        if (userCurrency == it.userWallet.currency) return@sumOf it.userWallet.currentBalance
-                        val exchangeRate = exchangeRateMap[it.userWallet.currency]
+                        if (userCurrency == it.wallet.currency) return@sumOf it.currentBalance
+                        val exchangeRate = exchangeRateMap[it.wallet.currency]
                             ?: return@combine FinancePanelUiState.NotShown
 
-                        it.userWallet.currentBalance * exchangeRate
+                        it.currentBalance * exchangeRate
                     }
 
                     val (expenses, income) = filteredTransactions

@@ -37,7 +37,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.Transfer
-import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
@@ -97,7 +97,9 @@ class WalletViewModel @AssistedInject constructor(
             income = income.sumOf { it.amount },
             expenses = expenses.sumOf { it.amount }.abs(),
             graphData = graphData,
-            userWallet = extendedUserWallet.userWallet,
+            wallet = extendedUserWallet.wallet,
+            currentBalance = extendedUserWallet.currentBalance,
+            isPrimary = extendedUserWallet.isPrimary,
             selectedTransaction = selectedTransaction,
             groupedTransactions = filterableTransactions.transactions.groupByDate(),
             availableCategories = filterableTransactions.availableCategories,
@@ -237,7 +239,9 @@ sealed interface WalletUiState {
 
     data class Success(
         val transactionFilter: TransactionFilter,
-        val userWallet: UserWallet,
+        val wallet: Wallet,
+        val currentBalance: BigDecimal,
+        val isPrimary: Boolean,
         val selectedTransaction: Transaction?,
         val groupedTransactions: Map<Instant, List<Transaction>>,
         val availableCategories: List<Category>,

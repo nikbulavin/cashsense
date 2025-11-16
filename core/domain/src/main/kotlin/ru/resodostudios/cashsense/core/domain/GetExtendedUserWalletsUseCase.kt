@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.combine
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.model.data.UserWallet
 import javax.inject.Inject
 
 class GetExtendedUserWalletsUseCase @Inject constructor(
@@ -19,21 +18,13 @@ class GetExtendedUserWalletsUseCase @Inject constructor(
     ) { extendedWallets, userData ->
         extendedWallets
             .map { extendedWallet ->
-                val currentBalance = extendedWallet.transactions
-                    .sumOf { it.amount }
-                    .plus(extendedWallet.wallet.initialBalance)
                 ExtendedUserWallet(
-                    userWallet = UserWallet(
-                        id = extendedWallet.wallet.id,
-                        title = extendedWallet.wallet.title,
-                        initialBalance = extendedWallet.wallet.initialBalance,
-                        currentBalance = currentBalance,
-                        currency = extendedWallet.wallet.currency,
-                        isPrimary = extendedWallet.wallet.id == userData.primaryWalletId,
-                    ),
+                    wallet = extendedWallet.wallet,
                     transactions = extendedWallet.transactions,
+                    currentBalance = extendedWallet.currentBalance,
+                    isPrimary = extendedWallet.wallet.id == userData.primaryWalletId,
                 )
             }
-            .sortedByDescending { it.userWallet.id == userData.primaryWalletId }
+            .sortedByDescending { it.wallet.id == userData.primaryWalletId }
     }
 }

@@ -68,7 +68,7 @@ import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
@@ -174,7 +174,9 @@ private fun WalletScreen(
             Scaffold(
                 topBar = {
                     WalletTopBar(
-                        userWallet = walletState.userWallet,
+                        wallet = walletState.wallet,
+                        currentBalance = walletState.currentBalance,
+                        isPrimary = walletState.isPrimary,
                         showNavigationIcon = showNavigationIcon,
                         onBackClick = onBackClick,
                         onPrimaryClick = onPrimaryClick,
@@ -183,7 +185,8 @@ private fun WalletScreen(
             ) { paddingValues ->
                 var expanded by rememberSaveable { mutableStateOf(true) }
                 val hazeState = rememberHazeState()
-                val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
+                val hazeStyle =
+                    HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
 
                 Box(modifier = Modifier.padding(paddingValues)) {
                     LazyColumn(
@@ -199,7 +202,7 @@ private fun WalletScreen(
                         item {
                             FinancePanel(
                                 availableCategories = walletState.availableCategories,
-                                currency = walletState.userWallet.currency,
+                                currency = walletState.wallet.currency,
                                 expenses = walletState.expenses,
                                 income = walletState.income,
                                 graphData = walletState.graphData,
@@ -219,14 +222,14 @@ private fun WalletScreen(
                             selectedTransaction = walletState.selectedTransaction,
                             onRepeatClick = { transactionId ->
                                 navigateToTransactionDialog(
-                                    walletState.userWallet.id,
+                                    walletState.wallet.id,
                                     transactionId,
                                     true,
                                 )
                             },
                             onEditClick = { transactionId ->
                                 navigateToTransactionDialog(
-                                    walletState.userWallet.id,
+                                    walletState.wallet.id,
                                     transactionId,
                                     false,
                                 )
@@ -237,7 +240,7 @@ private fun WalletScreen(
                     WalletToolbar(
                         expanded = expanded,
                         onTransfer = onTransfer,
-                        walletId = walletState.userWallet.id,
+                        walletId = walletState.wallet.id,
                         onEditWallet = onEditWallet,
                         onDeleteWallet = onDeleteWallet,
                         navigateToTransactionDialog = navigateToTransactionDialog,
@@ -340,7 +343,9 @@ private fun BoxScope.WalletToolbar(
 )
 @Composable
 private fun WalletTopBar(
-    userWallet: UserWallet,
+    wallet: Wallet,
+    currentBalance: BigDecimal,
+    isPrimary: Boolean,
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
@@ -348,15 +353,15 @@ private fun WalletTopBar(
     TopAppBar(
         title = {
             Text(
-                text = userWallet.title,
+                text = wallet.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         },
         subtitle = {
             AnimatedAmount(
-                amount = userWallet.currentBalance,
-                currency = userWallet.currency,
+                amount = currentBalance,
+                currency = wallet.currency,
                 label = "WalletBalance",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -370,17 +375,17 @@ private fun WalletTopBar(
                 )
             }
         },
-        actions = { PrimaryToggleButton(userWallet, onPrimaryClick) },
+        actions = { PrimaryToggleButton(isPrimary) { onPrimaryClick(wallet.id, !isPrimary) } },
     )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimaryToggleButton(
-    userWallet: UserWallet,
-    onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
+    isPrimary: Boolean,
+    onPrimaryClick: () -> Unit,
 ) {
-    val (icon, @StringRes contentDescriptionRes) = if (userWallet.isPrimary) {
+    val (icon, @StringRes contentDescriptionRes) = if (isPrimary) {
         CsIcons.Filled.Star to localesR.string.non_primary_icon_description
     } else {
         CsIcons.Outlined.Star to localesR.string.primary_icon_description
@@ -394,10 +399,8 @@ private fun PrimaryToggleButton(
         state = rememberTooltipState(),
     ) {
         CsIconToggleButton(
-            checked = userWallet.isPrimary,
-            onCheckedChange = { isChecked ->
-                onPrimaryClick(userWallet.id, isChecked)
-            },
+            checked = isPrimary,
+            onCheckedChange = { onPrimaryClick() },
             icon = icon,
             contentDescription = stringResource(contentDescriptionRes),
             modifier = Modifier
@@ -422,13 +425,11 @@ private fun WalletScreenPopulatedPreview(
                     dateType = DateType.ALL,
                     selectedDate = getCurrentZonedDateTime().date,
                 ),
-                userWallet = UserWallet(
+                wallet = Wallet(
                     id = "1",
                     title = "Credit",
                     initialBalance = BigDecimal(1000),
                     currency = getUsdCurrency(),
-                    isPrimary = true,
-                    currentBalance = BigDecimal(57500),
                 ),
                 selectedTransaction = null,
                 groupedTransactions = transactions.groupByDate(),
@@ -436,6 +437,8 @@ private fun WalletScreenPopulatedPreview(
                 expenses = BigDecimal(495.90),
                 income = BigDecimal(1000),
                 graphData = emptyMap(),
+                isPrimary = true,
+                currentBalance = BigDecimal(57500),
             ),
             showNavigationIcon = true,
             onPrimaryClick = { _, _ -> },
@@ -465,13 +468,11 @@ private fun WalletScreenEmptyPreview() {
                     dateType = DateType.ALL,
                     selectedDate = getCurrentZonedDateTime().date,
                 ),
-                userWallet = UserWallet(
+                wallet = Wallet(
                     id = "1",
                     title = "Credit",
                     initialBalance = BigDecimal(1000),
                     currency = getUsdCurrency(),
-                    isPrimary = true,
-                    currentBalance = BigDecimal(57500),
                 ),
                 selectedTransaction = null,
                 groupedTransactions = emptyMap(),
@@ -479,6 +480,8 @@ private fun WalletScreenEmptyPreview() {
                 expenses = BigDecimal(495.90),
                 income = BigDecimal(1000),
                 graphData = emptyMap(),
+                isPrimary = true,
+                currentBalance = BigDecimal(57500),
             ),
             showNavigationIcon = true,
             onPrimaryClick = { _, _ -> },
