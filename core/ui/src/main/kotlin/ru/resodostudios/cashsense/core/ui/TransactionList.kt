@@ -28,7 +28,7 @@ import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -38,17 +38,17 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalHazeApi::class)
 fun LazyListScope.transactions(
-    transactionsCategories: Map<Instant, List<TransactionWithCategory>>,
+    groupedTransactions: Map<Instant, List<Transaction>>,
     hazeState: HazeState,
     hazeStyle: HazeStyle,
-    onClick: (TransactionWithCategory?) -> Unit,
-    selectedTransaction: TransactionWithCategory? = null,
+    onClick: (Transaction?) -> Unit,
+    selectedTransaction: Transaction? = null,
     onRepeatClick: (String) -> Unit = {},
     onEditClick: (String) -> Unit = {},
     onDeleteClick: () -> Unit = {},
 ) {
-    if (transactionsCategories.isNotEmpty()) {
-        transactionsCategories.forEach { transactionGroup ->
+    if (groupedTransactions.isNotEmpty()) {
+        groupedTransactions.forEach { transactionGroup ->
             stickyHeader(
                 contentType = "Date",
             ) {
@@ -69,27 +69,26 @@ fun LazyListScope.transactions(
             item { Spacer(Modifier.height(16.dp)) }
             itemsIndexed(
                 items = transactionGroup.value,
-                key = { _, transactionCategory -> transactionCategory.transaction.id },
+                key = { _, transaction -> transaction.id },
                 contentType = { _, _ -> "Transaction" }
-            ) { index, transactionCategory ->
+            ) { index, transaction ->
                 val shape = when (index) {
                     0 if transactionGroup.value.size == 1 -> ListItemPositionShapes.Single
                     0 -> ListItemPositionShapes.First
                     transactionGroup.value.lastIndex -> ListItemPositionShapes.Last
                     else -> ListItemPositionShapes.Middle
                 }
-                val selected = selectedTransaction == transactionCategory
+                val selected = selectedTransaction == transaction
                 val motionScheme = MaterialTheme.motionScheme
                 TransactionItem(
-                    transaction = transactionCategory.transaction,
-                    category = transactionCategory.category,
-                    currency = transactionCategory.transaction.currency,
+                    transaction = transaction,
+                    currency = transaction.currency,
                     modifier = Modifier
                         .hazeSource(hazeState)
                         .padding(horizontal = 16.dp)
                         .clip(shape)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        .clickable { onClick(if (selected) null else transactionCategory) }
+                        .clickable { onClick(if (selected) null else transaction) }
                         .animateItem(
                             fadeInSpec = motionScheme.defaultEffectsSpec(),
                             fadeOutSpec = motionScheme.defaultEffectsSpec(),
@@ -116,12 +115,12 @@ fun LazyListScope.transactions(
     }
 }
 
-fun List<TransactionWithCategory>.groupByDate(
+fun List<Transaction>.groupByDate(
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
-): Map<Instant, List<TransactionWithCategory>> {
+): Map<Instant, List<Transaction>> {
     return this
         .groupBy {
-            it.transaction.timestamp
+            it.timestamp
                 .toLocalDateTime(timeZone).date
                 .atTime(0, 0)
                 .toInstant(timeZone)

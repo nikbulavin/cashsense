@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
                             baseCurrencies = baseCurrencies.toSet(),
                             targetCurrency = userCurrency,
                         ),
-                    ) { wallets, exchangeRates ->
+                    ) { extendedUserWallets, exchangeRates ->
                         val exchangeRateMap = exchangeRates.associate {
                             it.baseCurrency to it.exchangeRate
                         }
@@ -77,9 +77,9 @@ class HomeViewModel @Inject constructor(
                         var totalBalance = BigDecimal.ZERO
                         val allTransactions = mutableListOf<Transaction>()
 
-                        wallets.forEach { wallet ->
-                            val walletBalance = wallet.userWallet.currentBalance
-                            val walletCurrency = wallet.userWallet.currency
+                        extendedUserWallets.forEach { wallet ->
+                            val walletBalance = wallet.currentBalance
+                            val walletCurrency = wallet.wallet.currency
 
                             val convertedBalance = if (userCurrency == walletCurrency) {
                                 walletBalance
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
                                     ?: return@combine TotalBalanceUiState.NotShown
                             }
                             totalBalance += convertedBalance
-                            allTransactions.addAll(wallet.transactionsWithCategories.map { it.transaction })
+                            allTransactions.addAll(wallet.transactions)
                         }
 
                         val (totalExpenses, totalIncome) = allTransactions

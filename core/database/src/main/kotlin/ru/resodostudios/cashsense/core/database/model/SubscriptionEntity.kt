@@ -25,11 +25,13 @@ data class SubscriptionEntity(
     val reminder: Reminder?,
 )
 
-fun SubscriptionEntity.asExternalModel() = Subscription(
-    id = id,
-    title = title,
-    amount = amount,
-    currency = currency,
-    paymentDate = paymentDate,
-    reminder = reminder,
-)
+fun SubscriptionEntity.asExternalModel(): Subscription {
+    return Subscription(
+        id = id,
+        title = title,
+        amount = amount,
+        currency = currency,
+        paymentDate = paymentDate,
+        reminder = reminder,
+    )
+}

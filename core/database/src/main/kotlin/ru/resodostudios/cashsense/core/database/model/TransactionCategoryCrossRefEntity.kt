@@ -21,7 +21,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
             parentColumns = ["id"],
             childColumns = ["category_id"],
             onDelete = ForeignKey.CASCADE,
-        )
+        ),
     ],
     indices = [
         Index(value = ["transaction_id"]),
@@ -35,7 +35,9 @@ data class TransactionCategoryCrossRefEntity(
     val categoryId: String,
 )
 
-fun TransactionCategoryCrossRefEntity.asExternalModel() = TransactionCategoryCrossRef(
-    transactionId = transactionId,
-    categoryId = categoryId,
-)
+fun TransactionCategoryCrossRefEntity.asExternalModel(): TransactionCategoryCrossRef {
+    return TransactionCategoryCrossRef(
+        transactionId = transactionId,
+        categoryId = categoryId,
+    )
+}

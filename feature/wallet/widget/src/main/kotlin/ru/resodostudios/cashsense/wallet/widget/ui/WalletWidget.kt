@@ -98,8 +98,8 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
                         walletPopulated.wallet.id.hashCode().toLong()
                     },
                 ) { walletPopulated ->
-                    val currentBalance = walletPopulated.transactionsWithCategories
-                        .sumOf { it.transaction.amount }
+                    val currentBalance = walletPopulated.transactions
+                        .sumOf { it.amount }
                         .plus(walletPopulated.wallet.initialBalance)
 
                     Column {

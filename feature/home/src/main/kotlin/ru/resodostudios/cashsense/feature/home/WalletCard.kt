@@ -52,7 +52,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
-import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
@@ -62,7 +62,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun WalletCard(
-    userWallet: UserWallet,
+    wallet: Wallet,
+    currentBalance : BigDecimal,
+    isPrimary: Boolean,
     expenses: BigDecimal,
     income: BigDecimal,
     onWalletClick: (String) -> Unit,
@@ -73,7 +75,7 @@ internal fun WalletCard(
     shape: Shape = MaterialTheme.shapes.extraLarge,
 ) {
     OutlinedCard(
-        onClick = { onWalletClick(userWallet.id) },
+        onClick = { onWalletClick(wallet.id) },
         shape = shape,
         modifier = modifier.then(if (selected) Modifier.dropShadow(shape) else Modifier),
     ) {
@@ -85,14 +87,14 @@ internal fun WalletCard(
                 .fillMaxWidth(),
         ) {
             Text(
-                text = userWallet.title,
+                text = wallet.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,
             )
             AnimatedAmount(
-                amount = userWallet.currentBalance,
-                currency = userWallet.currency,
+                amount = currentBalance,
+                currency = wallet.currency,
                 label = "WalletBalance",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -100,9 +102,9 @@ internal fun WalletCard(
             TagsSection(
                 expenses = expenses,
                 income = income,
-                currency = userWallet.currency,
+                currency = wallet.currency,
                 modifier = Modifier.padding(top = 8.dp),
-                isPrimary = userWallet.isPrimary,
+                isPrimary = isPrimary,
             )
         }
         val addTransactionText = stringResource(localesR.string.add_transaction)
@@ -126,7 +128,7 @@ internal fun WalletCard(
             customItem(
                 buttonGroupContent = {
                     Button(
-                        onClick = { onNewTransactionClick(userWallet.id) },
+                        onClick = { onNewTransactionClick(wallet.id) },
                         shapes = ButtonDefaults.shapes(),
                     ) {
                         Icon(
@@ -152,7 +154,7 @@ internal fun WalletCard(
                     },
                     text = { Text(addTransactionText) },
                     onClick = {
-                        onNewTransactionClick(userWallet.id)
+                        onNewTransactionClick(wallet.id)
                         state.dismiss()
                     },
                 )
@@ -160,7 +162,7 @@ internal fun WalletCard(
             customItem(
                 buttonGroupContent = {
                     OutlinedButton(
-                        onClick = { onTransferClick(userWallet.id) },
+                        onClick = { onTransferClick(wallet.id) },
                         shapes = ButtonDefaults.shapes(),
                     ) {
                         Icon(
@@ -186,7 +188,7 @@ internal fun WalletCard(
                     },
                     text = { Text(addTransferText) },
                     onClick = {
-                        onTransferClick(userWallet.id)
+                        onTransferClick(wallet.id)
                         state.dismiss()
                     },
                 )
@@ -302,14 +304,14 @@ fun WalletCardPreview() {
     CsTheme {
         Surface {
             WalletCard(
-                userWallet = UserWallet(
+                wallet = Wallet(
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
                     currency = getUsdCurrency(),
-                    currentBalance = BigDecimal(2499.99),
-                    isPrimary = true,
                 ),
+                currentBalance = BigDecimal(2499.99),
+                isPrimary = true,
                 expenses = BigDecimal(200),
                 income = BigDecimal(800),
                 onWalletClick = {},
@@ -329,14 +331,14 @@ fun WalletCardSelectedPreview() {
     CsTheme {
         Surface {
             WalletCard(
-                userWallet = UserWallet(
+                wallet = Wallet(
                     id = "",
                     title = "Debit",
                     initialBalance = BigDecimal(1499.99),
                     currency = getUsdCurrency(),
-                    currentBalance = BigDecimal(2499.99),
-                    isPrimary = true,
                 ),
+                currentBalance = BigDecimal(2499.99),
+                isPrimary = true,
                 expenses = BigDecimal(200),
                 income = BigDecimal(800),
                 onWalletClick = {},

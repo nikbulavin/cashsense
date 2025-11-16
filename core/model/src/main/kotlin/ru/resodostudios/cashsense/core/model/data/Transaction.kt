@@ -11,8 +11,9 @@ data class Transaction(
     val description: String?,
     val amount: BigDecimal,
     val timestamp: Instant,
-    val status: StatusType,
+    val completed: Boolean,
     val ignored: Boolean,
     val transferId: Uuid?,
     val currency: Currency,
+    val category: Category?,
 )

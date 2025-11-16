@@ -57,16 +57,14 @@ class Home2PaneViewModel @Inject constructor(
         viewModelScope.launch {
             lastRemovedWalletState.value?.let {
                 val wallet = Wallet(
-                    id = it.userWallet.id,
-                    title = it.userWallet.title,
-                    initialBalance = it.userWallet.initialBalance,
-                    currency = it.userWallet.currency,
+                    id = it.wallet.id,
+                    title = it.wallet.title,
+                    initialBalance = it.wallet.initialBalance,
+                    currency = it.wallet.currency,
                 )
                 walletsRepository.upsertWallet(wallet)
-                if (it.userWallet.isPrimary) {
-                    userDataRepository.setPrimaryWallet(wallet.id, true)
-                }
-                it.transactionsWithCategories.forEach { transactionWithCategory ->
+                if (it.isPrimary) userDataRepository.setPrimaryWallet(wallet.id, true)
+                it.transactions.forEach { transactionWithCategory ->
                     transactionsRepository.upsertTransaction(transactionWithCategory)
                 }
             }

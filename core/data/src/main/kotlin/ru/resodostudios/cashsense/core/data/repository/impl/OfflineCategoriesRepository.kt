@@ -11,18 +11,20 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import javax.inject.Inject
 
 internal class OfflineCategoriesRepository @Inject constructor(
-    private val dao: CategoryDao
+    private val dao: CategoryDao,
 ) : CategoriesRepository {
 
-    override fun getCategory(id: String): Flow<Category> =
-        dao.getCategoryEntity(id).map { it.asExternalModel() }
+    override fun getCategory(id: String): Flow<Category> {
+        return dao.getCategoryEntity(id).map { it.asExternalModel() }
+    }
 
-    override fun getCategories(): Flow<List<Category>> =
-        dao.getCategoryEntities().map { it.map(CategoryEntity::asExternalModel) }
+    override fun getCategories(): Flow<List<Category>> {
+        return dao.getCategoryEntities().map { it.map(CategoryEntity::asExternalModel) }
+    }
 
-    override suspend fun upsertCategory(category: Category) =
-        dao.upsertCategory(category.asEntity()!!)
+    override suspend fun upsertCategory(category: Category) {
+        category.asEntity()?.let { dao.upsertCategory(it) }
+    }
 
-    override suspend fun deleteCategory(id: String) =
-        dao.deleteCategory(id)
+    override suspend fun deleteCategory(id: String) = dao.deleteCategory(id)
 }

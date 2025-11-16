@@ -6,13 +6,13 @@ import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
 import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
 
-fun List<TransactionWithCategory>.getGraphData(dateType: DateType): Map<Int, BigDecimal> {
+fun List<Transaction>.getGraphData(dateType: DateType): Map<Int, BigDecimal> {
     return this
         .groupBy {
-            val zonedDateTime = it.transaction.timestamp.getZonedDateTime()
+            val zonedDateTime = it.timestamp.getZonedDateTime()
             when (dateType) {
                 YEAR -> zonedDateTime.month.number
                 ALL, MONTH -> zonedDateTime.day
@@ -24,7 +24,7 @@ fun List<TransactionWithCategory>.getGraphData(dateType: DateType): Map<Int, Big
                 val minKey = this.keys.minOrNull() ?: 0
                 val maxKey = this.keys.maxOrNull() ?: 0
                 (minKey..maxKey).associateWith { key ->
-                    this[key]?.sumOf { it.transaction.amount }?.abs() ?: BigDecimal.ZERO
+                    this[key]?.sumOf { it.amount }?.abs() ?: BigDecimal.ZERO
                 }
             } else {
                 emptyMap()

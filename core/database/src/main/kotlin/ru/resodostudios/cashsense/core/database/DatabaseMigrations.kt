@@ -2,6 +2,8 @@ package ru.resodostudios.cashsense.core.database
 
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * Automatic schema migrations sometimes require extra instructions to perform the migration, for
@@ -46,4 +48,45 @@ internal object DatabaseMigrations {
         toColumnName = "id",
     )
     class Schema9to10 : AutoMigrationSpec
+}
+
+internal val Schema11to12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Create a new transactions table with the new schema
+        db.execSQL(
+            """
+            CREATE TABLE `transactions_new` (
+                `id` TEXT NOT NULL PRIMARY KEY,
+                `wallet_owner_id` TEXT NOT NULL,
+                `description` TEXT,
+                `amount` TEXT NOT NULL,
+                `timestamp` INTEGER NOT NULL,
+                `completed` INTEGER NOT NULL DEFAULT 1,
+                `ignored` INTEGER NOT NULL DEFAULT 0,
+                `transfer_id` TEXT,
+                FOREIGN KEY(`wallet_owner_id`) REFERENCES `wallets`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+            )
+        """
+        )
+
+        // Copy data from the old table to the new one, converting `status` to `completed`
+        db.execSQL(
+            """
+            INSERT INTO `transactions_new` (id, wallet_owner_id, description, amount, timestamp, completed)
+            SELECT id, wallet_owner_id, description, amount, timestamp,
+                   CASE WHEN status = 'PENDING' THEN 0 ELSE 1 END
+            FROM `transactions`
+        """
+        )
+
+        // Drop the old transactions table
+        db.execSQL("DROP TABLE `transactions`")
+
+        // Rename the new table to the original name
+        db.execSQL("ALTER TABLE `transactions_new` RENAME TO `transactions`")
+
+        // Recreate indices
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_wallet_owner_id` ON `transactions` (`wallet_owner_id`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_transfer_id` ON `transactions` (`transfer_id`)")
+    }
 }

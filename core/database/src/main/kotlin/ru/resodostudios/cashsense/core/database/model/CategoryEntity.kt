@@ -16,8 +16,10 @@ data class CategoryEntity(
     val iconId: Int,
 )
 
-fun CategoryEntity.asExternalModel() = Category(
-    id = id,
-    title = title,
-    iconId = iconId,
-)
+fun CategoryEntity.asExternalModel(): Category {
+    return Category(
+        id = id,
+        title = title,
+        iconId = iconId,
+    )
+}

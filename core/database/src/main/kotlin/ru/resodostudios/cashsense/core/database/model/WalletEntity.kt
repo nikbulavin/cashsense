@@ -8,7 +8,7 @@ import java.math.BigDecimal
 import java.util.Currency
 
 @Entity(
-    tableName = "wallets"
+    tableName = "wallets",
 )
 data class WalletEntity(
     @PrimaryKey
@@ -19,9 +19,11 @@ data class WalletEntity(
     val currency: Currency,
 )
 
-fun WalletEntity.asExternalModel() = Wallet(
-    id = id,
-    title = title,
-    initialBalance = initialBalance,
-    currency = currency,
-)
+fun WalletEntity.asExternalModel(): Wallet {
+    return Wallet(
+        id = id,
+        title = title,
+        initialBalance = initialBalance,
+        currency = currency,
+    )
+}

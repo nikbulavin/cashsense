@@ -2,7 +2,7 @@ package ru.resodostudios.cashsense.feature.home
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.model.data.UserWallet
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 
@@ -16,26 +16,26 @@ class ExtendedUserWalletPreviewParameterProvider : PreviewParameterProvider<List
         get() = sequenceOf(
             listOf(
                 ExtendedUserWallet(
-                    userWallet = UserWallet(
+                    wallet = Wallet(
                         id = "1",
                         title = "Credit",
                         initialBalance = BigDecimal(0),
-                        currentBalance = BigDecimal(1000),
                         currency = getUsdCurrency(),
-                        isPrimary = true,
                     ),
-                    transactionsWithCategories = emptyList(),
+                    transactions = emptyList(),
+                    currentBalance = BigDecimal(1000),
+                    isPrimary = true,
                 ),
                 ExtendedUserWallet(
-                    userWallet = UserWallet(
+                    wallet = Wallet(
                         id = "2",
                         title = "Debit",
                         initialBalance = BigDecimal(0),
-                        currentBalance = BigDecimal(500),
                         currency = getUsdCurrency(),
-                        isPrimary = false,
                     ),
-                    transactionsWithCategories = emptyList(),
+                    transactions = emptyList(),
+                    currentBalance = BigDecimal(500),
+                    isPrimary = false,
                 ),
             )
         )

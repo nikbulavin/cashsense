@@ -105,30 +105,30 @@ fun FinanceGraph(
         }
     }
 
-    var xTarget by remember { mutableIntStateOf(0) }
+    var xTarget by remember { mutableIntStateOf(-1) }
     val hapticFeedback = LocalHapticFeedback.current
+
     val markerVisibilityListener = remember {
         object : CartesianMarkerVisibilityListener {
 
             override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-                super.onUpdated(marker, targets)
                 val target = targets.firstOrNull() as? LineCartesianLayerMarkerTarget ?: return
                 val markerIndex = target.points.last().entry.x.toInt()
-
                 if (markerIndex != xTarget) {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                     xTarget = markerIndex
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                 }
             }
 
             override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
                 val target = targets.firstOrNull() as? LineCartesianLayerMarkerTarget ?: return
-                xTarget = target.points.last().entry.x.toInt()
+                val markerIndex = target.points.last().entry.x.toInt()
+                xTarget = markerIndex
                 hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
             }
 
             override fun onHidden(marker: CartesianMarker) {
-                xTarget = 0
+                xTarget = -1
             }
         }
     }

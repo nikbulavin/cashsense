@@ -26,8 +26,8 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
     override fun getConvertedCurrencies(
         baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
-    ): Flow<List<CurrencyExchangeRate>> =
-        dao.getCurrencyExchangeRateEntities(
+    ): Flow<List<CurrencyExchangeRate>> {
+        return dao.getCurrencyExchangeRateEntities(
             targetCurrency = targetCurrency,
             baseCurrencies = baseCurrencies,
         )
@@ -43,11 +43,13 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                     removeAll(cachedBaseCurrencies)
                 }
                 if (missingBaseCurrencies.isNotEmpty()) {
-                    val exchangeRates = getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
+                    val exchangeRates =
+                        getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
                     dao.upsertCurrencyExchangeRates(exchangeRates)
                 }
             }
             .catch { emit(emptyList()) }
+    }
 
     override suspend fun deleteOutdatedCurrencyExchangeRates() {
         val cutoff = Clock.System.now().minus(3.days)

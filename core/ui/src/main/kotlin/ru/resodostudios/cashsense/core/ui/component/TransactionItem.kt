@@ -55,7 +55,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
-import ru.resodostudios.cashsense.core.model.data.StatusType.PENDING
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -69,7 +68,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun TransactionItem(
     transaction: Transaction,
-    category: Category?,
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
@@ -80,8 +78,8 @@ internal fun TransactionItem(
     val (icon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
     } else {
-        val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
-        val title = category?.title ?: stringResource(localesR.string.uncategorized)
+        val iconId = transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId
+        val title = transaction.category?.title ?: stringResource(localesR.string.uncategorized)
         StoredIcon.asImageVector(iconId) to title
     }
 
@@ -130,7 +128,7 @@ internal fun TransactionItem(
                         }
                     }
                     AnimatedVisibility(
-                        visible = transaction.status == PENDING,
+                        visible = !transaction.completed,
                         enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
                         exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                     ) {
@@ -307,15 +305,15 @@ fun TransactionItemPreview() {
                     description = null,
                     amount = (-25).toBigDecimal(),
                     timestamp = Instant.parse("2024-09-13T14:20:00Z"),
-                    status = PENDING,
+                    completed = false,
                     ignored = true,
                     transferId = null,
                     currency = getUsdCurrency(),
-                ),
-                category = Category(
-                    id = "1",
-                    title = "Fastfood",
-                    iconId = StoredIcon.FASTFOOD.storedId,
+                    category = Category(
+                        id = "1",
+                        title = "Fastfood",
+                        iconId = StoredIcon.FASTFOOD.storedId,
+                    ),
                 ),
                 currency = getUsdCurrency(),
             )

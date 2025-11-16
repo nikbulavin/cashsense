@@ -7,11 +7,12 @@ import java.util.Currency
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-fun NetworkCurrencyExchangeRate.asEntity() =
-    CurrencyExchangeRateEntity(
+fun NetworkCurrencyExchangeRate.asEntity(): CurrencyExchangeRateEntity {
+    return CurrencyExchangeRateEntity(
         id = base + target,
         baseCurrency = Currency.getInstance(base),
         targetCurrency = Currency.getInstance(target),
         exchangeRate = exchangeRate?.toBigDecimal() ?: BigDecimal.ZERO,
         timestamp = Instant.parse(timestamp ?: Clock.System.now().toString()),
     )
+}

@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.util
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
 import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
@@ -11,25 +12,22 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.INCOME
 import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.TransactionWithCategory
 
-fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: TransactionFilter): FilterableTransactions {
-    val filteredTransactions = this
-        .filter {
-            when (transactionFilter.financeType) {
-                NOT_SET -> true
-                EXPENSES -> it.transaction.amount.signum() < 0
-                INCOME -> it.transaction.amount.signum() > 0
-            }
+fun List<Transaction>.applyTransactionFilter(transactionFilter: TransactionFilter): FilterableTransactions {
+    val filteredTransactions = this.filter { transaction ->
+        val financeTypeMatches = when (transactionFilter.financeType) {
+            NOT_SET -> true
+            EXPENSES -> transaction.amount.signum() < 0
+            INCOME -> transaction.amount.signum() > 0
         }
-        .filter {
-            when (transactionFilter.dateType) {
-                ALL -> true
-                WEEK -> it.transaction.timestamp.getZonedWeek() == getCurrentWeek()
-                MONTH -> matchesSelectedDate(it.transaction, transactionFilter)
-                YEAR -> it.transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year
-            }
+        val dateTypeMatches = when (transactionFilter.dateType) {
+            ALL -> true
+            WEEK -> transaction.timestamp.getZonedWeek() == getCurrentWeek()
+            MONTH -> matchesCurrentMonth(transaction, transactionFilter.selectedDate)
+            YEAR -> transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year
         }
+        financeTypeMatches && dateTypeMatches
+    }
 
     val availableCategories = filteredTransactions
         .asSequence()
@@ -38,7 +36,7 @@ fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: Tran
         .sortedBy { category ->
             filteredTransactions
                 .filter { it.category == category }
-                .sumOf { it.transaction.amount }
+                .sumOf { it.amount }
         }
         .toList()
 
@@ -49,13 +47,15 @@ fun List<TransactionWithCategory>.applyTransactionFilter(transactionFilter: Tran
     }
 
     return FilterableTransactions(
-        transactionsCategories = filteredByCategories,
+        transactions = filteredByCategories,
         availableCategories = availableCategories,
     )
 }
 
-private fun matchesSelectedDate(
+private fun matchesCurrentMonth(
     transaction: Transaction,
-    transactionFilter: TransactionFilter,
-) = transaction.timestamp.getZonedYear() == transactionFilter.selectedDate.year
-        && transaction.timestamp.getZonedMonth() == transactionFilter.selectedDate.month.number
+    selectedDate: LocalDate,
+): Boolean {
+    return transaction.timestamp.getZonedYear() == selectedDate.year &&
+            transaction.timestamp.getZonedMonth() == selectedDate.month.number
+}

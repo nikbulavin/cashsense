@@ -7,8 +7,6 @@ import java.util.Currency
 
 interface WalletsRepository {
 
-    fun getWallet(id: String): Flow<Wallet>
-
     fun getExtendedWallet(walletId: String): Flow<ExtendedWallet>
 
     fun getExtendedWallets(): Flow<List<ExtendedWallet>>

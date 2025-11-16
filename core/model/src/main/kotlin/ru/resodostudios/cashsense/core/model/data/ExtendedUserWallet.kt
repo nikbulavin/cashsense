@@ -1,6 +1,10 @@
 package ru.resodostudios.cashsense.core.model.data
 
+import java.math.BigDecimal
+
 data class ExtendedUserWallet(
-    val userWallet: UserWallet,
-    val transactionsWithCategories: List<TransactionWithCategory>,
+    val wallet: Wallet,
+    val transactions: List<Transaction>,
+    val currentBalance: BigDecimal,
+    val isPrimary: Boolean,
 )
