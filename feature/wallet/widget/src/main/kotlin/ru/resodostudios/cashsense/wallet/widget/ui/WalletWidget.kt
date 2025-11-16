@@ -67,18 +67,19 @@ internal class WalletWidget : GlanceAppWidget() {
         }
 
         provideContent {
-            val wallets by walletsRepository.getExtendedWallets()
-                .collectAsState(initialWallets)
+            val extendedWallets by walletsRepository.getExtendedWallets().collectAsState(initialWallets)
 
             CsGlanceTheme {
-                WalletWidgetContent(wallets)
+                WalletWidgetContent(extendedWallets)
             }
         }
     }
 }
 
 @Composable
-private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
+private fun WalletWidgetContent(
+    extendedWallets: List<ExtendedWallet>,
+) {
     val context = LocalContext.current
     Scaffold(
         titleBar = {
@@ -90,25 +91,19 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
         },
         modifier = GlanceModifier.cornerRadius(24.dp),
     ) {
-        if (wallets.isNotEmpty()) {
+        if (extendedWallets.isNotEmpty()) {
             LazyColumn {
                 items(
-                    items = wallets,
-                    itemId = { walletPopulated ->
-                        walletPopulated.wallet.id.hashCode().toLong()
-                    },
-                ) { walletPopulated ->
-                    val currentBalance = walletPopulated.transactions
-                        .sumOf { it.amount }
-                        .plus(walletPopulated.wallet.initialBalance)
-
+                    items = extendedWallets,
+                    itemId = { it.wallet.id.hashCode().toLong() },
+                ) { extendedWallet ->
                     Column {
                         WalletItem(
                             context = context,
-                            walletId = walletPopulated.wallet.id,
-                            title = walletPopulated.wallet.title,
-                            currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                            onClick = openHomeScreen(context, walletPopulated.wallet.id),
+                            walletId = extendedWallet.wallet.id,
+                            title = extendedWallet.wallet.title,
+                            currentBalance = extendedWallet.currentBalance.formatAmount(extendedWallet.wallet.currency),
+                            onClick = openHomeScreen(context, extendedWallet.wallet.id),
                         )
                         Spacer(GlanceModifier.height(4.dp))
                     }
