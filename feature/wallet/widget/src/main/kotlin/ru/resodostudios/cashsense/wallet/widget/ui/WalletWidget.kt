@@ -51,7 +51,7 @@ import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-class WalletWidget : GlanceAppWidget() {
+internal class WalletWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val walletsEntryPoint = EntryPointAccessors.fromApplication(
