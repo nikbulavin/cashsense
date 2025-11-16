@@ -64,7 +64,7 @@ private fun CategoryChip(
         },
         label = {
             Text(
-                text = category.title.toString(),
+                text = category.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

@@ -25,7 +25,7 @@ sealed interface TransactionDialogEvent {
 
     data class UpdateDescription(val description: String) : TransactionDialogEvent
 
-    data class UpdateCategory(val category: Category) : TransactionDialogEvent
+    data class UpdateCategory(val category: Category?) : TransactionDialogEvent
 
     data class UpdateTransactionIgnoring(val ignored: Boolean) : TransactionDialogEvent
 

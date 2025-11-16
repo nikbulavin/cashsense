@@ -251,7 +251,7 @@ private fun TransactionStatusChoiceRow(
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
     categories: List<Category>,
-    onCategoryClick: (Category) -> Unit,
+    onCategoryClick: (Category?) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
@@ -291,7 +291,7 @@ private fun CategoryDropdownMenu(
                     )
                 },
                 onClick = {
-                    onCategoryClick(Category())
+                    onCategoryClick(null)
                     iconId = 0
                     expanded = false
                 },
@@ -307,14 +307,14 @@ private fun CategoryDropdownMenu(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = category.title.toString(),
+                            text = category.title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
                     onClick = {
                         onCategoryClick(category)
-                        iconId = category.iconId ?: 0
+                        iconId = category.iconId
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
