@@ -22,7 +22,7 @@ import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.appwidget.lazy.items
+import androidx.glance.appwidget.lazy.itemsIndexed
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -87,19 +87,21 @@ private fun WalletWidgetContent(
     ) {
         if (extendedWallets.isNotEmpty()) {
             LazyColumn {
-                items(
+                itemsIndexed(
                     items = extendedWallets,
-                    itemId = { it.wallet.id.hashCode().toLong() },
-                ) { extendedWallet ->
+                    itemId = { _, extendedWallet -> extendedWallet.wallet.id.hashCode().toLong() },
+                ) { index, extendedWallet ->
                     Column {
                         WalletItem(
                             context = context,
                             walletId = extendedWallet.wallet.id,
                             title = extendedWallet.wallet.title,
-                            currentBalance = extendedWallet.currentBalance.formatAmount(extendedWallet.wallet.currency),
+                            currentBalance = extendedWallet.currentBalance.formatAmount(
+                                extendedWallet.wallet.currency
+                            ),
                             onClick = openHomeScreen(context, extendedWallet.wallet.id),
                         )
-                        Spacer(GlanceModifier.height(4.dp))
+                        Spacer(GlanceModifier.height(if (index == extendedWallets.lastIndex) 12.dp else 4.dp))
                     }
                 }
             }
@@ -119,7 +121,7 @@ private fun WalletWidgetContent(
 }
 
 @Composable
-fun WalletItem(
+private fun WalletItem(
     context: Context,
     walletId: String,
     title: String,
