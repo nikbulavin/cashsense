@@ -36,10 +36,8 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
-import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
@@ -51,34 +49,31 @@ import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-class WalletWidget : GlanceAppWidget() {
+internal class WalletWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val walletsEntryPoint = EntryPointAccessors.fromApplication(
             context.applicationContext,
             WalletWidgetEntryPoint::class.java,
         )
-        val walletsRepository = walletsEntryPoint.walletsRepository()
+        val getExtendedUserWalletsUseCase = walletsEntryPoint.getExtendedUserWalletsUseCase()
 
-        val initialWallets = withContext(Dispatchers.IO) {
-            walletsRepository.getExtendedWallets()
-                .first()
-                .sortedByDescending { it.wallet.id }
-        }
+        val initialWallets = getExtendedUserWalletsUseCase().first()
 
         provideContent {
-            val wallets by walletsRepository.getExtendedWallets()
-                .collectAsState(initialWallets)
+            val extendedWallets by getExtendedUserWalletsUseCase().collectAsState(initialWallets)
 
             CsGlanceTheme {
-                WalletWidgetContent(wallets)
+                WalletWidgetContent(extendedWallets)
             }
         }
     }
 }
 
 @Composable
-private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
+private fun WalletWidgetContent(
+    extendedWallets: List<ExtendedUserWallet>,
+) {
     val context = LocalContext.current
     Scaffold(
         titleBar = {
@@ -90,29 +85,26 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
         },
         modifier = GlanceModifier.cornerRadius(24.dp),
     ) {
-        if (wallets.isNotEmpty()) {
+        if (extendedWallets.isNotEmpty()) {
             LazyColumn {
                 items(
-                    items = wallets,
-                    itemId = { walletPopulated ->
-                        walletPopulated.wallet.id.hashCode().toLong()
-                    },
-                ) { walletPopulated ->
-                    val currentBalance = walletPopulated.transactions
-                        .sumOf { it.amount }
-                        .plus(walletPopulated.wallet.initialBalance)
-
+                    items = extendedWallets,
+                    itemId = { it.wallet.id.hashCode().toLong() },
+                ) { extendedWallet ->
                     Column {
                         WalletItem(
                             context = context,
-                            walletId = walletPopulated.wallet.id,
-                            title = walletPopulated.wallet.title,
-                            currentBalance = currentBalance.formatAmount(walletPopulated.wallet.currency),
-                            onClick = openHomeScreen(context, walletPopulated.wallet.id),
+                            walletId = extendedWallet.wallet.id,
+                            title = extendedWallet.wallet.title,
+                            currentBalance = extendedWallet.currentBalance.formatAmount(
+                                extendedWallet.wallet.currency
+                            ),
+                            onClick = openHomeScreen(context, extendedWallet.wallet.id),
                         )
                         Spacer(GlanceModifier.height(4.dp))
                     }
                 }
+                item { Spacer(GlanceModifier.height(8.dp)) }
             }
         } else {
             Box(
@@ -130,7 +122,7 @@ private fun WalletWidgetContent(wallets: List<ExtendedWallet>) {
 }
 
 @Composable
-fun WalletItem(
+private fun WalletItem(
     context: Context,
     walletId: String,
     title: String,
@@ -143,7 +135,7 @@ fun WalletItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
-            .cornerRadius(12.dp)
+            .cornerRadius(16.dp)
             .background(GlanceTheme.colors.secondaryContainer)
             .clickable(onClick),
     ) {
@@ -161,7 +153,7 @@ fun WalletItem(
             Text(
                 text = currentBalance,
                 style = CsGlanceTypography.bodyMedium
-                    .copy(color = GlanceTheme.colors.onSecondaryContainer),
+                    .copy(color = GlanceTheme.colors.onSurfaceVariant),
                 maxLines = 1,
             )
         }

@@ -5,7 +5,7 @@ import androidx.glance.GlanceTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 
 @Composable
-fun CsGlanceTheme(
+internal fun CsGlanceTheme(
     content: @Composable () -> Unit,
 ) {
     GlanceTheme(
