@@ -46,8 +46,8 @@ internal class CategoryDialogViewModel @Inject constructor(
             _categoryDialogUiState.update {
                 CategoryDialogUiState(
                     id = id,
-                    title = category.title.toString(),
-                    iconId = category.iconId ?: 0,
+                    title = category.title,
+                    iconId = category.iconId,
                 )
             }
         }

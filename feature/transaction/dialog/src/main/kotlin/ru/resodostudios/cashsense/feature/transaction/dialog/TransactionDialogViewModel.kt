@@ -145,7 +145,7 @@ internal class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun updateCategory(category: Category) {
+    private fun updateCategory(category: Category?) {
         _transactionDialogUiState.update {
             it.copy(category = category)
         }
@@ -215,7 +215,7 @@ data class TransactionDialogUiState(
     val amount: String = "",
     val currency: Currency = getUsdCurrency(),
     val date: Instant = Clock.System.now(),
-    val category: Category? = Category(),
+    val category: Category? = null,
     val transactionType: TransactionType = EXPENSE,
     val completed: Boolean = true,
     val ignored: Boolean = false,

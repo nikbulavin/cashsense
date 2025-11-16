@@ -46,7 +46,7 @@ internal fun CategoryItem(
         CsListItemEmphasized(
             headlineContent = {
                 Text(
-                    text = category.title.toString(),
+                    text = category.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -79,7 +79,7 @@ internal fun CategoryItem(
                             contentDescription = null,
                         )
                     },
-                    onClick = { category.id?.let { onEditClick(it) } },
+                    onClick = { onEditClick(category.id) },
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
@@ -93,7 +93,7 @@ internal fun CategoryItem(
                             contentDescription = null,
                         )
                     },
-                    onClick = { category.id?.let { onDeleteClick(it) } },
+                    onClick = { onDeleteClick(category.id) },
                     colors = ListItemDefaults.colors().copy(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                     ),
