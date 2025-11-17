@@ -87,6 +87,8 @@ internal fun TransactionItem(
     val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
 
+    val actionButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+
     Column(modifier = modifier) {
         CsListItemEmphasized(
             headlineContent = {
@@ -195,7 +197,7 @@ internal fun TransactionItem(
                         modifier = Modifier
                             .padding(bottom = 6.dp)
                             .clip(ListItemPositionShapes.Single)
-                            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                            .background(actionButtonContainerColor)
                             .clickable { expanded = !expanded },
                     )
                     Spacer(modifier = Modifier.size(6.dp))
@@ -212,7 +214,7 @@ internal fun TransactionItem(
                         },
                         onClick = { onRepeatClick(transaction.id) },
                         colors = ListItemDefaults.colors().copy(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            containerColor = actionButtonContainerColor,
                         ),
                         shape = ListItemPositionShapes.First,
                     )
@@ -226,7 +228,7 @@ internal fun TransactionItem(
                         },
                         onClick = { onEditClick(transaction.id) },
                         colors = ListItemDefaults.colors().copy(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                            containerColor = actionButtonContainerColor,
                         ),
                         shape = ListItemPositionShapes.Middle,
                     )
@@ -241,7 +243,7 @@ internal fun TransactionItem(
                     },
                     onClick = onDeleteClick,
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        containerColor = actionButtonContainerColor,
                     ),
                     shape = if (isTransfer) ListItemPositionShapes.Single else ListItemPositionShapes.Last,
                 )
