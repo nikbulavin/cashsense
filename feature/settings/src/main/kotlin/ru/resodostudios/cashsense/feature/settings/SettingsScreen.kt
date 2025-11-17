@@ -358,7 +358,7 @@ private fun LazyListScope.appearance(
                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                             },
                             colors = ToggleButtonDefaults.toggleButtonColors().copy(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                             ),
                         ) {
                             Icon(

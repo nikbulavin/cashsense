@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -87,7 +88,7 @@ fun LazyListScope.transactions(
                         .hazeSource(hazeState)
                         .padding(horizontal = 16.dp)
                         .clip(shape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
                         .clickable { onClick(if (selected) null else transaction) }
                         .animateItem(
                             fadeInSpec = motionScheme.defaultEffectsSpec(),

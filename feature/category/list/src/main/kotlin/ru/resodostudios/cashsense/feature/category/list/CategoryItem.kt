@@ -42,6 +42,8 @@ internal fun CategoryItem(
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
 
+    val actionButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+
     Column(modifier = modifier) {
         CsListItemEmphasized(
             headlineContent = {
@@ -81,7 +83,7 @@ internal fun CategoryItem(
                     },
                     onClick = { onEditClick(category.id) },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        containerColor = actionButtonContainerColor,
                     ),
                     shape = ListItemPositionShapes.First,
                 )
@@ -95,7 +97,7 @@ internal fun CategoryItem(
                     },
                     onClick = { onDeleteClick(category.id) },
                     colors = ListItemDefaults.colors().copy(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        containerColor = actionButtonContainerColor,
                     ),
                     shape = ListItemPositionShapes.Last,
                 )

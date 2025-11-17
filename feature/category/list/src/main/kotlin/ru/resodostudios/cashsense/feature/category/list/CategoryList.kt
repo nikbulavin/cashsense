@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.model.data.Category
 
@@ -19,7 +21,7 @@ internal fun LazyGridScope.categories(
 ) {
     itemsIndexed(
         items = categories,
-        key = { _, category -> category.id!! },
+        key = { _, category -> category.id },
         contentType = { _, _ -> "Category" },
     ) { index, category ->
         val shape = when (index) {
@@ -34,7 +36,7 @@ internal fun LazyGridScope.categories(
             category = category,
             modifier = Modifier
                 .clip(shape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
                 .clickable { onCategoryClick(if (selected) null else category) }
                 .animateItem(),
             selected = selected,
