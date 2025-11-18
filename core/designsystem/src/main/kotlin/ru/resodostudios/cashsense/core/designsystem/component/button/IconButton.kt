@@ -2,10 +2,12 @@
 
 package ru.resodostudios.cashsense.core.designsystem.component.button
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.OutlinedIconButton
@@ -28,6 +30,7 @@ fun CsIconButton(
     contentDescription: String,
     modifier: Modifier = Modifier,
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconButtonColors = IconButtonDefaults.iconButtonVibrantColors(),
 ) {
     TooltipBox(
         modifier = modifier,
@@ -40,7 +43,7 @@ fun CsIconButton(
         IconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
-            colors = IconButtonDefaults.iconButtonVibrantColors(),
+            colors = colors,
         ) {
             Icon(
                 imageVector = icon,
@@ -57,6 +60,8 @@ fun CsOutlinedIconButton(
     contentDescription: String,
     modifier: Modifier = Modifier,
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconButtonColors = IconButtonDefaults.outlinedIconButtonVibrantColors(),
+    border: BorderStroke = IconButtonDefaults.outlinedIconButtonVibrantBorder(true),
 ) {
     TooltipBox(
         modifier = modifier,
@@ -69,8 +74,8 @@ fun CsOutlinedIconButton(
         OutlinedIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
-            colors = IconButtonDefaults.outlinedIconButtonVibrantColors(),
-            border = IconButtonDefaults.outlinedIconButtonVibrantBorder(true),
+            colors = colors,
+            border = border,
         ) {
             Icon(
                 imageVector = icon,
