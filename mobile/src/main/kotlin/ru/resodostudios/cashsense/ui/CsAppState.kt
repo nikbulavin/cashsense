@@ -30,12 +30,10 @@ import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
 import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
-import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettings
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
 import kotlin.time.Duration.Companion.seconds
 
@@ -129,11 +127,7 @@ class CsAppState(
                 HOME -> navController.navigateToHome(navOptions = topLevelNavOptions)
                 CATEGORIES -> navController.navigateToCategories(topLevelNavOptions)
                 SUBSCRIPTIONS -> navController.navigateToSubscriptions(topLevelNavOptions)
-                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
             }
-
-            snackbarBottomPadding =
-                if (topLevelDestination == SETTINGS) 0.dp else defaultSnackbarBottomPadding
         }
     }
 }

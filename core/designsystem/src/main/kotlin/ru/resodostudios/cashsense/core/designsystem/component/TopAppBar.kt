@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -19,11 +20,15 @@ fun CsTopAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+    navigationIcon: @Composable (() -> Unit) = {},
+    actions: @Composable (RowScope.() -> Unit) = {},
 ) {
     CenterAlignedTopAppBar(
         title = { Text(stringResource(titleRes)) },
         modifier = modifier.testTag("csTopAppBar"),
         scrollBehavior = scrollBehavior,
         colors = colors,
+        navigationIcon = navigationIcon,
+        actions = actions,
     )
 }

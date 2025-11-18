@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +41,10 @@ import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
@@ -65,6 +70,7 @@ fun HomeScreen(
     undoWalletRemoval: () -> Unit,
     clearUndoState: () -> Unit,
     onTotalBalanceClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
@@ -85,6 +91,7 @@ fun HomeScreen(
         undoWalletRemoval = undoWalletRemoval,
         clearUndoState = clearUndoState,
         onTotalBalanceClick = onTotalBalanceClick,
+        onSettingsClick = onSettingsClick,
     )
 }
 
@@ -107,6 +114,7 @@ internal fun HomeScreen(
     undoWalletRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
     onTotalBalanceClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
     val undoText = stringResource(localesR.string.undo)
@@ -136,6 +144,22 @@ internal fun HomeScreen(
                     scrolledContainerColor = Color.Transparent,
                     containerColor = Color.Transparent,
                 ),
+                navigationIcon = {
+                    CsIconButton(
+                        onClick = onTotalBalanceClick,
+                        icon = CsIcons.Outlined.AccountBalance,
+                        contentDescription = stringResource(localesR.string.total_balance),
+                        tooltipPosition = TooltipAnchorPosition.Right,
+                    )
+                },
+                actions = {
+                    CsIconButton(
+                        onClick = onSettingsClick,
+                        icon = CsIcons.Outlined.Settings,
+                        contentDescription = stringResource(localesR.string.settings_title),
+                        tooltipPosition = TooltipAnchorPosition.Left,
+                    )
+                },
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

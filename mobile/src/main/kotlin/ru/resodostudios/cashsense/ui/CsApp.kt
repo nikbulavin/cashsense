@@ -47,11 +47,11 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.settings.navigation.SettingsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.SETTINGS
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -140,7 +140,7 @@ fun CsApp(
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
                             if (appState.navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
-                                currentTopLevelDestination != SETTINGS
+                                !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)
                             ) {
                                 Modifier.padding(bottom = appState.snackbarBottomPadding)
                             } else {
@@ -177,7 +177,7 @@ fun CsApp(
                     updateFabVisibility = { shouldShowFab = it },
                     modifier = Modifier.fillMaxSize(),
                 )
-                if (currentTopLevelDestination != null && currentTopLevelDestination != SETTINGS) {
+                if (currentTopLevelDestination != null && !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)) {
                     FabMenu(
                         visible = shouldShowFab,
                         onMenuItemClick = { fabItem ->
