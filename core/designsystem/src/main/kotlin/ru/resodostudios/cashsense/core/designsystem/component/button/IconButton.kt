@@ -8,7 +8,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -18,7 +17,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -42,6 +40,7 @@ fun CsIconButton(
         IconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
+            colors = IconButtonDefaults.iconButtonVibrantColors(),
         ) {
             Icon(
                 imageVector = icon,
@@ -69,10 +68,9 @@ fun CsOutlinedIconButton(
     ) {
         OutlinedIconButton(
             onClick = onClick,
-            border = IconButtonDefaults.outlinedIconButtonBorder(true).copy(
-                brush = SolidColor(MaterialTheme.colorScheme.outlineVariant),
-            ),
             shapes = IconButtonDefaults.shapes(),
+            colors = IconButtonDefaults.outlinedIconButtonVibrantColors(),
+            border = IconButtonDefaults.outlinedIconButtonVibrantBorder(true),
         ) {
             Icon(
                 imageVector = icon,
