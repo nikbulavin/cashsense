@@ -23,6 +23,7 @@ fun NavController.navigateToSettings(navOptions: NavOptions? = null) =
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 fun NavGraphBuilder.settingsScreen(
+    onBackClick: () -> Unit,
     onLicensesClick: () -> Unit,
     motionScheme: MotionScheme,
     nestedGraphs: NavGraphBuilder.() -> Unit,
@@ -35,7 +36,10 @@ fun NavGraphBuilder.settingsScreen(
         },
     ) {
         composable<SettingsRoute> {
-            SettingsScreen(onLicensesClick)
+            SettingsScreen(
+                onBackClick = onBackClick,
+                onLicensesClick = onLicensesClick,
+            )
         }
         nestedGraphs()
     }

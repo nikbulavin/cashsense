@@ -108,6 +108,7 @@ fun CsNavHost(
                 transferDialog(navController::navigateUp)
                 transactionDialog(navController::navigateUp)
                 settingsScreen(
+                    onBackClick = navController::navigateUp,
                     onLicensesClick = navController::navigateToLicenses,
                     motionScheme = motionScheme,
                     nestedGraphs = {

@@ -20,20 +20,22 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -50,13 +52,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
@@ -86,6 +89,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun SettingsScreen(
+    onBackClick: () -> Unit,
     onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -93,6 +97,7 @@ internal fun SettingsScreen(
 
     SettingsScreen(
         settingsState = settingsState,
+        onBackClick = onBackClick,
         onLicensesClick = onLicensesClick,
         onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
@@ -108,6 +113,7 @@ internal fun SettingsScreen(
 @Composable
 private fun SettingsScreen(
     settingsState: SettingsUiState,
+    onBackClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
@@ -121,13 +127,9 @@ private fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            CsTopAppBar(
-                titleRes = localesR.string.settings_title,
+            TopBar(
+                onBackClick = onBackClick,
                 scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    scrolledContainerColor = Color.Transparent,
-                    containerColor = Color.Transparent,
-                ),
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -192,6 +194,28 @@ private fun SectionTitle(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun TopBar(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+) {
+    LargeFlexibleTopAppBar(
+        title = { Text(stringResource(localesR.string.settings_title)) },
+        navigationIcon = {
+            CsIconButton(
+                onClick = onBackClick,
+                icon = CsIcons.Outlined.ArrowBack,
+                contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                tooltipPosition = TooltipAnchorPosition.Right,
+            )
+        },
+        modifier = modifier,
+        scrollBehavior = scrollBehavior,
+    )
+}
+
 @PreviewLightDark
 @Composable
 fun SettingsScreenPreview() {
@@ -208,6 +232,7 @@ fun SettingsScreenPreview() {
                         shouldShowTotalBalance = true,
                     )
                 ),
+                onBackClick = {},
                 onLicensesClick = {},
                 onDynamicColorPreferenceUpdate = {},
                 onDarkThemeConfigUpdate = {},
