@@ -47,6 +47,7 @@ import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -152,6 +153,7 @@ class TransactionOverviewViewModel @Inject constructor(
                         availableCategories = filterableTransactions.availableCategories,
                         totalBalance = totalBalance,
                         shouldShowApproximately = shouldShowApproximately,
+                        financialHealth = calculateFinancialHealth(income, expenses.abs())
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
@@ -288,6 +290,20 @@ class TransactionOverviewViewModel @Inject constructor(
         shouldDisplayUndoTransaction = false
         shouldDisplayUndoTransfer = false
     }
+
+    private fun calculateFinancialHealth(income: BigDecimal, expenses: BigDecimal): FinancialHealth {
+        if (expenses == BigDecimal.ZERO) {
+            return if (income > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
+        }
+        val ratio = income.divide(expenses, 2, RoundingMode.HALF_UP).toDouble()
+        return when {
+            ratio < 0.5 -> FinancialHealth.VERY_BAD
+            ratio < 0.9 -> FinancialHealth.BAD
+            ratio < 1.1 -> FinancialHealth.NEUTRAL
+            ratio < 1.5 -> FinancialHealth.GOOD
+            else -> FinancialHealth.VERY_GOOD
+        }
+    }
 }
 
 sealed interface FinancePanelUiState {
@@ -305,6 +321,7 @@ sealed interface FinancePanelUiState {
         val graphData: Map<Int, BigDecimal>,
         val totalBalance: BigDecimal,
         val shouldShowApproximately: Boolean,
+        val financialHealth: FinancialHealth,
     ) : FinancePanelUiState
 }
 

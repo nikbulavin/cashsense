@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.home
+package ru.resodostudios.cashsense.feature.transaction.overview
 
 enum class FinancialHealth {
     VERY_BAD,

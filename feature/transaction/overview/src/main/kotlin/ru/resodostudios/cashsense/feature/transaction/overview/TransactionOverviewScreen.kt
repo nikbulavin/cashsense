@@ -1,15 +1,18 @@
 package ru.resodostudios.cashsense.feature.transaction.overview
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,9 +29,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentCalm
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentExcited
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentFrustrated
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentNeutral
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentSad
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
@@ -205,6 +214,12 @@ private fun TopBar(
                         )
                     }
                 },
+                actions = {
+                    FinancialHealthIcon(
+                        financialHealth = financePanelUiState.financialHealth,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                },
                 modifier = modifier,
             )
         }
@@ -246,5 +261,64 @@ private fun LazyListScope.header(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun FinancialHealthIcon(
+    financialHealth: FinancialHealth,
+    modifier: Modifier = Modifier,
+) {
+    val badColor = MaterialTheme.colorScheme.errorContainer
+    val neutralColor = MaterialTheme.colorScheme.surfaceVariant
+    val goodColor = MaterialTheme.colorScheme.primaryContainer
+
+    val (icon, targetColor, contentDescription) = when (financialHealth) {
+        FinancialHealth.VERY_BAD -> Triple(
+            CsIcons.Outlined.SentimentFrustrated,
+            badColor,
+            localesR.string.financial_health_very_bad,
+        )
+
+        FinancialHealth.BAD -> Triple(
+            CsIcons.Outlined.SentimentSad,
+            badColor,
+            localesR.string.financial_health_bad,
+        )
+
+        FinancialHealth.NEUTRAL -> Triple(
+            CsIcons.Outlined.SentimentNeutral,
+            neutralColor,
+            localesR.string.financial_health_neutral,
+        )
+
+        FinancialHealth.GOOD -> Triple(
+            CsIcons.Outlined.SentimentCalm,
+            goodColor,
+            localesR.string.financial_health_good,
+        )
+
+        FinancialHealth.VERY_GOOD -> Triple(
+            CsIcons.Outlined.SentimentExcited,
+            goodColor,
+            localesR.string.financial_health_very_good,
+        )
+    }
+    val animatedColor by animateColorAsState(
+        targetValue = targetColor,
+        label = "FinancialHealthColor",
+        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+    )
+    Surface(
+        shape = CircleShape,
+        color = animatedColor,
+        modifier = modifier,
+    ) {
+        AnimatedIcon(
+            icon = icon,
+            contentDescription = stringResource(contentDescription),
+            modifier = Modifier.padding(4.dp),
+        )
     }
 }
