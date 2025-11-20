@@ -147,12 +147,21 @@ class TransactionOverviewViewModel @Inject constructor(
 
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
-                        formattedIncome = income.formatAmount(userCurrency, shouldShowApproximately),
-                        formattedExpenses = expenses.abs().formatAmount(userCurrency, shouldShowApproximately),
+                        formattedIncome = income.formatAmount(
+                            currency = userCurrency,
+                            withApproximately = shouldShowApproximately,
+                        ),
+                        formattedExpenses = expenses.abs().formatAmount(
+                            currency = userCurrency,
+                            withApproximately = shouldShowApproximately,
+                        ),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
-                        formattedTotalBalance = totalBalance.formatAmount(userCurrency, shouldShowApproximately),
+                        formattedTotalBalance = totalBalance.formatAmount(
+                            currency = userCurrency,
+                            withApproximately = shouldShowApproximately,
+                        ),
                         financialHealth = calculateFinancialHealth(income, expenses.abs())
                     )
                 }
