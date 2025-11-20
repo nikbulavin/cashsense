@@ -43,6 +43,7 @@ import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
@@ -146,13 +147,12 @@ class TransactionOverviewViewModel @Inject constructor(
 
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
-                        income = income,
-                        expenses = expenses.abs(),
+                        formattedIncome = income.formatAmount(userCurrency, shouldShowApproximately),
+                        formattedExpenses = expenses.abs().formatAmount(userCurrency, shouldShowApproximately),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
-                        totalBalance = totalBalance,
-                        shouldShowApproximately = shouldShowApproximately,
+                        formattedTotalBalance = totalBalance.formatAmount(userCurrency, shouldShowApproximately),
                         financialHealth = calculateFinancialHealth(income, expenses.abs())
                     )
                 }
@@ -316,11 +316,10 @@ sealed interface FinancePanelUiState {
         val transactionFilter: TransactionFilter,
         val availableCategories: List<Category>,
         val userCurrency: Currency,
-        val expenses: BigDecimal,
-        val income: BigDecimal,
+        val formattedExpenses: String,
+        val formattedIncome: String,
         val graphData: Map<Int, BigDecimal>,
-        val totalBalance: BigDecimal,
-        val shouldShowApproximately: Boolean,
+        val formattedTotalBalance: String,
         val financialHealth: FinancialHealth,
     ) : FinancePanelUiState
 }

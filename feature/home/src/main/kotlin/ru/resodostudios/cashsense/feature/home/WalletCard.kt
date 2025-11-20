@@ -56,17 +56,18 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
-import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun WalletCard(
     wallet: Wallet,
-    currentBalance : BigDecimal,
+    formattedCurrentBalance : String,
     isPrimary: Boolean,
-    expenses: BigDecimal,
-    income: BigDecimal,
+    formattedExpenses: String,
+    formattedIncome: String,
+    shouldShowExpensesTag: Boolean,
+    shouldShowIncomeTag: Boolean,
     onWalletClick: (String) -> Unit,
     onNewTransactionClick: (String) -> Unit,
     onTransferClick: (String) -> Unit,
@@ -93,16 +94,16 @@ internal fun WalletCard(
                 style = MaterialTheme.typography.titleLarge,
             )
             AnimatedAmount(
-                amount = currentBalance,
-                currency = wallet.currency,
+                formattedAmount = formattedCurrentBalance,
                 label = "WalletBalance",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             TagsSection(
-                expenses = expenses,
-                income = income,
-                currency = wallet.currency,
+                formattedExpenses = formattedExpenses,
+                formattedIncome = formattedIncome,
+                shouldShowExpensesTag = shouldShowExpensesTag,
+                shouldShowIncomeTag = shouldShowIncomeTag,
                 modifier = Modifier.padding(top = 8.dp),
                 isPrimary = isPrimary,
             )
@@ -203,9 +204,10 @@ internal fun WalletCard(
 )
 @Composable
 private fun TagsSection(
-    expenses: BigDecimal,
-    income: BigDecimal,
-    currency: Currency,
+    formattedExpenses: String,
+    formattedIncome: String,
+    shouldShowExpensesTag: Boolean,
+    shouldShowIncomeTag: Boolean,
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false,
 ) {
@@ -228,27 +230,25 @@ private fun TagsSection(
                 )
             }
             AnimatedVisibility(
-                visible = expenses.signum() > 0,
+                visible = shouldShowExpensesTag,
                 enter = fadeIn() + scaleIn(animationSpec),
                 exit = fadeOut() + scaleOut(animationSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsAnimatedTag(
-                    amount = expenses,
-                    currency = currency,
+                    formattedAmount = formattedExpenses,
                     color = MaterialTheme.colorScheme.errorContainer,
                     icon = CsIcons.Outlined.TrendingDown,
                 )
             }
             AnimatedVisibility(
-                visible = income.signum() > 0,
+                visible = shouldShowIncomeTag,
                 enter = fadeIn() + scaleIn(animationSpec),
                 exit = fadeOut() + scaleOut(animationSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsAnimatedTag(
-                    amount = income,
-                    currency = currency,
+                    formattedAmount = formattedIncome,
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                     icon = CsIcons.Outlined.TrendingUp,
                 )
@@ -259,8 +259,7 @@ private fun TagsSection(
 
 @Composable
 private fun CsAnimatedTag(
-    amount: BigDecimal,
-    currency: Currency,
+    formattedAmount: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
     shape: Shape = RoundedCornerShape(16.dp),
@@ -289,8 +288,7 @@ private fun CsAnimatedTag(
                 )
             }
             AnimatedAmount(
-                amount = amount,
-                currency = currency,
+                formattedAmount = formattedAmount,
                 label = "Tag",
                 style = MaterialTheme.typography.labelLarge,
             )
@@ -310,10 +308,12 @@ fun WalletCardPreview() {
                     initialBalance = BigDecimal(1499.99),
                     currency = getUsdCurrency(),
                 ),
-                currentBalance = BigDecimal(2499.99),
+                formattedCurrentBalance = "$2,499.99",
                 isPrimary = true,
-                expenses = BigDecimal(200),
-                income = BigDecimal(800),
+                formattedExpenses = "$200",
+                formattedIncome = "$800",
+                shouldShowExpensesTag = true,
+                shouldShowIncomeTag = true,
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },
@@ -337,10 +337,12 @@ fun WalletCardSelectedPreview() {
                     initialBalance = BigDecimal(1499.99),
                     currency = getUsdCurrency(),
                 ),
-                currentBalance = BigDecimal(2499.99),
+                formattedCurrentBalance = "$2,499.99",
                 isPrimary = true,
-                expenses = BigDecimal(200),
-                income = BigDecimal(800),
+                formattedExpenses = "$200",
+                formattedIncome = "$800",
+                shouldShowExpensesTag = true,
+                shouldShowIncomeTag = true,
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },

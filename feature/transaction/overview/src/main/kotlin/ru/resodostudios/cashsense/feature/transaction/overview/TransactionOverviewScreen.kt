@@ -197,11 +197,9 @@ private fun TopBar(
                 },
                 subtitle = {
                     AnimatedAmount(
-                        amount = financePanelUiState.totalBalance,
+                        formattedAmount = financePanelUiState.formattedTotalBalance,
                         label = "TotalBalance",
                         modifier = Modifier.fillMaxWidth(),
-                        currency = financePanelUiState.userCurrency,
-                        withApproximatelySign = financePanelUiState.shouldShowApproximately,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
@@ -248,8 +246,8 @@ private fun LazyListScope.header(
                 FinancePanel(
                     availableCategories = financePanelUiState.availableCategories,
                     currency = financePanelUiState.userCurrency,
-                    expenses = financePanelUiState.expenses,
-                    income = financePanelUiState.income,
+                    formattedExpenses = financePanelUiState.formattedExpenses,
+                    formattedIncome = financePanelUiState.formattedIncome,
                     graphData = financePanelUiState.graphData,
                     transactionFilter = financePanelUiState.transactionFilter,
                     onDateTypeUpdate = onDateTypeUpdate,
@@ -257,7 +255,6 @@ private fun LazyListScope.header(
                     onSelectedDateUpdate = onSelectedDateUpdate,
                     onCategoryFilterUpdate = onCategoryFilterUpdate,
                     modifier = Modifier.fillMaxWidth(),
-                    shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )
             }
         }

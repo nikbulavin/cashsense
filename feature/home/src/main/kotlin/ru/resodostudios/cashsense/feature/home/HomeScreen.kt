@@ -15,7 +15,9 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -37,6 +39,7 @@ import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
@@ -188,17 +191,25 @@ private fun LazyStaggeredGridScope.wallets(
         contentType = { "WalletCard" },
     ) { walletData ->
         val selected = highlightSelectedWallet && walletData.wallet.id == selectedWalletId
-        val (expenses, income) = walletData.transactions
+        val (expensesList, incomeList) = walletData.transactions
             .asSequence()
             .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
             .partition { it.amount.signum() < 0 }
+        val expenses = expensesList.sumOf { it.amount }.abs()
+        val income = incomeList.sumOf { it.amount }
+
+        val shouldShowExpensesTag by remember { derivedStateOf { expenses.signum() > 0 } }
+        val shouldShowIncomeTag by remember { derivedStateOf { income.signum() > 0 } }
+        val currency = walletData.wallet.currency
 
         WalletCard(
             wallet = walletData.wallet,
-            currentBalance = walletData.currentBalance,
+            formattedCurrentBalance = walletData.currentBalance.formatAmount(currency),
             isPrimary = walletData.isPrimary,
-            expenses = expenses.sumOf { it.amount }.abs(),
-            income = income.sumOf { it.amount },
+            formattedExpenses = expenses.formatAmount(currency),
+            formattedIncome = income.formatAmount(currency),
+            shouldShowExpensesTag = shouldShowExpensesTag,
+            shouldShowIncomeTag = shouldShowIncomeTag,
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
