@@ -106,9 +106,7 @@
   <string name="backup_description">すべてのデータをファイルにエクスポート</string>
   <string name="restore">復元</string>
   <string name="restore_description">バックアップファイルからデータをインポート</string>
-  <string name="show_total_balance">合計残高を表示</string>
-  <string name="show_total_balance_description">ホーム画面で合計資金額カードを表示または非表示にします</string>
-  <string name="close">閉じる</string>
+    <string name="close">閉じる</string>
   <string name="next_date">次の日付</string>
   <string name="previous_date">前の日付</string>
   <string name="transaction_deleted">トランザクションが削除されました</string>

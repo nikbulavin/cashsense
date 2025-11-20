@@ -87,8 +87,6 @@
     <string name="settings_title">Settings</string>
     <string name="show_less">show less</string>
     <string name="show_more">show more</string>
-    <string name="show_total_balance">Show total balance</string>
-    <string name="show_total_balance_description">Display or hide the total funds card on the home screen</string>
     <string name="subscription_deleted">Subscription deleted</string>
     <string name="subscriptions_empty">Nothing in Subscriptions</string>
     <string name="subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>

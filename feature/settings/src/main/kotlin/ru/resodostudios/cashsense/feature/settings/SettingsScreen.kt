@@ -57,7 +57,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButto
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
@@ -105,7 +104,6 @@ internal fun SettingsScreen(
         onLanguageUpdate = viewModel::updateLanguage,
         onDataExport = viewModel::exportData,
         onDataImport = viewModel::importData,
-        onTotalBalanceVisibilityUpdate = viewModel::updateTotalBalanceVisibility,
     )
 }
 
@@ -121,7 +119,6 @@ private fun SettingsScreen(
     onLanguageUpdate: (String) -> Unit,
     onDataExport: (Uri) -> Unit,
     onDataImport: (Uri, Boolean) -> Unit,
-    onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -157,7 +154,6 @@ private fun SettingsScreen(
                         settings = settingsState.settings,
                         onCurrencyUpdate = onCurrencyUpdate,
                         onLanguageUpdate = onLanguageUpdate,
-                        onTotalBalanceVisibilityUpdate = onTotalBalanceVisibilityUpdate,
                     )
                     appearance(
                         settings = settingsState.settings,
@@ -233,7 +229,6 @@ fun SettingsScreenPreview() {
                         currency = getUsdCurrency(),
                         language = Language.ENGLISH,
                         availableLanguages = emptyList(),
-                        shouldShowTotalBalance = true,
                     )
                 ),
                 onBackClick = {},
@@ -244,7 +239,6 @@ fun SettingsScreenPreview() {
                 onLanguageUpdate = {},
                 onDataExport = {},
                 onDataImport = { _, _ -> },
-                onTotalBalanceVisibilityUpdate = {},
             )
         }
     }
@@ -254,7 +248,6 @@ private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
     onLanguageUpdate: (String) -> Unit,
-    onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
     item {
         SectionTitle(
@@ -290,7 +283,7 @@ private fun LazyListScope.general(
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Middle,
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
@@ -310,27 +303,6 @@ private fun LazyListScope.general(
                 onDismiss = { showLanguageDialog = false },
             )
         }
-    }
-    item {
-        CsToggableListItem(
-            shape = ListItemPositionShapes.Last,
-            headlineContent = { Text(stringResource(localesR.string.show_total_balance)) },
-            supportingContent = { Text(stringResource(localesR.string.show_total_balance_description)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Outlined.AccountBalance,
-                    contentDescription = null,
-                )
-            },
-            trailingContent = {
-                CsSwitch(
-                    checked = settings.shouldShowTotalBalance,
-                    onCheckedChange = null,
-                )
-            },
-            checked = settings.shouldShowTotalBalance,
-            onCheckedChange = onTotalBalanceVisibilityUpdate,
-        )
     }
 }
 

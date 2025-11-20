@@ -106,9 +106,7 @@
   <string name="backup_description">Экспорт всех данных в файл</string>
   <string name="restore">Восстановление</string>
   <string name="restore_description">Импорт данных из файла резервной копии</string>
-  <string name="show_total_balance">Показывать общий баланс</string>
-  <string name="show_total_balance_description">Отобразить или скрыть карточку с общим кол-вом средств на главном экране</string>
-  <string name="close">Закрыть</string>
+    <string name="close">Закрыть</string>
   <string name="next_date">Следующая дата</string>
   <string name="previous_date">Предыдущая дата</string>
   <string name="transaction_deleted">Транзакция удалена</string>
