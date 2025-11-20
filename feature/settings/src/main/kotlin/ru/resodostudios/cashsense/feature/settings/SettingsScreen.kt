@@ -213,6 +213,10 @@ private fun TopBar(
         },
         modifier = modifier,
         scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
+        ),
     )
 }
 
