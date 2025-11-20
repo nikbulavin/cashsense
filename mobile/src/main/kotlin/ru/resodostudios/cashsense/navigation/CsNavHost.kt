@@ -50,6 +50,10 @@ fun CsNavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
         modifier = modifier,
+        popEnterTransition = {
+            slideInHorizontally(motionScheme.fastSpatialSpec()) { -it / 4 } +
+                    fadeIn(motionScheme.fastEffectsSpec())
+        },
         enterTransition = {
             val isTopLevelNav =
                 isTopLevelNavigation(initialState, targetState, topLevelDestinations)
