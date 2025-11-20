@@ -105,6 +105,7 @@ class TransactionOverviewViewModel @Inject constructor(
                     val exchangeRateMap = exchangeRates
                         .associate { it.baseCurrency to it.exchangeRate }
 
+                    val allTransactions = wallets.flatMap { wallet -> wallet.transactions }
                     val filterableTransactions = wallets
                         .flatMap { wallet -> wallet.transactions }
                         .applyTransactionFilter(transactionFilter)
@@ -145,6 +146,17 @@ class TransactionOverviewViewModel @Inject constructor(
 
                     val graphData = filteredTransactions.getGraphData(transactionFilter.dateType)
 
+                    val (totalExpenses, totalIncome) = allTransactions
+                        .asSequence()
+                        .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+                        .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
+                            if (transaction.amount.signum() < 0) {
+                                expenses + transaction.amount to income
+                            } else {
+                                expenses to income + transaction.amount
+                            }
+                        }
+
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         formattedIncome = income.formatAmount(
@@ -162,7 +174,7 @@ class TransactionOverviewViewModel @Inject constructor(
                             currency = userCurrency,
                             withApproximately = shouldShowApproximately,
                         ),
-                        financialHealth = calculateFinancialHealth(income, expenses.abs())
+                        financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs())
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
