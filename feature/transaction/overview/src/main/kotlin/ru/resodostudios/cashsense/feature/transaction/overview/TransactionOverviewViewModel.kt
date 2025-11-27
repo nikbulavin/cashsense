@@ -100,7 +100,6 @@ class TransactionOverviewViewModel @Inject constructor(
                     getExtendedUserWallets.invoke(),
                     transactionFilterState,
                 ) { exchangeRates, wallets, transactionFilter ->
-                    val isMultiCurrencyBalance = !baseCurrencies.all { it == userCurrency }
                     val currencyExchangeRates = exchangeRates
                         .associate { it.baseCurrency to it.exchangeRate }
 
@@ -179,7 +178,7 @@ class TransactionOverviewViewModel @Inject constructor(
                         availableCategories = filterableTransactions.availableCategories,
                         formattedTotalBalance = totalBalance.formatAmount(
                             currency = userCurrency,
-                            withApproximately = isMultiCurrencyBalance,
+                            withApproximately = !baseCurrencies.all { it == userCurrency },
                         ),
                         financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs())
                     )

@@ -12,8 +12,8 @@ import java.util.Currency
 
 fun List<Transaction>.getGraphData(
     dateType: DateType,
-    userCurrency: Currency,
-    currencyExchangeRates: Map<Currency, BigDecimal>,
+    userCurrency: Currency? = null,
+    currencyExchangeRates: Map<Currency, BigDecimal>? = null,
 ): Map<Int, BigDecimal> {
     return this
         .groupBy {
@@ -30,37 +30,18 @@ fun List<Transaction>.getGraphData(
                 val maxKey = this.keys.maxOrNull() ?: 0
                 (minKey..maxKey).associateWith { key ->
                     this[key]?.sumOf { transaction ->
-                        val amount = transaction.amount
-                        val currency = transaction.currency
-                        if (userCurrency == currency) {
-                            amount
+                        if (userCurrency != null && currencyExchangeRates != null) {
+                            val amount = transaction.amount
+                            val currency = transaction.currency
+                            if (userCurrency == currency) {
+                                amount
+                            } else {
+                                currencyExchangeRates[currency]?.let { rate -> amount * rate } ?: BigDecimal.ZERO
+                            }
                         } else {
-                            currencyExchangeRates[currency]?.let { rate -> amount * rate } ?: BigDecimal.ZERO
+                            transaction.amount
                         }
                     }?.abs() ?: BigDecimal.ZERO
-                }
-            } else {
-                emptyMap()
-            }
-        }
-}
-
-fun List<Transaction>.getGraphData(dateType: DateType): Map<Int, BigDecimal> {
-    return this
-        .groupBy {
-            val zonedDateTime = it.timestamp.getZonedDateTime()
-            when (dateType) {
-                YEAR -> zonedDateTime.month.number
-                ALL, MONTH -> zonedDateTime.day
-                WEEK -> zonedDateTime.dayOfWeek.ordinal
-            }
-        }
-        .run {
-            if (this.isNotEmpty()) {
-                val minKey = this.keys.minOrNull() ?: 0
-                val maxKey = this.keys.maxOrNull() ?: 0
-                (minKey..maxKey).associateWith { key ->
-                    this[key]?.sumOf { it.amount }?.abs() ?: BigDecimal.ZERO
                 }
             } else {
                 emptyMap()
