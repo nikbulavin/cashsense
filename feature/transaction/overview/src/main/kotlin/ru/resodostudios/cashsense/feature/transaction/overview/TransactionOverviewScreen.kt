@@ -271,36 +271,12 @@ private fun FinancialHealthIcon(
     val neutralColor = MaterialTheme.colorScheme.surfaceVariant
     val goodColor = MaterialTheme.colorScheme.primaryContainer
 
-    val (icon, targetColor, contentDescription) = when (financialHealth) {
-        FinancialHealth.VERY_BAD -> Triple(
-            CsIcons.Outlined.SentimentFrustrated,
-            badColor,
-            localesR.string.financial_health_very_bad,
-        )
-
-        FinancialHealth.BAD -> Triple(
-            CsIcons.Outlined.SentimentSad,
-            badColor,
-            localesR.string.financial_health_bad,
-        )
-
-        FinancialHealth.NEUTRAL -> Triple(
-            CsIcons.Outlined.SentimentNeutral,
-            neutralColor,
-            localesR.string.financial_health_neutral,
-        )
-
-        FinancialHealth.GOOD -> Triple(
-            CsIcons.Outlined.SentimentCalm,
-            goodColor,
-            localesR.string.financial_health_good,
-        )
-
-        FinancialHealth.VERY_GOOD -> Triple(
-            CsIcons.Outlined.SentimentExcited,
-            goodColor,
-            localesR.string.financial_health_very_good,
-        )
+    val (icon, targetColor) = when (financialHealth) {
+        FinancialHealth.VERY_BAD -> CsIcons.Outlined.SentimentFrustrated to badColor
+        FinancialHealth.BAD -> CsIcons.Outlined.SentimentSad to badColor
+        FinancialHealth.NEUTRAL -> CsIcons.Outlined.SentimentNeutral to neutralColor
+        FinancialHealth.GOOD -> CsIcons.Outlined.SentimentCalm to goodColor
+        FinancialHealth.VERY_GOOD -> CsIcons.Outlined.SentimentExcited to goodColor
     }
     val animatedColor by animateColorAsState(
         targetValue = targetColor,
@@ -314,7 +290,7 @@ private fun FinancialHealthIcon(
     ) {
         AnimatedIcon(
             icon = icon,
-            contentDescription = stringResource(contentDescription),
+            contentDescription = stringResource(localesR.string.financial_health),
             modifier = Modifier.padding(4.dp),
         )
     }

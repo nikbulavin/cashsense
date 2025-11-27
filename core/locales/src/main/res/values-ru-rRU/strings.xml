@@ -111,9 +111,5 @@
   <string name="previous_date">Предыдущая дата</string>
   <string name="transaction_deleted">Транзакция удалена</string>
   <string name="transfer_deleted">Перевод удалён</string>
-  <string name="financial_health_very_bad">Очень плохое финансовое состояние</string>
-  <string name="financial_health_bad">Плохое финансовое состояние</string>
-  <string name="financial_health_neutral">Нейтральное финансовое состояние</string>
-  <string name="financial_health_good">Хорошее финансовое состояние</string>
-  <string name="financial_health_very_good">Очень хорошее финансовое состояние</string>
+  <string name="financial_health">Финансовое здоровье</string>
 </resources>
