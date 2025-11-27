@@ -106,11 +106,13 @@
   <string name="backup_description">सभी डेटा को फ़ाइल में निर्यात करें</string>
   <string name="restore">पुनर्स्थापित करें</string>
   <string name="restore_description">बैकअप फ़ाइल से डेटा आयात करें</string>
-  <string name="show_total_balance">कुल शेष राशि दिखाएं</string>
-  <string name="show_total_balance_description">होम स्क्रीन पर कुल फंड कार्ड दिखाएं या छिपाएं</string>
   <string name="close">बंद करें</string>
   <string name="next_date">अगली तिथि</string>
   <string name="previous_date">पिछली तिथि</string>
   <string name="transaction_deleted">लेनदेन हटाया गया</string>
   <string name="transfer_deleted">स्थानांतरण हटाया गया</string>
+  <string name="collapsed">Collapsed</string>
+  <string name="expanded">Expanded</string>
+  <string name="financial_health">Financial health</string>
+  <string name="toggle_menu">Toggle menu</string>
 </resources>
