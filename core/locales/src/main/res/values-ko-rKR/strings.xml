@@ -106,11 +106,13 @@
   <string name="backup_description">모든 데이터를 파일로 내보내기</string>
   <string name="restore">복원</string>
   <string name="restore_description">백업 파일에서 데이터 가져오기</string>
-  <string name="show_total_balance">총 잔액 표시</string>
-  <string name="show_total_balance_description">홈 화면에 총 자금 카드 표시 또는 숨기기</string>
   <string name="close">닫기</string>
   <string name="next_date">다음 날짜</string>
   <string name="previous_date">이전 날짜</string>
   <string name="transaction_deleted">거래가 삭제되었습니다</string>
   <string name="transfer_deleted">삭제된 전송</string>
+  <string name="collapsed">Collapsed</string>
+  <string name="expanded">Expanded</string>
+  <string name="financial_health">Financial health</string>
+  <string name="toggle_menu">Toggle menu</string>
 </resources>
