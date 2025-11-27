@@ -106,11 +106,13 @@
   <string name="backup_description">تصدير جميع البيانات إلى ملف</string>
   <string name="restore">استعادة</string>
   <string name="restore_description">استيراد البيانات من ملف النسخ الاحتياطي</string>
-  <string name="show_total_balance">عرض الرصيد الإجمالي</string>
-  <string name="show_total_balance_description">عرض أو إخفاء بطاقة الأموال الإجمالية على الشاشة الرئيسية</string>
   <string name="close">إغلاق</string>
   <string name="next_date">التاريخ التالي</string>
   <string name="previous_date">التاريخ السابق</string>
   <string name="transaction_deleted">تم حذف المعاملة</string>
   <string name="transfer_deleted">تم حذف التحويل</string>
+  <string name="collapsed">Collapsed</string>
+  <string name="expanded">Expanded</string>
+  <string name="financial_health">Financial health</string>
+  <string name="toggle_menu">Toggle menu</string>
 </resources>
