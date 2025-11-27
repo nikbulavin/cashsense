@@ -92,8 +92,6 @@ class TransactionOverviewViewModel @Inject constructor(
             if (baseCurrencies.isEmpty()) {
                 flowOf(FinancePanelUiState.NotShown)
             } else {
-                val shouldShowApproximately = !baseCurrencies.all { it == userCurrency }
-
                 combine(
                     currencyConversionRepository.getConvertedCurrencies(
                         baseCurrencies = baseCurrencies.toSet(),
@@ -102,7 +100,8 @@ class TransactionOverviewViewModel @Inject constructor(
                     getExtendedUserWallets.invoke(),
                     transactionFilterState,
                 ) { exchangeRates, wallets, transactionFilter ->
-                    val exchangeRateMap = exchangeRates
+                    val isMultiCurrencyBalance = !baseCurrencies.all { it == userCurrency }
+                    val currencyExchangeRates = exchangeRates
                         .associate { it.baseCurrency to it.exchangeRate }
 
                     val allTransactions = wallets.flatMap { wallet -> wallet.transactions }
@@ -116,10 +115,14 @@ class TransactionOverviewViewModel @Inject constructor(
                                 it.timestamp.isInCurrentMonthAndYear()
                             } else true
                         }
+                    val isMultiCurrencyTransactions = !filteredTransactions
+                        .map { it.currency }
+                        .distinct()
+                        .all { it == userCurrency }
 
                     val totalBalance = wallets.sumOf {
                         if (userCurrency == it.wallet.currency) return@sumOf it.currentBalance
-                        val exchangeRate = exchangeRateMap[it.wallet.currency]
+                        val exchangeRate = currencyExchangeRates[it.wallet.currency]
                             ?: return@combine FinancePanelUiState.NotShown
 
                         it.currentBalance * exchangeRate
@@ -133,7 +136,7 @@ class TransactionOverviewViewModel @Inject constructor(
                             val convertedAmount = if (userCurrency == currency) {
                                 amount
                             } else {
-                                exchangeRateMap[currency]?.let { rate -> amount * rate }
+                                currencyExchangeRates[currency]?.let { rate -> amount * rate }
                                     ?: return@combine FinancePanelUiState.NotShown
                             }
 
@@ -144,7 +147,11 @@ class TransactionOverviewViewModel @Inject constructor(
                             }
                         }
 
-                    val graphData = filteredTransactions.getGraphData(transactionFilter.dateType)
+                    val graphData = filteredTransactions.getGraphData(
+                        dateType = transactionFilter.dateType,
+                        userCurrency = userCurrency,
+                        currencyExchangeRates = currencyExchangeRates,
+                    )
 
                     val (totalExpenses, totalIncome) = allTransactions
                         .asSequence()
@@ -161,18 +168,18 @@ class TransactionOverviewViewModel @Inject constructor(
                         transactionFilter = transactionFilter,
                         formattedIncome = income.formatAmount(
                             currency = userCurrency,
-                            withApproximately = shouldShowApproximately,
+                            withApproximately = isMultiCurrencyTransactions,
                         ),
                         formattedExpenses = expenses.abs().formatAmount(
                             currency = userCurrency,
-                            withApproximately = shouldShowApproximately,
+                            withApproximately = isMultiCurrencyTransactions,
                         ),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
                         formattedTotalBalance = totalBalance.formatAmount(
                             currency = userCurrency,
-                            withApproximately = shouldShowApproximately,
+                            withApproximately = isMultiCurrencyBalance,
                         ),
                         financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs())
                     )

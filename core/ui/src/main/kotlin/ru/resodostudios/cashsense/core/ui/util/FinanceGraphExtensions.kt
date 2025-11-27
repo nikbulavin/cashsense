@@ -8,6 +8,42 @@ import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
 import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
+import java.util.Currency
+
+fun List<Transaction>.getGraphData(
+    dateType: DateType,
+    userCurrency: Currency,
+    currencyExchangeRates: Map<Currency, BigDecimal>,
+): Map<Int, BigDecimal> {
+    return this
+        .groupBy {
+            val zonedDateTime = it.timestamp.getZonedDateTime()
+            when (dateType) {
+                YEAR -> zonedDateTime.month.number
+                ALL, MONTH -> zonedDateTime.day
+                WEEK -> zonedDateTime.dayOfWeek.ordinal
+            }
+        }
+        .run {
+            if (this.isNotEmpty()) {
+                val minKey = this.keys.minOrNull() ?: 0
+                val maxKey = this.keys.maxOrNull() ?: 0
+                (minKey..maxKey).associateWith { key ->
+                    this[key]?.sumOf { transaction ->
+                        val amount = transaction.amount
+                        val currency = transaction.currency
+                        if (userCurrency == currency) {
+                            amount
+                        } else {
+                            currencyExchangeRates[currency]?.let { rate -> amount * rate } ?: BigDecimal.ZERO
+                        }
+                    }?.abs() ?: BigDecimal.ZERO
+                }
+            } else {
+                emptyMap()
+            }
+        }
+}
 
 fun List<Transaction>.getGraphData(dateType: DateType): Map<Int, BigDecimal> {
     return this
