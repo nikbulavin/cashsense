@@ -18,6 +18,7 @@ import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToC
 import ru.resodostudios.cashsense.feature.category.list.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.navigation.navigateToLicenses
+import ru.resodostudios.cashsense.feature.settings.navigation.navigateToSettings
 import ru.resodostudios.cashsense.feature.settings.navigation.settingsScreen
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.subscriptionDialog
@@ -49,6 +50,10 @@ fun CsNavHost(
         navController = navController,
         startDestination = HomeListDetailRoute,
         modifier = modifier,
+        popEnterTransition = {
+            slideInHorizontally(motionScheme.fastSpatialSpec()) { -it / 4 } +
+                    fadeIn(motionScheme.fastEffectsSpec())
+        },
         enterTransition = {
             val isTopLevelNav =
                 isTopLevelNavigation(initialState, targetState, topLevelDestinations)
@@ -97,6 +102,7 @@ fun CsNavHost(
             navigateToWalletDialog = navController::navigateToWalletDialog,
             navigateToCategoryDialog = navController::navigateToCategoryDialog,
             navigateToSubscriptionDialog = navController::navigateToSubscriptionDialog,
+            navigateToSettings = navController::navigateToSettings,
             onShowSnackbar = onShowSnackbar,
             updateFabVisibility = updateFabVisibility,
             updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
@@ -105,6 +111,17 @@ fun CsNavHost(
                 walletDialog(navController::navigateUp)
                 transferDialog(navController::navigateUp)
                 transactionDialog(navController::navigateUp)
+                settingsScreen(
+                    onBackClick = navController::navigateUp,
+                    onLicensesClick = navController::navigateToLicenses,
+                    motionScheme = motionScheme,
+                    nestedGraphs = {
+                        licensesScreen(
+                            motionScheme = motionScheme,
+                            onBackClick = navController::navigateUp,
+                        )
+                    },
+                )
             },
         )
         categoriesScreen(
@@ -116,16 +133,6 @@ fun CsNavHost(
             onEditSubscription = navController::navigateToSubscriptionDialog,
             onShowSnackbar = onShowSnackbar,
             nestedGraphs = { subscriptionDialog(navController::navigateUp) },
-        )
-        settingsScreen(
-            onLicensesClick = navController::navigateToLicenses,
-            motionScheme = motionScheme,
-            nestedGraphs = {
-                licensesScreen(
-                    motionScheme = motionScheme,
-                    onBackClick = navController::navigateUp,
-                )
-            },
         )
     }
 }

@@ -20,6 +20,4 @@ interface UserDataRepository {
     fun exportData(backupFileUri: Uri)
 
     fun importData(backupFileUri: Uri, restart: Boolean = true)
-
-    suspend fun setTotalBalancePreference(shouldShowTotalBalance: Boolean)
 }

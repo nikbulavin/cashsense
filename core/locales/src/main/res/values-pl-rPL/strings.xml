@@ -106,9 +106,7 @@
   <string name="backup_description">Eksportuj wszystkie dane do pliku</string>
   <string name="restore">Przywróć</string>
   <string name="restore_description">Importuj dane z pliku kopii zapasowej</string>
-  <string name="show_total_balance">Pokaż całkowite saldo</string>
-  <string name="show_total_balance_description">Wyświetl lub ukryj kartę całkowitych środków na ekranie głównym</string>
-  <string name="close">Zamknij</string>
+    <string name="close">Zamknij</string>
   <string name="next_date">Następna data</string>
   <string name="previous_date">Poprzednia data</string>
   <string name="transaction_deleted">Transakcja usunięta</string>

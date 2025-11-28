@@ -16,42 +16,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import java.math.BigDecimal
-import java.util.Currency
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnimatedAmount(
-    amount: BigDecimal,
-    currency: Currency,
+    formattedAmount: String,
     label: String,
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
-    withApproximatelySign: Boolean = false,
 ) {
     val slideAnimSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
     val fadeAnimSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     AnimatedContent(
-        targetState = amount,
+        targetState = formattedAmount,
         transitionSpec = {
-            if (amount > initialState) {
-                slideInVertically(slideAnimSpec) { -it } + fadeIn(fadeAnimSpec) togetherWith
-                        slideOutVertically { it } + fadeOut(fadeAnimSpec)
-            } else {
-                slideInVertically(slideAnimSpec) { it } + fadeIn(fadeAnimSpec) togetherWith
-                        slideOutVertically { -it } + fadeOut(fadeAnimSpec)
-            }
+            slideInVertically(slideAnimSpec) { -it } + fadeIn(fadeAnimSpec) togetherWith
+                    slideOutVertically { it } + fadeOut(fadeAnimSpec)
         },
         label = label,
         modifier = modifier,
         content = {
             Text(
-                text = it.formatAmount(
-                    currency = currency,
-                    withApproximately = withApproximatelySign,
-                ),
+                text = it,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = style,

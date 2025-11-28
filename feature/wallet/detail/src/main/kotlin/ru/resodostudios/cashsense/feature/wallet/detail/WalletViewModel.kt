@@ -42,6 +42,7 @@ import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
@@ -91,14 +92,15 @@ class WalletViewModel @AssistedInject constructor(
         val (expenses, income) = filteredTransactions.partition { it.amount.signum() < 0 }
 
         val graphData = filteredTransactions.getGraphData(transactionFilter.dateType)
+        val currency = extendedUserWallet.wallet.currency
 
         WalletUiState.Success(
             transactionFilter = transactionFilter,
-            income = income.sumOf { it.amount },
-            expenses = expenses.sumOf { it.amount }.abs(),
+            formattedIncome = income.sumOf { it.amount }.formatAmount(currency),
+            formattedExpenses = expenses.sumOf { it.amount }.abs().formatAmount(currency),
             graphData = graphData,
             wallet = extendedUserWallet.wallet,
-            currentBalance = extendedUserWallet.currentBalance,
+            formattedCurrentBalance = extendedUserWallet.currentBalance.formatAmount(currency),
             isPrimary = extendedUserWallet.isPrimary,
             selectedTransaction = selectedTransaction,
             groupedTransactions = filterableTransactions.transactions.groupByDate(),
@@ -240,13 +242,13 @@ sealed interface WalletUiState {
     data class Success(
         val transactionFilter: TransactionFilter,
         val wallet: Wallet,
-        val currentBalance: BigDecimal,
+        val formattedCurrentBalance: String,
         val isPrimary: Boolean,
         val selectedTransaction: Transaction?,
         val groupedTransactions: Map<Instant, List<Transaction>>,
         val availableCategories: List<Category>,
-        val expenses: BigDecimal,
-        val income: BigDecimal,
+        val formattedExpenses: String,
+        val formattedIncome: String,
         val graphData: Map<Int, BigDecimal>,
     ) : WalletUiState
 }

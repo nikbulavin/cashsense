@@ -20,20 +20,22 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -50,13 +52,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
@@ -86,6 +88,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun SettingsScreen(
+    onBackClick: () -> Unit,
     onLicensesClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -93,6 +96,7 @@ internal fun SettingsScreen(
 
     SettingsScreen(
         settingsState = settingsState,
+        onBackClick = onBackClick,
         onLicensesClick = onLicensesClick,
         onDynamicColorPreferenceUpdate = viewModel::updateDynamicColorPreference,
         onDarkThemeConfigUpdate = viewModel::updateDarkThemeConfig,
@@ -100,7 +104,6 @@ internal fun SettingsScreen(
         onLanguageUpdate = viewModel::updateLanguage,
         onDataExport = viewModel::exportData,
         onDataImport = viewModel::importData,
-        onTotalBalanceVisibilityUpdate = viewModel::updateTotalBalanceVisibility,
     )
 }
 
@@ -108,6 +111,7 @@ internal fun SettingsScreen(
 @Composable
 private fun SettingsScreen(
     settingsState: SettingsUiState,
+    onBackClick: () -> Unit,
     onLicensesClick: () -> Unit,
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
@@ -115,19 +119,14 @@ private fun SettingsScreen(
     onLanguageUpdate: (String) -> Unit,
     onDataExport: (Uri) -> Unit,
     onDataImport: (Uri, Boolean) -> Unit,
-    onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
         topBar = {
-            CsTopAppBar(
-                titleRes = localesR.string.settings_title,
+            TopBar(
+                onBackClick = onBackClick,
                 scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    scrolledContainerColor = Color.Transparent,
-                    containerColor = Color.Transparent,
-                ),
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -155,7 +154,6 @@ private fun SettingsScreen(
                         settings = settingsState.settings,
                         onCurrencyUpdate = onCurrencyUpdate,
                         onLanguageUpdate = onLanguageUpdate,
-                        onTotalBalanceVisibilityUpdate = onTotalBalanceVisibilityUpdate,
                     )
                     appearance(
                         settings = settingsState.settings,
@@ -185,10 +183,36 @@ private fun SectionTitle(
     Text(
         text = text,
         style = MaterialTheme.typography.labelLarge,
-        modifier = modifier.padding(top = topPadding, bottom = 12.dp, start = 8.dp),
+        modifier = modifier.padding(top = topPadding, bottom = 12.dp),
         color = MaterialTheme.colorScheme.primary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun TopBar(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+) {
+    LargeFlexibleTopAppBar(
+        title = { Text(stringResource(localesR.string.settings_title)) },
+        navigationIcon = {
+            CsIconButton(
+                onClick = onBackClick,
+                icon = CsIcons.Outlined.ArrowBack,
+                contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                tooltipPosition = TooltipAnchorPosition.Right,
+            )
+        },
+        modifier = modifier,
+        scrollBehavior = scrollBehavior,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
+        ),
     )
 }
 
@@ -205,9 +229,9 @@ fun SettingsScreenPreview() {
                         currency = getUsdCurrency(),
                         language = Language.ENGLISH,
                         availableLanguages = emptyList(),
-                        shouldShowTotalBalance = true,
                     )
                 ),
+                onBackClick = {},
                 onLicensesClick = {},
                 onDynamicColorPreferenceUpdate = {},
                 onDarkThemeConfigUpdate = {},
@@ -215,7 +239,6 @@ fun SettingsScreenPreview() {
                 onLanguageUpdate = {},
                 onDataExport = {},
                 onDataImport = { _, _ -> },
-                onTotalBalanceVisibilityUpdate = {},
             )
         }
     }
@@ -225,7 +248,6 @@ private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
     onLanguageUpdate: (String) -> Unit,
-    onTotalBalanceVisibilityUpdate: (Boolean) -> Unit,
 ) {
     item {
         SectionTitle(
@@ -261,7 +283,7 @@ private fun LazyListScope.general(
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Middle,
+            shape = ListItemPositionShapes.Last,
             headlineContent = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
@@ -281,27 +303,6 @@ private fun LazyListScope.general(
                 onDismiss = { showLanguageDialog = false },
             )
         }
-    }
-    item {
-        CsToggableListItem(
-            shape = ListItemPositionShapes.Last,
-            headlineContent = { Text(stringResource(localesR.string.show_total_balance)) },
-            supportingContent = { Text(stringResource(localesR.string.show_total_balance_description)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Outlined.AccountBalance,
-                    contentDescription = null,
-                )
-            },
-            trailingContent = {
-                CsSwitch(
-                    checked = settings.shouldShowTotalBalance,
-                    onCheckedChange = null,
-                )
-            },
-            checked = settings.shouldShowTotalBalance,
-            onCheckedChange = onTotalBalanceVisibilityUpdate,
-        )
     }
 }
 

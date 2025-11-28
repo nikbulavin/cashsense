@@ -5,18 +5,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
-import ru.resodostudios.cashsense.core.designsystem.icon.filled.Settings
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Home
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesBaseRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.SettingsBaseRoute
-import ru.resodostudios.cashsense.feature.settings.navigation.SettingsRoute
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionDialogRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
@@ -93,15 +89,6 @@ enum class TopLevelDestination(
         ),
         baseRoute = SubscriptionsBaseRoute::class,
     ),
-    SETTINGS(
-        selectedIcon = CsIcons.Filled.Settings,
-        unselectedIcon = CsIcons.Outlined.Settings,
-        iconTextId = localesR.string.settings_title,
-        routes = setOf(
-            SettingsRoute::class,
-        ),
-        baseRoute = SettingsBaseRoute::class,
-    )
 }
 
 data class FabConfig(

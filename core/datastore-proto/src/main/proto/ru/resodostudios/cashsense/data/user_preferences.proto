@@ -6,14 +6,12 @@ option java_package = "ru.resodostudios.cashsense.core.datastore";
 option java_multiple_files = true;
 
 message UserPreferences {
+    reserved 5;
+    reserved "should_show_total_balance";
 
     DarkThemeConfigProto dark_theme_config = 1;
-
     bool use_dynamic_color = 2;
 
     string primary_wallet_id = 3;
-
     string currency = 4;
-
-    bool should_show_total_balance = 5;
 }

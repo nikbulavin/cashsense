@@ -87,6 +87,7 @@ fun NavGraphBuilder.homeListDetailScreen(
     navigateToWalletDialog: () -> Unit,
     navigateToCategoryDialog: () -> Unit,
     navigateToSubscriptionDialog: () -> Unit,
+    navigateToSettings: () -> Unit,
     navigationSuiteType: NavigationSuiteType,
     nestedDestinations: NavGraphBuilder.() -> Unit,
     updateFabVisibility: (Boolean) -> Unit = {},
@@ -106,6 +107,7 @@ fun NavGraphBuilder.homeListDetailScreen(
                 navigateToWalletDialog = navigateToWalletDialog,
                 navigateToCategoryDialog = navigateToCategoryDialog,
                 navigateToSubscriptionDialog = navigateToSubscriptionDialog,
+                navigateToSettings = navigateToSettings,
                 updateFabVisibility = updateFabVisibility,
                 updateSnackbarBottomPadding = updateSnackbarBottomPadding,
                 navigationSuiteType = navigationSuiteType,
@@ -124,6 +126,7 @@ internal fun HomeListDetailScreen(
     navigateToWalletDialog: () -> Unit,
     navigateToCategoryDialog: () -> Unit,
     navigateToSubscriptionDialog: () -> Unit,
+    navigateToSettings: () -> Unit,
     updateFabVisibility: (Boolean) -> Unit = {},
     updateSnackbarBottomPadding: (Dp) -> Unit = {},
     navigationSuiteType: NavigationSuiteType,
@@ -139,6 +142,7 @@ internal fun HomeListDetailScreen(
         navigateToWalletDialog = navigateToWalletDialog,
         navigateToCategoryDialog = navigateToCategoryDialog,
         navigateToSubscriptionDialog = navigateToSubscriptionDialog,
+        navigateToSettings = navigateToSettings,
         onWalletSelect = viewModel::onWalletSelect,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
@@ -165,6 +169,7 @@ internal fun HomeListDetailScreen(
     navigateToWalletDialog: () -> Unit,
     navigateToCategoryDialog: () -> Unit,
     navigateToSubscriptionDialog: () -> Unit,
+    navigateToSettings: () -> Unit,
     onWalletSelect: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -290,6 +295,7 @@ internal fun HomeListDetailScreen(
                         undoWalletRemoval = undoWalletRemoval,
                         clearUndoState = clearUndoState,
                         onTotalBalanceClick = ::onTotalBalanceClickShowDetailPane,
+                        onSettingsClick = navigateToSettings,
                     )
                     if (scaffoldNavigator.isDetailPaneVisible() && scaffoldNavigator.isListPaneVisible()) {
                         FabMenu(

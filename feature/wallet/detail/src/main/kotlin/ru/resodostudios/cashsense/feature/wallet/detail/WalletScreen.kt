@@ -175,7 +175,7 @@ private fun WalletScreen(
                 topBar = {
                     WalletTopBar(
                         wallet = walletState.wallet,
-                        currentBalance = walletState.currentBalance,
+                        formattedCurrentBalance = walletState.formattedCurrentBalance,
                         isPrimary = walletState.isPrimary,
                         showNavigationIcon = showNavigationIcon,
                         onBackClick = onBackClick,
@@ -203,8 +203,8 @@ private fun WalletScreen(
                             FinancePanel(
                                 availableCategories = walletState.availableCategories,
                                 currency = walletState.wallet.currency,
-                                expenses = walletState.expenses,
-                                income = walletState.income,
+                                formattedExpenses = walletState.formattedExpenses,
+                                formattedIncome = walletState.formattedIncome,
                                 graphData = walletState.graphData,
                                 transactionFilter = walletState.transactionFilter,
                                 onDateTypeUpdate = onDateTypeUpdate,
@@ -344,7 +344,7 @@ private fun BoxScope.WalletToolbar(
 @Composable
 private fun WalletTopBar(
     wallet: Wallet,
-    currentBalance: BigDecimal,
+    formattedCurrentBalance: String,
     isPrimary: Boolean,
     showNavigationIcon: Boolean,
     onBackClick: () -> Unit,
@@ -360,8 +360,7 @@ private fun WalletTopBar(
         },
         subtitle = {
             AnimatedAmount(
-                amount = currentBalance,
-                currency = wallet.currency,
+                formattedAmount = formattedCurrentBalance,
                 label = "WalletBalance",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -434,11 +433,11 @@ private fun WalletScreenPopulatedPreview(
                 selectedTransaction = null,
                 groupedTransactions = transactions.groupByDate(),
                 availableCategories = emptyList(),
-                expenses = BigDecimal(495.90),
-                income = BigDecimal(1000),
+                formattedExpenses = "$495.9",
+                formattedIncome = "1,000",
                 graphData = emptyMap(),
                 isPrimary = true,
-                currentBalance = BigDecimal(57500),
+                formattedCurrentBalance = "$57,500",
             ),
             showNavigationIcon = true,
             onPrimaryClick = { _, _ -> },
@@ -477,11 +476,11 @@ private fun WalletScreenEmptyPreview() {
                 selectedTransaction = null,
                 groupedTransactions = emptyMap(),
                 availableCategories = emptyList(),
-                expenses = BigDecimal(495.90),
-                income = BigDecimal(1000),
+                formattedExpenses = "$495.9",
+                formattedIncome = "1,000",
                 graphData = emptyMap(),
                 isPrimary = true,
-                currentBalance = BigDecimal(57500),
+                formattedCurrentBalance = "$57,500",
             ),
             showNavigationIcon = true,
             onPrimaryClick = { _, _ -> },

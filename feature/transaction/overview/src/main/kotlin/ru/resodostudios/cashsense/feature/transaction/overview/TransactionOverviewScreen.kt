@@ -1,15 +1,18 @@
 package ru.resodostudios.cashsense.feature.transaction.overview
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,9 +29,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentCalm
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentExcited
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentFrustrated
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentNeutral
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentSad
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
@@ -188,11 +197,9 @@ private fun TopBar(
                 },
                 subtitle = {
                     AnimatedAmount(
-                        amount = financePanelUiState.totalBalance,
+                        formattedAmount = financePanelUiState.formattedTotalBalance,
                         label = "TotalBalance",
                         modifier = Modifier.fillMaxWidth(),
-                        currency = financePanelUiState.userCurrency,
-                        withApproximatelySign = financePanelUiState.shouldShowApproximately,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
@@ -204,6 +211,12 @@ private fun TopBar(
                             contentDescription = stringResource(localesR.string.navigation_back_icon_description),
                         )
                     }
+                },
+                actions = {
+                    FinancialHealthIcon(
+                        financialHealth = financePanelUiState.financialHealth,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
                 },
                 modifier = modifier,
             )
@@ -233,8 +246,8 @@ private fun LazyListScope.header(
                 FinancePanel(
                     availableCategories = financePanelUiState.availableCategories,
                     currency = financePanelUiState.userCurrency,
-                    expenses = financePanelUiState.expenses,
-                    income = financePanelUiState.income,
+                    formattedExpenses = financePanelUiState.formattedExpenses,
+                    formattedIncome = financePanelUiState.formattedIncome,
                     graphData = financePanelUiState.graphData,
                     transactionFilter = financePanelUiState.transactionFilter,
                     onDateTypeUpdate = onDateTypeUpdate,
@@ -242,9 +255,43 @@ private fun LazyListScope.header(
                     onSelectedDateUpdate = onSelectedDateUpdate,
                     onCategoryFilterUpdate = onCategoryFilterUpdate,
                     modifier = Modifier.fillMaxWidth(),
-                    shouldShowApproximately = financePanelUiState.shouldShowApproximately,
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun FinancialHealthIcon(
+    financialHealth: FinancialHealth,
+    modifier: Modifier = Modifier,
+) {
+    val badColor = MaterialTheme.colorScheme.errorContainer
+    val neutralColor = MaterialTheme.colorScheme.surfaceVariant
+    val goodColor = MaterialTheme.colorScheme.primaryContainer
+
+    val (icon, targetColor) = when (financialHealth) {
+        FinancialHealth.VERY_BAD -> CsIcons.Outlined.SentimentFrustrated to badColor
+        FinancialHealth.BAD -> CsIcons.Outlined.SentimentSad to badColor
+        FinancialHealth.NEUTRAL -> CsIcons.Outlined.SentimentNeutral to neutralColor
+        FinancialHealth.GOOD -> CsIcons.Outlined.SentimentCalm to goodColor
+        FinancialHealth.VERY_GOOD -> CsIcons.Outlined.SentimentExcited to goodColor
+    }
+    val animatedColor by animateColorAsState(
+        targetValue = targetColor,
+        label = "FinancialHealthColor",
+        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+    )
+    Surface(
+        shape = CircleShape,
+        color = animatedColor,
+        modifier = modifier,
+    ) {
+        AnimatedIcon(
+            icon = icon,
+            contentDescription = stringResource(localesR.string.financial_health),
+            modifier = Modifier.padding(4.dp),
+        )
     }
 }
