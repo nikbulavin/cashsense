@@ -111,8 +111,8 @@
   <string name="previous_date">Date précédente</string>
   <string name="transaction_deleted">Transaction supprimée</string>
   <string name="transfer_deleted">Transfert supprimé</string>
-  <string name="collapsed">Collapsed</string>
-  <string name="expanded">Expanded</string>
-  <string name="financial_health">Financial health</string>
-  <string name="toggle_menu">Toggle menu</string>
+  <string name="collapsed">Effondré</string>
+  <string name="expanded">Élargi</string>
+  <string name="financial_health">Santé financière</string>
+  <string name="toggle_menu">Menu bascule</string>
 </resources>
