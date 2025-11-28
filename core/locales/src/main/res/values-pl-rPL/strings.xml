@@ -106,9 +106,13 @@
   <string name="backup_description">Eksportuj wszystkie dane do pliku</string>
   <string name="restore">Przywróć</string>
   <string name="restore_description">Importuj dane z pliku kopii zapasowej</string>
-    <string name="close">Zamknij</string>
+  <string name="close">Zamknij</string>
   <string name="next_date">Następna data</string>
   <string name="previous_date">Poprzednia data</string>
   <string name="transaction_deleted">Transakcja usunięta</string>
   <string name="transfer_deleted">Przeniesienie usunięte</string>
+  <string name="collapsed">Zawalił się</string>
+  <string name="expanded">Rozszerzone</string>
+  <string name="financial_health">Kondycja finansowa</string>
+  <string name="toggle_menu">Przełącz menu</string>
 </resources>
