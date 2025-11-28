@@ -111,8 +111,8 @@
   <string name="previous_date">पिछली तिथि</string>
   <string name="transaction_deleted">लेनदेन हटाया गया</string>
   <string name="transfer_deleted">स्थानांतरण हटाया गया</string>
-  <string name="collapsed">Collapsed</string>
-  <string name="expanded">Expanded</string>
-  <string name="financial_health">Financial health</string>
-  <string name="toggle_menu">Toggle menu</string>
+  <string name="collapsed">ध्वस्त</string>
+  <string name="expanded">विस्तारित</string>
+  <string name="financial_health">वित्तीय स्वास्थ्य</string>
+  <string name="toggle_menu">मेनू टॉगल करें</string>
 </resources>
