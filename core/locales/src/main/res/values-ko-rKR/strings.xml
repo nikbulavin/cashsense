@@ -111,8 +111,8 @@
   <string name="previous_date">이전 날짜</string>
   <string name="transaction_deleted">거래가 삭제되었습니다</string>
   <string name="transfer_deleted">삭제된 전송</string>
-  <string name="collapsed">Collapsed</string>
-  <string name="expanded">Expanded</string>
-  <string name="financial_health">Financial health</string>
-  <string name="toggle_menu">Toggle menu</string>
+  <string name="collapsed">붕괴된</string>
+  <string name="expanded">확장된</string>
+  <string name="financial_health">재정 건전성</string>
+  <string name="toggle_menu">메뉴 전환</string>
 </resources>
