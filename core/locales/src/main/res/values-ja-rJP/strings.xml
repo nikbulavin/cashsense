@@ -106,9 +106,13 @@
   <string name="backup_description">すべてのデータをファイルにエクスポート</string>
   <string name="restore">復元</string>
   <string name="restore_description">バックアップファイルからデータをインポート</string>
-    <string name="close">閉じる</string>
+  <string name="close">閉じる</string>
   <string name="next_date">次の日付</string>
   <string name="previous_date">前の日付</string>
   <string name="transaction_deleted">トランザクションが削除されました</string>
   <string name="transfer_deleted">削除済み転送</string>
+  <string name="collapsed">崩壊した</string>
+  <string name="expanded">拡張された</string>
+  <string name="financial_health">財務健全性</string>
+  <string name="toggle_menu">メニューを切り替える</string>
 </resources>

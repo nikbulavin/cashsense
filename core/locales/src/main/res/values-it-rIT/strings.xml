@@ -106,9 +106,13 @@
   <string name="backup_description">Esporta tutti i dati in un file</string>
   <string name="restore">Ripristina</string>
   <string name="restore_description">Importa dati da un file di backup</string>
-    <string name="close">Chiudi</string>
+  <string name="close">Chiudi</string>
   <string name="next_date">Data successiva</string>
   <string name="previous_date">Data precedente</string>
   <string name="transaction_deleted">Transazione eliminata</string>
   <string name="transfer_deleted">Trasferimento eliminato</string>
+  <string name="collapsed">Crollato</string>
+  <string name="expanded">Ampliato</string>
+  <string name="financial_health">Salute finanziaria</string>
+  <string name="toggle_menu">Attiva/Disattiva menu</string>
 </resources>

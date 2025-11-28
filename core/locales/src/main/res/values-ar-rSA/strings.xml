@@ -106,9 +106,13 @@
   <string name="backup_description">تصدير جميع البيانات إلى ملف</string>
   <string name="restore">استعادة</string>
   <string name="restore_description">استيراد البيانات من ملف النسخ الاحتياطي</string>
-    <string name="close">إغلاق</string>
+  <string name="close">إغلاق</string>
   <string name="next_date">التاريخ التالي</string>
   <string name="previous_date">التاريخ السابق</string>
   <string name="transaction_deleted">تم حذف المعاملة</string>
   <string name="transfer_deleted">تم حذف التحويل</string>
+  <string name="collapsed">انهار</string>
+  <string name="expanded">موسع</string>
+  <string name="financial_health">الصحة المالية</string>
+  <string name="toggle_menu">تبديل القائمة</string>
 </resources>
