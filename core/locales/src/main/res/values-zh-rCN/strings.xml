@@ -111,8 +111,8 @@
   <string name="previous_date">上一个日期</string>
   <string name="transaction_deleted">交易已删除</string>
   <string name="transfer_deleted">转账已删除</string>
-  <string name="collapsed">Collapsed</string>
-  <string name="expanded">Expanded</string>
-  <string name="financial_health">Financial health</string>
-  <string name="toggle_menu">Toggle menu</string>
+  <string name="collapsed">已收起</string>
+  <string name="expanded">已展开</string>
+  <string name="financial_health">财务健康状况</string>
+  <string name="toggle_menu">切换菜单</string>
 </resources>
