@@ -167,18 +167,18 @@ class TransactionOverviewViewModel @Inject constructor(
                         transactionFilter = transactionFilter,
                         formattedIncome = income.formatAmount(
                             currency = userCurrency,
-                            withApproximately = isMultiCurrencyTransactions,
+                            approximatelyPrefix = isMultiCurrencyTransactions,
                         ),
                         formattedExpenses = expenses.abs().formatAmount(
                             currency = userCurrency,
-                            withApproximately = isMultiCurrencyTransactions,
+                            approximatelyPrefix = isMultiCurrencyTransactions,
                         ),
                         graphData = graphData,
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
                         formattedTotalBalance = totalBalance.formatAmount(
                             currency = userCurrency,
-                            withApproximately = !baseCurrencies.all { it == userCurrency },
+                            approximatelyPrefix = !baseCurrencies.all { it == userCurrency },
                         ),
                         financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs())
                     )

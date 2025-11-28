@@ -15,14 +15,14 @@ import kotlin.time.toJavaInstant
 
 fun BigDecimal.formatAmount(
     currency: Currency,
-    withPlus: Boolean = false,
-    withApproximately: Boolean = false,
+    plusPrefix: Boolean = false,
+    approximatelyPrefix: Boolean = false,
     locale: Locale = Locale.getDefault(),
 ): String {
     val formattedAmount = getDecimalFormat(currency, locale).format(this)
     return buildString {
-        if (withApproximately && this@formatAmount.signum() > 0) append("≈")
-        if (withPlus && this@formatAmount.signum() > 0) append("+")
+        if (approximatelyPrefix && this@formatAmount.signum() > 0) append("≈")
+        if (plusPrefix && this@formatAmount.signum() > 0) append("+")
         append(formattedAmount)
     }
 }
@@ -30,18 +30,20 @@ fun BigDecimal.formatAmount(
 fun getDecimalFormat(
     currency: Currency,
     locale: Locale = Locale.getDefault(),
-) = DecimalFormat.getCurrencyInstance(locale).apply {
-    minimumFractionDigits = 0
-    maximumFractionDigits = 2
-    this.currency = currency
-} as DecimalFormat
+): DecimalFormat {
+    return (DecimalFormat.getCurrencyInstance(locale) as DecimalFormat).apply {
+        minimumFractionDigits = 0
+        maximumFractionDigits = 2
+        this.currency = currency
+    }
+}
 
 @Composable
 fun Instant.formatDate(
     dateFormatType: DateFormatType = DateFormatType.DATE,
     formatStyle: FormatStyle = FormatStyle.MEDIUM,
-): String =
-    when (dateFormatType) {
+): String {
+    return when (dateFormatType) {
         DateFormatType.DATE_TIME -> DateTimeFormatter.ofLocalizedDateTime(formatStyle)
         DateFormatType.DATE -> DateTimeFormatter.ofLocalizedDate(formatStyle)
         DateFormatType.TIME -> DateTimeFormatter.ofLocalizedTime(formatStyle)
@@ -49,3 +51,4 @@ fun Instant.formatDate(
         .withLocale(Locale.getDefault())
         .withZone(LocalTimeZone.current.toJavaZoneId())
         .format(toJavaInstant())
+}
