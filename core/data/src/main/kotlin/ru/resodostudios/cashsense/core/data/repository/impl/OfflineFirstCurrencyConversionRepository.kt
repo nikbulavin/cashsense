@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.onEach
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
-import ru.resodostudios.cashsense.core.database.model.asExternalModel
-import ru.resodostudios.cashsense.core.model.data.CurrencyExchangeRate
 import ru.resodostudios.cashsense.core.network.CsNetworkDataSource
+import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.time.Clock
@@ -26,29 +25,27 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
     override fun getConvertedCurrencies(
         baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
-    ): Flow<List<CurrencyExchangeRate>> {
+    ): Flow<Map<Currency, BigDecimal>> {
         return dao.getCurrencyExchangeRateEntities(
             targetCurrency = targetCurrency,
             baseCurrencies = baseCurrencies,
         )
             .map { cachedRates ->
-                cachedRates.map { it.asExternalModel() }
+                cachedRates.associate { it.baseCurrency to it.exchangeRate }
             }
             .onEach { currencyExchangeRates ->
-                val cachedBaseCurrencies = currencyExchangeRates
-                    .mapTo(HashSet()) { it.baseCurrency }
                 val missingBaseCurrencies = buildSet {
                     addAll(baseCurrencies)
                     remove(targetCurrency)
-                    removeAll(cachedBaseCurrencies)
+                    removeAll(currencyExchangeRates.keys)
                 }
                 if (missingBaseCurrencies.isNotEmpty()) {
-                    val exchangeRates =
+                    dao.upsertCurrencyExchangeRates(
                         getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
-                    dao.upsertCurrencyExchangeRates(exchangeRates)
+                    )
                 }
             }
-            .catch { emit(emptyList()) }
+            .catch { emit(emptyMap()) }
     }
 
     override suspend fun deleteOutdatedCurrencyExchangeRates() {

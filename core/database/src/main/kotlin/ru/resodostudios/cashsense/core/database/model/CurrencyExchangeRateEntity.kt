@@ -3,7 +3,6 @@ package ru.resodostudios.cashsense.core.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.resodostudios.cashsense.core.model.data.CurrencyExchangeRate
 import java.math.BigDecimal
 import java.util.Currency
 import kotlin.time.Instant
@@ -22,11 +21,3 @@ data class CurrencyExchangeRateEntity(
     val exchangeRate: BigDecimal,
     val timestamp: Instant,
 )
-
-fun CurrencyExchangeRateEntity.asExternalModel(): CurrencyExchangeRate {
-    return CurrencyExchangeRate(
-        baseCurrency = baseCurrency,
-        targetCurrency = targetCurrency,
-        exchangeRate = exchangeRate,
-    )
-}

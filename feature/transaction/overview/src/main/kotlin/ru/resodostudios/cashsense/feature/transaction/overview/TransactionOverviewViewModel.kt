@@ -42,7 +42,7 @@ import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
-import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
+import ru.resodostudios.cashsense.core.ui.util.filterTransactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
@@ -100,93 +100,74 @@ class TransactionOverviewViewModel @Inject constructor(
                     getExtendedUserWallets.invoke(),
                     transactionFilterState,
                 ) { exchangeRates, wallets, transactionFilter ->
-                    val currencyExchangeRates = exchangeRates
-                        .associate { it.baseCurrency to it.exchangeRate }
-
                     val allTransactions = wallets.flatMap { wallet -> wallet.transactions }
-                    val filterableTransactions = wallets
-                        .flatMap { wallet -> wallet.transactions }
-                        .applyTransactionFilter(transactionFilter)
-
+                    val filterableTransactions = allTransactions.filterTransactions(transactionFilter)
                     val filteredTransactions = filterableTransactions.transactions
                         .filter {
                             !it.ignored && if (transactionFilter.dateType == ALL) {
                                 it.timestamp.isInCurrentMonthAndYear()
                             } else true
                         }
-                    val isMultiCurrencyTransactions = !filteredTransactions
+
+                    val totalBalance = wallets.sumOf {
+                        if (userCurrency == it.wallet.currency) return@sumOf it.currentBalance
+                        exchangeRates[it.wallet.currency]
+                            ?.times(it.currentBalance)
+                            ?: return@combine FinancePanelUiState.NotShown
+                    }
+
+                    val isMultiCurrencyExpenses = !filteredTransactions
+                        .asSequence()
+                        .filter { it.amount.signum() < 0 }
+                        .map { it.currency }
+                        .distinct()
+                        .all { it == userCurrency }
+                    val isMultiCurrencyIncome = !filteredTransactions
+                        .asSequence()
+                        .filter { it.amount.signum() > 0 }
                         .map { it.currency }
                         .distinct()
                         .all { it == userCurrency }
 
-                    val totalBalance = wallets.sumOf {
-                        if (userCurrency == it.wallet.currency) return@sumOf it.currentBalance
-                        val exchangeRate = currencyExchangeRates[it.wallet.currency]
-                            ?: return@combine FinancePanelUiState.NotShown
-
-                        it.currentBalance * exchangeRate
-                    }
-
-                    val (expenses, income) = filteredTransactions
-                        .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
-                            val amount = transaction.amount
-                            val currency = transaction.currency
-
-                            val convertedAmount = if (userCurrency == currency) {
-                                amount
-                            } else {
-                                currencyExchangeRates[currency]?.let { rate -> amount * rate }
-                                    ?: return@combine FinancePanelUiState.NotShown
-                            }
-
-                            if (amount.signum() < 0) {
-                                expenses + convertedAmount to income
-                            } else {
-                                expenses to income + convertedAmount
-                            }
-                        }
-
-                    val graphData = filteredTransactions.getGraphData(
-                        dateType = transactionFilter.dateType,
+                    val (expenses, income) = calculateExpensesAndIncome(
+                        transactions = filteredTransactions,
                         userCurrency = userCurrency,
-                        currencyExchangeRates = currencyExchangeRates,
-                    )
-
-                    val (totalExpenses, totalIncome) = allTransactions
-                        .asSequence()
-                        .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-                        .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
-                            if (transaction.amount.signum() < 0) {
-                                expenses + transaction.amount to income
-                            } else {
-                                expenses to income + transaction.amount
-                            }
-                        }
+                        currencyExchangeRates = exchangeRates,
+                    ) ?: return@combine FinancePanelUiState.NotShown
 
                     FinancePanelUiState.Shown(
                         transactionFilter = transactionFilter,
                         formattedIncome = income.formatAmount(
                             currency = userCurrency,
-                            approximatelyPrefix = isMultiCurrencyTransactions,
+                            approximatelyPrefix = isMultiCurrencyIncome,
                         ),
                         formattedExpenses = expenses.abs().formatAmount(
                             currency = userCurrency,
-                            approximatelyPrefix = isMultiCurrencyTransactions,
+                            approximatelyPrefix = isMultiCurrencyExpenses,
                         ),
-                        graphData = graphData,
+                        graphData = filteredTransactions.getGraphData(
+                            dateType = transactionFilter.dateType,
+                            userCurrency = userCurrency,
+                            currencyExchangeRates = exchangeRates,
+                        ),
                         userCurrency = userCurrency,
                         availableCategories = filterableTransactions.availableCategories,
                         formattedTotalBalance = totalBalance.formatAmount(
                             currency = userCurrency,
                             approximatelyPrefix = !baseCurrencies.all { it == userCurrency },
                         ),
-                        financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs())
+                        financialHealth = calculateFinancialHealth(
+                            transactions = allTransactions,
+                            userCurrency = userCurrency,
+                            currencyExchangeRates = exchangeRates,
+                        ) ?: return@combine FinancePanelUiState.NotShown,
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
             }
         }
         .flowOn(defaultDispatcher)
+        .catch { FinancePanelUiState.NotShown }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -199,9 +180,11 @@ class TransactionOverviewViewModel @Inject constructor(
         selectedTransactionState,
     ) { extendedUserWallets, transactionFilter, selectedTransaction ->
         val transactions = extendedUserWallets
+            .asSequence()
             .flatMap { it.transactions }
             .sortedByDescending { it.timestamp }
-            .applyTransactionFilter(transactionFilter).transactions
+            .toList()
+            .filterTransactions(transactionFilter).transactions
 
         TransactionOverviewUiState.Success(
             selectedTransaction = selectedTransaction,
@@ -318,11 +301,22 @@ class TransactionOverviewViewModel @Inject constructor(
         shouldDisplayUndoTransfer = false
     }
 
-    private fun calculateFinancialHealth(income: BigDecimal, expenses: BigDecimal): FinancialHealth {
-        if (expenses == BigDecimal.ZERO) {
-            return if (income > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
+    private fun calculateFinancialHealth(
+        transactions: List<Transaction>,
+        userCurrency: Currency,
+        currencyExchangeRates: Map<Currency, BigDecimal>,
+    ): FinancialHealth? {
+        val monthlyTransactions = transactions
+            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+        val (monthlyExpenses, monthlyIncome) = calculateExpensesAndIncome(
+            transactions = monthlyTransactions,
+            userCurrency = userCurrency,
+            currencyExchangeRates = currencyExchangeRates,
+        ) ?: return null
+        if (monthlyExpenses == BigDecimal.ZERO) {
+            return if (monthlyIncome > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
         }
-        val ratio = income.divide(expenses, 2, RoundingMode.HALF_UP).toDouble()
+        val ratio = monthlyIncome.divide(monthlyExpenses, 2, RoundingMode.HALF_UP).toDouble()
         return when {
             ratio < 0.5 -> FinancialHealth.VERY_BAD
             ratio < 0.9 -> FinancialHealth.BAD
@@ -330,6 +324,32 @@ class TransactionOverviewViewModel @Inject constructor(
             ratio < 1.5 -> FinancialHealth.GOOD
             else -> FinancialHealth.VERY_GOOD
         }
+    }
+
+    private fun calculateExpensesAndIncome(
+        transactions: List<Transaction>,
+        userCurrency: Currency,
+        currencyExchangeRates: Map<Currency, BigDecimal>,
+    ): Pair<BigDecimal, BigDecimal>? {
+        var expenses = BigDecimal.ZERO
+        var income = BigDecimal.ZERO
+        for (transaction in transactions) {
+            val amount = transaction.amount
+            val currency = transaction.currency
+
+            val convertedAmount = if (userCurrency == currency) {
+                amount
+            } else {
+                currencyExchangeRates[currency]?.times(amount) ?: return null
+            }
+
+            if (amount.signum() < 0) {
+                expenses += convertedAmount
+            } else {
+                income += convertedAmount
+            }
+        }
+        return expenses to income
     }
 }
 
