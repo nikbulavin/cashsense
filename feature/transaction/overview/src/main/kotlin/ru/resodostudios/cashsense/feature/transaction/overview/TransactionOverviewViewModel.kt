@@ -103,9 +103,9 @@ class TransactionOverviewViewModel @Inject constructor(
                     val currencyExchangeRates = exchangeRates
                         .associate { it.baseCurrency to it.exchangeRate }
 
-                    val allTransactions = wallets.flatMap { wallet -> wallet.transactions }
-                    val filterableTransactions = wallets
+                    val allTransactions = wallets
                         .flatMap { wallet -> wallet.transactions }
+                    val filterableTransactions = allTransactions
                         .applyTransactionFilter(transactionFilter)
 
                     val filteredTransactions = filterableTransactions.transactions
@@ -114,10 +114,6 @@ class TransactionOverviewViewModel @Inject constructor(
                                 it.timestamp.isInCurrentMonthAndYear()
                             } else true
                         }
-                    val isMultiCurrencyTransactions = !filteredTransactions
-                        .map { it.currency }
-                        .distinct()
-                        .all { it == userCurrency }
 
                     val totalBalance = wallets.sumOf {
                         if (userCurrency == it.wallet.currency) return@sumOf it.currentBalance
@@ -127,6 +123,18 @@ class TransactionOverviewViewModel @Inject constructor(
                         it.currentBalance * exchangeRate
                     }
 
+                    val isMultiCurrencyExpenses = !filteredTransactions
+                        .asSequence()
+                        .filter { it.amount.signum() < 0 }
+                        .map { it.currency }
+                        .distinct()
+                        .all { it == userCurrency }
+                    val isMultiCurrencyIncome = !filteredTransactions
+                        .asSequence()
+                        .filter { it.amount.signum() > 0 }
+                        .map { it.currency }
+                        .distinct()
+                        .all { it == userCurrency }
                     val (expenses, income) = filteredTransactions
                         .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
                             val amount = transaction.amount
@@ -135,7 +143,8 @@ class TransactionOverviewViewModel @Inject constructor(
                             val convertedAmount = if (userCurrency == currency) {
                                 amount
                             } else {
-                                currencyExchangeRates[currency]?.let { rate -> amount * rate }
+                                currencyExchangeRates[currency]
+                                    ?.times(amount)
                                     ?: return@combine FinancePanelUiState.NotShown
                             }
 
@@ -152,14 +161,25 @@ class TransactionOverviewViewModel @Inject constructor(
                         currencyExchangeRates = currencyExchangeRates,
                     )
 
-                    val (totalExpenses, totalIncome) = allTransactions
+                    val (monthlyExpenses, monthlyIncome) = allTransactions
                         .asSequence()
                         .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
                         .fold(BigDecimal.ZERO to BigDecimal.ZERO) { (expenses, income), transaction ->
-                            if (transaction.amount.signum() < 0) {
-                                expenses + transaction.amount to income
+                            val amount = transaction.amount
+                            val currency = transaction.currency
+
+                            val convertedAmount = if (userCurrency == currency) {
+                                amount
                             } else {
-                                expenses to income + transaction.amount
+                                currencyExchangeRates[currency]
+                                    ?.times(amount)
+                                    ?: return@combine FinancePanelUiState.NotShown
+                            }
+
+                            if (amount.signum() < 0) {
+                                expenses + convertedAmount to income
+                            } else {
+                                expenses to income + convertedAmount
                             }
                         }
 
@@ -167,11 +187,11 @@ class TransactionOverviewViewModel @Inject constructor(
                         transactionFilter = transactionFilter,
                         formattedIncome = income.formatAmount(
                             currency = userCurrency,
-                            approximatelyPrefix = isMultiCurrencyTransactions,
+                            approximatelyPrefix = isMultiCurrencyIncome,
                         ),
                         formattedExpenses = expenses.abs().formatAmount(
                             currency = userCurrency,
-                            approximatelyPrefix = isMultiCurrencyTransactions,
+                            approximatelyPrefix = isMultiCurrencyExpenses,
                         ),
                         graphData = graphData,
                         userCurrency = userCurrency,
@@ -180,7 +200,10 @@ class TransactionOverviewViewModel @Inject constructor(
                             currency = userCurrency,
                             approximatelyPrefix = !baseCurrencies.all { it == userCurrency },
                         ),
-                        financialHealth = calculateFinancialHealth(totalIncome, totalExpenses.abs())
+                        financialHealth = calculateFinancialHealth(
+                            monthlyIncome,
+                            monthlyExpenses.abs(),
+                        ),
                     )
                 }
                     .catch { FinancePanelUiState.NotShown }
@@ -318,7 +341,10 @@ class TransactionOverviewViewModel @Inject constructor(
         shouldDisplayUndoTransfer = false
     }
 
-    private fun calculateFinancialHealth(income: BigDecimal, expenses: BigDecimal): FinancialHealth {
+    private fun calculateFinancialHealth(
+        income: BigDecimal,
+        expenses: BigDecimal,
+    ): FinancialHealth {
         if (expenses == BigDecimal.ZERO) {
             return if (income > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
         }
