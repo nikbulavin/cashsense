@@ -13,7 +13,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 
-fun List<Transaction>.applyTransactionFilter(transactionFilter: TransactionFilter): FilterableTransactions {
+fun List<Transaction>.filterTransactions(transactionFilter: TransactionFilter): FilterableTransactions {
     val filteredTransactions = this.filter { transaction ->
         val financeTypeMatches = when (transactionFilter.financeType) {
             NOT_SET -> true

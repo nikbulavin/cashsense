@@ -41,7 +41,7 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.groupByDate
-import ru.resodostudios.cashsense.core.ui.util.applyTransactionFilter
+import ru.resodostudios.cashsense.core.ui.util.filterTransactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
@@ -82,7 +82,7 @@ class WalletViewModel @AssistedInject constructor(
         selectedTransactionState,
     ) { extendedUserWallet, transactionFilter, selectedTransaction ->
         val filterableTransactions = extendedUserWallet.transactions
-            .applyTransactionFilter(transactionFilter)
+            .filterTransactions(transactionFilter)
         val filteredTransactions = filterableTransactions.transactions
             .filter {
                 !it.ignored && if (transactionFilter.dateType == ALL) {
