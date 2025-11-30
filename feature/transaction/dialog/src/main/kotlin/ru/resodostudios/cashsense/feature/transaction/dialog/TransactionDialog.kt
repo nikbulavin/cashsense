@@ -16,6 +16,7 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -246,7 +247,7 @@ private fun TransactionStatusChoiceRow(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
@@ -263,7 +264,7 @@ private fun CategoryDropdownMenu(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             value = currentCategory?.title ?: stringResource(localesR.string.none),
             onValueChange = {},
@@ -277,10 +278,13 @@ private fun CategoryDropdownMenu(
             },
             singleLine = true,
             enabled = categories.isNotEmpty(),
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            shape = MenuDefaults.standaloneGroupShape,
+            containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
             DropdownMenuItem(
                 text = {
@@ -303,8 +307,9 @@ private fun CategoryDropdownMenu(
                     )
                 },
             )
-            categories.forEach { category ->
+            categories.forEachIndexed { index, category ->
                 DropdownMenuItem(
+                    shapes = MenuDefaults.itemShape(index, categories.size),
                     text = {
                         Text(
                             text = category.title,
@@ -312,6 +317,7 @@ private fun CategoryDropdownMenu(
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
+                    selected = index == categories.indexOf(currentCategory),
                     onClick = {
                         onCategoryClick(category)
                         iconId = category.iconId
@@ -324,6 +330,7 @@ private fun CategoryDropdownMenu(
                             contentDescription = null,
                         )
                     },
+                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
                 )
             }
         }
