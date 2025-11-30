@@ -3,10 +3,12 @@ package ru.resodostudios.cashsense.core.ui.component
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -27,7 +30,7 @@ import ru.resodostudios.cashsense.core.util.getValidCurrencies
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CurrencyDropdownMenu(
     currency: Currency,
@@ -69,8 +72,14 @@ fun CurrencyDropdownMenu(
                 expanded = true
             },
             label = { Text(stringResource(localesR.string.currency)) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = expanded,
+                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.SecondaryEditable),
+                )
+            },
             enabled = enabled,
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -82,34 +91,43 @@ fun CurrencyDropdownMenu(
                     focusManager.clearFocus()
                 }
             },
+            shape = MenuDefaults.standaloneGroupShape,
             modifier = Modifier.heightIn(max = dropDownHeight),
+            containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
-            filteredCurrencies.forEach { selectionOption ->
-                val currencyText = "${selectionOption.currencyCode} - ${selectionOption.displayName}"
+            filteredCurrencies.forEachIndexed { index, option ->
                 DropdownMenuItem(
-                    text = { Text(currencyText) },
+                    shapes = MenuDefaults.itemShape(index, filteredCurrencies.size),
+                    text = {
+                        Text(
+                            text = "${option.currencyCode} - ${option.displayName}",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
                     onClick = {
-                        selectedCurrency = selectionOption
-                        onCurrencyClick(selectionOption)
-                        currencySearchText = selectionOption.currencyCode
+                        selectedCurrency = option
+                        onCurrencyClick(option)
+                        currencySearchText = option.currencyCode
                         expanded = false
                         focusManager.clearFocus()
                     },
-                    leadingIcon = if (currency == selectionOption) {
-                        {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Check,
-                                contentDescription = null,
-                            )
-                        }
-                    } else null,
+                    selected = currency == option,
+                    checkedLeadingIcon = {
+                        Icon(
+                            CsIcons.Outlined.Check,
+                            contentDescription = null
+                        )
+                    },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
             if (filteredCurrencies.isEmpty()) {
                 DropdownMenuItem(
+                    shapes = MenuDefaults.itemShape(0, 1),
                     text = { Text(stringResource(localesR.string.currency_not_found)) },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    selected = false,
                     onClick = {
                         expanded = false
                         focusManager.clearFocus()

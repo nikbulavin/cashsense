@@ -12,9 +12,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +41,7 @@ import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -194,7 +198,7 @@ private fun TransferDialog(
     TrackScreenViewEvent(screenName = "TransferDialog")
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WalletDropdownMenu(
     @StringRes title: Int,
@@ -226,15 +230,21 @@ private fun WalletDropdownMenu(
             } else {
                 null
             },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            shape = MenuDefaults.standaloneGroupShape,
+            containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
-            availableWallets.forEach { wallet ->
+            availableWallets.forEachIndexed { index, wallet ->
                 val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
                 val menuText = "${wallet.title} – $currentBalance"
                 DropdownMenuItem(
+                    shapes = MenuDefaults.itemShape(index, availableWallets.size),
+                    selected = selectedWallet == wallet,
+                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
                     text = {
                         Text(
                             text = menuText,
