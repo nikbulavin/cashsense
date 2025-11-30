@@ -49,7 +49,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalTogg
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
@@ -165,7 +164,14 @@ private fun TransactionDialog(
                 )
                 CategoryDropdownMenu(
                     currentCategory = transactionDialogState.category,
-                    categories = if (categoriesState is Success) categoriesState.categories else emptyList(),
+                    categories = if (categoriesState is Success) {
+                        buildList {
+                            add(null)
+                            addAll(categoriesState.categories)
+                        }
+                    } else {
+                        emptyList()
+                    },
                     onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
                 )
                 TransactionStatusChoiceRow(
@@ -251,7 +257,7 @@ private fun TransactionStatusChoiceRow(
 @Composable
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
-    categories: List<Category>,
+    categories: List<Category?>,
     onCategoryClick: (Category?) -> Unit,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -286,33 +292,12 @@ private fun CategoryDropdownMenu(
             shape = MenuDefaults.standaloneGroupShape,
             containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = stringResource(localesR.string.none),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                onClick = {
-                    onCategoryClick(null)
-                    iconId = 0
-                    expanded = false
-                },
-                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                leadingIcon = {
-                    Icon(
-                        imageVector = CsIcons.Outlined.Category,
-                        contentDescription = null,
-                    )
-                },
-            )
             categories.forEachIndexed { index, category ->
                 DropdownMenuItem(
                     shapes = MenuDefaults.itemShape(index, categories.size),
                     text = {
                         Text(
-                            text = category.title,
+                            text = category?.title?: stringResource(localesR.string.none),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -320,13 +305,13 @@ private fun CategoryDropdownMenu(
                     selected = index == categories.indexOf(currentCategory),
                     onClick = {
                         onCategoryClick(category)
-                        iconId = category.iconId
+                        iconId = category?.iconId ?: 0
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     leadingIcon = {
                         Icon(
-                            imageVector = StoredIcon.asImageVector(category.iconId),
+                            imageVector = StoredIcon.asImageVector(category?.iconId),
                             contentDescription = null,
                         )
                     },
