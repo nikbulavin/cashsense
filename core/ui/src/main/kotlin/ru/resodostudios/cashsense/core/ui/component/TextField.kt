@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -11,7 +13,6 @@ import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
@@ -26,6 +27,7 @@ import androidx.compose.material3.TimePickerDisplayMode
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +69,7 @@ fun DatePickerTextField(
     onlyFutureDates: Boolean = false,
 ) {
     var openDialog by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
         value = timestamp.formatDate(),
@@ -74,14 +77,19 @@ fun DatePickerTextField(
         readOnly = true,
         label = { Text(stringResource(labelRes)) },
         trailingIcon = {
-            IconButton(onClick = { openDialog = true }) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                )
-            }
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+            )
         },
         singleLine = true,
+        interactionSource = interactionSource.also { interactionSource ->
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect {
+                    if (it is PressInteraction.Release) openDialog = true
+                }
+            }
+        },
         modifier = modifier,
     )
     if (openDialog) {
@@ -149,6 +157,7 @@ fun TimePickerTextField(
 ) {
     var openDialog by remember { mutableStateOf(false) }
     var displayMode by remember { mutableStateOf(TimePickerDisplayMode.Picker) }
+    val interactionSource = remember { MutableInteractionSource() }
     val windowInfo = LocalWindowInfo.current
 
     OutlinedTextField(
@@ -157,14 +166,19 @@ fun TimePickerTextField(
         readOnly = true,
         label = { Text(stringResource(localesR.string.time)) },
         trailingIcon = {
-            IconButton(onClick = { openDialog = true }) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Schedule,
-                    contentDescription = null,
-                )
-            }
+            Icon(
+                imageVector = CsIcons.Outlined.Schedule,
+                contentDescription = null,
+            )
         },
         singleLine = true,
+        interactionSource = interactionSource.also { interactionSource ->
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect {
+                    if (it is PressInteraction.Release) openDialog = true
+                }
+            }
+        },
         modifier = modifier,
     )
     if (openDialog) {
