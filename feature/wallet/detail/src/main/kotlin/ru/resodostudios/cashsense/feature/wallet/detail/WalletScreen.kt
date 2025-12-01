@@ -359,6 +359,7 @@ private fun WalletTopBar(
                     onClick = onBackClick,
                     icon = CsIcons.Outlined.ArrowBack,
                     contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                    tooltipPosition = TooltipAnchorPosition.Right,
                 )
             }
         },
