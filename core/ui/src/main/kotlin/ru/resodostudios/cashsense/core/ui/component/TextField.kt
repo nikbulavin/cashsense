@@ -2,8 +2,10 @@ package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -15,8 +17,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDialog
+import androidx.compose.material3.TimePickerDialogDefaults
+import androidx.compose.material3.TimePickerDialogDefaults.MinHeightForTimePicker
+import androidx.compose.material3.TimePickerDisplayMode
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -27,10 +33,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
@@ -124,7 +132,10 @@ fun DatePickerTextField(
                 }
             },
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                state = datePickerState,
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            )
         }
     }
 }
@@ -137,6 +148,8 @@ fun TimePickerTextField(
     modifier: Modifier = Modifier,
 ) {
     var openDialog by remember { mutableStateOf(false) }
+    var displayMode by remember { mutableStateOf(TimePickerDisplayMode.Picker) }
+    val windowInfo = LocalWindowInfo.current
 
     OutlinedTextField(
         value = timestamp.formatDate(DateFormatType.TIME, FormatStyle.SHORT),
@@ -188,8 +201,29 @@ fun TimePickerTextField(
                     Text(stringResource(localesR.string.cancel))
                 }
             },
+            modeToggleButton = {
+                if (windowInfo.containerSize.height.dp > MinHeightForTimePicker) {
+                    TimePickerDialogDefaults.DisplayModeToggle(
+                        onDisplayModeChange = {
+                            displayMode = if (displayMode == TimePickerDisplayMode.Picker) {
+                                TimePickerDisplayMode.Input
+                            } else {
+                                TimePickerDisplayMode.Picker
+                            }
+                        },
+                        displayMode = displayMode,
+                    )
+                }
+            },
         ) {
-            TimePicker(state = timePickerState)
+            if (
+                displayMode == TimePickerDisplayMode.Picker &&
+                windowInfo.containerSize.height.dp > MinHeightForTimePicker
+            ) {
+                TimePicker(state = timePickerState)
+            } else {
+                TimeInput(state = timePickerState)
+            }
         }
     }
 }
