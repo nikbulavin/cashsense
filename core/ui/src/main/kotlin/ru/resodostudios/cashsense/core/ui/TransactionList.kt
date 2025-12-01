@@ -62,7 +62,7 @@ fun LazyListScope.transactions(
                         .hazeEffect(hazeState, hazeStyle) {
                             blurEnabled = true
                             blurRadius = 10.dp
-                            noiseFactor = 0.1f
+                            noiseFactor = 0f
                             inputScale = HazeInputScale.Auto
                         },
                 )
