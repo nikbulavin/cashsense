@@ -93,22 +93,32 @@ fun CsIconToggleButton(
     icon: ImageVector,
     contentDescription: String,
     modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
 ) {
-    val hapticFeedback = LocalHapticFeedback.current
-    IconToggleButton(
-        shapes = IconButtonDefaults.toggleableShapes(),
-        checked = checked,
-        onCheckedChange = { isChecked ->
-            hapticFeedback.performHapticFeedback(
-                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-            )
-            onCheckedChange(isChecked)
-        },
+    TooltipBox(
         modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-        )
+        val hapticFeedback = LocalHapticFeedback.current
+        IconToggleButton(
+            shapes = IconButtonDefaults.toggleableShapes(),
+            checked = checked,
+            onCheckedChange = { isChecked ->
+                hapticFeedback.performHapticFeedback(
+                    if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onCheckedChange(isChecked)
+            },
+            modifier = modifier,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+            )
+        }
     }
 }

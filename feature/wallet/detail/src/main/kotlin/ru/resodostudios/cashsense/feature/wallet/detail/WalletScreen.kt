@@ -1,12 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet.detail
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AppBarRow
@@ -19,17 +17,11 @@ import androidx.compose.material3.FloatingToolbarDefaults.floatingToolbarVertica
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -370,7 +362,12 @@ private fun WalletTopBar(
                 )
             }
         },
-        actions = { PrimaryToggleButton(isPrimary) { onPrimaryClick(wallet.id, !isPrimary) } },
+        actions = {
+            PrimaryToggleButton(
+                isPrimary = isPrimary,
+                onPrimaryClick = { onPrimaryClick(wallet.id, !isPrimary) },
+            )
+        },
     )
 }
 
@@ -379,30 +376,21 @@ private fun WalletTopBar(
 private fun PrimaryToggleButton(
     isPrimary: Boolean,
     onPrimaryClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val (icon, @StringRes contentDescriptionRes) = if (isPrimary) {
-        CsIcons.Filled.Star to localesR.string.non_primary_icon_description
+    val (icon, contentDescription) = if (isPrimary) {
+        CsIcons.Filled.Star to stringResource(localesR.string.non_primary_icon_description)
     } else {
-        CsIcons.Outlined.Star to localesR.string.primary_icon_description
+        CsIcons.Outlined.Star to stringResource(localesR.string.primary_icon_description)
     }
-
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Below,
-        ),
-        tooltip = { PlainTooltip { Text(stringResource(contentDescriptionRes)) } },
-        state = rememberTooltipState(),
-    ) {
-        CsIconToggleButton(
-            checked = isPrimary,
-            onCheckedChange = { onPrimaryClick() },
-            icon = icon,
-            contentDescription = stringResource(contentDescriptionRes),
-            modifier = Modifier
-                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide))
-                .padding(end = 4.dp),
-        )
-    }
+    CsIconToggleButton(
+        checked = isPrimary,
+        onCheckedChange = { onPrimaryClick() },
+        icon = icon,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        tooltipPosition = TooltipAnchorPosition.Left,
+    )
 }
 
 @PreviewLightDark
