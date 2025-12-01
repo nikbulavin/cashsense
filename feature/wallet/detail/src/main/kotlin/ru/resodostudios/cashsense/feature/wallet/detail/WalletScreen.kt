@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.wallet.detail
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -244,6 +243,9 @@ private fun WalletScreen(
                         onEditWallet = onEditWallet,
                         onDeleteWallet = onDeleteWallet,
                         navigateToTransactionDialog = navigateToTransactionDialog,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .offset(y = -ScreenOffset),
                     )
                 }
             }
@@ -254,20 +256,18 @@ private fun WalletScreen(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun BoxScope.WalletToolbar(
+private fun WalletToolbar(
     expanded: Boolean,
     onTransfer: (String) -> Unit,
     walletId: String,
     onEditWallet: (String) -> Unit,
     onDeleteWallet: (String) -> Unit,
     navigateToTransactionDialog: (String, String?, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val vibrantColors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
     HorizontalFloatingToolbar(
-        colors = vibrantColors,
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .offset(y = -ScreenOffset),
+        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
+        modifier = modifier,
         expanded = expanded,
         leadingContent = {
             IconButton(
@@ -287,11 +287,7 @@ private fun BoxScope.WalletToolbar(
                 overflowIndicator = { menuState ->
                     IconButton(
                         onClick = {
-                            if (menuState.isShowing) {
-                                menuState.dismiss()
-                            } else {
-                                menuState.show()
-                            }
+                            if (menuState.isShowing) menuState.dismiss() else menuState.show()
                         },
                     ) {
                         Icon(
