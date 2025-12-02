@@ -37,12 +37,16 @@ fun NavGraphBuilder.settingsScreen(
             slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
                     fadeIn(motionScheme.defaultEffectsSpec())
         },
+        popExitTransition = {
+            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+                    fadeOut(motionScheme.defaultEffectsSpec())
+        },
         enterTransition = {
             slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } +
                     fadeIn(motionScheme.defaultEffectsSpec())
         },
         exitTransition = {
-            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
                     fadeOut(motionScheme.defaultEffectsSpec())
         },
     ) {

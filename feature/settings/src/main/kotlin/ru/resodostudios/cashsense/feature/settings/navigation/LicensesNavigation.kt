@@ -27,13 +27,13 @@ fun NavGraphBuilder.licensesScreen(
     onBackClick: () -> Unit,
 ) {
     composable<LicensesRoute>(
-        exitTransition = {
-            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
-                    fadeOut(motionScheme.defaultEffectsSpec())
-        },
         enterTransition = {
             slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } +
                     fadeIn(motionScheme.defaultEffectsSpec())
+        },
+        exitTransition = {
+            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+                    fadeOut(motionScheme.defaultEffectsSpec())
         },
     ) {
         LicensesScreen(

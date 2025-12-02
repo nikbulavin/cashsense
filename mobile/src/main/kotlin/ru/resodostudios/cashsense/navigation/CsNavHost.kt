@@ -68,10 +68,10 @@ fun CsNavHost(
                         if (isNavigatingToTheRight) it else -it
                     } + fadeIn(motionScheme.defaultEffectsSpec())
                 } else {
-                    defaultEnterTransition()
+                    fadeIn()
                 }
             } else {
-                defaultEnterTransition()
+                fadeIn()
             }
         },
         exitTransition = {
@@ -88,10 +88,11 @@ fun CsNavHost(
                         if (isNavigatingToTheRight) -it else it
                     } + fadeOut(motionScheme.defaultEffectsSpec())
                 } else {
-                    defaultExitTransition()
+                    fadeOut()
                 }
             } else {
-                defaultExitTransition()
+                slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
+                        fadeOut(motionScheme.defaultEffectsSpec())
             }
         },
     ) {
@@ -157,6 +158,3 @@ private fun getTopLevelIndex(
         topLevelDestination.routes.any { route -> destination.hasRoute(route) }
     }
 }
-
-private fun defaultEnterTransition() = fadeIn()
-private fun defaultExitTransition() = fadeOut()
