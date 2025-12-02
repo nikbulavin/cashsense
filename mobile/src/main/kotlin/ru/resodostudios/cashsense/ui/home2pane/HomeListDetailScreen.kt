@@ -74,10 +74,10 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/{$WALLET_ID_KEY}"
 
 @Serializable
-internal object WalletPlaceholderRoute
+data object WalletPlaceholderRoute
 
 @Serializable
-internal object HomeListDetailRoute
+data object HomeListDetailRoute
 
 fun NavGraphBuilder.homeListDetailScreen(
     onEditWallet: (String) -> Unit,
@@ -118,7 +118,7 @@ fun NavGraphBuilder.homeListDetailScreen(
 }
 
 @Composable
-internal fun HomeListDetailScreen(
+fun HomeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
@@ -163,7 +163,7 @@ internal fun HomeListDetailScreen(
     ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
-internal fun HomeListDetailScreen(
+fun HomeListDetailScreen(
     selectedWalletId: String?,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,

@@ -51,8 +51,8 @@ fun CsNavHost(
         startDestination = HomeListDetailRoute,
         modifier = modifier,
         popEnterTransition = {
-            slideInHorizontally(motionScheme.fastSpatialSpec()) { -it / 4 } +
-                    fadeIn(motionScheme.fastEffectsSpec())
+            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
+                    fadeIn(motionScheme.defaultEffectsSpec())
         },
         enterTransition = {
             val isTopLevelNav =
@@ -64,9 +64,9 @@ fun CsNavHost(
 
                 if (initialIndex != -1 && targetIndex != -1) {
                     val isNavigatingToTheRight = targetIndex > initialIndex
-                    slideInHorizontally(motionScheme.fastSpatialSpec()) {
-                        (if (isNavigatingToTheRight) it else -it) / 4
-                    } + fadeIn(motionScheme.fastEffectsSpec())
+                    slideInHorizontally(motionScheme.defaultSpatialSpec()) {
+                        if (isNavigatingToTheRight) it else -it
+                    } + fadeIn(motionScheme.defaultEffectsSpec())
                 } else {
                     defaultEnterTransition()
                 }
@@ -84,9 +84,9 @@ fun CsNavHost(
 
                 if (initialIndex != -1 && targetIndex != -1) {
                     val isNavigatingToTheRight = targetIndex > initialIndex
-                    slideOutHorizontally(motionScheme.fastSpatialSpec()) {
-                        (if (isNavigatingToTheRight) -it else it) / 4
-                    } + fadeOut(motionScheme.fastEffectsSpec())
+                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) {
+                        if (isNavigatingToTheRight) -it else it
+                    } + fadeOut(motionScheme.defaultEffectsSpec())
                 } else {
                     defaultExitTransition()
                 }

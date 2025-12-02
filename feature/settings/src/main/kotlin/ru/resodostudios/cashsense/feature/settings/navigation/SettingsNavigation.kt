@@ -15,10 +15,10 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.settings.SettingsScreen
 
 @Serializable
-object SettingsBaseRoute
+data object SettingsBaseRoute
 
 @Serializable
-object SettingsRoute
+data object SettingsRoute
 
 fun NavController.navigateToSettings(navOptions: NavOptions? = null) {
     navigate(SettingsBaseRoute, navOptions)
@@ -34,16 +34,16 @@ fun NavGraphBuilder.settingsScreen(
     navigation<SettingsBaseRoute>(
         startDestination = SettingsRoute,
         popEnterTransition = {
-            slideInHorizontally(motionScheme.fastSpatialSpec()) { -it / 4 } +
-                    fadeIn(motionScheme.fastEffectsSpec())
+            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
+                    fadeIn(motionScheme.defaultEffectsSpec())
         },
         enterTransition = {
-            slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 4 } +
-                    fadeIn(motionScheme.fastEffectsSpec())
+            slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+                    fadeIn(motionScheme.defaultEffectsSpec())
         },
         exitTransition = {
-            slideOutHorizontally(motionScheme.fastSpatialSpec()) { it / 4 } +
-                    fadeOut(motionScheme.fastEffectsSpec())
+            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+                    fadeOut(motionScheme.defaultEffectsSpec())
         },
     ) {
         composable<SettingsRoute> {
