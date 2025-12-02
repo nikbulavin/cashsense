@@ -189,7 +189,7 @@ fun TimePickerTextField(
             initialMinute = localTime.minute,
         )
         TimePickerDialog(
-            title = { Text(stringResource(localesR.string.time)) },
+            title = { TimePickerDialogDefaults.Title(displayMode) },
             onDismissRequest = { openDialog = false },
             confirmButton = {
                 TextButton(

@@ -26,8 +26,10 @@ fun NavController.navigateToTransactionDialog(
     walletId: String,
     transactionId: String? = null,
     repeated: Boolean = false,
-) = navigate(route = TransactionDialogRoute(walletId, transactionId, repeated)) {
-    launchSingleTop = true
+) {
+    navigate(route = TransactionDialogRoute(walletId, transactionId, repeated)) {
+        launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.transactionDialog(

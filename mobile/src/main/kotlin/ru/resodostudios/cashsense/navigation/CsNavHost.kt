@@ -51,8 +51,8 @@ fun CsNavHost(
         startDestination = HomeListDetailRoute,
         modifier = modifier,
         popEnterTransition = {
-            slideInHorizontally(motionScheme.fastSpatialSpec()) { -it / 4 } +
-                    fadeIn(motionScheme.fastEffectsSpec())
+            slideInHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
+                    fadeIn(motionScheme.defaultEffectsSpec())
         },
         enterTransition = {
             val isTopLevelNav =
@@ -64,14 +64,14 @@ fun CsNavHost(
 
                 if (initialIndex != -1 && targetIndex != -1) {
                     val isNavigatingToTheRight = targetIndex > initialIndex
-                    slideInHorizontally(motionScheme.fastSpatialSpec()) {
-                        (if (isNavigatingToTheRight) it else -it) / 4
-                    } + fadeIn(motionScheme.fastEffectsSpec())
+                    slideInHorizontally(motionScheme.defaultSpatialSpec()) {
+                        if (isNavigatingToTheRight) it else -it
+                    } + fadeIn(motionScheme.defaultEffectsSpec())
                 } else {
-                    defaultEnterTransition()
+                    fadeIn()
                 }
             } else {
-                defaultEnterTransition()
+                fadeIn()
             }
         },
         exitTransition = {
@@ -84,14 +84,15 @@ fun CsNavHost(
 
                 if (initialIndex != -1 && targetIndex != -1) {
                     val isNavigatingToTheRight = targetIndex > initialIndex
-                    slideOutHorizontally(motionScheme.fastSpatialSpec()) {
-                        (if (isNavigatingToTheRight) -it else it) / 4
-                    } + fadeOut(motionScheme.fastEffectsSpec())
+                    slideOutHorizontally(motionScheme.defaultSpatialSpec()) {
+                        if (isNavigatingToTheRight) -it else it
+                    } + fadeOut(motionScheme.defaultEffectsSpec())
                 } else {
-                    defaultExitTransition()
+                    fadeOut()
                 }
             } else {
-                defaultExitTransition()
+                slideOutHorizontally(motionScheme.defaultSpatialSpec()) { -it } +
+                        fadeOut(motionScheme.defaultEffectsSpec())
             }
         },
     ) {
@@ -142,10 +143,12 @@ private fun isTopLevelNavigation(
     targetState: NavBackStackEntry,
     topLevelDestinations: List<TopLevelDestination>,
 ): Boolean {
-    val initialIsTopLevel =
-        topLevelDestinations.any { it.routes.any { route -> initialState.destination.hasRoute(route) } }
-    val targetIsTopLevel =
-        topLevelDestinations.any { it.routes.any { route -> targetState.destination.hasRoute(route) } }
+    val initialIsTopLevel = topLevelDestinations.any {
+        it.routes.any { route -> initialState.destination.hasRoute(route) }
+    }
+    val targetIsTopLevel = topLevelDestinations.any {
+        it.routes.any { route -> targetState.destination.hasRoute(route) }
+    }
     return initialIsTopLevel && targetIsTopLevel
 }
 
@@ -157,6 +160,3 @@ private fun getTopLevelIndex(
         topLevelDestination.routes.any { route -> destination.hasRoute(route) }
     }
 }
-
-private fun defaultEnterTransition() = fadeIn()
-private fun defaultExitTransition() = fadeOut()

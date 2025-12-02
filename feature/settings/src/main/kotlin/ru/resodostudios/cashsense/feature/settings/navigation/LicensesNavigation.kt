@@ -13,10 +13,12 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.settings.LicensesScreen
 
 @Serializable
-object LicensesRoute
+data object LicensesRoute
 
-fun NavController.navigateToLicenses() = navigate(LicensesRoute) {
-    launchSingleTop = true
+fun NavController.navigateToLicenses() {
+    navigate(LicensesRoute) {
+        launchSingleTop = true
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -25,13 +27,13 @@ fun NavGraphBuilder.licensesScreen(
     onBackClick: () -> Unit,
 ) {
     composable<LicensesRoute>(
-        exitTransition = {
-            slideOutHorizontally(motionScheme.fastSpatialSpec()) { -it / 4 } +
-                    fadeOut(motionScheme.fastEffectsSpec())
-        },
         enterTransition = {
-            slideInHorizontally(motionScheme.fastSpatialSpec()) { it / 4 } +
-                    fadeIn(motionScheme.fastEffectsSpec())
+            slideInHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+                    fadeIn(motionScheme.defaultEffectsSpec())
+        },
+        exitTransition = {
+            slideOutHorizontally(motionScheme.defaultSpatialSpec()) { it } +
+                    fadeOut(motionScheme.defaultEffectsSpec())
         },
     ) {
         LicensesScreen(

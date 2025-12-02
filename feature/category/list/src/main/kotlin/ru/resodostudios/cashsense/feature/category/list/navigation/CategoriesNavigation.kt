@@ -9,10 +9,10 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.category.list.CategoriesScreen
 
 @Serializable
-object CategoriesBaseRoute
+data object CategoriesBaseRoute
 
 @Serializable
-object CategoriesRoute
+data object CategoriesRoute
 
 fun NavController.navigateToCategories(navOptions: NavOptions? = null) =
     navigate(route = CategoriesBaseRoute, navOptions)

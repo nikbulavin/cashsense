@@ -8,7 +8,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Home
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesBaseRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
@@ -35,7 +34,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
  * @param iconTextId The string resource ID for the label of the destination, used for accessibility and display.
  * @param routes A set of all `KClass` routes that belong to this top-level destination. This is used to determine which destination is currently active.
  * @param baseRoute The primary or starting route `KClass` for the destination's navigation graph.
- * @param fabConfig An optional configuration for the Floating Action Button. If null, no FAB is shown. This typically includes the FAB's icon and content description.
  */
 enum class TopLevelDestination(
     val selectedIcon: ImageVector,
@@ -43,16 +41,11 @@ enum class TopLevelDestination(
     @StringRes val iconTextId: Int,
     val routes: Set<KClass<*>>,
     val baseRoute: KClass<*>,
-    val fabConfig: FabConfig? = null,
 ) {
     HOME(
         selectedIcon = CsIcons.Filled.Home,
         unselectedIcon = CsIcons.Outlined.Home,
         iconTextId = localesR.string.home_title,
-        fabConfig = FabConfig(
-            icon = CsIcons.Outlined.Wallet,
-            title = localesR.string.new_wallet,
-        ),
         routes = setOf(
             HomeRoute::class,
             WalletDialogRoute::class,
@@ -65,10 +58,6 @@ enum class TopLevelDestination(
         selectedIcon = CsIcons.Filled.Category,
         unselectedIcon = CsIcons.Outlined.Category,
         iconTextId = localesR.string.categories_title,
-        fabConfig = FabConfig(
-            icon = CsIcons.Outlined.Category,
-            title = localesR.string.new_category,
-        ),
         routes = setOf(
             CategoriesRoute::class,
             CategoryDialogRoute::class,
@@ -79,10 +68,6 @@ enum class TopLevelDestination(
         selectedIcon = CsIcons.Outlined.Autorenew,
         unselectedIcon = CsIcons.Outlined.Autorenew,
         iconTextId = localesR.string.subscriptions_title,
-        fabConfig = FabConfig(
-            icon = CsIcons.Outlined.Autorenew,
-            title = localesR.string.new_subscription,
-        ),
         routes = setOf(
             SubscriptionsRoute::class,
             SubscriptionDialogRoute::class,
@@ -90,8 +75,3 @@ enum class TopLevelDestination(
         baseRoute = SubscriptionsBaseRoute::class,
     ),
 }
-
-data class FabConfig(
-    val icon: ImageVector,
-    @StringRes val title: Int,
-)
