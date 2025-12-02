@@ -13,8 +13,10 @@ data class WalletDialogRoute(
 
 fun NavController.navigateToWalletDialog(
     walletId: String? = null,
-) = navigate(route = WalletDialogRoute(walletId)) {
-    launchSingleTop = true
+) {
+    navigate(route = WalletDialogRoute(walletId)) {
+        launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.walletDialog(

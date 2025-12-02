@@ -143,10 +143,12 @@ private fun isTopLevelNavigation(
     targetState: NavBackStackEntry,
     topLevelDestinations: List<TopLevelDestination>,
 ): Boolean {
-    val initialIsTopLevel =
-        topLevelDestinations.any { it.routes.any { route -> initialState.destination.hasRoute(route) } }
-    val targetIsTopLevel =
-        topLevelDestinations.any { it.routes.any { route -> targetState.destination.hasRoute(route) } }
+    val initialIsTopLevel = topLevelDestinations.any {
+        it.routes.any { route -> initialState.destination.hasRoute(route) }
+    }
+    val targetIsTopLevel = topLevelDestinations.any {
+        it.routes.any { route -> targetState.destination.hasRoute(route) }
+    }
     return initialIsTopLevel && targetIsTopLevel
 }
 

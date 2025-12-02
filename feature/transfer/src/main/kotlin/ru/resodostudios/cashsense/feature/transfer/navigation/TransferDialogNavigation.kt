@@ -13,8 +13,10 @@ data class TransferDialogRoute(
 
 fun NavController.navigateToTransferDialog(
     walletId: String? = null,
-) = navigate(route = TransferDialogRoute(walletId)) {
-    launchSingleTop = true
+) {
+    navigate(route = TransferDialogRoute(walletId)) {
+        launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.transferDialog(

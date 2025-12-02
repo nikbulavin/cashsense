@@ -12,10 +12,10 @@ import ru.resodostudios.cashsense.core.util.Constants.SUBSCRIPTIONS_PATH
 import ru.resodostudios.cashsense.feature.subscription.list.SubscriptionsScreen
 
 @Serializable
-object SubscriptionsBaseRoute
+data object SubscriptionsBaseRoute
 
 @Serializable
-object SubscriptionsRoute
+data object SubscriptionsRoute
 
 private const val DEEP_LINK_BASE_PATH = "$DEEP_LINK_SCHEME_AND_HOST/$SUBSCRIPTIONS_PATH"
 
