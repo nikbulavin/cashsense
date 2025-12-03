@@ -66,9 +66,7 @@ fun CsApp(
     var shouldShowFab by rememberSaveable { mutableStateOf(true) }
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
-
     val activity = LocalActivity.current
-
     val updateAvailableMessage = stringResource(localesR.string.app_update_available)
     val updateDownloadedMessage = stringResource(localesR.string.app_update_downloaded)
     val updateText = stringResource(localesR.string.update)
@@ -95,7 +93,7 @@ fun CsApp(
                 if (snackbarResult) inAppUpdateResult.completeUpdate()
             }
 
-            else -> {}
+            InAppUpdateResult.NotAvailable -> Unit
         }
     }
 
@@ -177,7 +175,9 @@ fun CsApp(
                     updateFabVisibility = { shouldShowFab = it },
                     modifier = Modifier.fillMaxSize(),
                 )
-                if (currentTopLevelDestination != null && !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)) {
+                if (currentTopLevelDestination != null &&
+                    !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)
+                ) {
                     FabMenu(
                         visible = shouldShowFab,
                         onMenuItemClick = { fabItem ->
@@ -202,5 +202,6 @@ fun CsApp(
     }
 }
 
-private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
-    this?.hierarchy?.any { it.hasRoute(route) } == true
+private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean {
+    return this?.hierarchy?.any { it.hasRoute(route) } == true
+}
