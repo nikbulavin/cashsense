@@ -27,24 +27,26 @@ internal class InAppUpdateManagerImpl @Inject constructor(
 
 sealed class InAppUpdateResult {
 
+    object NotAvailable : InAppUpdateResult()
+
     class Available(private val result: AppUpdateResult.Available) : InAppUpdateResult() {
         fun startFlexibleUpdate(activity: Activity, requestCode: Int): Boolean {
             return result.startFlexibleUpdate(activity, requestCode)
         }
     }
 
+    object InProgress : InAppUpdateResult()
+
     class Downloaded(private val result: AppUpdateResult.Downloaded) : InAppUpdateResult() {
         suspend fun completeUpdate() = result.completeUpdate()
     }
-
-    object NotAvailable : InAppUpdateResult()
 }
 
 private fun AppUpdateResult.toInAppUpdateResult(): InAppUpdateResult {
     return when (this) {
         is AppUpdateResult.Available -> InAppUpdateResult.Available(this)
         is AppUpdateResult.Downloaded -> InAppUpdateResult.Downloaded(this)
-        is AppUpdateResult.InProgress -> InAppUpdateResult.NotAvailable
+        is AppUpdateResult.InProgress -> InAppUpdateResult.InProgress
         AppUpdateResult.NotAvailable -> InAppUpdateResult.NotAvailable
     }
 }

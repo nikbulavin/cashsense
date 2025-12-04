@@ -63,37 +63,53 @@ fun CsApp(
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
     val currentTopLevelDestination = appState.currentTopLevelDestination
+
     var shouldShowFab by rememberSaveable { mutableStateOf(true) }
+    var isUpdateInProgressSnackbarShown by rememberSaveable { mutableStateOf(false) }
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
     val activity = LocalActivity.current
+
     val updateAvailableMessage = stringResource(localesR.string.app_update_available)
+    val updateInProgressMessage = stringResource(localesR.string.app_update_in_progress)
     val updateDownloadedMessage = stringResource(localesR.string.app_update_downloaded)
-    val updateText = stringResource(localesR.string.update)
-    val installText = stringResource(localesR.string.install)
+    val updateActionLabel = stringResource(localesR.string.update)
+    val installActionLabel = stringResource(localesR.string.install)
 
     LaunchedEffect(inAppUpdateResult) {
         when (inAppUpdateResult) {
+            InAppUpdateResult.NotAvailable -> {
+                isUpdateInProgressSnackbarShown = false
+            }
+
             is InAppUpdateResult.Available -> {
                 val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateAvailableMessage,
-                    actionLabel = updateText,
+                    actionLabel = updateActionLabel,
                     duration = Indefinite,
                     withDismissAction = true,
                 ) == ActionPerformed
                 if (snackbarResult) activity?.let { inAppUpdateResult.startFlexibleUpdate(it, 120) }
             }
 
+            InAppUpdateResult.InProgress -> {
+                if (!isUpdateInProgressSnackbarShown) {
+                    snackbarHostState.showSnackbar(
+                        message = updateInProgressMessage,
+                        duration = Indefinite,
+                    )
+                    isUpdateInProgressSnackbarShown = true
+                }
+            }
+
             is InAppUpdateResult.Downloaded -> {
                 val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateDownloadedMessage,
-                    actionLabel = installText,
+                    actionLabel = installActionLabel,
                     duration = Indefinite,
                 ) == ActionPerformed
                 if (snackbarResult) inAppUpdateResult.completeUpdate()
             }
-
-            InAppUpdateResult.NotAvailable -> Unit
         }
     }
 
