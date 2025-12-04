@@ -15,7 +15,6 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -85,7 +84,7 @@ fun HomeScreen(
     ExperimentalMaterial3Api::class,
 )
 @Composable
-internal fun HomeScreen(
+private fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
@@ -99,16 +98,12 @@ internal fun HomeScreen(
     onSettingsClick: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
-    val undoText = stringResource(localesR.string.undo)
+    val undoActionLabel = stringResource(localesR.string.undo)
 
     LaunchedEffect(shouldDisplayUndoWallet) {
         if (shouldDisplayUndoWallet) {
-            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoText)
-            if (snackBarResult) {
-                undoWalletRemoval()
-            } else {
-                clearUndoState()
-            }
+            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoActionLabel)
+            if (snackBarResult) undoWalletRemoval() else clearUndoState()
         }
     }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
@@ -190,31 +185,33 @@ private fun LazyStaggeredGridScope.wallets(
         key = { it.wallet.id },
         contentType = { "WalletCard" },
     ) { walletData ->
-        val selected = highlightSelectedWallet && walletData.wallet.id == selectedWalletId
-        val (expensesList, incomeList) = walletData.transactions
-            .asSequence()
-            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-            .partition { it.amount.signum() < 0 }
-        val expenses = expensesList.sumOf { it.amount }.abs()
-        val income = incomeList.sumOf { it.amount }
+        val (expenses, income) = remember(walletData.transactions) {
+            val (expensesList, incomeList) = walletData.transactions
+                .asSequence()
+                .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+                .partition { it.amount < 0.toBigDecimal() }
 
-        val shouldShowExpensesTag by remember { derivedStateOf { expenses.signum() > 0 } }
-        val shouldShowIncomeTag by remember { derivedStateOf { income.signum() > 0 } }
+            val totalExpenses = expensesList.sumOf { it.amount }.abs()
+            val totalIncome = incomeList.sumOf { it.amount }
+
+            totalExpenses to totalIncome
+        }
+
         val currency = walletData.wallet.currency
 
         WalletCard(
             wallet = walletData.wallet,
             formattedCurrentBalance = walletData.currentBalance.formatAmount(currency),
             isPrimary = walletData.isPrimary,
-            formattedExpenses = expenses.formatAmount(currency),
-            formattedIncome = income.formatAmount(currency),
-            shouldShowExpensesTag = shouldShowExpensesTag,
-            shouldShowIncomeTag = shouldShowIncomeTag,
+            formattedExpenses = remember(expenses, currency) { expenses.formatAmount(currency) },
+            formattedIncome = remember(income, currency) { income.formatAmount(currency) },
+            shouldShowExpensesTag = expenses > 0.toBigDecimal(),
+            shouldShowIncomeTag = income > 0.toBigDecimal(),
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
             modifier = Modifier.animateItem(),
-            selected = selected,
+            selected = highlightSelectedWallet && walletData.wallet.id == selectedWalletId,
         )
     }
 }
