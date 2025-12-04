@@ -6,6 +6,7 @@
     <string name="amount">Amount</string>
     <string name="app_update_available">New version is available</string>
     <string name="app_update_downloaded">Update is downloaded</string>
+    <string name="app_update_in_progress">Update is downloading…</string>
     <string name="backup">Backup</string>
     <string name="backup_and_restore">Backup &amp; restore</string>
     <string name="backup_description">Export all data to a file</string>

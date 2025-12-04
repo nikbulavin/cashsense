@@ -123,8 +123,14 @@ private fun TransactionOverviewScreen(
         clearUndoState()
     }
 
+    if (transactionOverviewState is TransactionOverviewUiState.Loading ||
+        financePanelUiState is FinancePanelUiState.Loading
+    ) {
+        LoadingState(Modifier.fillMaxSize())
+    }
+
     when (transactionOverviewState) {
-        TransactionOverviewUiState.Loading -> LoadingState(Modifier.fillMaxSize())
+        TransactionOverviewUiState.Loading -> Unit
         is TransactionOverviewUiState.Success -> {
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
@@ -159,10 +165,14 @@ private fun TransactionOverviewScreen(
                         hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,
                         onRepeatClick = { transactionId ->
-                            transaction?.walletOwnerId?.let { navigateToTransactionDialog(it, transactionId, true) }
+                            transaction?.walletOwnerId?.let { walletId ->
+                                navigateToTransactionDialog(walletId, transactionId, true)
+                            }
                         },
                         onEditClick = { transactionId ->
-                            transaction?.walletOwnerId?.let { navigateToTransactionDialog(it, transactionId, false) }
+                            transaction?.walletOwnerId?.let { walletId ->
+                                navigateToTransactionDialog(walletId, transactionId, false)
+                            }
                         },
                         onDeleteClick = onTransactionDelete,
                     )
@@ -234,14 +244,7 @@ private fun LazyListScope.header(
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
 ) {
     when (financePanelUiState) {
-        FinancePanelUiState.Loading -> item {
-            LoadingState(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
-            )
-        }
-
+        FinancePanelUiState.Loading -> Unit
         FinancePanelUiState.NotShown -> Unit
         is FinancePanelUiState.Shown -> {
             item {
