@@ -26,17 +26,18 @@ internal class InAppUpdateManagerImpl @Inject constructor(
 }
 
 sealed class InAppUpdateResult {
-    data class Available(val result: AppUpdateResult.Available) : InAppUpdateResult() {
+
+    class Available(private val result: AppUpdateResult.Available) : InAppUpdateResult() {
         fun startFlexibleUpdate(activity: Activity, requestCode: Int): Boolean {
             return result.startFlexibleUpdate(activity, requestCode)
         }
     }
 
-    data class Downloaded(val result: AppUpdateResult.Downloaded) : InAppUpdateResult() {
+    class Downloaded(private val result: AppUpdateResult.Downloaded) : InAppUpdateResult() {
         suspend fun completeUpdate() = result.completeUpdate()
     }
 
-    data object NotAvailable : InAppUpdateResult()
+    object NotAvailable : InAppUpdateResult()
 }
 
 private fun AppUpdateResult.toInAppUpdateResult(): InAppUpdateResult {
