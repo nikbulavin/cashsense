@@ -27,6 +27,7 @@ import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Repeat
@@ -129,7 +130,7 @@ internal class TransactionDialogViewModel @Inject constructor(
 
     private fun updateAmount(amount: String) {
         _transactionDialogUiState.update {
-            it.copy(amount = amount)
+            it.copy(amount = amount.cleanAmount())
         }
     }
 
@@ -227,7 +228,7 @@ fun TransactionDialogUiState.asTransaction(walletId: String, category: Category?
     return Transaction(
         id = transactionId.ifBlank { Uuid.random().toHexString() },
         walletOwnerId = walletId,
-        description = description.ifBlank { null },
+        description = description.ifBlank { null }?.trim(),
         amount = amount
             .toBigDecimal()
             .run { if (transactionType == EXPENSE) negate() else abs() },

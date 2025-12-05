@@ -37,7 +37,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -131,7 +130,7 @@ private fun WalletDialog(
                 )
                 OutlinedTextField(
                     value = walletDialogState.initialBalance,
-                    onValueChange = { onInitialBalanceUpdate(it.cleanAmount()) },
+                    onValueChange = onInitialBalanceUpdate,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
