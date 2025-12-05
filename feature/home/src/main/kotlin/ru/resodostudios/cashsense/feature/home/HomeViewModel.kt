@@ -5,13 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
-import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
+import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.feature.home.model.UiWallet
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -20,6 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
+    @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val homeDestination: HomeRoute = savedStateHandle.toRoute()
@@ -35,12 +41,30 @@ class HomeViewModel @Inject constructor(
         if (extendedUserWallets.isEmpty()) {
             WalletsUiState.Empty
         } else {
+            val uiWallets = extendedUserWallets.map { walletData ->
+                val (expenses, income) = walletData.transactions
+                    .asSequence()
+                    .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+                    .partition { it.amount.signum() < 0 }
+                    .let { (expensesList, incomeList) ->
+                        val totalExpenses = expensesList.sumOf { it.amount }.abs()
+                        val totalIncome = incomeList.sumOf { it.amount }
+                        totalExpenses to totalIncome
+                    }
+
+                UiWallet(
+                    extendedUserWallet = walletData,
+                    expenses = expenses,
+                    income = income,
+                )
+            }
             WalletsUiState.Success(
                 selectedWalletId = selectedWalletId,
-                extendedUserWallets = extendedUserWallets,
+                uiWallets = uiWallets,
             )
         }
     }
+        .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -60,7 +84,7 @@ sealed interface WalletsUiState {
 
     data class Success(
         val selectedWalletId: String?,
-        val extendedUserWallets: List<ExtendedUserWallet>,
+        val uiWallets: List<UiWallet>,
     ) : WalletsUiState
 }
 

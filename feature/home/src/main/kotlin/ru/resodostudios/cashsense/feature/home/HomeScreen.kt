@@ -16,7 +16,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -38,11 +37,10 @@ import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
+import ru.resodostudios.cashsense.feature.home.model.UiWallet
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -158,7 +156,7 @@ private fun HomeScreen(
                     ),
                 ) {
                     wallets(
-                        extendedUserWallets = walletsState.extendedUserWallets,
+                        uiWallets = walletsState.uiWallets,
                         selectedWalletId = walletsState.selectedWalletId,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = onTransactionCreate,
@@ -173,7 +171,7 @@ private fun HomeScreen(
 }
 
 private fun LazyStaggeredGridScope.wallets(
-    extendedUserWallets: List<ExtendedUserWallet>,
+    uiWallets: List<UiWallet>,
     selectedWalletId: String?,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
@@ -181,44 +179,24 @@ private fun LazyStaggeredGridScope.wallets(
     highlightSelectedWallet: Boolean = false,
 ) {
     items(
-        items = extendedUserWallets,
-        key = { it.wallet.id },
+        items = uiWallets,
+        key = { it.extendedUserWallet.wallet.id },
         contentType = { "WalletCard" },
-    ) { walletData ->
-        val (expenses, income) = remember(walletData.transactions) {
-            val (expensesList, incomeList) = walletData.transactions
-                .asSequence()
-                .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-                .partition { it.amount < 0.toBigDecimal() }
-
-            val totalExpenses = expensesList.sumOf { it.amount }.abs()
-            val totalIncome = incomeList.sumOf { it.amount }
-
-            totalExpenses to totalIncome
-        }
-
-        val currency = walletData.wallet.currency
-
+    ) { uiWallet ->
         WalletCard(
-            wallet = walletData.wallet,
-            formattedCurrentBalance = walletData.currentBalance.formatAmount(currency),
-            isPrimary = walletData.isPrimary,
-            formattedExpenses = remember(expenses, currency) { expenses.formatAmount(currency) },
-            formattedIncome = remember(income, currency) { income.formatAmount(currency) },
-            shouldShowExpensesTag = expenses > 0.toBigDecimal(),
-            shouldShowIncomeTag = income > 0.toBigDecimal(),
+            uiWallet = uiWallet,
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
             modifier = Modifier.animateItem(),
-            selected = highlightSelectedWallet && walletData.wallet.id == selectedWalletId,
+            selected = highlightSelectedWallet && uiWallet.extendedUserWallet.wallet.id == selectedWalletId,
         )
     }
 }
 
 @Preview
 @Composable
-fun HomeScreenPopulatedPreview(
+private fun HomeScreenPopulatedPreview(
     @PreviewParameter(ExtendedUserWalletPreviewParameterProvider::class)
     extendedUserWallets: List<ExtendedUserWallet>,
 ) {
@@ -227,11 +205,17 @@ fun HomeScreenPopulatedPreview(
             HomeScreen(
                 walletsState = Success(
                     selectedWalletId = null,
-                    extendedUserWallets = extendedUserWallets,
+                    uiWallets = extendedUserWallets.map {
+                        UiWallet(
+                            extendedUserWallet = it,
+                            expenses = 500.toBigDecimal(),
+                            income = 500.toBigDecimal(),
+                        )
+                    },
                 ),
-                onWalletClick = { },
-                onTransfer = { },
-                onTransactionCreate = { },
+                onWalletClick = {},
+                onTransfer = {},
+                onTransactionCreate = {},
                 highlightSelectedWallet = false,
             )
         }
