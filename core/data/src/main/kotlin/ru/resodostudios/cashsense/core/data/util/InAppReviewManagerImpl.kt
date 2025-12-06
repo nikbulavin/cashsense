@@ -19,9 +19,7 @@ internal class InAppReviewManagerImpl @Inject constructor(
     override suspend fun openReviewDialog(activity: Activity) {
         val transactionsCount = transactionsRepository.getTransactionsCount().first()
         if (transactionsCount < MIN_TRANSACTIONS_FOR_REVIEW) return
-        runCatching {
-            reviewManager.launchReviewFlow(activity, reviewManager.requestReviewFlow().await())
-        }
+        reviewManager.launchReviewFlow(activity, reviewManager.requestReviewFlow().await())
     }
 }
 

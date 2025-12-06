@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
-import android.app.Activity
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
@@ -59,7 +57,6 @@ internal class TransactionDialogViewModel @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
-    private val inAppReviewManager: InAppReviewManager,
 ) : ViewModel() {
 
     private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
@@ -84,7 +81,7 @@ internal class TransactionDialogViewModel @Inject constructor(
     fun onTransactionEvent(event: TransactionDialogEvent) {
         when (event) {
             Repeat -> repeatTransaction()
-            is Save -> saveTransaction(event.state, event.activity)
+            is Save -> saveTransaction(event.state)
             is UpdateTransactionId -> updateTransactionId(event.id)
             is UpdateWalletId -> updateWalletId(event.id)
             is UpdateCurrency -> updateCurrency(event.currency)
@@ -98,11 +95,10 @@ internal class TransactionDialogViewModel @Inject constructor(
         }
     }
 
-    private fun saveTransaction(state: TransactionDialogUiState, activity: Activity) {
+    private fun saveTransaction(state: TransactionDialogUiState) {
         appScope.launch {
             val transaction = state.asTransaction(transactionDestination.walletId, state.category)
             transactionsRepository.upsertTransaction(transaction)
-            inAppReviewManager.openReviewDialog(activity)
         }
     }
 

@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -107,7 +106,6 @@ private fun TransactionDialog(
     } else {
         localesR.string.new_transaction to localesR.string.add
     }
-    val activity = LocalActivity.current
     val analyticsHelper = LocalAnalyticsHelper.current
 
     CsAlertDialog(
@@ -116,7 +114,7 @@ private fun TransactionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.ReceiptLong,
         onConfirm = {
-            activity?.let { onTransactionEvent(Save(transactionDialogState, it)) }
+            onTransactionEvent(Save(transactionDialogState))
             if (transactionDialogState.transactionId.isBlank()) {
                 analyticsHelper.logNewItemAdded(
                     itemType = AnalyticsEvent.ItemTypes.TRANSACTION,

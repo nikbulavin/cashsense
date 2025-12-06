@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
-import android.app.Activity
 import androidx.compose.runtime.Immutable
 import ru.resodostudios.cashsense.core.model.data.Category
 import java.util.Currency
@@ -29,7 +28,7 @@ sealed interface TransactionDialogEvent {
 
     data class UpdateTransactionIgnoring(val ignored: Boolean) : TransactionDialogEvent
 
-    data class Save(val state: TransactionDialogUiState, val activity: Activity) : TransactionDialogEvent
+    data class Save(val state: TransactionDialogUiState) : TransactionDialogEvent
 
     data object Repeat : TransactionDialogEvent
 }

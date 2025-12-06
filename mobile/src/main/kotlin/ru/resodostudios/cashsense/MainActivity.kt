@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
 import ru.resodostudios.cashsense.core.analytics.AnalyticsHelper
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
+import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var inAppUpdateManager: InAppUpdateManager
+
+    @Inject
+    lateinit var inAppReviewManager: InAppReviewManager
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -90,6 +94,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
             }
+            inAppReviewManager.openReviewDialog(this@MainActivity)
         }
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
