@@ -55,9 +55,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
@@ -81,11 +78,9 @@ internal fun TransactionDialog(
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val transactionDialogState by viewModel.transactionDialogUiState.collectAsStateWithLifecycle()
-    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     TransactionDialog(
         transactionDialogState = transactionDialogState,
-        categoriesState = categoriesState,
         onDismiss = onDismiss,
         onTransactionEvent = viewModel::onTransactionEvent,
     )
@@ -95,12 +90,9 @@ internal fun TransactionDialog(
 @Composable
 private fun TransactionDialog(
     transactionDialogState: TransactionDialogUiState,
-    categoriesState: CategoriesUiState,
     onDismiss: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val isLoading = transactionDialogState.isLoading || categoriesState is Loading
-
     val (titleRes, confirmButtonTextRes) = if (transactionDialogState.transactionId.isNotEmpty()) {
         localesR.string.edit_transaction to localesR.string.save
     } else {
@@ -125,7 +117,7 @@ private fun TransactionDialog(
         isConfirmEnabled = transactionDialogState.amount.isAmountValid(),
         onDismiss = onDismiss,
     ) {
-        if (isLoading) {
+        if (transactionDialogState.isLoading) {
             LoadingState(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,14 +153,7 @@ private fun TransactionDialog(
                 )
                 CategoryDropdownMenu(
                     currentCategory = transactionDialogState.category,
-                    categories = if (categoriesState is Success) {
-                        buildList {
-                            add(null)
-                            addAll(categoriesState.categories)
-                        }
-                    } else {
-                        emptyList()
-                    },
+                    categories = transactionDialogState.categories,
                     onCategoryClick = { onTransactionEvent(UpdateCategory(it)) },
                 )
                 TransactionStatusChoiceRow(
