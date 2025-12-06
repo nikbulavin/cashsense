@@ -15,9 +15,7 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,11 +37,10 @@ import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Empty
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Loading
 import ru.resodostudios.cashsense.feature.home.WalletsUiState.Success
+import ru.resodostudios.cashsense.feature.home.model.UiWallet
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -85,7 +82,7 @@ fun HomeScreen(
     ExperimentalMaterial3Api::class,
 )
 @Composable
-internal fun HomeScreen(
+private fun HomeScreen(
     walletsState: WalletsUiState,
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
@@ -99,16 +96,12 @@ internal fun HomeScreen(
     onSettingsClick: () -> Unit = {},
 ) {
     val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
-    val undoText = stringResource(localesR.string.undo)
+    val undoActionLabel = stringResource(localesR.string.undo)
 
     LaunchedEffect(shouldDisplayUndoWallet) {
         if (shouldDisplayUndoWallet) {
-            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoText)
-            if (snackBarResult) {
-                undoWalletRemoval()
-            } else {
-                clearUndoState()
-            }
+            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoActionLabel)
+            if (snackBarResult) undoWalletRemoval() else clearUndoState()
         }
     }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
@@ -163,7 +156,7 @@ internal fun HomeScreen(
                     ),
                 ) {
                     wallets(
-                        extendedUserWallets = walletsState.extendedUserWallets,
+                        uiWallets = walletsState.uiWallets,
                         selectedWalletId = walletsState.selectedWalletId,
                         onWalletClick = onWalletClick,
                         onTransactionCreate = onTransactionCreate,
@@ -178,7 +171,7 @@ internal fun HomeScreen(
 }
 
 private fun LazyStaggeredGridScope.wallets(
-    extendedUserWallets: List<ExtendedUserWallet>,
+    uiWallets: List<UiWallet>,
     selectedWalletId: String?,
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
@@ -186,42 +179,24 @@ private fun LazyStaggeredGridScope.wallets(
     highlightSelectedWallet: Boolean = false,
 ) {
     items(
-        items = extendedUserWallets,
-        key = { it.wallet.id },
+        items = uiWallets,
+        key = { it.extendedUserWallet.wallet.id },
         contentType = { "WalletCard" },
-    ) { walletData ->
-        val selected = highlightSelectedWallet && walletData.wallet.id == selectedWalletId
-        val (expensesList, incomeList) = walletData.transactions
-            .asSequence()
-            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-            .partition { it.amount.signum() < 0 }
-        val expenses = expensesList.sumOf { it.amount }.abs()
-        val income = incomeList.sumOf { it.amount }
-
-        val shouldShowExpensesTag by remember { derivedStateOf { expenses.signum() > 0 } }
-        val shouldShowIncomeTag by remember { derivedStateOf { income.signum() > 0 } }
-        val currency = walletData.wallet.currency
-
+    ) { uiWallet ->
         WalletCard(
-            wallet = walletData.wallet,
-            formattedCurrentBalance = walletData.currentBalance.formatAmount(currency),
-            isPrimary = walletData.isPrimary,
-            formattedExpenses = expenses.formatAmount(currency),
-            formattedIncome = income.formatAmount(currency),
-            shouldShowExpensesTag = shouldShowExpensesTag,
-            shouldShowIncomeTag = shouldShowIncomeTag,
+            uiWallet = uiWallet,
             onWalletClick = onWalletClick,
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
             modifier = Modifier.animateItem(),
-            selected = selected,
+            selected = highlightSelectedWallet && uiWallet.extendedUserWallet.wallet.id == selectedWalletId,
         )
     }
 }
 
 @Preview
 @Composable
-fun HomeScreenPopulatedPreview(
+private fun HomeScreenPopulatedPreview(
     @PreviewParameter(ExtendedUserWalletPreviewParameterProvider::class)
     extendedUserWallets: List<ExtendedUserWallet>,
 ) {
@@ -230,11 +205,17 @@ fun HomeScreenPopulatedPreview(
             HomeScreen(
                 walletsState = Success(
                     selectedWalletId = null,
-                    extendedUserWallets = extendedUserWallets,
+                    uiWallets = extendedUserWallets.map {
+                        UiWallet(
+                            extendedUserWallet = it,
+                            expenses = 500.toBigDecimal(),
+                            income = 500.toBigDecimal(),
+                        )
+                    },
                 ),
-                onWalletClick = { },
-                onTransfer = { },
-                onTransactionCreate = { },
+                onWalletClick = {},
+                onTransfer = {},
+                onTransactionCreate = {},
                 highlightSelectedWallet = false,
             )
         }

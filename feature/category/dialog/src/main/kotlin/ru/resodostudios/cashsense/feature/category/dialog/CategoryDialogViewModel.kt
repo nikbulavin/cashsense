@@ -88,7 +88,7 @@ data class CategoryDialogUiState(
 fun CategoryDialogUiState.asCategory(): Category {
     return Category(
         id = id.ifBlank { Uuid.random().toHexString() },
-        title = title,
+        title = title.trim(),
         iconId = iconId,
     )
 }

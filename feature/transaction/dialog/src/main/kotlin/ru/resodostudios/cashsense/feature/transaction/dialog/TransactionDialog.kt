@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,7 +63,6 @@ import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.feature.transaction.dialog.TransactionDialogEvent.Save
@@ -108,7 +106,6 @@ private fun TransactionDialog(
     } else {
         localesR.string.new_transaction to localesR.string.add
     }
-    val activity = LocalActivity.current
     val analyticsHelper = LocalAnalyticsHelper.current
 
     CsAlertDialog(
@@ -117,7 +114,7 @@ private fun TransactionDialog(
         dismissButtonTextRes = localesR.string.cancel,
         icon = CsIcons.Outlined.ReceiptLong,
         onConfirm = {
-            activity?.let { onTransactionEvent(Save(transactionDialogState, it)) }
+            onTransactionEvent(Save(transactionDialogState))
             if (transactionDialogState.transactionId.isBlank()) {
                 analyticsHelper.logNewItemAdded(
                     itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
@@ -148,7 +145,7 @@ private fun TransactionDialog(
                 )
                 OutlinedTextField(
                     value = transactionDialogState.amount,
-                    onValueChange = { onTransactionEvent(UpdateAmount(it.cleanAmount())) },
+                    onValueChange = { onTransactionEvent(UpdateAmount(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,

@@ -47,6 +47,7 @@ import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import java.math.BigDecimal
+import java.util.Locale.filter
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -164,9 +165,7 @@ class WalletViewModel @AssistedInject constructor(
         }
         if (financeType == NOT_SET) {
             transactionFilterState.update {
-                it.copy(
-                    selectedCategories = emptySet(),
-                )
+                it.copy(selectedCategories = emptySet())
             }
         }
     }
@@ -184,17 +183,13 @@ class WalletViewModel @AssistedInject constructor(
         when (transactionFilterState.value.dateType) {
             MONTH -> {
                 transactionFilterState.update {
-                    it.copy(
-                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.MONTH),
-                    )
+                    it.copy(selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.MONTH))
                 }
             }
 
             YEAR -> {
                 transactionFilterState.update {
-                    it.copy(
-                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.YEAR),
-                    )
+                    it.copy(selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.YEAR))
                 }
             }
 
@@ -204,18 +199,14 @@ class WalletViewModel @AssistedInject constructor(
 
     fun undoTransactionRemoval() {
         viewModelScope.launch {
-            lastRemovedTransaction?.let {
-                transactionsRepository.upsertTransaction(it)
-            }
+            lastRemovedTransaction?.let { transactionsRepository.upsertTransaction(it) }
             clearUndoState()
         }
     }
 
     fun undoTransferRemoval() {
         viewModelScope.launch {
-            lastRemovedTransfer?.let {
-                transactionsRepository.upsertTransfer(it)
-            }
+            lastRemovedTransfer?.let { transactionsRepository.upsertTransfer(it) }
             clearUndoState()
         }
     }
@@ -229,9 +220,7 @@ class WalletViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            walletId: String,
-        ): WalletViewModel
+        fun create(walletId: String): WalletViewModel
     }
 }
 

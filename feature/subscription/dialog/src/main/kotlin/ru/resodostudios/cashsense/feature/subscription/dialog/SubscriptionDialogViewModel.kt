@@ -27,6 +27,7 @@ import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionDialogRoute
 import java.util.Currency
@@ -72,7 +73,7 @@ class SubscriptionDialogViewModel @Inject constructor(
 
             is SubscriptionDialogEvent.UpdateAmount -> {
                 _subscriptionDialogUiState.update {
-                    it.copy(amount = event.amount)
+                    it.copy(amount = event.amount.cleanAmount())
                 }
             }
 
@@ -116,15 +117,11 @@ class SubscriptionDialogViewModel @Inject constructor(
 
     private fun loadSubscription(id: String) {
         viewModelScope.launch {
-            _subscriptionDialogUiState.update {
-                SubscriptionDialogUiState(
-                    id = id,
-                    isLoading = true,
-                )
-            }
+            _subscriptionDialogUiState.update { SubscriptionDialogUiState(isLoading = true) }
             val subscription = subscriptionsRepository.getSubscription(id).first()
             _subscriptionDialogUiState.update {
                 it.copy(
+                    id = subscription.id,
                     title = subscription.title,
                     amount = subscription.amount.toString(),
                     paymentDate = subscription.paymentDate,
@@ -168,7 +165,7 @@ fun SubscriptionDialogUiState.asSubscription(): Subscription {
 
     return Subscription(
         id = subscriptionId,
-        title = title,
+        title = title.trim(),
         amount = amount.toBigDecimal(),
         paymentDate = paymentDate,
         currency = currency,

@@ -52,22 +52,19 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
+import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import ru.resodostudios.cashsense.feature.home.model.UiWallet
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun WalletCard(
-    wallet: Wallet,
-    formattedCurrentBalance : String,
-    isPrimary: Boolean,
-    formattedExpenses: String,
-    formattedIncome: String,
-    shouldShowExpensesTag: Boolean,
-    shouldShowIncomeTag: Boolean,
+    uiWallet: UiWallet,
     onWalletClick: (String) -> Unit,
     onNewTransactionClick: (String) -> Unit,
     onTransferClick: (String) -> Unit,
@@ -75,6 +72,7 @@ internal fun WalletCard(
     selected: Boolean = false,
     shape: Shape = MaterialTheme.shapes.extraLarge,
 ) {
+    val wallet = uiWallet.extendedUserWallet.wallet
     OutlinedCard(
         onClick = { onWalletClick(wallet.id) },
         shape = shape,
@@ -94,18 +92,18 @@ internal fun WalletCard(
                 style = MaterialTheme.typography.titleLarge,
             )
             AnimatedAmount(
-                formattedAmount = formattedCurrentBalance,
+                formattedAmount = uiWallet.extendedUserWallet.currentBalance.formatAmount(wallet.currency),
                 label = "WalletBalance",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             TagsSection(
-                formattedExpenses = formattedExpenses,
-                formattedIncome = formattedIncome,
-                shouldShowExpensesTag = shouldShowExpensesTag,
-                shouldShowIncomeTag = shouldShowIncomeTag,
+                formattedExpenses = uiWallet.expenses.formatAmount(wallet.currency),
+                formattedIncome = uiWallet.income.formatAmount(wallet.currency),
+                shouldShowExpensesTag = uiWallet.expenses.signum() > 0,
+                shouldShowIncomeTag = uiWallet.income.signum() > 0,
                 modifier = Modifier.padding(top = 8.dp),
-                isPrimary = isPrimary,
+                isPrimary = uiWallet.extendedUserWallet.isPrimary,
             )
         }
         val addTransactionText = stringResource(localesR.string.add_transaction)
@@ -114,13 +112,7 @@ internal fun WalletCard(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp, top = 16.dp),
             overflowIndicator = { menuState ->
                 CsIconButton(
-                    onClick = {
-                        if (menuState.isShowing) {
-                            menuState.dismiss()
-                        } else {
-                            menuState.show()
-                        }
-                    },
+                    onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
                     icon = CsIcons.Outlined.MoreVert,
                     contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                 )
@@ -217,11 +209,12 @@ private fun TagsSection(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = modifier.animateContentSize(),
         ) {
-            val animationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+            val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+            val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
             AnimatedVisibility(
                 visible = isPrimary,
-                enter = fadeIn() + scaleIn(animationSpec),
-                exit = fadeOut() + scaleOut(animationSpec),
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsTag(
@@ -231,8 +224,8 @@ private fun TagsSection(
             }
             AnimatedVisibility(
                 visible = shouldShowExpensesTag,
-                enter = fadeIn() + scaleIn(animationSpec),
-                exit = fadeOut() + scaleOut(animationSpec),
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsAnimatedTag(
@@ -243,8 +236,8 @@ private fun TagsSection(
             }
             AnimatedVisibility(
                 visible = shouldShowIncomeTag,
-                enter = fadeIn() + scaleIn(animationSpec),
-                exit = fadeOut() + scaleOut(animationSpec),
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
                 modifier = Modifier.animateBounds(this@LookaheadScope),
             ) {
                 CsAnimatedTag(
@@ -273,12 +266,7 @@ private fun CsAnimatedTag(
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(
-                start = 8.dp,
-                top = 4.dp,
-                end = 8.dp,
-                bottom = 4.dp,
-            )
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             icon?.let {
                 Icon(
@@ -298,22 +286,25 @@ private fun CsAnimatedTag(
 
 @PreviewLightDark
 @Composable
-fun WalletCardPreview() {
+private fun WalletCardPreview() {
     CsTheme {
         Surface {
             WalletCard(
-                wallet = Wallet(
-                    id = "",
-                    title = "Debit",
-                    initialBalance = BigDecimal(1499.99),
-                    currency = getUsdCurrency(),
+                uiWallet = UiWallet(
+                    expenses = 200.toBigDecimal(),
+                    income = 800.toBigDecimal(),
+                    extendedUserWallet = ExtendedUserWallet(
+                        wallet = Wallet(
+                            id = "",
+                            title = "Debit",
+                            initialBalance = BigDecimal(1499.99),
+                            currency = getUsdCurrency(),
+                        ),
+                        currentBalance = BigDecimal(1499.99),
+                        isPrimary = true,
+                        transactions = emptyList(),
+                    )
                 ),
-                formattedCurrentBalance = "$2,499.99",
-                isPrimary = true,
-                formattedExpenses = "$200",
-                formattedIncome = "$800",
-                shouldShowExpensesTag = true,
-                shouldShowIncomeTag = true,
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },
@@ -327,22 +318,25 @@ fun WalletCardPreview() {
 
 @PreviewLightDark
 @Composable
-fun WalletCardSelectedPreview() {
+private fun WalletCardSelectedPreview() {
     CsTheme {
         Surface {
             WalletCard(
-                wallet = Wallet(
-                    id = "",
-                    title = "Debit",
-                    initialBalance = BigDecimal(1499.99),
-                    currency = getUsdCurrency(),
+                uiWallet = UiWallet(
+                    expenses = 200.toBigDecimal(),
+                    income = 800.toBigDecimal(),
+                    extendedUserWallet = ExtendedUserWallet(
+                        wallet = Wallet(
+                            id = "",
+                            title = "Debit",
+                            initialBalance = BigDecimal(1499.99),
+                            currency = getUsdCurrency(),
+                        ),
+                        currentBalance = BigDecimal(1499.99),
+                        isPrimary = true,
+                        transactions = emptyList(),
+                    )
                 ),
-                formattedCurrentBalance = "$2,499.99",
-                isPrimary = true,
-                formattedExpenses = "$200",
-                formattedIncome = "$800",
-                shouldShowExpensesTag = true,
-                shouldShowIncomeTag = true,
                 onWalletClick = {},
                 onNewTransactionClick = {},
                 onTransferClick = { _ -> },

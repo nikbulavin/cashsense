@@ -17,9 +17,9 @@ import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
-import java.math.BigDecimal
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -60,12 +60,11 @@ internal class WalletDialogViewModel @Inject constructor(
 
     private fun loadWallet(id: String) {
         viewModelScope.launch {
-            _walletDialogState.update {
-                it.copy(id = id, isLoading = true)
-            }
+            _walletDialogState.update { it.copy(isLoading = true) }
             val extendedUserWallet = getExtendedUserWallet.invoke(id).first()
             _walletDialogState.update {
                 it.copy(
+                    id = extendedUserWallet.wallet.id,
                     title = extendedUserWallet.wallet.title,
                     initialBalance = extendedUserWallet.wallet.initialBalance.toString(),
                     currency = extendedUserWallet.wallet.currency,
@@ -76,7 +75,6 @@ internal class WalletDialogViewModel @Inject constructor(
             }
         }
     }
-
 
     fun saveWallet(state: WalletDialogUiState) {
         appScope.launch {
@@ -94,7 +92,7 @@ internal class WalletDialogViewModel @Inject constructor(
 
     fun updateInitialBalance(initialBalance: String) {
         _walletDialogState.update {
-            it.copy(initialBalance = initialBalance)
+            it.copy(initialBalance = initialBalance.cleanAmount())
         }
     }
 
@@ -125,11 +123,11 @@ data class WalletDialogUiState(
 fun WalletDialogUiState.asWallet(): Wallet {
     return Wallet(
         id = id.ifBlank { Uuid.random().toHexString() },
-        title = title,
+        title = title.trim(),
         initialBalance = if (initialBalance.isBlank()) {
-            BigDecimal.ZERO
+            0.toBigDecimal()
         } else {
-            BigDecimal(initialBalance)
+            initialBalance.toBigDecimal()
         },
         currency = currency,
     )

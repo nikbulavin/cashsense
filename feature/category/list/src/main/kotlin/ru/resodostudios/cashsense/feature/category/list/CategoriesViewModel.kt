@@ -71,16 +71,12 @@ internal class CategoriesViewModel @Inject constructor(
 
     fun undoCategoryRemoval() {
         viewModelScope.launch {
-            lastRemovedCategory?.let {
-                categoriesRepository.upsertCategory(it.first)
-                it.second.forEach { transactionId ->
-                    it.first.id?.let { categoryId ->
-                        val crossRef = TransactionCategoryCrossRef(
-                            transactionId = transactionId,
-                            categoryId = categoryId,
-                        )
-                        transactionsRepository.upsertTransactionCategoryCrossRef(crossRef)
-                    }
+            lastRemovedCategory?.let { (category, transactionIds) ->
+                categoriesRepository.upsertCategory(category)
+                transactionIds.forEach { transactionId ->
+                    transactionsRepository.upsertTransactionCategoryCrossRef(
+                        TransactionCategoryCrossRef(transactionId, category.id)
+                    )
                 }
             }
             clearUndoState()
