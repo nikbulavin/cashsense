@@ -23,4 +23,4 @@ internal class InAppReviewManagerImpl @Inject constructor(
     }
 }
 
-private const val MIN_TRANSACTIONS_FOR_REVIEW = 15
+private const val MIN_TRANSACTIONS_FOR_REVIEW = 20
