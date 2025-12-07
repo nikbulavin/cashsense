@@ -37,7 +37,6 @@ import ru.resodostudios.cashsense.ui.home2pane.homeListDetailScreen
 @Composable
 fun CsNavHost(
     appState: CsAppState,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     navigationSuiteType: NavigationSuiteType,
     updateFabVisibility: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -104,7 +103,6 @@ fun CsNavHost(
             navigateToCategoryDialog = navController::navigateToCategoryDialog,
             navigateToSubscriptionDialog = navController::navigateToSubscriptionDialog,
             navigateToSettings = navController::navigateToSettings,
-            onShowSnackbar = onShowSnackbar,
             updateFabVisibility = updateFabVisibility,
             updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
             navigationSuiteType = navigationSuiteType,
@@ -126,12 +124,9 @@ fun CsNavHost(
         )
         categoriesScreen(
             onEditCategory = navController::navigateToCategoryDialog,
-            onShowSnackbar = onShowSnackbar,
         )
         subscriptionsScreen(
             onEditSubscription = navController::navigateToSubscriptionDialog,
-            onShowSnackbar = onShowSnackbar,
-            nestedGraphs = {},
         )
         walletDialog(navController::navigateUp)
         categoryDialog(navController::navigateUp)

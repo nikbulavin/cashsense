@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -53,6 +55,7 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.R
+import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
@@ -82,7 +85,6 @@ data object HomeListDetailRoute
 fun NavGraphBuilder.homeListDetailScreen(
     onEditWallet: (String) -> Unit,
     onTransfer: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     navigateToWalletDialog: () -> Unit,
     navigateToCategoryDialog: () -> Unit,
@@ -99,10 +101,17 @@ fun NavGraphBuilder.homeListDetailScreen(
                 navDeepLink<HomeRoute>(basePath = DEEP_LINK_BASE_PATH),
             ),
         ) {
+            val snackbarHostState = LocalSnackbarHostState.current
             HomeListDetailScreen(
                 onEditWallet = onEditWallet,
                 onTransfer = onTransfer,
-                onShowSnackbar = onShowSnackbar,
+                onShowSnackbar = { message, actionLabel ->
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = actionLabel,
+                        duration = SnackbarDuration.Short,
+                    ) == ActionPerformed
+                },
                 navigateToTransactionDialog = navigateToTransactionDialog,
                 navigateToWalletDialog = navigateToWalletDialog,
                 navigateToCategoryDialog = navigateToCategoryDialog,

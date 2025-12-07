@@ -8,16 +8,11 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Home
-import ru.resodostudios.cashsense.feature.category.dialog.navigation.CategoryDialogRoute
-import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesBaseRoute
 import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.SubscriptionDialogRoute
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.TransactionDialogRoute
 import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
-import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.WalletDialogRoute
 import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -60,7 +55,7 @@ enum class TopLevelDestination(
         routes = setOf(
             CategoriesRoute::class,
         ),
-        baseRoute = CategoriesBaseRoute::class,
+        baseRoute = CategoriesRoute::class,
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.Outlined.Autorenew,
@@ -69,6 +64,6 @@ enum class TopLevelDestination(
         routes = setOf(
             SubscriptionsRoute::class,
         ),
-        baseRoute = SubscriptionsBaseRoute::class,
+        baseRoute = SubscriptionsRoute::class,
     ),
 }

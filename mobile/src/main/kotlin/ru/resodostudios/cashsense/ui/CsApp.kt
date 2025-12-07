@@ -16,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration.Indefinite
-import androidx.compose.material3.SnackbarDuration.Short
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
@@ -26,6 +25,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +42,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
+import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
@@ -178,40 +179,35 @@ fun CsApp(
                         ),
                     ),
             ) {
-                CsNavHost(
-                    appState = appState,
-                    navigationSuiteType = appState.navigationSuiteType,
-                    onShowSnackbar = { message, action ->
-                        snackbarHostState.showSnackbar(
-                            message = message,
-                            actionLabel = action,
-                            duration = Short,
-                        ) == ActionPerformed
-                    },
-                    updateFabVisibility = { shouldShowFab = it },
-                    modifier = Modifier.fillMaxSize(),
-                )
-                if (currentTopLevelDestination != null &&
-                    !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)
-                ) {
-                    FabMenu(
-                        visible = shouldShowFab,
-                        onMenuItemClick = { fabItem ->
-                            when (fabItem) {
-                                WALLET -> appState.navController.navigateToWalletDialog()
-                                CATEGORY -> appState.navController.navigateToCategoryDialog()
-                                SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
-                            }
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .windowInsetsPadding(WindowInsets.systemBars),
-                        toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
-                            ToggleFloatingActionButtonDefaults.containerSizeMedium()
-                        } else {
-                            ToggleFloatingActionButtonDefaults.containerSize()
-                        },
+                CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+                    CsNavHost(
+                        appState = appState,
+                        navigationSuiteType = appState.navigationSuiteType,
+                        updateFabVisibility = { shouldShowFab = it },
+                        modifier = Modifier.fillMaxSize(),
                     )
+                    if (currentTopLevelDestination != null &&
+                        !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)
+                    ) {
+                        FabMenu(
+                            visible = shouldShowFab,
+                            onMenuItemClick = { fabItem ->
+                                when (fabItem) {
+                                    WALLET -> appState.navController.navigateToWalletDialog()
+                                    CATEGORY -> appState.navController.navigateToCategoryDialog()
+                                    SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
+                                }
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .windowInsetsPadding(WindowInsets.systemBars),
+                            toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                                ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                            } else {
+                                ToggleFloatingActionButtonDefaults.containerSize()
+                            },
+                        )
+                    }
                 }
             }
         }
