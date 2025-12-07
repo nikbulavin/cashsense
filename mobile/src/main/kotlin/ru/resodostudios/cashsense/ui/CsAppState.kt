@@ -73,8 +73,8 @@ class CsAppState(
 
     val currentDestination: NavDestination?
         @Composable get() {
-            val currentEntry = navController.currentBackStackEntryFlow.collectAsState(null)
-            return currentEntry.value?.destination.also { destination ->
+            val currentEntry by navController.currentBackStackEntryFlow.collectAsState(null)
+            return currentEntry?.destination.also { destination ->
                 if (destination != null) previousDestination.value = destination
             } ?: previousDestination.value
         }
@@ -104,14 +104,15 @@ class CsAppState(
             initialValue = InAppUpdateResult.NotAvailable,
         )
 
-    val navigationSuiteType =
-        NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
+    val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
-    val defaultSnackbarBottomPadding = when (navigationSuiteType) {
-        NavigationSuiteType.NavigationRail -> 110.dp
-        else -> 76.dp
-    }
-    var snackbarBottomPadding by mutableStateOf(defaultSnackbarBottomPadding)
+    var snackbarBottomPadding by mutableStateOf(
+        if (navigationSuiteType == NavigationSuiteType.NavigationRail) {
+            110.dp
+        } else {
+            76.dp
+        }
+    )
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
         trace("Navigation: ${topLevelDestination.name}") {

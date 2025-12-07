@@ -14,13 +14,14 @@ data object CategoriesBaseRoute
 @Serializable
 data object CategoriesRoute
 
-fun NavController.navigateToCategories(navOptions: NavOptions? = null) =
+fun NavController.navigateToCategories(navOptions: NavOptions? = null) {
     navigate(route = CategoriesBaseRoute, navOptions)
+}
 
 fun NavGraphBuilder.categoriesScreen(
     onEditCategory: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    nestedGraphs: NavGraphBuilder.() -> Unit,
+    nestedGraphs: NavGraphBuilder.() -> Unit = {},
 ) {
     navigation<CategoriesBaseRoute>(
         startDestination = CategoriesRoute,

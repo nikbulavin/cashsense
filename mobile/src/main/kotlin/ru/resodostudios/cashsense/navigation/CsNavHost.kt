@@ -109,7 +109,6 @@ fun CsNavHost(
             updateSnackbarBottomPadding = { appState.snackbarBottomPadding = it },
             navigationSuiteType = navigationSuiteType,
             nestedDestinations = {
-                walletDialog(navController::navigateUp)
                 transferDialog(navController::navigateUp)
                 transactionDialog(navController::navigateUp)
                 settingsScreen(
@@ -128,13 +127,15 @@ fun CsNavHost(
         categoriesScreen(
             onEditCategory = navController::navigateToCategoryDialog,
             onShowSnackbar = onShowSnackbar,
-            nestedGraphs = { categoryDialog(navController::navigateUp) },
         )
         subscriptionsScreen(
             onEditSubscription = navController::navigateToSubscriptionDialog,
             onShowSnackbar = onShowSnackbar,
-            nestedGraphs = { subscriptionDialog(navController::navigateUp) },
+            nestedGraphs = {},
         )
+        walletDialog(navController::navigateUp)
+        categoryDialog(navController::navigateUp)
+        subscriptionDialog(navController::navigateUp)
     }
 }
 

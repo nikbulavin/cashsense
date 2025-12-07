@@ -48,7 +48,6 @@ enum class TopLevelDestination(
         iconTextId = localesR.string.home_title,
         routes = setOf(
             HomeRoute::class,
-            WalletDialogRoute::class,
             TransferDialogRoute::class,
             TransactionDialogRoute::class,
         ),
@@ -60,7 +59,6 @@ enum class TopLevelDestination(
         iconTextId = localesR.string.categories_title,
         routes = setOf(
             CategoriesRoute::class,
-            CategoryDialogRoute::class,
         ),
         baseRoute = CategoriesBaseRoute::class,
     ),
@@ -70,7 +68,6 @@ enum class TopLevelDestination(
         iconTextId = localesR.string.subscriptions_title,
         routes = setOf(
             SubscriptionsRoute::class,
-            SubscriptionDialogRoute::class,
         ),
         baseRoute = SubscriptionsBaseRoute::class,
     ),
