@@ -8,11 +8,11 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Home
-import ru.resodostudios.cashsense.feature.category.list.navigation.CategoriesRoute
-import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.SubscriptionsRoute
-import ru.resodostudios.cashsense.feature.transaction.dialog.navigation.TransactionDialogRoute
-import ru.resodostudios.cashsense.feature.transfer.navigation.TransferDialogRoute
+import ru.resodostudios.cashsense.feature.category.list.impl.navigation.CategoriesRoute
+import ru.resodostudios.cashsense.feature.home.impl.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.SubscriptionsRoute
+import ru.resodostudios.cashsense.feature.transaction.dialog.impl.navigation.TransactionDialogRoute
+import ru.resodostudios.cashsense.feature.transfer.impl.navigation.TransferDialogRoute
 import ru.resodostudios.cashsense.ui.home2pane.HomeListDetailRoute
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR

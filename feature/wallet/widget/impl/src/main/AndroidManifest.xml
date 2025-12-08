@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <receiver
+            android:name="ru.resodostudios.cashsense.wallet.widget.impl.WalletWidgetReceiver"
+            android:exported="false"
+            android:label="@string/wallet_widget_description">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/wallet_widget_info" />
+        </receiver>
+    </application>
+
+</manifest>

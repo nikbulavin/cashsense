@@ -47,10 +47,10 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
-import ru.resodostudios.cashsense.feature.category.dialog.navigation.navigateToCategoryDialog
-import ru.resodostudios.cashsense.feature.settings.navigation.SettingsBaseRoute
-import ru.resodostudios.cashsense.feature.subscription.dialog.navigation.navigateToSubscriptionDialog
-import ru.resodostudios.cashsense.feature.wallet.dialog.navigation.navigateToWalletDialog
+import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseRoute
+import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import kotlin.reflect.KClass

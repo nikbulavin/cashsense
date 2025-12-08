@@ -28,9 +28,9 @@ import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
-import ru.resodostudios.cashsense.feature.category.list.navigation.navigateToCategories
-import ru.resodostudios.cashsense.feature.home.navigation.navigateToHome
-import ru.resodostudios.cashsense.feature.subscription.list.navigation.navigateToSubscriptions
+import ru.resodostudios.cashsense.feature.category.list.impl.navigation.navigateToCategories
+import ru.resodostudios.cashsense.feature.home.impl.navigation.navigateToHome
+import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.navigateToSubscriptions
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME

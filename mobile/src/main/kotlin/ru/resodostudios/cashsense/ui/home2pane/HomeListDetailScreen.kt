@@ -64,13 +64,13 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
-import ru.resodostudios.cashsense.feature.home.HomeScreen
-import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
-import ru.resodostudios.cashsense.feature.transaction.overview.TransactionOverviewScreen
-import ru.resodostudios.cashsense.feature.transaction.overview.navigation.TransactionOverviewRoute
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletScreen
-import ru.resodostudios.cashsense.feature.wallet.detail.WalletViewModel
-import ru.resodostudios.cashsense.feature.wallet.detail.navigation.WalletRoute
+import ru.resodostudios.cashsense.feature.home.impl.HomeScreen
+import ru.resodostudios.cashsense.feature.home.impl.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.transaction.overview.impl.TransactionOverviewScreen
+import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.TransactionOverviewRoute
+import ru.resodostudios.cashsense.feature.wallet.detail.impl.WalletScreen
+import ru.resodostudios.cashsense.feature.wallet.detail.impl.WalletViewModel
+import ru.resodostudios.cashsense.feature.wallet.detail.impl.navigation.WalletRoute
 import kotlin.math.max
 import ru.resodostudios.cashsense.core.locales.R as localesR
 

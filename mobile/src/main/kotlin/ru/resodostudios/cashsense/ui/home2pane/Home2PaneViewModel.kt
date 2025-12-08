@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
-import ru.resodostudios.cashsense.feature.home.navigation.HomeRoute
+import ru.resodostudios.cashsense.feature.home.impl.navigation.HomeRoute
 import javax.inject.Inject
 
 @HiltViewModel
