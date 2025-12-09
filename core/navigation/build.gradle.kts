@@ -1,7 +1,5 @@
 plugins {
     alias(libs.plugins.cashsense.android.library)
-    alias(libs.plugins.cashsense.hilt)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose)
 }
