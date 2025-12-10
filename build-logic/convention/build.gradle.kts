@@ -43,10 +43,6 @@ gradlePlugin {
             id = libs.plugins.cashsense.android.library.asProvider().get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("androidFeature") {
-            id = libs.plugins.cashsense.android.feature.get().pluginId
-            implementationClass = "AndroidFeatureConventionPlugin"
-        }
         register("androidTest") {
             id = libs.plugins.cashsense.android.test.get().pluginId
             implementationClass = "AndroidTestConventionPlugin"
@@ -62,6 +58,14 @@ gradlePlugin {
         register("androidFlavors") {
             id = libs.plugins.cashsense.android.application.flavors.get().pluginId
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
+        register("androidFeatureApi") {
+            id = libs.plugins.cashsense.android.feature.api.get().pluginId
+            implementationClass = "AndroidFeatureApiConventionPlugin"
+        }
+        register("androidFeatureImpl") {
+            id = libs.plugins.cashsense.android.feature.impl.get().pluginId
+            implementationClass = "AndroidFeatureImplConventionPlugin"
         }
         register("hilt") {
             id = libs.plugins.cashsense.hilt.get().pluginId

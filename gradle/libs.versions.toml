@@ -155,7 +155,8 @@ cashsense-android-application = { id = "cashsense.android.application" }
 cashsense-android-application-compose = { id = "cashsense.android.application.compose" }
 cashsense-android-application-firebase = { id = "cashsense.android.application.firebase" }
 cashsense-android-application-flavors = { id = "cashsense.android.application.flavors" }
-cashsense-android-feature = { id = "cashsense.android.feature" }
+cashsense-android-feature-api = { id = "cashsense.android.feature.api" }
+cashsense-android-feature-impl = { id = "cashsense.android.feature.impl" }
 cashsense-android-library = { id = "cashsense.android.library" }
 cashsense-android-library-compose = { id = "cashsense.android.library.compose" }
 cashsense-android-room = { id = "cashsense.android.room" }

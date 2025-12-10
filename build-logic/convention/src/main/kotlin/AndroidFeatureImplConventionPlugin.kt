@@ -6,7 +6,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import ru.resodostudios.cashsense.libs
 
-class AndroidFeatureConventionPlugin : Plugin<Project> {
+class AndroidFeatureImplConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
@@ -26,6 +26,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
                 "implementation"(libs.findLibrary("androidx.navigation.compose").get())
+                "implementation"(libs.findLibrary("androidx.navigation3.runtime").get())
                 "implementation"(libs.findLibrary("androidx.tracing").get())
                 "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
             }

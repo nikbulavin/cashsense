@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.cashsense.android.feature)
+    alias(libs.plugins.cashsense.android.feature.impl)
     alias(libs.plugins.cashsense.android.library.compose)
 }
 
