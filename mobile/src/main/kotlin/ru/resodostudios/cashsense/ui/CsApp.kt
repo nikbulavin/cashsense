@@ -52,7 +52,9 @@ import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseR
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
-import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
+import ru.resodostudios.cashsense.navigation.HOME
+import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
+import ru.resodostudios.core.navigation.Navigator
 import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -114,32 +116,29 @@ fun CsApp(
         }
     }
 
+    val navigator = remember { Navigator(appState.navigationState) }
+
     NavigationSuiteScaffold(
         navigationItems = {
-            appState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination.isRouteInHierarchy(destination.baseRoute)
+            TOP_LEVEL_NAV_ITEMS.forEach { (navKey, navItem) ->
+                val selected = navKey == appState.navigationState.currentTopLevelKey
                 NavigationSuiteItem(
                     selected = selected,
                     icon = {
-                        val icon = if (selected) {
-                            destination.selectedIcon
-                        } else {
-                            destination.unselectedIcon
-                        }
                         Icon(
-                            imageVector = icon,
+                            imageVector = if (selected) navItem.selectedIcon else navItem.unselectedIcon,
                             contentDescription = null,
                         )
                     },
                     label = {
                         Text(
-                            text = stringResource(destination.iconTextId),
+                            text = stringResource(navItem.iconTextId),
                             maxLines = 1,
                         )
                     },
                     onClick = {
-                        if (destination != HOME) shouldShowFab = true
-                        appState.navigateToTopLevelDestination(destination)
+                        if (navItem != HOME) shouldShowFab = true
+                        navigator.navigate(navKey)
                     },
                 )
             }

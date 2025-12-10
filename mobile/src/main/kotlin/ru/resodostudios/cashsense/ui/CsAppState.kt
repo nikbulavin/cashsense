@@ -29,12 +29,16 @@ import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.navigateToCategories
+import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.navigation.navigateToHome
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.navigateToSubscriptions
+import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
 import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.CATEGORIES
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.HOME
 import ru.resodostudios.cashsense.navigation.TopLevelDestination.SUBSCRIPTIONS
+import ru.resodostudios.core.navigation.NavigationState
+import ru.resodostudios.core.navigation.rememberNavigationState
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -45,6 +49,7 @@ fun rememberCsAppState(
     navController: NavHostController = rememberNavController(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
 ): CsAppState {
+    val navigationState = rememberNavigationState(HomeNavKey(), TOP_LEVEL_NAV_ITEMS.keys)
 
     return remember(
         timeZoneMonitor,
@@ -57,6 +62,7 @@ fun rememberCsAppState(
             coroutineScope = coroutineScope,
             navController = navController,
             windowAdaptiveInfo = windowAdaptiveInfo,
+            navigationState = navigationState,
         )
     }
 }
@@ -68,6 +74,7 @@ class CsAppState(
     coroutineScope: CoroutineScope,
     val navController: NavHostController,
     val windowAdaptiveInfo: WindowAdaptiveInfo,
+    val navigationState: NavigationState,
 ) {
     private val previousDestination = mutableStateOf<NavDestination?>(null)
 
