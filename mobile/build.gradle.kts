@@ -58,10 +58,13 @@ baselineProfile {
 
 dependencies {
     implementation(projects.feature.category.dialog.impl)
+    implementation(projects.feature.category.list.api)
     implementation(projects.feature.category.list.impl)
+    implementation(projects.feature.home.api)
     implementation(projects.feature.home.impl)
     implementation(projects.feature.settings.impl)
     implementation(projects.feature.subscription.dialog.impl)
+    implementation(projects.feature.subscription.list.api)
     implementation(projects.feature.subscription.list.impl)
     implementation(projects.feature.transaction.dialog.impl)
     implementation(projects.feature.transaction.overview.impl)
