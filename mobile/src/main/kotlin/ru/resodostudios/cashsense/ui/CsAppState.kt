@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
@@ -75,15 +74,6 @@ class CsAppState(
             return currentEntry?.destination.also { destination ->
                 if (destination != null) previousDestination.value = destination
             } ?: previousDestination.value
-        }
-
-    val currentTopLevelDestination: TopLevelDestination?
-        @Composable get() {
-            return TopLevelDestination.entries.find { topLevelDestination ->
-                topLevelDestination.routes.any { routeClass ->
-                    currentDestination?.hasRoute(routeClass) == true
-                }
-            }
         }
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries

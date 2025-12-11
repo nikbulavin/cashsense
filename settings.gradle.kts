@@ -49,6 +49,7 @@ include(":core:notifications")
 include(":core:shortcuts")
 include(":core:ui")
 
+include(":feature:category:dialog:api")
 include(":feature:category:dialog:impl")
 include(":feature:category:list:api")
 include(":feature:category:list:impl")

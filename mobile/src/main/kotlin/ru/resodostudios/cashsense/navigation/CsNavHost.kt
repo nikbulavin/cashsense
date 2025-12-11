@@ -15,7 +15,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.categoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.navigateToCategoryDialog
-import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesScreen
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.licensesScreen
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.navigateToLicenses
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.navigateToSettings
@@ -121,9 +120,6 @@ fun CsNavHost(
                     },
                 )
             },
-        )
-        categoriesScreen(
-            onEditCategory = navController::navigateToCategoryDialog,
         )
         subscriptionsScreen(
             onEditSubscription = navController::navigateToSubscriptionDialog,

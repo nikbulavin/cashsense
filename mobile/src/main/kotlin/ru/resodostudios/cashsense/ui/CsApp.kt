@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -45,6 +44,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
@@ -52,14 +52,14 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
-import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.category.dialog.api.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.categoryDialogEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.navigateToWalletDialog
-import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.HOME
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
 import ru.resodostudios.core.navigation.Navigator
@@ -74,7 +74,6 @@ fun CsApp(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val currentDestination = appState.currentDestination
-    val currentTopLevelDestination = appState.currentTopLevelDestination
 
     var shouldShowFab by rememberSaveable { mutableStateOf(true) }
     var isUpdateInProgressSnackbarShown by rememberSaveable { mutableStateOf(false) }
@@ -189,46 +188,40 @@ fun CsApp(
             ) {
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
+                    val dialogStrategy = remember { DialogSceneStrategy<NavKey>() }
 
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
                         categoriesEntry(navigator)
+                        categoryDialogEntry(navigator)
                         subscriptionsEntry(navigator)
                     }
 
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
-                        sceneStrategy = listDetailStrategy,
-                        onBack = { navigator.goBack() },
+                        sceneStrategy = dialogStrategy,
+                        onBack = navigator::goBack,
                     )
-//                    CsNavHost(
-//                        appState = appState,
-//                        navigationSuiteType = appState.navigationSuiteType,
-//                        updateFabVisibility = { shouldShowFab = it },
-//                        modifier = Modifier.fillMaxSize(),
-//                    )
-//                    if (currentTopLevelDestination != null &&
-//                        !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)
-//                    ) {
-//                        FabMenu(
-//                            visible = shouldShowFab,
-//                            onMenuItemClick = { fabItem ->
-//                                when (fabItem) {
-//                                    WALLET -> appState.navController.navigateToWalletDialog()
-//                                    CATEGORY -> appState.navController.navigateToCategoryDialog()
-//                                    SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
-//                                }
-//                            },
-//                            modifier = Modifier
-//                                .align(Alignment.BottomEnd)
-//                                .windowInsetsPadding(WindowInsets.systemBars),
-//                            toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
-//                                ToggleFloatingActionButtonDefaults.containerSizeMedium()
-//                            } else {
-//                                ToggleFloatingActionButtonDefaults.containerSize()
-//                            },
-//                        )
-//                    }
+                    if (appState.navigationState.currentTopLevelKey in TOP_LEVEL_NAV_ITEMS.keys) {
+                        FabMenu(
+                            visible = shouldShowFab,
+                            onMenuItemClick = { fabItem ->
+                                when (fabItem) {
+                                    WALLET -> appState.navController.navigateToWalletDialog()
+                                    CATEGORY -> navigator.navigateToCategoryDialog()
+                                    SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
+                                }
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .windowInsetsPadding(WindowInsets.systemBars),
+                            toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                                ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                            } else {
+                                ToggleFloatingActionButtonDefaults.containerSize()
+                            },
+                        )
+                    }
                 }
             }
         }

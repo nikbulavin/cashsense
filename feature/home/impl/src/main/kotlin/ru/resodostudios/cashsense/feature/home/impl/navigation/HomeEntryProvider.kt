@@ -24,9 +24,6 @@ fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {
             HomeDetailPlaceholder()
         },
     ) { key ->
-        val viewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> {
-            it.create(key)
-        }
         HomeScreen(
             onWalletClick = {},
             onTransfer = {},
@@ -36,7 +33,7 @@ fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {
             shouldDisplayUndoWallet = false,
             undoWalletRemoval = {},
             clearUndoState = {},
-            viewModel = viewModel,
+            viewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { it.create(key) },
         )
     }
 }

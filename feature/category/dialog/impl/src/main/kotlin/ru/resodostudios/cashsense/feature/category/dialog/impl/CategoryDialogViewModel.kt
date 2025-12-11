@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.feature.category.dialog.impl
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,25 +19,22 @@ import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
-import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.CategoryDialogRoute
-import javax.inject.Inject
+import ru.resodostudios.cashsense.feature.category.dialog.api.CategoryNavKey
 import kotlin.uuid.Uuid
 
-@HiltViewModel
-internal class CategoryDialogViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = CategoryDialogViewModel.Factory::class)
+internal class CategoryDialogViewModel @AssistedInject constructor(
     private val categoriesRepository: CategoriesRepository,
-    savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
     private val analyticsHelper: AnalyticsHelper,
+    @Assisted val key: CategoryNavKey,
 ) : ViewModel() {
-
-    private val categoryDialogDestination: CategoryDialogRoute = savedStateHandle.toRoute()
 
     private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
     val categoryDialogUiState = _categoryDialogUiState.asStateFlow()
 
     init {
-        categoryDialogDestination.categoryId?.let(::loadCategory)
+        key.categoryId?.let(::loadCategory)
     }
 
     private fun loadCategory(id: String) {
@@ -74,6 +72,11 @@ internal class CategoryDialogViewModel @Inject constructor(
         _categoryDialogUiState.update {
             it.copy(iconId = iconId)
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: CategoryNavKey): CategoryDialogViewModel
     }
 }
 

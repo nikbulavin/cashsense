@@ -3,12 +3,9 @@ package ru.resodostudios.cashsense.navigation
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.designsystem.icon.filled.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Home
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Category
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Home
-import ru.resodostudios.cashsense.feature.category.list.impl.navigation.CategoriesRoute
 import ru.resodostudios.cashsense.feature.home.impl.navigation.HomeRoute
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.SubscriptionsRoute
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.navigation.TransactionDialogRoute
@@ -47,15 +44,6 @@ enum class TopLevelDestination(
             TransactionDialogRoute::class,
         ),
         baseRoute = HomeListDetailRoute::class,
-    ),
-    CATEGORIES(
-        selectedIcon = CsIcons.Filled.Category,
-        unselectedIcon = CsIcons.Outlined.Category,
-        iconTextId = localesR.string.categories_title,
-        routes = setOf(
-            CategoriesRoute::class,
-        ),
-        baseRoute = CategoriesRoute::class,
     ),
     SUBSCRIPTIONS(
         selectedIcon = CsIcons.Outlined.Autorenew,
