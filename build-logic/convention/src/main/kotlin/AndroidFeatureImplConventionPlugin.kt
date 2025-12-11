@@ -12,7 +12,6 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "cashsense.android.library")
             apply(plugin = "cashsense.hilt")
-            apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
             extensions.configure<LibraryExtension> {
                 testOptions.animationsDisabled = true
@@ -28,7 +27,6 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.navigation3.runtime").get())
                 "implementation"(libs.findLibrary("androidx.tracing").get())
-                "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
             }
         }
     }
