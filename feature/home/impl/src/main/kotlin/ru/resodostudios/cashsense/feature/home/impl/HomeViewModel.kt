@@ -3,7 +3,9 @@ package ru.resodostudios.cashsense.feature.home.impl
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,22 +18,22 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
-import ru.resodostudios.cashsense.feature.home.impl.navigation.HomeRoute
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = HomeViewModel.Factory::class)
+class HomeViewModel @AssistedInject constructor(
     private val savedStateHandle: SavedStateHandle,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
+    @Assisted val key: HomeNavKey,
 ) : ViewModel() {
 
-    private val homeDestination: HomeRoute = savedStateHandle.toRoute()
     private val selectedWalletId = savedStateHandle.getStateFlow(
         key = SELECTED_WALLET_ID_KEY,
-        initialValue = homeDestination.walletId,
+        initialValue = key.walletId,
     )
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
@@ -73,6 +75,11 @@ class HomeViewModel @Inject constructor(
 
     fun onWalletClick(walletId: String?) {
         savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: HomeNavKey): HomeViewModel
     }
 }
 
