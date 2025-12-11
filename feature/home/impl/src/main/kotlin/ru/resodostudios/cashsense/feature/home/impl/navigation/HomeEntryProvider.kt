@@ -5,17 +5,11 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import kotlinx.serialization.Serializable
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.HomeDetailPlaceholder
 import ru.resodostudios.cashsense.feature.home.impl.HomeScreen
 import ru.resodostudios.cashsense.feature.home.impl.HomeViewModel
 import ru.resodostudios.core.navigation.Navigator
-
-@Serializable
-data class HomeRoute(
-    val walletId: String? = null,
-)
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {

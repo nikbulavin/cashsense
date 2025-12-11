@@ -26,7 +26,6 @@ import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
-import ru.resodostudios.cashsense.navigation.TopLevelDestination
 import ru.resodostudios.core.navigation.NavigationState
 import ru.resodostudios.core.navigation.rememberNavigationState
 import kotlin.time.Duration.Companion.seconds
@@ -75,8 +74,6 @@ class CsAppState(
                 if (destination != null) previousDestination.value = destination
             } ?: previousDestination.value
         }
-
-    val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
 
     val currentTimeZone = timeZoneMonitor.currentTimeZone
         .stateIn(

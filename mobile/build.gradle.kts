@@ -64,6 +64,7 @@ dependencies {
     implementation(projects.feature.home.api)
     implementation(projects.feature.home.impl)
     implementation(projects.feature.settings.impl)
+    implementation(projects.feature.subscription.dialog.api)
     implementation(projects.feature.subscription.dialog.impl)
     implementation(projects.feature.subscription.list.api)
     implementation(projects.feature.subscription.list.impl)

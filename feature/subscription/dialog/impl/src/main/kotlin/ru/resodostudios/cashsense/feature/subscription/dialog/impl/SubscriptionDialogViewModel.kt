@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog.impl
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,29 +30,27 @@ import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.SubscriptionDialogRoute
+import ru.resodostudios.cashsense.feature.subscription.dialog.api.SubscriptionNavKey
 import java.util.Currency
-import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-@HiltViewModel
-class SubscriptionDialogViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = SubscriptionDialogViewModel.Factory::class)
+class SubscriptionDialogViewModel @AssistedInject constructor(
     private val userDataRepository: UserDataRepository,
     private val subscriptionsRepository: SubscriptionsRepository,
-    savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
+    @Assisted val key: SubscriptionNavKey,
 ) : ViewModel() {
-
-    private val subscriptionDialogDestination: SubscriptionDialogRoute = savedStateHandle.toRoute()
 
     private val _subscriptionDialogUiState = MutableStateFlow(SubscriptionDialogUiState())
     val subscriptionDialogUiState = _subscriptionDialogUiState.asStateFlow()
 
     init {
-        if (subscriptionDialogDestination.subscriptionId != null) {
-            loadSubscription(subscriptionDialogDestination.subscriptionId)
+        val subscriptionId = key.subscriptionId
+        if (subscriptionId != null) {
+            loadSubscription(subscriptionId)
         } else {
             loadUserData()
         }
@@ -132,6 +131,11 @@ class SubscriptionDialogViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: SubscriptionNavKey): SubscriptionDialogViewModel
     }
 }
 

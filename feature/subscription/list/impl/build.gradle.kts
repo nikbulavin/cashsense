@@ -10,5 +10,6 @@ android {
 dependencies {
     implementation(projects.core.data)
 
+    implementation(projects.feature.subscription.dialog.api)
     implementation(projects.feature.subscription.list.api)
 }

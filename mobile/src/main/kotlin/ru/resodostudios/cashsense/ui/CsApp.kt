@@ -57,7 +57,8 @@ import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.catego
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseRoute
-import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.HOME
@@ -195,6 +196,7 @@ fun CsApp(
                         categoriesEntry(navigator)
                         categoryDialogEntry(navigator)
                         subscriptionsEntry(navigator)
+                        subscriptionDialogEntry(navigator)
                     }
 
                     NavDisplay(
@@ -209,7 +211,7 @@ fun CsApp(
                                 when (fabItem) {
                                     WALLET -> appState.navController.navigateToWalletDialog()
                                     CATEGORY -> navigator.navigateToCategoryDialog()
-                                    SUBSCRIPTION -> appState.navController.navigateToSubscriptionDialog()
+                                    SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
                                 }
                             },
                             modifier = Modifier
