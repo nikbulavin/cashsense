@@ -53,6 +53,7 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.navigateToCategoryDialog
+import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.navigateToSubscriptionDialog
@@ -190,6 +191,7 @@ fun CsApp(
 
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
+                        categoriesEntry(navigator)
                     }
 
                     NavDisplay(
