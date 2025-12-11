@@ -24,7 +24,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = HomeViewModel.Factory::class)
-class HomeViewModel @AssistedInject constructor(
+internal class HomeViewModel @AssistedInject constructor(
     private val savedStateHandle: SavedStateHandle,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,

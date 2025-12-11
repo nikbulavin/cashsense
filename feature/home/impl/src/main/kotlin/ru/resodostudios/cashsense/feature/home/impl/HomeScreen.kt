@@ -42,7 +42,7 @@ import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun HomeScreen(
+internal fun HomeScreen(
     onWalletClick: (String?) -> Unit,
     onTransfer: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,

@@ -10,4 +10,8 @@ android {
 dependencies {
     implementation(projects.core.data)
     implementation(projects.core.domain)
+
+    implementation(projects.feature.wallet.dialog.api)
+
+    implementation(libs.androidx.navigation3.ui)
 }

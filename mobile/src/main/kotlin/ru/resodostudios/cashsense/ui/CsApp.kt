@@ -60,7 +60,8 @@ import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseR
 import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
-import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.navigateToWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
+import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.walletDialogEntry
 import ru.resodostudios.cashsense.navigation.HOME
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
 import ru.resodostudios.core.navigation.Navigator
@@ -193,6 +194,7 @@ fun CsApp(
 
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
+                        walletDialogEntry(navigator)
                         categoriesEntry(navigator)
                         categoryDialogEntry(navigator)
                         subscriptionsEntry(navigator)
@@ -209,7 +211,7 @@ fun CsApp(
                             visible = shouldShowFab,
                             onMenuItemClick = { fabItem ->
                                 when (fabItem) {
-                                    WALLET -> appState.navController.navigateToWalletDialog()
+                                    WALLET -> navigator.navigateToWalletDialog()
                                     CATEGORY -> navigator.navigateToCategoryDialog()
                                     SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
                                 }

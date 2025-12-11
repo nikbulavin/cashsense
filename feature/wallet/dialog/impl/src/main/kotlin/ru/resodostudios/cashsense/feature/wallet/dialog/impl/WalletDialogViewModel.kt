@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog.impl
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,28 +20,26 @@ import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.WalletDialogRoute
+import ru.resodostudios.cashsense.feature.wallet.dialog.api.WalletDialogNavKey
 import java.util.Currency
-import javax.inject.Inject
 import kotlin.uuid.Uuid
 
-@HiltViewModel
-internal class WalletDialogViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = WalletDialogViewModel.Factory::class)
+internal class WalletDialogViewModel @AssistedInject constructor(
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
-    savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
     private val getExtendedUserWallet: GetExtendedUserWalletUseCase,
+    @Assisted val key: WalletDialogNavKey,
 ) : ViewModel() {
-
-    private val walletDialogDestination: WalletDialogRoute = savedStateHandle.toRoute()
 
     private val _walletDialogState = MutableStateFlow(WalletDialogUiState())
     val walletDialogState = _walletDialogState.asStateFlow()
 
     init {
-        if (walletDialogDestination.walletId != null) {
-            loadWallet(walletDialogDestination.walletId)
+        val walletId = key.walletId
+        if (walletId != null) {
+            loadWallet(walletId)
         } else {
             loadUserData()
         }
@@ -106,6 +105,11 @@ internal class WalletDialogViewModel @Inject constructor(
         _walletDialogState.update {
             it.copy(isPrimary = isPrimary)
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: WalletDialogNavKey): WalletDialogViewModel
     }
 }
 

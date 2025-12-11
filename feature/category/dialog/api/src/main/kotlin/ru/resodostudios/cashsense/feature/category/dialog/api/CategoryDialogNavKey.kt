@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.core.navigation.Navigator
 
 @Serializable
-data class CategoryNavKey(
+data class CategoryDialogNavKey(
     val categoryId: String? = null,
 ) : NavKey
 
 fun Navigator.navigateToCategoryDialog(
     categoryId: String? = null,
 ) {
-    navigate(CategoryNavKey(categoryId))
+    navigate(CategoryDialogNavKey(categoryId))
 }

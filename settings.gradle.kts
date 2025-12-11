@@ -64,6 +64,7 @@ include(":feature:transaction:dialog:impl")
 include(":feature:transaction:overview:impl")
 include(":feature:transfer:impl")
 include(":feature:wallet:detail:impl")
+include(":feature:wallet:dialog:api")
 include(":feature:wallet:dialog:impl")
 include(":feature:wallet:widget:impl")
 

@@ -30,7 +30,7 @@ import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.subscription.dialog.api.SubscriptionNavKey
+import ru.resodostudios.cashsense.feature.subscription.dialog.api.SubscriptionDialogNavKey
 import java.util.Currency
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -41,7 +41,7 @@ class SubscriptionDialogViewModel @AssistedInject constructor(
     private val userDataRepository: UserDataRepository,
     private val subscriptionsRepository: SubscriptionsRepository,
     @ApplicationScope private val appScope: CoroutineScope,
-    @Assisted val key: SubscriptionNavKey,
+    @Assisted val key: SubscriptionDialogNavKey,
 ) : ViewModel() {
 
     private val _subscriptionDialogUiState = MutableStateFlow(SubscriptionDialogUiState())
@@ -135,7 +135,7 @@ class SubscriptionDialogViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: SubscriptionNavKey): SubscriptionDialogViewModel
+        fun create(key: SubscriptionDialogNavKey): SubscriptionDialogViewModel
     }
 }
 

@@ -19,7 +19,7 @@ import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
-import ru.resodostudios.cashsense.feature.category.dialog.api.CategoryNavKey
+import ru.resodostudios.cashsense.feature.category.dialog.api.CategoryDialogNavKey
 import kotlin.uuid.Uuid
 
 @HiltViewModel(assistedFactory = CategoryDialogViewModel.Factory::class)
@@ -27,7 +27,7 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
     private val analyticsHelper: AnalyticsHelper,
-    @Assisted val key: CategoryNavKey,
+    @Assisted val key: CategoryDialogNavKey,
 ) : ViewModel() {
 
     private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
@@ -76,7 +76,7 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: CategoryNavKey): CategoryDialogViewModel
+        fun create(key: CategoryDialogNavKey): CategoryDialogViewModel
     }
 }
 
