@@ -57,6 +57,7 @@ import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categori
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseRoute
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.navigateToSubscriptionDialog
+import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.navigateToWalletDialog
 import ru.resodostudios.cashsense.navigation.CsNavHost
 import ru.resodostudios.cashsense.navigation.HOME
@@ -192,6 +193,7 @@ fun CsApp(
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
                         categoriesEntry(navigator)
+                        subscriptionsEntry(navigator)
                     }
 
                     NavDisplay(
