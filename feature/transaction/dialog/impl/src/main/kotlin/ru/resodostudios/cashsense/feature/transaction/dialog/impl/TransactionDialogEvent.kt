@@ -10,8 +10,6 @@ sealed interface TransactionDialogEvent {
 
     data class UpdateTransactionId(val id: String) : TransactionDialogEvent
 
-    data class UpdateWalletId(val id: String) : TransactionDialogEvent
-
     data class UpdateAmount(val amount: String) : TransactionDialogEvent
 
     data class UpdateTransactionType(val type: TransactionType) : TransactionDialogEvent

@@ -10,5 +10,7 @@ android {
 dependencies {
     implementation(projects.core.data)
 
-    implementation(libs.androidx.activity.compose)
+    implementation(projects.feature.transaction.dialog.api)
+
+    implementation(libs.androidx.navigation3.ui)
 }

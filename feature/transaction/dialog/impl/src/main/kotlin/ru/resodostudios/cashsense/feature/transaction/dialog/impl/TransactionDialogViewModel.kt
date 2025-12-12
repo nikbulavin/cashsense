@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.feature.transaction.dialog.impl
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,8 +19,8 @@ import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.util.Constants.WALLET_ID_KEY
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import ru.resodostudios.cashsense.feature.transaction.dialog.api.TransactionDialogNavKey
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.Repeat
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.Save
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.UpdateAmount
@@ -31,31 +32,25 @@ import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDia
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.UpdateTransactionId
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.UpdateTransactionIgnoring
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.UpdateTransactionType
-import ru.resodostudios.cashsense.feature.transaction.dialog.impl.TransactionDialogEvent.UpdateWalletId
-import ru.resodostudios.cashsense.feature.transaction.dialog.impl.navigation.TransactionDialogRoute
 import java.util.Currency
-import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-@HiltViewModel
-internal class TransactionDialogViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = TransactionDialogViewModel.Factory::class)
+internal class TransactionDialogViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
+    @Assisted val key: TransactionDialogNavKey,
 ) : ViewModel() {
-
-    private val transactionDestination: TransactionDialogRoute = savedStateHandle.toRoute()
 
     private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
     val transactionDialogUiState = _transactionDialogUiState.asStateFlow()
 
     init {
         _transactionDialogUiState.update { it.copy(isLoading = true) }
-        updateWalletId(transactionDestination.walletId)
-        val transactionId = transactionDestination.transactionId
+        val transactionId = key.transactionId
         if (transactionId == null) {
             loadCategories()
         } else {
@@ -68,7 +63,6 @@ internal class TransactionDialogViewModel @Inject constructor(
             Repeat -> repeatTransaction()
             is Save -> saveTransaction(event.state)
             is UpdateTransactionId -> updateTransactionId(event.id)
-            is UpdateWalletId -> updateWalletId(event.id)
             is UpdateCurrency -> updateCurrency(event.currency)
             is UpdateDate -> updateDate(event.date)
             is UpdateAmount -> updateAmount(event.amount)
@@ -82,7 +76,7 @@ internal class TransactionDialogViewModel @Inject constructor(
 
     private fun saveTransaction(state: TransactionDialogUiState) {
         appScope.launch {
-            val transaction = state.asTransaction(transactionDestination.walletId, state.category)
+            val transaction = state.asTransaction(key.walletId, state.category)
             transactionsRepository.upsertTransaction(transaction)
         }
     }
@@ -91,10 +85,6 @@ internal class TransactionDialogViewModel @Inject constructor(
         _transactionDialogUiState.update {
             it.copy(transactionId = id)
         }
-    }
-
-    private fun updateWalletId(id: String) {
-        savedStateHandle[WALLET_ID_KEY] = id
     }
 
     private fun updateCurrency(currency: Currency) {
@@ -157,14 +147,14 @@ internal class TransactionDialogViewModel @Inject constructor(
     private fun loadTransaction(id: String) {
         viewModelScope.launch {
             val transaction = transactionsRepository.getTransaction(id).first()
-            val date = if (transactionDestination.repeated) {
+            val date = if (key.repeated) {
                 Clock.System.now()
             } else {
                 transaction.timestamp
             }
             _transactionDialogUiState.update {
                 it.copy(
-                    transactionId = if (transactionDestination.repeated) "" else transaction.id,
+                    transactionId = if (key.repeated) "" else transaction.id,
                     description = transaction.description ?: "",
                     amount = transaction.amount.abs().toString(),
                     transactionType = if (transaction.amount.signum() < 0) TransactionType.EXPENSE else TransactionType.INCOME,
@@ -195,6 +185,11 @@ internal class TransactionDialogViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: TransactionDialogNavKey): TransactionDialogViewModel
     }
 }
 

@@ -9,4 +9,8 @@ android {
 
 dependencies {
     implementation(projects.core.data)
+
+    implementation(projects.feature.transfer.api)
+
+    implementation(libs.androidx.navigation3.ui)
 }

@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.feature.transfer.impl
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,30 +19,27 @@ import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.Transfer
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.transfer.impl.navigation.TransferDialogRoute
+import ru.resodostudios.cashsense.feature.transfer.dialog.api.TransferDialogNavKey
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.Currency
-import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-@HiltViewModel
-internal class TransferDialogViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = TransferDialogViewModel.Factory::class)
+internal class TransferDialogViewModel @AssistedInject constructor(
     private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
-    savedStateHandle: SavedStateHandle,
     @ApplicationScope private val appScope: CoroutineScope,
+    @Assisted val key: TransferDialogNavKey,
 ) : ViewModel() {
-
-    private val transferDialogDestination: TransferDialogRoute = savedStateHandle.toRoute()
 
     private val _transferDialogState = MutableStateFlow(TransferDialogUiState())
     val transferDialogState = _transferDialogState.asStateFlow()
 
     init {
-        transferDialogDestination.walletId?.let(::loadTransfer)
+        loadTransfer(key.walletId)
     }
 
     private fun loadTransfer(walletId: String) {
@@ -161,6 +159,11 @@ internal class TransferDialogViewModel @Inject constructor(
         _transferDialogState.update {
             it.copy(date = date)
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: TransferDialogNavKey): TransferDialogViewModel
     }
 }
 
