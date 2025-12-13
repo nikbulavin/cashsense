@@ -15,6 +15,8 @@ dependencies {
     implementation(projects.feature.home.api)
     implementation(projects.feature.transaction.dialog.api)
     implementation(projects.feature.transfer.api)
+    implementation(projects.feature.wallet.detail.api)
+    implementation(projects.feature.settings.api)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

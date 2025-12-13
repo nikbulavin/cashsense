@@ -24,7 +24,6 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.hilt.lifecycle.viewmodel.compose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
-                "implementation"(libs.findLibrary("androidx.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.navigation3.runtime").get())
                 "implementation"(libs.findLibrary("androidx.tracing").get())
             }

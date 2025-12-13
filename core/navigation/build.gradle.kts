@@ -10,5 +10,5 @@ android {
 
 dependencies {
     api(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.lifecycle.viewModel.navigation3)
+    implementation(libs.androidx.lifecycle.viewModelNavigation3)
 }

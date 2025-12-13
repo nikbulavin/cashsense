@@ -46,16 +46,17 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
+import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
 import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @HiltViewModel(assistedFactory = WalletViewModel.Factory::class)
-class WalletViewModel @AssistedInject constructor(
+internal class WalletViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val userDataRepository: UserDataRepository,
     getExtendedUserWallet: GetExtendedUserWalletUseCase,
-    @Assisted val walletId: String,
+    @Assisted val key: WalletNavKey,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
@@ -77,7 +78,7 @@ class WalletViewModel @AssistedInject constructor(
     private val selectedTransactionState = MutableStateFlow<Transaction?>(null)
 
     val walletUiState: StateFlow<WalletUiState> = combine(
-        getExtendedUserWallet.invoke(walletId),
+        getExtendedUserWallet.invoke(key.walletId),
         transactionFilterState,
         selectedTransactionState,
     ) { extendedUserWallet, transactionFilter, selectedTransaction ->
@@ -219,7 +220,7 @@ class WalletViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(walletId: String): WalletViewModel
+        fun create(key: WalletNavKey): WalletViewModel
     }
 }
 

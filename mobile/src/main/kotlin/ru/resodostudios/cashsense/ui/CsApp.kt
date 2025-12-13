@@ -39,9 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.DialogSceneStrategy
@@ -56,19 +53,21 @@ import ru.resodostudios.cashsense.feature.category.dialog.api.navigateToCategory
 import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.categoryDialogEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
-import ru.resodostudios.cashsense.feature.settings.impl.navigation.SettingsBaseRoute
+import ru.resodostudios.cashsense.feature.settings.api.SettingsNavKey
+import ru.resodostudios.cashsense.feature.settings.impl.navigation.licensesEntry
+import ru.resodostudios.cashsense.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.transaction.dialog.impl.navigation.transactionDialogEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
+import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
+import ru.resodostudios.cashsense.feature.wallet.detail.impl.navigation.walletEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.walletDialogEntry
-import ru.resodostudios.cashsense.navigation.HOME
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
 import ru.resodostudios.core.navigation.Navigator
 import ru.resodostudios.core.navigation.toEntries
-import kotlin.reflect.KClass
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3AdaptiveApi::class)
@@ -77,9 +76,7 @@ fun CsApp(
     appState: CsAppState,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val currentDestination = appState.currentDestination
 
-    var shouldShowFab by rememberSaveable { mutableStateOf(true) }
     var isUpdateInProgressSnackbarShown by rememberSaveable { mutableStateOf(false) }
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
@@ -148,10 +145,7 @@ fun CsApp(
                             maxLines = 1,
                         )
                     },
-                    onClick = {
-                        if (navItem != HOME) shouldShowFab = true
-                        navigator.navigate(navKey)
-                    },
+                    onClick = { navigator.navigate(navKey) },
                 )
             }
         },
@@ -166,7 +160,7 @@ fun CsApp(
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
                             if (appState.navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
-                                !currentDestination.isRouteInHierarchy(SettingsBaseRoute::class)
+                                SettingsNavKey !in appState.navigationState.currentSubStack
                             ) {
                                 Modifier.padding(bottom = appState.snackbarBottomPadding)
                             } else {
@@ -198,6 +192,9 @@ fun CsApp(
                         homeEntry(navigator)
                         categoriesEntry(navigator)
                         subscriptionsEntry(navigator)
+                        walletEntry(navigator)
+                        settingsEntry(navigator)
+                        licensesEntry(navigator)
                         walletDialogEntry(navigator)
                         categoryDialogEntry(navigator)
                         subscriptionDialogEntry(navigator)
@@ -210,32 +207,27 @@ fun CsApp(
                         sceneStrategy = dialogStrategy,
                         onBack = navigator::goBack,
                     )
-                    if (appState.navigationState.currentTopLevelKey in TOP_LEVEL_NAV_ITEMS.keys) {
-                        FabMenu(
-                            visible = shouldShowFab,
-                            onMenuItemClick = { fabItem ->
-                                when (fabItem) {
-                                    WALLET -> navigator.navigateToWalletDialog()
-                                    CATEGORY -> navigator.navigateToCategoryDialog()
-                                    SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
-                                }
-                            },
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .windowInsetsPadding(WindowInsets.systemBars),
-                            toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
-                                ToggleFloatingActionButtonDefaults.containerSizeMedium()
-                            } else {
-                                ToggleFloatingActionButtonDefaults.containerSize()
-                            },
-                        )
-                    }
+                    FabMenu(
+                        visible = SettingsNavKey !in appState.navigationState.currentSubStack &&
+                                appState.navigationState.currentKey !is WalletNavKey,
+                        onMenuItemClick = { fabItem ->
+                            when (fabItem) {
+                                WALLET -> navigator.navigateToWalletDialog()
+                                CATEGORY -> navigator.navigateToCategoryDialog()
+                                SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .windowInsetsPadding(WindowInsets.systemBars),
+                        toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                            ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                        } else {
+                            ToggleFloatingActionButtonDefaults.containerSize()
+                        },
+                    )
                 }
             }
         }
     }
-}
-
-private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean {
-    return this?.hierarchy?.any { it.hasRoute(route) } == true
 }

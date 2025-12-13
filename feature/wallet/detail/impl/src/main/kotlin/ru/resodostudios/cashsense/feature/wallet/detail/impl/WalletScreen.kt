@@ -74,7 +74,7 @@ import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun WalletScreen(
+internal fun WalletScreen(
     onBackClick: () -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,

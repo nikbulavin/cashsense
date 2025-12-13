@@ -6,16 +6,12 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -35,7 +31,6 @@ fun rememberCsAppState(
     timeZoneMonitor: TimeZoneMonitor,
     inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
 ): CsAppState {
     val navigationState = rememberNavigationState(HomeNavKey(), TOP_LEVEL_NAV_ITEMS.keys)
@@ -43,13 +38,11 @@ fun rememberCsAppState(
     return remember(
         timeZoneMonitor,
         coroutineScope,
-        navController,
     ) {
         CsAppState(
             timeZoneMonitor = timeZoneMonitor,
             inAppUpdateManager = inAppUpdateManager,
             coroutineScope = coroutineScope,
-            navController = navController,
             windowAdaptiveInfo = windowAdaptiveInfo,
             navigationState = navigationState,
         )
@@ -61,19 +54,9 @@ class CsAppState(
     timeZoneMonitor: TimeZoneMonitor,
     inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope,
-    val navController: NavHostController,
     val windowAdaptiveInfo: WindowAdaptiveInfo,
     val navigationState: NavigationState,
 ) {
-    private val previousDestination = mutableStateOf<NavDestination?>(null)
-
-    val currentDestination: NavDestination?
-        @Composable get() {
-            val currentEntry by navController.currentBackStackEntryFlow.collectAsState(null)
-            return currentEntry?.destination.also { destination ->
-                if (destination != null) previousDestination.value = destination
-            } ?: previousDestination.value
-        }
 
     val currentTimeZone = timeZoneMonitor.currentTimeZone
         .stateIn(
