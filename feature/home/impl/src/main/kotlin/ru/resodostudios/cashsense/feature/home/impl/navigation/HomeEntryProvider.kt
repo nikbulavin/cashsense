@@ -11,6 +11,7 @@ import ru.resodostudios.cashsense.feature.home.impl.HomeScreen
 import ru.resodostudios.cashsense.feature.home.impl.HomeViewModel
 import ru.resodostudios.cashsense.feature.settings.api.navigateToSettings
 import ru.resodostudios.cashsense.feature.transaction.dialog.api.navigateToTransactionDialog
+import ru.resodostudios.cashsense.feature.transaction.overview.api.navigateToTransactionOverview
 import ru.resodostudios.cashsense.feature.transfer.dialog.api.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.wallet.detail.api.navigateToWallet
 import ru.resodostudios.core.navigation.Navigator
@@ -27,6 +28,7 @@ fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {
             onTransfer = navigator::navigateToTransferDialog,
             onTransactionCreate = navigator::navigateToTransactionDialog,
             onSettingsClick = navigator::navigateToSettings,
+            onTotalBalanceClick = navigator::navigateToTransactionOverview,
             highlightSelectedWallet = false,
             onShowSnackbar = { _, _ -> false },
             shouldDisplayUndoWallet = false,
