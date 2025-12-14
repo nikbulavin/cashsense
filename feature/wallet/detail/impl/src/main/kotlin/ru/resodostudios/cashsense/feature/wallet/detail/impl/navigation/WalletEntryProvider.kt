@@ -23,7 +23,7 @@ fun EntryProviderScope<NavKey>.walletEntry(navigator: Navigator) {
             onTransfer = navigator::navigateToTransferDialog,
             onEditWallet = navigator::navigateToWalletDialog,
             navigateToTransactionDialog = navigator::navigateToTransactionDialog,
-            showNavigationIcon = true,
+            shouldShowNavigationIcon = true,
             onShowSnackbar = { _, _ -> false },
             onDeleteClick = {},
             viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory> { it.create(key) },

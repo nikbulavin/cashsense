@@ -79,7 +79,7 @@ internal fun WalletScreen(
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
-    showNavigationIcon: Boolean,
+    shouldShowNavigationIcon: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: WalletViewModel = hiltViewModel(),
@@ -88,7 +88,7 @@ internal fun WalletScreen(
 
     WalletScreen(
         walletState = walletState,
-        showNavigationIcon = showNavigationIcon,
+        shouldShowNavigationIcon = shouldShowNavigationIcon,
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
@@ -118,7 +118,7 @@ internal fun WalletScreen(
 @Composable
 private fun WalletScreen(
     walletState: WalletUiState,
-    showNavigationIcon: Boolean,
+    shouldShowNavigationIcon: Boolean,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -167,7 +167,7 @@ private fun WalletScreen(
                         wallet = walletState.wallet,
                         formattedCurrentBalance = walletState.formattedCurrentBalance,
                         isPrimary = walletState.isPrimary,
-                        showNavigationIcon = showNavigationIcon,
+                        showNavigationIcon = shouldShowNavigationIcon,
                         onBackClick = onBackClick,
                         onPrimaryClick = onPrimaryClick,
                     )
@@ -423,7 +423,7 @@ private fun WalletScreenPopulatedPreview(
                 isPrimary = true,
                 formattedCurrentBalance = "$57,500",
             ),
-            showNavigationIcon = true,
+            shouldShowNavigationIcon = true,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
             onEditWallet = {},
@@ -466,7 +466,7 @@ private fun WalletScreenEmptyPreview() {
                 isPrimary = true,
                 formattedCurrentBalance = "$57,500",
             ),
-            showNavigationIcon = true,
+            shouldShowNavigationIcon = true,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
             onEditWallet = {},
