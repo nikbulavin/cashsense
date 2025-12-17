@@ -1,4 +1,4 @@
-[<img alt="Get it on Google Play" src="docs/images/badges/google-play-badge.png" height="80"/>](https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense)
+[<img alt="Get it on Google Play" src="docs/images/badges/google-play-badge.png" height="70"/>](https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense)
 
 Cash Sense
 ==========
