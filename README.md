@@ -1,5 +1,4 @@
 [<img alt="Get it on Google Play" src="docs/images/badges/google-play-badge.png" height="80"/>](https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense)
-[<img alt="Get it on RuStore" src="docs/images/badges/rustore-badge.png" height="80"/>](https://trk.mail.ru/c/me10h4?bundle_id=ru.resodostudios.cashsense)
 
 Cash Sense
 ==========
