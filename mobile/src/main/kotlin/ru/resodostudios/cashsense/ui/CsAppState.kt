@@ -32,8 +32,8 @@ fun rememberCsAppState(
     inAppUpdateManager: InAppUpdateManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
+    navigationState: NavigationState = rememberNavigationState(HomeNavKey(), TOP_LEVEL_NAV_ITEMS.keys),
 ): CsAppState {
-    val navigationState = rememberNavigationState(HomeNavKey(), TOP_LEVEL_NAV_ITEMS.keys)
 
     return remember(
         timeZoneMonitor,

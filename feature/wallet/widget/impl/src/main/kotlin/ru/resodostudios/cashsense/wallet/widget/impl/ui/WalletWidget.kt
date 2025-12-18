@@ -39,7 +39,7 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
 import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
@@ -163,7 +163,7 @@ private fun WalletItem(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
                     data =
-                        "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
+                        "$DEEPLINK_PATH_BASE/$TRANSACTION_PATH/$walletId/null/false".toUri()
                     component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
@@ -182,7 +182,7 @@ private fun openHomeScreen(
     return actionStartActivity(
         Intent().apply {
             action = Intent.ACTION_VIEW
-            data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId".toUri()
+            data = "$DEEPLINK_PATH_BASE/$HOME_PATH/$walletId".toUri()
             component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         }

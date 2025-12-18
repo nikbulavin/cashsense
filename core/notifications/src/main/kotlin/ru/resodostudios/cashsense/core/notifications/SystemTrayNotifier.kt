@@ -19,8 +19,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
-import ru.resodostudios.cashsense.core.util.Constants.SUBSCRIPTIONS_PATH
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_SUBSCRIPTIONS
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -128,7 +128,7 @@ private fun Context.subscriptionPendingIntent(): PendingIntent? = PendingIntent.
     SUBSCRIPTIONS_NOTIFICATION_REQUEST_CODE,
     Intent().apply {
         action = Intent.ACTION_VIEW
-        data = "$DEEP_LINK_SCHEME_AND_HOST/$SUBSCRIPTIONS_PATH".toUri()
+        data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_SUBSCRIPTIONS".toUri()
         component = ComponentName(
             packageName,
             TARGET_ACTIVITY_NAME,
