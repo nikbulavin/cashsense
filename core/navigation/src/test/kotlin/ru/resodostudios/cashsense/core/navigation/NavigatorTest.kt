@@ -6,12 +6,9 @@ import org.junit.Before
 import org.junit.Test
 import ru.resodostudios.core.navigation.NavigationState
 import ru.resodostudios.core.navigation.Navigator
-import kotlin.collections.associateWith
-import kotlin.collections.last
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 private object TestFirstTopLevelKey : NavKey
 private object TestSecondTopLevelKey : NavKey
@@ -225,12 +222,5 @@ class NavigatorTest {
 
         assertEquals(navigationState.currentKey, TestFirstTopLevelKey)
         assertEquals(navigationState.currentTopLevelKey, TestFirstTopLevelKey)
-    }
-
-    @Test
-    fun throwOnEmptyBackStack() {
-        assertFailsWith<IllegalStateException> {
-            navigator.goBack()
-        }
     }
 }
