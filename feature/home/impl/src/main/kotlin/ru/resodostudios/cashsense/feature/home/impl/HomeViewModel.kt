@@ -20,7 +20,6 @@ import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel(assistedFactory = HomeViewModel.Factory::class)
