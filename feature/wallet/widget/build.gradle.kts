@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.wallet.widget.impl"
+    namespace = "ru.resodostudios.cashsense.feature.wallet.widget"
 }
 
 dependencies {

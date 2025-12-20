@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.wallet.widget.impl.ui
+package ru.resodostudios.cashsense.wallet.widget.ui
 
 import android.content.ComponentName
 import android.content.Context
@@ -43,10 +43,10 @@ import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_HOME
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_TRANSACTION
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.feature.wallet.widget.impl.R
-import ru.resodostudios.cashsense.wallet.widget.impl.WalletWidgetEntryPoint
-import ru.resodostudios.cashsense.wallet.widget.impl.ui.theme.CsGlanceTheme
-import ru.resodostudios.cashsense.wallet.widget.impl.ui.theme.CsGlanceTypography
+import ru.resodostudios.cashsense.feature.wallet.widget.R
+import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
+import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
+import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 internal class WalletWidget : GlanceAppWidget() {

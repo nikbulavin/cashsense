@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name="ru.resodostudios.cashsense.wallet.widget.impl.WalletWidgetReceiver"
+            android:name="ru.resodostudios.cashsense.wallet.widget.WalletWidgetReceiver"
             android:exported="false"
             android:label="@string/wallet_widget_description">
             <intent-filter>

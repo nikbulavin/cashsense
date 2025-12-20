@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.wallet.widget.impl.ui.theme
+package ru.resodostudios.cashsense.wallet.widget.ui.theme
 
 import androidx.compose.ui.unit.sp
 import androidx.glance.text.FontWeight

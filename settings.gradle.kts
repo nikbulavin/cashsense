@@ -71,6 +71,6 @@ include(":feature:wallet:detail:api")
 include(":feature:wallet:detail:impl")
 include(":feature:wallet:dialog:api")
 include(":feature:wallet:dialog:impl")
-include(":feature:wallet:widget:impl")
+include(":feature:wallet:widget")
 
 include(":work")
