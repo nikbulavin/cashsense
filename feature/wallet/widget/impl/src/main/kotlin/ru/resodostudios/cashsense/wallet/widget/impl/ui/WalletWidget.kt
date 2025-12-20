@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
-import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
 import ru.resodostudios.cashsense.feature.wallet.widget.impl.R
@@ -182,7 +182,7 @@ private fun openHomeScreen(
     return actionStartActivity(
         Intent().apply {
             action = Intent.ACTION_VIEW
-            data = "$DEEPLINK_PATH_BASE/$HOME_PATH/$walletId".toUri()
+            data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/$walletId".toUri()
             component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         }

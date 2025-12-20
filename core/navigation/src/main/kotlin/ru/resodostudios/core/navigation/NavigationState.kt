@@ -15,18 +15,26 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 
-/**
- * Create a navigation state that persists config changes and process death.
- */
 @Composable
 fun rememberNavigationState(
-    startKey: NavKey,
+    initialBackStack: List<NavKey>,
     topLevelKeys: Set<NavKey>,
 ): NavigationState {
-    val topLevelStack = rememberNavBackStack(startKey)
-    val subStacks = topLevelKeys.associateWith { key -> rememberNavBackStack(key) }
+    require(initialBackStack.isNotEmpty()) { "Initial back stack cannot be empty" }
 
-    return remember(startKey, topLevelKeys) {
+    val startKey = initialBackStack.first()
+
+    val topLevelStack = rememberNavBackStack(startKey)
+
+    val subStacks = topLevelKeys.associateWith { key ->
+        if (key == startKey) {
+            rememberNavBackStack(*(initialBackStack.toTypedArray()))
+        } else {
+            rememberNavBackStack(key)
+        }
+    }
+
+    return remember(startKey, topLevelKeys, initialBackStack) {
         NavigationState(
             startKey = startKey,
             topLevelStack = topLevelStack,
@@ -49,7 +57,7 @@ class NavigationState(
 ) {
     val currentTopLevelKey: NavKey by derivedStateOf { topLevelStack.last() }
 
-    val topLevelKeys
+    val topLevelKeys: Set<NavKey>
         get() = subStacks.keys
 
     @get:VisibleForTesting
