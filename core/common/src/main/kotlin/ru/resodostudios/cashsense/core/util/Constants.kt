@@ -6,8 +6,8 @@ object Constants {
 
     const val DEEPLINK_TAG_HOME= "home"
     const val DEEPLINK_TAG_SUBSCRIPTIONS = "subscriptions"
+    const val DEEPLINK_TAG_TRANSACTION = "transaction"
     const val DEEPLINK_TAG_WALLET = "wallet"
-    const val TRANSACTION_PATH = "transaction"
 
     const val USD_CURRENCY_CODE = "USD"
 }

@@ -10,12 +10,12 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_TRANSACTION
 import javax.inject.Inject
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DYNAMIC_TRANSACTION_SHORTCUT_ID = "dynamic_new_transaction"
-private const val DEEP_LINK_BASE_PATH = "$DEEPLINK_PATH_BASE/$TRANSACTION_PATH"
+private const val DEEP_LINK_BASE_PATH = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION"
 
 internal class DynamicShortcutManager @Inject constructor(
     @ApplicationContext private val context: Context,
