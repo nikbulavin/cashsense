@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_HOME
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
@@ -80,7 +81,16 @@ private fun WalletWidgetContent(
             TitleBar(
                 startIcon = ImageProvider(R.drawable.ic_outlined_wallet),
                 title = context.getString(localesR.string.wallet_widget_title),
-                modifier = GlanceModifier.clickable(openHomeScreen(context)),
+                modifier = GlanceModifier.clickable(
+                    actionStartActivity(
+                        Intent().apply {
+                            action = Intent.ACTION_VIEW
+                            data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_HOME".toUri()
+                            component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        }
+                    )
+                ),
             )
         },
         modifier = GlanceModifier.cornerRadius(24.dp),
@@ -92,14 +102,20 @@ private fun WalletWidgetContent(
                     itemId = { it.wallet.id.hashCode().toLong() },
                 ) { extendedWallet ->
                     Column {
+                        val walletId = extendedWallet.wallet.id
                         WalletItem(
                             context = context,
-                            walletId = extendedWallet.wallet.id,
+                            walletId = walletId,
                             title = extendedWallet.wallet.title,
-                            currentBalance = extendedWallet.currentBalance.formatAmount(
-                                extendedWallet.wallet.currency
+                            currentBalance = extendedWallet.currentBalance.formatAmount(extendedWallet.wallet.currency),
+                            onClick = actionStartActivity(
+                                Intent().apply {
+                                    action = Intent.ACTION_VIEW
+                                    data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/${walletId}".toUri()
+                                    component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                }
                             ),
-                            onClick = openHomeScreen(context, extendedWallet.wallet.id),
                         )
                         Spacer(GlanceModifier.height(4.dp))
                     }
@@ -173,18 +189,4 @@ private fun WalletItem(
             contentColor = GlanceTheme.colors.onSecondaryContainer,
         )
     }
-}
-
-private fun openHomeScreen(
-    context: Context,
-    walletId: String? = null,
-): Action {
-    return actionStartActivity(
-        Intent().apply {
-            action = Intent.ACTION_VIEW
-            data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/$walletId".toUri()
-            component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-    )
 }

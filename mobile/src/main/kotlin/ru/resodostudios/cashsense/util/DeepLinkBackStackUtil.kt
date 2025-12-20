@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.util
 
 import android.net.Uri
 import androidx.navigation3.runtime.NavKey
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_HOME
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_SUBSCRIPTIONS
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
@@ -35,6 +36,7 @@ fun Uri?.toKey(): NavKey {
     if (pathSegments.isEmpty()) return HomeNavKey()
 
     return when (paths.first()) {
+        DEEPLINK_TAG_HOME -> HomeNavKey()
         DEEPLINK_TAG_WALLET -> {
             val walletId = pathSegments[1]
             if (walletId == null) HomeNavKey() else WalletNavKey(walletId)
