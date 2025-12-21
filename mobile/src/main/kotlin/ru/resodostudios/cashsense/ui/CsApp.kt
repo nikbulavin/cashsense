@@ -1,6 +1,11 @@
 package ru.resodostudios.cashsense.ui
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,6 +18,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration.Indefinite
 import androidx.compose.material3.SnackbarHost
@@ -38,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -189,6 +196,10 @@ fun CsApp(
                     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
                     val dialogStrategy = remember { DialogSceneStrategy<NavKey>() }
 
+                    val motionScheme = MaterialTheme.motionScheme
+                    val slideSpec = motionScheme.defaultSpatialSpec<IntOffset>()
+                    val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
+
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
                         categoriesEntry(navigator)
@@ -208,6 +219,18 @@ fun CsApp(
                         entries = appState.navigationState.toEntries(entryProvider),
                         sceneStrategy = dialogStrategy,
                         onBack = navigator::goBack,
+                        transitionSpec = {
+                            slideInHorizontally(slideSpec) { it } + fadeIn(fadeSpec) togetherWith
+                                    slideOutHorizontally(slideSpec) { -it } + fadeOut(fadeSpec)
+                        },
+                        popTransitionSpec = {
+                            slideInHorizontally(slideSpec) { -it } + fadeIn(fadeSpec) togetherWith
+                                    slideOutHorizontally(slideSpec) { it } + fadeOut(fadeSpec)
+                        },
+                        predictivePopTransitionSpec = {
+                            slideInHorizontally(slideSpec) { -it } + fadeIn(fadeSpec) togetherWith
+                                    slideOutHorizontally(slideSpec) { it } + fadeOut(fadeSpec)
+                        },
                     )
                     FabMenu(
                         visible = SettingsNavKey !in appState.navigationState.currentSubStack &&
