@@ -34,7 +34,6 @@ import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.feature.subscription.list.impl.SubscriptionsUiState.Success
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -166,7 +165,7 @@ private fun SubscriptionsGridPreview(
     CsTheme {
         Surface {
             SubscriptionsScreen(
-                subscriptionsState = Success(
+                subscriptionsState = SubscriptionsUiState.Success(
                     subscriptions = subscriptions,
                     shouldDisplayUndoSubscription = false,
                     selectedSubscription = null,

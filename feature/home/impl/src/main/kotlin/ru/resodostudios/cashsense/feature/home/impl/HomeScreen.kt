@@ -37,7 +37,6 @@ import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.feature.home.impl.WalletsUiState.Success
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -201,7 +200,7 @@ private fun HomeScreenPopulatedPreview(
     CsTheme {
         Surface {
             HomeScreen(
-                walletsState = Success(
+                walletsState = WalletsUiState.Success(
                     selectedWalletId = null,
                     uiWallets = extendedUserWallets.map {
                         UiWallet(

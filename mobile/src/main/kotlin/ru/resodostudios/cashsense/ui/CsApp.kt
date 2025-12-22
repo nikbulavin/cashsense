@@ -3,8 +3,9 @@ package ru.resodostudios.cashsense.ui
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -197,7 +198,8 @@ fun CsApp(
                     val dialogStrategy = remember { DialogSceneStrategy<NavKey>() }
 
                     val motionScheme = MaterialTheme.motionScheme
-                    val slideSpec = motionScheme.defaultSpatialSpec<IntOffset>()
+                    val scaleSpec = motionScheme.slowSpatialSpec<Float>()
+                    val slideSpec = motionScheme.slowSpatialSpec<IntOffset>()
                     val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
                     val entryProvider = entryProvider {
@@ -215,22 +217,21 @@ fun CsApp(
                         transferDialogEntry(navigator)
                     }
 
+                    val enterTransition = scaleIn(scaleSpec, 0.96f) +
+                            slideInVertically(slideSpec) { it / 32 } +
+                            fadeIn(fadeSpec)
+                    val popEnterTransition = scaleIn(scaleSpec, 1.04f) +
+                            slideInVertically(slideSpec) { -it / 32 } +
+                            fadeIn(fadeSpec)
+                    val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
+
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
                         sceneStrategy = dialogStrategy,
                         onBack = navigator::goBack,
-                        transitionSpec = {
-                            slideInHorizontally(slideSpec) { it } + fadeIn(fadeSpec) togetherWith
-                                    slideOutHorizontally(slideSpec) { -it } + fadeOut(fadeSpec)
-                        },
-                        popTransitionSpec = {
-                            slideInHorizontally(slideSpec) { -it } + fadeIn(fadeSpec) togetherWith
-                                    slideOutHorizontally(slideSpec) { it } + fadeOut(fadeSpec)
-                        },
-                        predictivePopTransitionSpec = {
-                            slideInHorizontally(slideSpec) { -it } + fadeIn(fadeSpec) togetherWith
-                                    slideOutHorizontally(slideSpec) { it } + fadeOut(fadeSpec)
-                        },
+                        transitionSpec = { enterTransition togetherWith exitTransition },
+                        popTransitionSpec = { popEnterTransition togetherWith exitTransition },
+                        predictivePopTransitionSpec = { popEnterTransition togetherWith exitTransition },
                     )
                     FabMenu(
                         visible = SettingsNavKey !in appState.navigationState.currentSubStack &&

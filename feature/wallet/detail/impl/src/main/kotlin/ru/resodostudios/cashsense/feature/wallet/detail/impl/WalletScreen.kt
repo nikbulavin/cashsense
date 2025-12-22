@@ -69,7 +69,6 @@ import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import ru.resodostudios.cashsense.feature.wallet.detail.impl.WalletUiState.Success
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -401,7 +400,7 @@ private fun WalletScreenPopulatedPreview(
 ) {
     CsTheme {
         WalletScreen(
-            walletState = Success(
+            walletState = WalletUiState.Success(
                 transactionFilter = TransactionFilter(
                     selectedCategories = emptySet(),
                     financeType = FinanceType.NOT_SET,
@@ -444,7 +443,7 @@ private fun WalletScreenPopulatedPreview(
 private fun WalletScreenEmptyPreview() {
     CsTheme {
         WalletScreen(
-            walletState = Success(
+            walletState = WalletUiState.Success(
                 transactionFilter = TransactionFilter(
                     selectedCategories = emptySet(),
                     financeType = FinanceType.NOT_SET,
