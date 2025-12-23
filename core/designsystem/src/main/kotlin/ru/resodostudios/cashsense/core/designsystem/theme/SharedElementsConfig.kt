@@ -8,8 +8,10 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.compositionLocalOf
 
 sealed interface SharedElementKey {
-    object Expenses : SharedElementKey
-    object Income : SharedElementKey
+    data object Expenses : SharedElementKey
+    data object Income : SharedElementKey
+    data class WalletTitle(val walletId: String, val title: String) : SharedElementKey
+    data class WalletBalance(val walletId: String, val balance: String) : SharedElementKey
 }
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {

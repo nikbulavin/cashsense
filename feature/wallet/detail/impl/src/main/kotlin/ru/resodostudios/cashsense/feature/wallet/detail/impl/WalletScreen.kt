@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.impl
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
@@ -54,6 +56,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
@@ -336,38 +341,52 @@ private fun WalletTopBar(
     onBackClick: () -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = wallet.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        subtitle = {
-            AnimatedAmount(
-                formattedAmount = formattedCurrentBalance,
-                label = "WalletBalance",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        },
-        navigationIcon = {
-            if (showNavigationIcon) {
-                CsIconButton(
-                    onClick = onBackClick,
-                    icon = CsIcons.Outlined.ArrowBack,
-                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
-                    tooltipPosition = TooltipAnchorPosition.Right,
+    with(LocalSharedTransitionScope.current) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = wallet.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletTitle(wallet.id, wallet.title)),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    ),
                 )
-            }
-        },
-        actions = {
-            PrimaryToggleButton(
-                isPrimary = isPrimary,
-                onPrimaryClick = { onPrimaryClick(wallet.id, !isPrimary) },
-            )
-        },
-    )
+            },
+            subtitle = {
+                AnimatedAmount(
+                    formattedAmount = formattedCurrentBalance,
+                    label = "WalletBalance",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletBalance(wallet.id, formattedCurrentBalance)),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    ),
+                )
+            },
+            navigationIcon = {
+                if (showNavigationIcon) {
+                    CsIconButton(
+                        onClick = onBackClick,
+                        icon = CsIcons.Outlined.ArrowBack,
+                        contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                        tooltipPosition = TooltipAnchorPosition.Right,
+                    )
+                }
+            },
+            actions = {
+                PrimaryToggleButton(
+                    isPrimary = isPrimary,
+                    onPrimaryClick = { onPrimaryClick(wallet.id, !isPrimary) },
+                )
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)

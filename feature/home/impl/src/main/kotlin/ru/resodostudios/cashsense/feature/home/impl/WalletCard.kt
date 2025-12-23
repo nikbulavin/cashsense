@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.home.impl
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -41,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -51,7 +53,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
@@ -72,119 +77,134 @@ internal fun WalletCard(
     selected: Boolean = false,
     shape: Shape = MaterialTheme.shapes.extraLarge,
 ) {
-    val wallet = uiWallet.extendedUserWallet.wallet
-    OutlinedCard(
-        onClick = { onWalletClick(wallet.id) },
-        shape = shape,
-        modifier = modifier.then(if (selected) Modifier.dropShadow(shape) else Modifier),
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .padding(top = 12.dp, start = 16.dp, end = 16.dp)
-                .fillMaxWidth(),
+    with(LocalSharedTransitionScope.current) {
+        val wallet = uiWallet.extendedUserWallet.wallet
+        OutlinedCard(
+            onClick = { onWalletClick(wallet.id) },
+            shape = shape,
+            modifier = modifier.then(if (selected) Modifier.dropShadow(shape) else Modifier),
         ) {
-            Text(
-                text = wallet.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge,
-            )
-            AnimatedAmount(
-                formattedAmount = uiWallet.extendedUserWallet.currentBalance.formatAmount(wallet.currency),
-                label = "WalletBalance",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            TagsSection(
-                formattedExpenses = uiWallet.expenses.formatAmount(wallet.currency),
-                formattedIncome = uiWallet.income.formatAmount(wallet.currency),
-                shouldShowExpensesTag = uiWallet.expenses.signum() > 0,
-                shouldShowIncomeTag = uiWallet.income.signum() > 0,
-                modifier = Modifier.padding(top = 8.dp),
-                isPrimary = uiWallet.extendedUserWallet.isPrimary,
-            )
-        }
-        val addTransactionText = stringResource(localesR.string.add_transaction)
-        val addTransferText = stringResource(localesR.string.transfer)
-        ButtonGroup(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp, top = 16.dp),
-            overflowIndicator = { menuState ->
-                CsIconButton(
-                    onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
-                    icon = CsIcons.Outlined.MoreVert,
-                    contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier
+                    .padding(top = 12.dp, start = 16.dp, end = 16.dp)
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    text = wallet.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletTitle(wallet.id, wallet.title)),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    ),
                 )
-            },
-        ) {
-            customItem(
-                buttonGroupContent = {
-                    Button(
-                        onClick = { onNewTransactionClick(wallet.id) },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Add,
-                            contentDescription = addTransactionText,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(
-                            text = addTransactionText,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-            ) { state ->
-                DropdownMenuItem(
-                    leadingIcon = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Add,
-                            contentDescription = null,
-                        )
-                    },
-                    text = { Text(addTransactionText) },
-                    onClick = {
-                        onNewTransactionClick(wallet.id)
-                        state.dismiss()
-                    },
+                val balance = uiWallet.extendedUserWallet.currentBalance.formatAmount(wallet.currency)
+                AnimatedAmount(
+                    formattedAmount = balance,
+                    label = "WalletBalance",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.sharedBounds(
+                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletBalance(wallet.id, balance)),
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    ),
+                )
+                TagsSection(
+                    formattedExpenses = uiWallet.expenses.formatAmount(wallet.currency),
+                    formattedIncome = uiWallet.income.formatAmount(wallet.currency),
+                    shouldShowExpensesTag = uiWallet.expenses.signum() > 0,
+                    shouldShowIncomeTag = uiWallet.income.signum() > 0,
+                    modifier = Modifier.padding(top = 8.dp),
+                    isPrimary = uiWallet.extendedUserWallet.isPrimary,
                 )
             }
-            customItem(
-                buttonGroupContent = {
-                    OutlinedButton(
-                        onClick = { onTransferClick(wallet.id) },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Icon(
-                            imageVector = CsIcons.Outlined.SendMoney,
-                            contentDescription = addTransactionText,
-                            modifier = Modifier.size(ButtonDefaults.IconSize),
-                        )
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(
-                            text = addTransferText,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+            val addTransactionText = stringResource(localesR.string.add_transaction)
+            val addTransferText = stringResource(localesR.string.transfer)
+            ButtonGroup(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp, top = 16.dp),
+                overflowIndicator = { menuState ->
+                    CsIconButton(
+                        onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
+                        icon = CsIcons.Outlined.MoreVert,
+                        contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
+                    )
                 },
-            ) { state ->
-                DropdownMenuItem(
-                    leadingIcon = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.SendMoney,
-                            contentDescription = null,
-                        )
+            ) {
+                customItem(
+                    buttonGroupContent = {
+                        Button(
+                            onClick = { onNewTransactionClick(wallet.id) },
+                            shapes = ButtonDefaults.shapes(),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Add,
+                                contentDescription = addTransactionText,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                text = addTransactionText,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                ) { state ->
+                    DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Add,
+                                contentDescription = null,
+                            )
+                        },
+                        text = { Text(addTransactionText) },
+                        onClick = {
+                            onNewTransactionClick(wallet.id)
+                            state.dismiss()
+                        },
+                    )
+                }
+                customItem(
+                    buttonGroupContent = {
+                        OutlinedButton(
+                            onClick = { onTransferClick(wallet.id) },
+                            shapes = ButtonDefaults.shapes(),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.SendMoney,
+                                contentDescription = addTransactionText,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                text = addTransferText,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     },
-                    text = { Text(addTransferText) },
-                    onClick = {
-                        onTransferClick(wallet.id)
-                        state.dismiss()
-                    },
-                )
+                ) { state ->
+                    DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.SendMoney,
+                                contentDescription = null,
+                            )
+                        },
+                        text = { Text(addTransferText) },
+                        onClick = {
+                            onTransferClick(wallet.id)
+                            state.dismiss()
+                        },
+                    )
+                }
             }
         }
     }

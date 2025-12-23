@@ -218,10 +218,10 @@ fun CsApp(
                     }
 
                     val enterTransition = scaleIn(scaleSpec, 0.96f) +
-                            slideInVertically(slideSpec) { it / 32 } +
+                            slideInVertically(slideSpec) { it / 28 } +
                             fadeIn(fadeSpec)
                     val popEnterTransition = scaleIn(scaleSpec, 1.04f) +
-                            slideInVertically(slideSpec) { -it / 32 } +
+                            slideInVertically(slideSpec) { -it / 28 } +
                             fadeIn(fadeSpec)
                     val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
 
