@@ -1,17 +1,18 @@
 [versions]
-aboutLibraries = "13.1.0"
+aboutLibraries = "13.2.1"
 accompanist = "0.37.3"
-androidGradlePlugin = "8.13.1"
-androidxActivityCompose = "1.12.1"
+androidGradlePlugin = "8.13.2"
+androidxActivityCompose = "1.12.2"
 androidxAppCompat = "1.7.1"
 androidxBrowser = "1.9.0"
-androidxComposeMaterial3 = "1.5.0-alpha10"
+androidxComposeMaterial3 = "1.5.0-alpha11"
+androidxComposeMaterial3AdaptiveNavigation3 = "1.3.0-alpha05"
 androidxCoreSplashscreen = "1.2.0"
 androidxDataStore = "1.2.0"
 androidxGlance = "1.2.0-rc01"
 androidxLifecycle = "2.10.0"
 androidxMacroBenchmark = "1.4.1"
-androidxNavigation = "2.9.6"
+androidxNavigation3 = "1.0.0"
 androidxProfileinstaller = "1.4.1"
 androidxTestCore = "1.7.0"
 androidxTestEspresso = "3.7.0"
@@ -21,8 +22,8 @@ androidxTestRunner = "1.7.0"
 androidxTestUiAutomator = "2.3.0"
 androidxTracing = "1.3.0"
 androidxWork = "2.11.0"
-composeBom = "2025.12.00"
-firebaseBom = "34.6.0"
+composeBom = "2025.12.01"
+firebaseBom = "34.7.0"
 firebaseCrashlyticsPlugin = "3.0.6"
 firebasePerfPlugin = "2.0.2"
 gmsPlugin = "4.4.4"
@@ -33,16 +34,16 @@ kotlin = "2.2.21"
 kotlinxCoroutines = "1.10.2"
 kotlinxDatetime = "0.7.1"
 kotlinxSerializationJson = "1.9.0"
-ksp = "2.3.3"
+ksp = "2.3.4"
 ktor = "3.3.3"
 leakcanaryAndroid = "2.14"
 lottie = "6.7.1"
 playAppUpdate = "2.1.0"
 playReview = "2.0.2"
-protobuf = "4.33.1"
-protobufPlugin = "0.9.5"
+protobuf = "4.33.2"
+protobufPlugin = "0.9.6"
 room = "2.8.4"
-vico = "2.2.1"
+vico = "2.4.0-beta.1"
 zip4j = "2.11.5"
 
 [libraries]
@@ -57,6 +58,7 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", versi
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive" }
 androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation" }
+androidx-compose-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "androidxComposeMaterial3AdaptiveNavigation3" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
@@ -71,7 +73,9 @@ androidx-glance-material3 = { group = "androidx.glance", name = "glance-material
 androidx-hilt-lifecycle-viewmodel-compose = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel-compose", version.ref = "hiltExt" }
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
+androidx-lifecycle-viewModelNavigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "androidxLifecycle" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "androidxNavigation3" }
+androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "androidxNavigation3" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxTestEspresso" }
@@ -151,7 +155,8 @@ cashsense-android-application = { id = "cashsense.android.application" }
 cashsense-android-application-compose = { id = "cashsense.android.application.compose" }
 cashsense-android-application-firebase = { id = "cashsense.android.application.firebase" }
 cashsense-android-application-flavors = { id = "cashsense.android.application.flavors" }
-cashsense-android-feature = { id = "cashsense.android.feature" }
+cashsense-android-feature-api = { id = "cashsense.android.feature.api" }
+cashsense-android-feature-impl = { id = "cashsense.android.feature.impl" }
 cashsense-android-library = { id = "cashsense.android.library" }
 cashsense-android-library-compose = { id = "cashsense.android.library.compose" }
 cashsense-android-room = { id = "cashsense.android.room" }

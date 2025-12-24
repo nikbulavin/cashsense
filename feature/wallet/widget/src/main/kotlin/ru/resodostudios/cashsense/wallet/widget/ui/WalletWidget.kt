@@ -13,7 +13,6 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
-import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
@@ -39,10 +38,11 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.util.Constants.DEEP_LINK_SCHEME_AND_HOST
-import ru.resodostudios.cashsense.core.util.Constants.HOME_PATH
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_HOME
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_TRANSACTION
+import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
-import ru.resodostudios.cashsense.core.util.Constants.TRANSACTION_PATH
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
@@ -80,7 +80,16 @@ private fun WalletWidgetContent(
             TitleBar(
                 startIcon = ImageProvider(R.drawable.ic_outlined_wallet),
                 title = context.getString(localesR.string.wallet_widget_title),
-                modifier = GlanceModifier.clickable(openHomeScreen(context)),
+                modifier = GlanceModifier.clickable(
+                    actionStartActivity(
+                        Intent().apply {
+                            action = Intent.ACTION_VIEW
+                            data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_HOME".toUri()
+                            component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        }
+                    )
+                ),
             )
         },
         modifier = GlanceModifier.cornerRadius(24.dp),
@@ -96,10 +105,7 @@ private fun WalletWidgetContent(
                             context = context,
                             walletId = extendedWallet.wallet.id,
                             title = extendedWallet.wallet.title,
-                            currentBalance = extendedWallet.currentBalance.formatAmount(
-                                extendedWallet.wallet.currency
-                            ),
-                            onClick = openHomeScreen(context, extendedWallet.wallet.id),
+                            currentBalance = extendedWallet.currentBalance.formatAmount(extendedWallet.wallet.currency),
                         )
                         Spacer(GlanceModifier.height(4.dp))
                     }
@@ -113,8 +119,7 @@ private fun WalletWidgetContent(
             ) {
                 Text(
                     text = context.getString(localesR.string.wallet_widget_empty),
-                    style = CsGlanceTypography.titleMedium
-                        .copy(color = GlanceTheme.colors.onBackground),
+                    style = CsGlanceTypography.titleMedium.copy(color = GlanceTheme.colors.onBackground),
                 )
             }
         }
@@ -127,7 +132,6 @@ private fun WalletItem(
     walletId: String,
     title: String,
     currentBalance: String,
-    onClick: Action,
     modifier: GlanceModifier = GlanceModifier,
 ) {
     Row(
@@ -137,7 +141,16 @@ private fun WalletItem(
             .padding(start = 12.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
             .cornerRadius(16.dp)
             .background(GlanceTheme.colors.secondaryContainer)
-            .clickable(onClick),
+            .clickable(
+                actionStartActivity(
+                    Intent().apply {
+                        action = Intent.ACTION_VIEW
+                        data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/${walletId}".toUri()
+                        component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    }
+                )
+            ),
     ) {
         Column(
             verticalAlignment = Alignment.CenterVertically,
@@ -162,8 +175,7 @@ private fun WalletItem(
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data =
-                        "$DEEP_LINK_SCHEME_AND_HOST/$TRANSACTION_PATH/$walletId/null/false".toUri()
+                    data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION/$walletId".toUri()
                     component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
@@ -173,18 +185,4 @@ private fun WalletItem(
             contentColor = GlanceTheme.colors.onSecondaryContainer,
         )
     }
-}
-
-private fun openHomeScreen(
-    context: Context,
-    walletId: String? = null,
-): Action {
-    return actionStartActivity(
-        Intent().apply {
-            action = Intent.ACTION_VIEW
-            data = "$DEEP_LINK_SCHEME_AND_HOST/$HOME_PATH/$walletId".toUri()
-            component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-    )
 }

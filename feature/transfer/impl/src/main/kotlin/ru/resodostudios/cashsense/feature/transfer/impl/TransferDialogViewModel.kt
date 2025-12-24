@@ -1,0 +1,220 @@
+package ru.resodostudios.cashsense.feature.transfer.impl
+
+import androidx.compose.runtime.Immutable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.Transfer
+import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.util.getUsdCurrency
+import ru.resodostudios.cashsense.feature.transfer.dialog.api.TransferDialogNavKey
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.Currency
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlin.uuid.Uuid
+
+@HiltViewModel(assistedFactory = TransferDialogViewModel.Factory::class)
+internal class TransferDialogViewModel @AssistedInject constructor(
+    private val walletsRepository: WalletsRepository,
+    private val transactionsRepository: TransactionsRepository,
+    @ApplicationScope private val appScope: CoroutineScope,
+    @Assisted val key: TransferDialogNavKey,
+) : ViewModel() {
+
+    private val _transferDialogState = MutableStateFlow(TransferDialogUiState())
+    val transferDialogState = _transferDialogState.asStateFlow()
+
+    init {
+        loadTransfer(key.walletId)
+    }
+
+    private fun loadTransfer(walletId: String) {
+        viewModelScope.launch {
+            _transferDialogState.update { TransferDialogUiState(isLoading = true) }
+            val transferWallets = walletsRepository.getExtendedWallets()
+                .first()
+                .map { extendedWallet ->
+                    val currentBalance = extendedWallet.transactions
+                        .sumOf { it.amount }
+                        .plus(extendedWallet.wallet.initialBalance)
+                    TransferWallet(
+                        id = extendedWallet.wallet.id,
+                        title = extendedWallet.wallet.title,
+                        currentBalance = currentBalance,
+                        currency = extendedWallet.wallet.currency,
+                    )
+                }
+            val sendingWallet = transferWallets.first { it.id == walletId }
+            val receivingWallet = if (transferWallets.size == 2) {
+                transferWallets.first { it != sendingWallet }
+            } else {
+                TransferWallet()
+            }
+            val exchangeRate = if (sendingWallet.currency == receivingWallet.currency) "1" else ""
+            _transferDialogState.update {
+                it.copy(
+                    sendingWallet = sendingWallet,
+                    receivingWallet = receivingWallet,
+                    exchangeRate = exchangeRate,
+                    transferWallets = transferWallets,
+                    isLoading = false,
+                )
+            }
+        }
+    }
+
+    private fun calculateAmount(convertedAmount: String, exchangeRate: String): String {
+        return if (convertedAmount.isNotBlank() && exchangeRate.isNotBlank() && BigDecimal(exchangeRate) != BigDecimal.ZERO) {
+            BigDecimal(convertedAmount)
+                .divide(BigDecimal(exchangeRate), 2, RoundingMode.HALF_UP)
+                .toString()
+        } else {
+            ""
+        }
+    }
+
+    private fun calculateConvertedAmount(amount: String, exchangeRate: String): String {
+        return if (amount.isNotBlank() && exchangeRate.isNotBlank()) {
+            BigDecimal(amount)
+                .multiply(BigDecimal(exchangeRate))
+                .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP)
+                .toString()
+        } else {
+            ""
+        }
+    }
+
+    fun saveTransfer(state: TransferDialogUiState) {
+        appScope.launch {
+            transactionsRepository.upsertTransfer(state.asTransfer())
+        }
+    }
+
+    fun updateSendingWallet(transferWallet: TransferWallet) {
+        _transferDialogState.update {
+            it.copy(sendingWallet = transferWallet)
+        }
+        if (transferWallet.currency == _transferDialogState.value.receivingWallet.currency) {
+            _transferDialogState.update {
+                it.copy(exchangeRate = "1")
+            }
+        } else {
+            _transferDialogState.update {
+                it.copy(exchangeRate = "")
+            }
+        }
+    }
+
+    fun updateReceivingWallet(transferWallet: TransferWallet) {
+        _transferDialogState.update {
+            it.copy(receivingWallet = transferWallet)
+        }
+        if (transferWallet.currency == _transferDialogState.value.sendingWallet.currency) {
+            _transferDialogState.update {
+                it.copy(exchangeRate = "1")
+            }
+        } else {
+            _transferDialogState.update {
+                it.copy(exchangeRate = "")
+            }
+        }
+    }
+
+    fun updateAmount(amount: String) {
+        val convertedAmount = calculateConvertedAmount(amount, _transferDialogState.value.exchangeRate)
+        _transferDialogState.update {
+            it.copy(amount = amount, convertedAmount = convertedAmount)
+        }
+    }
+
+    fun updateExchangingRate(exchangeRate: String) {
+        val convertedAmount = calculateConvertedAmount(_transferDialogState.value.amount, exchangeRate)
+        _transferDialogState.update {
+            it.copy(exchangeRate = exchangeRate, convertedAmount = convertedAmount)
+        }
+    }
+
+    fun updateConvertedAmount(convertedAmount: String) {
+        val amount = calculateAmount(convertedAmount, _transferDialogState.value.exchangeRate)
+        _transferDialogState.update {
+            it.copy(convertedAmount = convertedAmount, amount = amount)
+        }
+    }
+
+    fun updateDate(date: Instant) {
+        _transferDialogState.update {
+            it.copy(date = date)
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(key: TransferDialogNavKey): TransferDialogViewModel
+    }
+}
+
+@Immutable
+data class TransferDialogUiState(
+    val sendingWallet: TransferWallet = TransferWallet(),
+    val receivingWallet: TransferWallet = TransferWallet(),
+    val amount: String = "",
+    val exchangeRate: String = "",
+    val convertedAmount: String = "",
+    val transferWallets: List<TransferWallet> = emptyList(),
+    val isLoading: Boolean = false,
+    val date: Instant = Clock.System.now(),
+)
+
+data class TransferWallet(
+    val id: String = "",
+    val title: String = "",
+    val currentBalance: BigDecimal = BigDecimal.ZERO,
+    val currency: Currency? = null,
+)
+
+fun TransferDialogUiState.asTransfer(): Transfer {
+    val transferId = Uuid.random()
+    val withdrawalTransaction = Transaction(
+        id = Uuid.random().toHexString(),
+        walletOwnerId = sendingWallet.id,
+        description = null,
+        amount = BigDecimal(amount).negate(),
+        timestamp = date,
+        completed = true,
+        ignored = true,
+        transferId = transferId,
+        currency = getUsdCurrency(),
+        category = null,
+    )
+    val depositTransaction = Transaction(
+        id = Uuid.random().toHexString(),
+        walletOwnerId = receivingWallet.id,
+        description = null,
+        amount = BigDecimal(convertedAmount),
+        timestamp = date,
+        completed = true,
+        ignored = true,
+        transferId = transferId,
+        currency = getUsdCurrency(),
+        category = null,
+    )
+
+    return Transfer(
+        withdrawalTransaction = withdrawalTransaction,
+        depositTransaction = depositTransaction,
+    )
+}

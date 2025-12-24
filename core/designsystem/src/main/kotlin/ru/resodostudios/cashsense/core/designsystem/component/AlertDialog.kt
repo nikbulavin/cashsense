@@ -16,6 +16,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -31,7 +32,7 @@ fun CsAlertDialog(
     content: @Composable (() -> Unit)? = null,
 ) {
     AlertDialog(
-        onDismissRequest = {},
+        onDismissRequest = onDismiss,
         icon = {
             Icon(
                 imageVector = icon,
@@ -68,5 +69,6 @@ fun CsAlertDialog(
             }
         },
         modifier = modifier,
+        properties = DialogProperties(dismissOnClickOutside = false),
     )
 }

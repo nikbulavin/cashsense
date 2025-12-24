@@ -32,9 +32,13 @@ import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
+import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
 import ru.resodostudios.cashsense.ui.CsApp
 import ru.resodostudios.cashsense.ui.rememberCsAppState
+import ru.resodostudios.cashsense.util.buildBackStack
 import ru.resodostudios.cashsense.util.isSystemInDarkTheme
+import ru.resodostudios.cashsense.util.toKey
+import ru.resodostudios.core.navigation.rememberNavigationState
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -99,10 +103,17 @@ class MainActivity : AppCompatActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
+        val startKey = intent.data.toKey()
+
+        val syntheticBackStack = buildBackStack(
+            startKey = startKey,
+        )
+
         setContent {
             val appState = rememberCsAppState(
                 timeZoneMonitor = timeZoneMonitor,
                 inAppUpdateManager = inAppUpdateManager,
+                navigationState = rememberNavigationState(syntheticBackStack, TOP_LEVEL_NAV_ITEMS.keys),
             )
 
             val currentTimeZone by appState.currentTimeZone.collectAsStateWithLifecycle()
