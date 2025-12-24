@@ -179,28 +179,17 @@ fun CsApp(
                 )
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            modifier = Modifier.semantics {
-                testTagsAsResourceId = true
-            },
+            modifier = Modifier.semantics { testTagsAsResourceId = true },
         ) { innerPadding ->
             Box(
                 modifier = Modifier
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing.only(
-                            WindowInsetsSides.Horizontal,
-                        ),
-                    ),
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
             ) {
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                     val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
                     val dialogStrategy = remember { DialogSceneStrategy<NavKey>() }
-
-                    val motionScheme = MaterialTheme.motionScheme
-                    val scaleSpec = motionScheme.slowSpatialSpec<Float>()
-                    val slideSpec = motionScheme.slowSpatialSpec<IntOffset>()
-                    val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
@@ -217,6 +206,11 @@ fun CsApp(
                         transferDialogEntry(navigator)
                     }
 
+                    val motionScheme = MaterialTheme.motionScheme
+                    val scaleSpec = motionScheme.slowSpatialSpec<Float>()
+                    val slideSpec = motionScheme.slowSpatialSpec<IntOffset>()
+                    val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
+
                     val enterTransition = scaleIn(scaleSpec, 0.96f) +
                             slideInVertically(slideSpec) { it / 28 } +
                             fadeIn(fadeSpec)
@@ -227,7 +221,7 @@ fun CsApp(
 
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
-                        sceneStrategy = dialogStrategy,
+                        sceneStrategy = dialogStrategy.then(listDetailStrategy),
                         onBack = navigator::goBack,
                         transitionSpec = { enterTransition togetherWith exitTransition },
                         popTransitionSpec = { popEnterTransition togetherWith exitTransition },
@@ -235,7 +229,7 @@ fun CsApp(
                     )
                     FabMenu(
                         visible = SettingsNavKey !in appState.navigationState.currentSubStack &&
-                                appState.navigationState.currentKey !is WalletNavKey,
+                                appState.navigationState.currentSubStack.all { it !is WalletNavKey },
                         onMenuItemClick = { fabItem ->
                             when (fabItem) {
                                 WALLET -> navigator.navigateToWalletDialog()
