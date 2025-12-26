@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.Modifier
@@ -100,7 +101,9 @@ fun LazyListScope.transactions(
                     onEditClick = onEditClick,
                     onDeleteClick = onDeleteClick,
                 )
-                if (index != transactionGroup.value.lastIndex) Spacer(Modifier.height(2.dp))
+                if (index != transactionGroup.value.lastIndex) {
+                    Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
+                }
             }
         }
     } else {

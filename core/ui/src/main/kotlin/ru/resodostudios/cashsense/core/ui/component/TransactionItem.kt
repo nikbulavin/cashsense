@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -90,7 +91,7 @@ internal fun TransactionItem(
     val actionButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
 
     Column(modifier = modifier) {
-        CsListItemEmphasized(
+        CsListItem(
             headlineContent = {
                 Text(
                     text = transaction.amount.formatAmount(currency, true),
@@ -171,9 +172,6 @@ internal fun TransactionItem(
                     contentDescription = null,
                 )
             },
-            colors = ListItemDefaults.colors().copy(
-                containerColor = Color.Transparent,
-            ),
         )
         AnimatedVisibility(
             visible = selected,
@@ -205,7 +203,7 @@ internal fun TransactionItem(
                 val isTransfer = transaction.transferId != null
                 if (!isTransfer) {
                     CsListItemEmphasized(
-                        headlineContent = { Text(stringResource(localesR.string.repeat)) },
+                        content = { Text(stringResource(localesR.string.repeat)) },
                         leadingContent = {
                             Icon(
                                 imageVector = CsIcons.Outlined.Redo,
@@ -213,13 +211,11 @@ internal fun TransactionItem(
                             )
                         },
                         onClick = { onRepeatClick(transaction.id) },
-                        colors = ListItemDefaults.colors().copy(
-                            containerColor = actionButtonContainerColor,
-                        ),
-                        shape = ListItemPositionShapes.First,
+                        colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
+                        shapes = ListItemDefaults.segmentedShapes(0, 3),
                     )
                     CsListItemEmphasized(
-                        headlineContent = { Text(stringResource(localesR.string.edit)) },
+                        content = { Text(stringResource(localesR.string.edit)) },
                         leadingContent = {
                             Icon(
                                 imageVector = CsIcons.Outlined.Edit,
@@ -227,14 +223,12 @@ internal fun TransactionItem(
                             )
                         },
                         onClick = { onEditClick(transaction.id) },
-                        colors = ListItemDefaults.colors().copy(
-                            containerColor = actionButtonContainerColor,
-                        ),
-                        shape = ListItemPositionShapes.Middle,
+                        colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
+                        shapes = ListItemDefaults.segmentedShapes(1, 3),
                     )
                 }
                 CsListItemEmphasized(
-                    headlineContent = { Text(stringResource(localesR.string.delete)) },
+                    content = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = CsIcons.Outlined.Delete,
@@ -242,10 +236,12 @@ internal fun TransactionItem(
                         )
                     },
                     onClick = onDeleteClick,
-                    colors = ListItemDefaults.colors().copy(
-                        containerColor = actionButtonContainerColor,
-                    ),
-                    shape = if (isTransfer) ListItemPositionShapes.Single else ListItemPositionShapes.Last,
+                    colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
+                    shapes = if (isTransfer) {
+                        ListItemDefaults.segmentedShapes(0, 1)
+                    } else {
+                        ListItemDefaults.segmentedShapes(2, 3)
+                    },
                 )
             }
         }
@@ -265,7 +261,7 @@ private fun DescriptionListItem(
         modifier = modifier,
     ) {
         CsListItemEmphasized(
-            headlineContent = { Text(stringResource(localesR.string.description)) },
+            content = { Text(stringResource(localesR.string.description)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Description,
@@ -278,9 +274,8 @@ private fun DescriptionListItem(
                     contentDescription = stringResource(if (expanded) localesR.string.show_less else localesR.string.show_more),
                 )
             },
-            colors = ListItemDefaults.colors().copy(
-                containerColor = Color.Transparent,
-            ),
+            colors = ListItemDefaults.colors(contentColor = Color.Transparent),
+            onClick = {},
         )
         AnimatedVisibility(
             visible = expanded,

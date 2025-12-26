@@ -1,11 +1,12 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -21,7 +22,6 @@ import androidx.compose.ui.unit.dp
 fun CsListItem(
     headlineContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
@@ -29,11 +29,7 @@ fun CsListItem(
 ) {
     ListItem(
         headlineContent = headlineContent,
-        modifier = modifier
-            .clip(RoundedCornerShape(18.dp))
-            .then(
-                if (onClick != null) Modifier.clickable { onClick() } else modifier
-            ),
+        modifier = modifier,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
         leadingContent = leadingContent,
@@ -88,12 +84,12 @@ fun CsToggableListItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsListItemEmphasized(
-    headlineContent: @Composable () -> Unit,
+    content: @Composable () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = ListItemPositionShapes.Single,
-    onClick: (() -> Unit)? = null,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
@@ -101,14 +97,13 @@ fun CsListItemEmphasized(
     colors: ListItemColors = ListItemDefaults.colors(
         containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
     ),
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
     ListItem(
-        headlineContent = headlineContent,
-        modifier = modifier
-            .clip(shape)
-            .then(
-                if (onClick != null) Modifier.clickable { onClick() } else Modifier
-            ),
+        shapes = shapes,
+        onClick = onClick,
+        content = content,
+        modifier = modifier,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
         leadingContent = leadingContent,
