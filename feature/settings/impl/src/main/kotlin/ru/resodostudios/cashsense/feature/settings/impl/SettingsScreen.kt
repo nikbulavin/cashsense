@@ -53,7 +53,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
@@ -381,8 +380,8 @@ private fun LazyListScope.appearance(
     item {
         AnimatedVisibility(supportDynamicColor) {
             CsToggableListItem(
-                shape = ListItemPositionShapes.Last,
-                headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
+                shapes = ListItemDefaults.segmentedShapes(1, 2),
+                content = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
                         imageVector = CsIcons.Outlined.FormatPaint,

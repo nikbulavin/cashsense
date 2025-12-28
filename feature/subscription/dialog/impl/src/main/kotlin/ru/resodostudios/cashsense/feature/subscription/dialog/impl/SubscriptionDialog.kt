@@ -13,10 +13,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,6 +73,7 @@ fun SubscriptionDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SubscriptionDialog(
     subscriptionDialogState: SubscriptionDialogUiState,
@@ -162,12 +165,10 @@ fun SubscriptionDialog(
             )
             CsToggableListItem(
                 checked = subscriptionDialogState.isReminderEnabled,
-                onCheckedChange = { onSubscriptionEvent(
-                    SubscriptionDialogEvent.UpdateReminderSwitch(
-                        it
-                    )
-                ) },
-                headlineContent = { Text(stringResource(localesR.string.reminder)) },
+                onCheckedChange = {
+                    onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
+                },
+                content = { Text(stringResource(localesR.string.reminder)) },
                 supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
                     Icon(
@@ -181,15 +182,14 @@ fun SubscriptionDialog(
                         onCheckedChange = null,
                     )
                 },
+                shapes = ListItemDefaults.segmentedShapes(0, 1),
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
                     interval = subscriptionDialogState.repeatingInterval,
-                    onIntervalChange = { onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdateRepeatingInterval(
-                            it
-                        )
-                    ) },
+                    onIntervalChange = {
+                        onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it))
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),

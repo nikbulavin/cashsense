@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
@@ -8,14 +7,13 @@ import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -40,12 +38,13 @@ fun CsListItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsToggableListItem(
-    headlineContent: @Composable () -> Unit,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = ListItemPositionShapes.Single,
-    onCheckedChange: ((Boolean) -> Unit)? = null,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+    onCheckedChange: (Boolean) -> Unit,
     checked: Boolean = false,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -56,31 +55,22 @@ fun CsToggableListItem(
     ),
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    ListItem(
-        headlineContent = headlineContent,
-        modifier = modifier
-            .clip(shape)
-            .then(
-                if (onCheckedChange != null) {
-                    Modifier.toggleable(
-                        value = checked,
-                        onValueChange = { isChecked ->
-                            hapticFeedback.performHapticFeedback(
-                                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                            )
-                            onCheckedChange(isChecked)
-                        },
-                        role = Role.Switch,
-                    )
-                } else {
-                    modifier
-                }
-            ),
+    SegmentedListItem(
+        checked = checked,
+        onCheckedChange = { isChecked ->
+            hapticFeedback.performHapticFeedback(
+                if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+            )
+            onCheckedChange(isChecked)
+        },
+        shapes = shapes,
+        content = content,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
         leadingContent = leadingContent,
         trailingContent = trailingContent,
         colors = colors,
+        modifier = modifier,
     )
 }
 
