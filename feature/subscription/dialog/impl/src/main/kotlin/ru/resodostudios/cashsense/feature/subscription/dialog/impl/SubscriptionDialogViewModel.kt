@@ -37,7 +37,7 @@ import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 @HiltViewModel(assistedFactory = SubscriptionDialogViewModel.Factory::class)
-class SubscriptionDialogViewModel @AssistedInject constructor(
+internal class SubscriptionDialogViewModel @AssistedInject constructor(
     private val userDataRepository: UserDataRepository,
     private val subscriptionsRepository: SubscriptionsRepository,
     @ApplicationScope private val appScope: CoroutineScope,
