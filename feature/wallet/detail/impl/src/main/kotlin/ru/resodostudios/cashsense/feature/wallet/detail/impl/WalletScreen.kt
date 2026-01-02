@@ -80,6 +80,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun WalletScreen(
     onBackClick: () -> Unit,
+    onTransactionClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
@@ -99,7 +100,7 @@ internal fun WalletScreen(
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        onTransactionSelect = viewModel::updateSelectedTransaction,
+        onTransactionSelect = { it?.id?.let { transaction -> onTransactionClick(transaction) } },
         onTransactionDelete = viewModel::deleteTransaction,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,

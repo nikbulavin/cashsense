@@ -69,6 +69,8 @@ dependencies {
     implementation(projects.feature.subscription.dialog.impl)
     implementation(projects.feature.subscription.list.api)
     implementation(projects.feature.subscription.list.impl)
+    implementation(projects.feature.transaction.detail.api)
+    implementation(projects.feature.transaction.detail.impl)
     implementation(projects.feature.transaction.dialog.api)
     implementation(projects.feature.transaction.dialog.impl)
     implementation(projects.feature.transaction.overview.impl)

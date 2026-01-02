@@ -5,6 +5,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.dialog.api.navigateToTransactionDialog
 import ru.resodostudios.cashsense.feature.transfer.dialog.api.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -20,6 +21,7 @@ fun EntryProviderScope<NavKey>.walletEntry(navigator: Navigator) {
     ) { key ->
         WalletScreen(
             onBackClick = navigator::goBack,
+            onTransactionClick = navigator::navigateToTransaction,
             onTransfer = navigator::navigateToTransferDialog,
             onEditWallet = navigator::navigateToWalletDialog,
             navigateToTransactionDialog = navigator::navigateToTransactionDialog,

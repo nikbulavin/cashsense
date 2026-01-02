@@ -1,0 +1,18 @@
+package ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation
+
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
+import ru.resodostudios.cashsense.feature.transaction.detail.impl.TransactionScreen
+import ru.resodostudios.core.navigation.Navigator
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+fun EntryProviderScope<NavKey>.transactionEntry(navigator: Navigator) {
+    entry<TransactionNavKey>(
+        metadata = ListDetailSceneStrategy.extraPane(),
+    ) { key ->
+        TransactionScreen()
+    }
+}
