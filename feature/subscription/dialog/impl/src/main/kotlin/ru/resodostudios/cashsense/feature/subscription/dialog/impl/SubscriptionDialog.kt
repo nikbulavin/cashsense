@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -184,7 +185,7 @@ private fun SubscriptionDialog(
                         onCheckedChange = null,
                     )
                 },
-                shapes = ListItemDefaults.segmentedShapes(0, 1),
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
@@ -199,9 +200,7 @@ private fun SubscriptionDialog(
             }
         }
         LaunchedEffect(subscriptionDialogState.id) {
-            if (subscriptionDialogState.id.isEmpty()) {
-                focusRequester.requestFocus()
-            }
+            if (subscriptionDialogState.id.isEmpty()) focusRequester.requestFocus()
         }
 
         if (subscriptionDialogState.isReminderEnabled) NotificationPermissionEffect()

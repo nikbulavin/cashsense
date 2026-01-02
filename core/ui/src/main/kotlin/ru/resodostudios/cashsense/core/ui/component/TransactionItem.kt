@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -238,7 +239,7 @@ internal fun TransactionItem(
                     onClick = onDeleteClick,
                     colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
                     shapes = if (isTransfer) {
-                        ListItemDefaults.segmentedShapes(0, 1)
+                        ListItemDefaults.shapes(RoundedCornerShape(16.dp))
                     } else {
                         ListItemDefaults.segmentedShapes(2, 3)
                     },
@@ -256,7 +257,7 @@ private fun DescriptionListItem(
     modifier: Modifier = Modifier,
 ) {
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-    val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+    val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
     Column(
         modifier = modifier,
     ) {
@@ -274,13 +275,13 @@ private fun DescriptionListItem(
                     contentDescription = stringResource(if (expanded) localesR.string.show_less else localesR.string.show_more),
                 )
             },
-            colors = ListItemDefaults.colors(contentColor = Color.Transparent),
+            colors = ListItemDefaults.colors(Color.Transparent),
             onClick = {},
         )
         AnimatedVisibility(
             visible = expanded,
-            enter = fadeIn(effectsSpec) + expandVertically(intSizeSpatialSpec),
-            exit = fadeOut(effectsSpec) + shrinkVertically(intSizeSpatialSpec),
+            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
         ) {
             Text(
                 text = transaction.description.toString(),
