@@ -8,12 +8,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,30 +24,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Description
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.KeyboardArrowDown
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.KeyboardArrowUp
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
@@ -162,23 +148,6 @@ internal fun TransactionItem(
                 verticalArrangement = Arrangement.spacedBy(2.dp),
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             ) {
-                AnimatedVisibility(
-                    visible = !transaction.description.isNullOrBlank(),
-                    enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
-                    exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
-                ) {
-                    var expanded by remember { mutableStateOf(false) }
-                    DescriptionListItem(
-                        expanded = expanded,
-                        transaction = transaction,
-                        modifier = Modifier
-                            .padding(bottom = 6.dp)
-                            .clip(ListItemPositionShapes.Single)
-                            .background(actionButtonContainerColor)
-                            .clickable { expanded = !expanded },
-                    )
-                    Spacer(modifier = Modifier.size(6.dp))
-                }
                 val isTransfer = transaction.transferId != null
                 if (!isTransfer) {
                     CsListItemEmphasized(
@@ -223,48 +192,6 @@ internal fun TransactionItem(
                     },
                 )
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun DescriptionListItem(
-    expanded: Boolean,
-    transaction: Transaction,
-    modifier: Modifier = Modifier,
-) {
-    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-    val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
-    Column(
-        modifier = modifier,
-    ) {
-        CsListItemEmphasized(
-            content = { Text(stringResource(localesR.string.description)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Outlined.Description,
-                    contentDescription = null,
-                )
-            },
-            trailingContent = {
-                AnimatedIcon(
-                    icon = if (expanded) CsIcons.Outlined.KeyboardArrowUp else CsIcons.Outlined.KeyboardArrowDown,
-                    contentDescription = stringResource(if (expanded) localesR.string.show_less else localesR.string.show_more),
-                )
-            },
-            colors = ListItemDefaults.colors(Color.Transparent),
-            onClick = {},
-        )
-        AnimatedVisibility(
-            visible = expanded,
-            enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
-            exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
-        ) {
-            Text(
-                text = transaction.description.toString(),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
-            )
         }
     }
 }

@@ -482,7 +482,7 @@ private fun LazyListScope.about(
                 )
             },
             onClick = {
-                launchCustomChromeTab(
+                launchCustomTab(
                     context = context,
                     uri = FEEDBACK_URL.toUri(),
                     toolbarColor = backgroundColor,
@@ -504,7 +504,7 @@ private fun LazyListScope.about(
                 )
             },
             onClick = {
-                launchCustomChromeTab(
+                launchCustomTab(
                     context = context,
                     uri = PRIVACY_POLICY_URL.toUri(),
                     toolbarColor = backgroundColor,
@@ -546,7 +546,7 @@ private fun LazyListScope.about(
     }
 }
 
-private fun launchCustomChromeTab(
+private fun launchCustomTab(
     context: Context,
     uri: Uri,
     @ColorInt toolbarColor: Int,
