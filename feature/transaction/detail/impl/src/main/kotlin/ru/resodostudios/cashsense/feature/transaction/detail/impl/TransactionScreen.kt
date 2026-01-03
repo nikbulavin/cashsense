@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -14,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,8 +30,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -54,12 +60,21 @@ private fun TransactionScreen(
     when (transactionState) {
         TransactionUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is TransactionUiState.Success -> {
+            val transaction = transactionState.transaction
+            val category = transactionState.transaction.category
+            val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
+                CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
+            } else {
+                val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
+                val title = category?.title ?: stringResource(localesR.string.uncategorized)
+                StoredIcon.asImageVector(iconId) to title
+            }
             Scaffold(
                 topBar = {
                     TopAppBar(
                         title = {
                             Text(
-                                text = transactionState.transaction.timestamp.formatDate(
+                                text = transaction.timestamp.formatDate(
                                     DateFormatType.DATE_TIME,
                                     FormatStyle.MEDIUM,
                                 ),
@@ -82,10 +97,23 @@ private fun TransactionScreen(
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(innerPadding)
                         .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    transactionState.transaction.description?.let {
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = MaterialShapes.Cookie7Sided.toShape(),
+                        modifier = Modifier.size(128.dp),
+                    ) {
+                        Icon(
+                            imageVector = categoryIcon,
+                            contentDescription = stringResource(localesR.string.pending),
+                            modifier = Modifier.padding(32.dp),
+                        )
+                    }
+                    transaction.description?.let {
                         TransactionDescription(
                             description = it,
                         )
