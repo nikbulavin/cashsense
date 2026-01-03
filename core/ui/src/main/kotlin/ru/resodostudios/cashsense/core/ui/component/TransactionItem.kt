@@ -56,12 +56,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
-import java.time.format.FormatStyle
 import java.util.Currency
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -151,28 +148,9 @@ internal fun TransactionItem(
                             )
                         }
                     }
-                    AnimatedVisibility(
-                        visible = selected,
-                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
-                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
-                    ) {
-                        Text(
-                            text = transaction.timestamp.formatDate(
-                                DateFormatType.TIME,
-                                FormatStyle.SHORT,
-                            ),
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
                 }
             },
-            leadingContent = {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                )
-            },
+            leadingContent = { Icon(imageVector = icon, contentDescription = null) },
         )
         AnimatedVisibility(
             visible = selected,
@@ -293,7 +271,7 @@ private fun DescriptionListItem(
 
 @PreviewLightDark
 @Composable
-fun TransactionItemPreview() {
+private fun TransactionItemPreview() {
     CsTheme {
         Surface {
             TransactionItem(
