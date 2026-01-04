@@ -43,7 +43,7 @@ playReview = "2.0.2"
 protobuf = "4.33.2"
 protobufPlugin = "0.9.6"
 room = "2.8.4"
-vico = "2.4.0-beta.1"
+vico = "2.4.0"
 zip4j = "2.11.5"
 
 [libraries]

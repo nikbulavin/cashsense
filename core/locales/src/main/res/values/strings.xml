@@ -101,7 +101,6 @@
     <string name="transaction_deleted">Transaction deleted</string>
     <string name="transaction_ignore">Ignore in calculations</string>
     <string name="transaction_shortcut_long_label">Add a new transaction</string>
-    <string name="transactions_empty">Nothing in Transactions</string>
     <string name="transfer">Transfer</string>
     <string name="transfer_deleted">Transfer deleted</string>
     <string name="transfers">Transfers</string>
