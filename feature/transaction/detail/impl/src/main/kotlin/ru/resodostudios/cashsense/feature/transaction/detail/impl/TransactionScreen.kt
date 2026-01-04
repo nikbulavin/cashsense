@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction.detail.impl
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -99,8 +101,9 @@ private fun TransactionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(innerPadding)
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Surface(
                         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -113,6 +116,19 @@ private fun TransactionScreen(
                             modifier = Modifier.padding(32.dp),
                         )
                     }
+                    Text(
+                        text = categoryTitle,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = transaction.amount.formatAmount(transactionState.transaction.currency, true),
+                        style = MaterialTheme.typography.headlineLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                     transaction.description?.let {
                         TransactionDescription(
                             description = it,
