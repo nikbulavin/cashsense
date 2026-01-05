@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.transaction.detail.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,8 +34,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -43,21 +50,32 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun TransactionScreen(
     onBackClick: () -> Unit,
+    onRepeatClick: (walletId: String, transactionId: String) -> Unit,
+    onEditClick: (walletId: String, transactionId: String) -> Unit,
     viewModel: TransactionViewModel = hiltViewModel(),
 ) {
     val transactionUiState by viewModel.transactionUiState.collectAsStateWithLifecycle()
 
     TransactionScreen(
-        transactionState = transactionUiState,
         onBackClick = onBackClick,
+        onRepeatClick = onRepeatClick,
+        onEditClick = onEditClick,
+        onDeleteClick = {
+            viewModel.deleteTransaction(it)
+            onBackClick()
+        },
+        transactionState = transactionUiState,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TransactionScreen(
-    transactionState: TransactionUiState,
     onBackClick: () -> Unit,
+    onRepeatClick: (walletId: String, transactionId: String) -> Unit,
+    onEditClick: (walletId: String, transactionId: String) -> Unit,
+    onDeleteClick: (Transaction) -> Unit,
+    transactionState: TransactionUiState,
 ) {
     when (transactionState) {
         TransactionUiState.Loading -> LoadingState(Modifier.fillMaxSize())
@@ -124,11 +142,53 @@ private fun TransactionScreen(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = transaction.amount.formatAmount(transactionState.transaction.currency, true),
+                        text = transaction.amount.formatAmount(
+                            currency = transactionState.transaction.currency,
+                            plusPrefix = true,
+                        ),
                         style = MaterialTheme.typography.headlineLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+                    Row(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        FilledIconButton(
+                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                            onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
+                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Redo,
+                                contentDescription = stringResource(localesR.string.repeat),
+                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                            )
+                        }
+                        FilledIconButton(
+                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                            onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
+                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Edit,
+                                contentDescription = stringResource(localesR.string.edit),
+                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                            )
+                        }
+                        FilledIconButton(
+                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                            onClick = { onDeleteClick(transaction) },
+                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Delete,
+                                contentDescription = stringResource(localesR.string.delete),
+                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                            )
+                        }
+                    }
                     transaction.description?.let {
                         TransactionDescription(
                             description = it,

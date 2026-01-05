@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.core.locales)
 
     implementation(projects.feature.transaction.detail.api)
+    implementation(projects.feature.transaction.dialog.api)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

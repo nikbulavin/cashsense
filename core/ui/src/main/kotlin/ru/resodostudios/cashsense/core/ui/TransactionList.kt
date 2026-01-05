@@ -42,9 +42,6 @@ fun LazyListScope.transactions(
     hazeStyle: HazeStyle,
     onClick: (Transaction?) -> Unit,
     selectedTransaction: Transaction? = null,
-    onRepeatClick: (String) -> Unit = {},
-    onEditClick: (String) -> Unit = {},
-    onDeleteClick: () -> Unit = {},
 ) {
     groupedTransactions.forEach { transactionGroup ->
         stickyHeader(
@@ -93,9 +90,6 @@ fun LazyListScope.transactions(
                         placementSpec = motionScheme.defaultSpatialSpec(),
                     ),
                 selected = selected,
-                onRepeatClick = onRepeatClick,
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick,
             )
             if (index != transactionGroup.value.lastIndex) {
                 Spacer(Modifier.height(ListItemDefaults.SegmentedGap))

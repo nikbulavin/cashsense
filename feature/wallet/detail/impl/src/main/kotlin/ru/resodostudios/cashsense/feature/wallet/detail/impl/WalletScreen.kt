@@ -101,7 +101,6 @@ internal fun WalletScreen(
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
         onTransactionSelect = { it?.id?.let { transaction -> onTransactionClick(transaction) } },
-        onTransactionDelete = viewModel::deleteTransaction,
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
@@ -136,7 +135,6 @@ private fun WalletScreen(
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionSelect: (Transaction?) -> Unit = {},
-    onTransactionDelete: () -> Unit = {},
     shouldDisplayUndoTransaction: Boolean = false,
     undoTransactionRemoval: () -> Unit = {},
     shouldDisplayUndoTransfer: Boolean = false,
@@ -215,21 +213,6 @@ private fun WalletScreen(
                             hazeStyle = hazeStyle,
                             onClick = onTransactionSelect,
                             selectedTransaction = walletState.selectedTransaction,
-                            onRepeatClick = { transactionId ->
-                                navigateToTransactionDialog(
-                                    walletState.wallet.id,
-                                    transactionId,
-                                    true,
-                                )
-                            },
-                            onEditClick = { transactionId ->
-                                navigateToTransactionDialog(
-                                    walletState.wallet.id,
-                                    transactionId,
-                                    false,
-                                )
-                            },
-                            onDeleteClick = onTransactionDelete,
                         )
                     }
                     WalletToolbar(

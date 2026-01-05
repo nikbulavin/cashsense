@@ -54,7 +54,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 fun TransactionOverviewScreen(
     shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
-    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
 ) {
@@ -70,8 +69,6 @@ fun TransactionOverviewScreen(
         onSelectedDateUpdate = viewModel::updateSelectedDate,
         onCategoryFilterUpdate = viewModel::updateSelectedCategories,
         transactionOverviewState = transactionOverviewState,
-        navigateToTransactionDialog = navigateToTransactionDialog,
-        onTransactionDelete = viewModel::deleteTransaction,
         onTransactionSelect = viewModel::updateSelectedTransaction,
         onShowSnackbar = onShowSnackbar,
         shouldDisplayUndoTransaction = viewModel.shouldDisplayUndoTransaction,
@@ -93,9 +90,7 @@ private fun TransactionOverviewScreen(
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
-    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onTransactionDelete: () -> Unit = {},
     onTransactionSelect: (Transaction?) -> Unit = {},
     shouldDisplayUndoTransaction: Boolean = false,
     undoTransactionRemoval: () -> Unit = {},
@@ -157,24 +152,12 @@ private fun TransactionOverviewScreen(
                         onSelectedDateUpdate = onSelectedDateUpdate,
                         onCategoryFilterUpdate = onCategoryFilterUpdate,
                     )
-                    val transaction = transactionOverviewState.selectedTransaction
                     transactions(
                         selectedTransaction = transactionOverviewState.selectedTransaction,
                         groupedTransactions = transactionOverviewState.groupedTransactions,
                         hazeState = hazeState,
                         hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,
-                        onRepeatClick = { transactionId ->
-                            transaction?.walletOwnerId?.let { walletId ->
-                                navigateToTransactionDialog(walletId, transactionId, true)
-                            }
-                        },
-                        onEditClick = { transactionId ->
-                            transaction?.walletOwnerId?.let { walletId ->
-                                navigateToTransactionDialog(walletId, transactionId, false)
-                            }
-                        },
-                        onDeleteClick = onTransactionDelete,
                     )
                 }
             }

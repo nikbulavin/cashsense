@@ -2,22 +2,17 @@ package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,13 +27,9 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
@@ -56,9 +47,6 @@ internal fun TransactionItem(
     currency: Currency,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
-    onRepeatClick: (String) -> Unit = {},
-    onEditClick: (String) -> Unit = {},
-    onDeleteClick: () -> Unit = {},
 ) {
     val (icon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
@@ -71,8 +59,6 @@ internal fun TransactionItem(
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
-
-    val actionButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
 
     Column(modifier = modifier) {
         CsListItem(
@@ -138,61 +124,6 @@ internal fun TransactionItem(
             },
             leadingContent = { Icon(imageVector = icon, contentDescription = null) },
         )
-        AnimatedVisibility(
-            visible = selected,
-            enter = fadeIn(effectsSpec) + expandVertically(intSizeSpatialSpec),
-            exit = fadeOut(effectsSpec) + shrinkVertically(intSizeSpatialSpec),
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-            ) {
-                val isTransfer = transaction.transferId != null
-                if (!isTransfer) {
-                    CsListItemEmphasized(
-                        content = { Text(stringResource(localesR.string.repeat)) },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Redo,
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = { onRepeatClick(transaction.id) },
-                        colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
-                        shapes = ListItemDefaults.segmentedShapes(0, 3),
-                    )
-                    CsListItemEmphasized(
-                        content = { Text(stringResource(localesR.string.edit)) },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Edit,
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = { onEditClick(transaction.id) },
-                        colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
-                        shapes = ListItemDefaults.segmentedShapes(1, 3),
-                    )
-                }
-                CsListItemEmphasized(
-                    content = { Text(stringResource(localesR.string.delete)) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = onDeleteClick,
-                    colors = ListItemDefaults.segmentedColors(containerColor = actionButtonContainerColor),
-                    shapes = if (isTransfer) {
-                        ListItemDefaults.shapes(RoundedCornerShape(16.dp))
-                    } else {
-                        ListItemDefaults.segmentedShapes(2, 3)
-                    },
-                )
-            }
-        }
     }
 }
 
