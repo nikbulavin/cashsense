@@ -6,13 +6,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
@@ -43,10 +44,12 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun TransactionItem(
+    selected: Boolean,
     transaction: Transaction,
     currency: Currency,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    selected: Boolean = false,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
     val (icon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
@@ -60,73 +63,76 @@ internal fun TransactionItem(
     val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
 
-    Column(modifier = modifier) {
-        CsListItem(
-            headlineContent = {
-                Text(
-                    text = transaction.amount.formatAmount(currency, true),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = categoryTitle,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            trailingContent = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.animateContentSize(intSizeSpatialSpec),
+    CsSelectableListItem(
+        shapes = shapes,
+        onClick = onClick,
+        selected = selected,
+        modifier = modifier,
+        content = {
+            Text(
+                text = transaction.amount.formatAmount(currency, true),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        supportingContent = {
+            Text(
+                text = categoryTitle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        trailingContent = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.animateContentSize(intSizeSpatialSpec),
+            ) {
+                AnimatedVisibility(
+                    visible = transaction.ignored,
+                    enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                    exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                 ) {
-                    AnimatedVisibility(
-                        visible = transaction.ignored,
-                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
-                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
+                    Surface(
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = MaterialShapes.PixelCircle.toShape(),
                     ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialShapes.PixelCircle.toShape(),
-                        ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Block,
-                                contentDescription = stringResource(localesR.string.transaction_ignore),
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .size(20.dp),
-                                tint = MaterialTheme.colorScheme.onErrorContainer,
-                            )
-                        }
-                    }
-                    AnimatedVisibility(
-                        visible = !transaction.completed,
-                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
-                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            shape = MaterialShapes.Clover4Leaf.toShape(),
-                            modifier = Modifier.padding(start = 8.dp),
-                        ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Pending,
-                                contentDescription = stringResource(localesR.string.pending),
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .size(20.dp),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                            )
-                        }
+                        Icon(
+                            imageVector = CsIcons.Outlined.Block,
+                            contentDescription = stringResource(localesR.string.transaction_ignore),
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(20.dp),
+                            tint = MaterialTheme.colorScheme.onErrorContainer,
+                        )
                     }
                 }
-            },
-            leadingContent = { Icon(imageVector = icon, contentDescription = null) },
-        )
-    }
+                AnimatedVisibility(
+                    visible = !transaction.completed,
+                    enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                    exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
+                ) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = MaterialShapes.Clover4Leaf.toShape(),
+                        modifier = Modifier.padding(start = 8.dp),
+                    ) {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Pending,
+                            contentDescription = stringResource(localesR.string.pending),
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(20.dp),
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
+            }
+        },
+        leadingContent = { Icon(imageVector = icon, contentDescription = null) },
+    )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @PreviewLightDark
 @Composable
 private fun TransactionItemPreview() {
@@ -150,6 +156,8 @@ private fun TransactionItemPreview() {
                     ),
                 ),
                 currency = getUsdCurrency(),
+                selected = false,
+                onClick = {},
             )
         }
     }

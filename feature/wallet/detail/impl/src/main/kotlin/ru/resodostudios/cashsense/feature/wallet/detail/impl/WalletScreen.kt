@@ -100,7 +100,10 @@ internal fun WalletScreen(
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        onTransactionSelect = { it?.id?.let { transaction -> onTransactionClick(transaction) } },
+        onTransactionSelect = {
+            viewModel.updateSelectedTransaction(it)
+            it?.id?.let { transaction -> onTransactionClick(transaction) }
+        },
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
@@ -333,7 +336,12 @@ private fun WalletTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletTitle(wallet.id, wallet.title)),
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey.WalletTitle(
+                                walletId = wallet.id,
+                                title = wallet.title,
+                            ),
+                        ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -346,7 +354,12 @@ private fun WalletTopBar(
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletBalance(wallet.id, formattedCurrentBalance)),
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey.WalletBalance(
+                                walletId = wallet.id,
+                                balance = formattedCurrentBalance,
+                            ),
+                        ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,

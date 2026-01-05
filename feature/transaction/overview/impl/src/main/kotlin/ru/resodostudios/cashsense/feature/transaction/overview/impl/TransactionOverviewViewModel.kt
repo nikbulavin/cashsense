@@ -55,7 +55,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @HiltViewModel
-class TransactionOverviewViewModel @Inject constructor(
+internal class TransactionOverviewViewModel @Inject constructor(
     private val currencyConversionRepository: CurrencyConversionRepository,
     private val transactionsRepository: TransactionsRepository,
     walletRepository: WalletsRepository,

@@ -7,6 +7,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
+import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.TransactionOverviewScreen
 import ru.resodostudios.core.navigation.Navigator
@@ -19,6 +20,7 @@ fun EntryProviderScope<NavKey>.transactionOverviewEntry(navigator: Navigator) {
         val snackbarHostState = LocalSnackbarHostState.current
         TransactionOverviewScreen(
             onBackClick = navigator::goBack,
+            onTransactionClick = navigator::navigateToTransaction,
             shouldShowNavigationIcon = true,
             onShowSnackbar = { message, actionLabel ->
                 snackbarHostState.showSnackbar(

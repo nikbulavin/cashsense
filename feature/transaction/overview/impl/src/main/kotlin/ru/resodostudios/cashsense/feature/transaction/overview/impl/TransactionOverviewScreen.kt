@@ -51,9 +51,10 @@ import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun TransactionOverviewScreen(
+internal fun TransactionOverviewScreen(
     shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
+    onTransactionClick: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
 ) {
@@ -69,7 +70,10 @@ fun TransactionOverviewScreen(
         onSelectedDateUpdate = viewModel::updateSelectedDate,
         onCategoryFilterUpdate = viewModel::updateSelectedCategories,
         transactionOverviewState = transactionOverviewState,
-        onTransactionSelect = viewModel::updateSelectedTransaction,
+        onTransactionSelect = {
+            viewModel.updateSelectedTransaction(it)
+            it?.id?.let { transaction -> onTransactionClick(transaction) }
+        },
         onShowSnackbar = onShowSnackbar,
         shouldDisplayUndoTransaction = viewModel.shouldDisplayUndoTransaction,
         undoTransactionRemoval = viewModel::undoTransactionRemoval,

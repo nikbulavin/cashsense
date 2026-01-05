@@ -50,7 +50,7 @@ fun CsToggableListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    colors: ListItemColors = ListItemDefaults.colors(
+    colors: ListItemColors = ListItemDefaults.segmentedColors(
         containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
     ),
 ) {
@@ -99,6 +99,36 @@ fun CsListItemEmphasized(
         leadingContent = leadingContent,
         trailingContent = trailingContent,
         colors = colors,
+    )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun CsSelectableListItem(
+    selected: Boolean,
+    content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+    onClick: () -> Unit,
+    overlineContent: @Composable (() -> Unit)? = null,
+    supportingContent: @Composable (() -> Unit)? = null,
+    leadingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.segmentedColors(
+        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+    ),
+) {
+    SegmentedListItem(
+        selected = selected,
+        onClick = onClick,
+        shapes = shapes,
+        content = content,
+        overlineContent = overlineContent,
+        supportingContent = supportingContent,
+        leadingContent = leadingContent,
+        trailingContent = trailingContent,
+        colors = colors,
+        modifier = modifier,
     )
 }
 
