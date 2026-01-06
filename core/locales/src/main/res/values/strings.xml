@@ -97,11 +97,9 @@
     <string name="to_wallet">To wallet</string>
     <string name="toggle_menu">Toggle menu</string>
     <string name="total_balance">Total balance</string>
-    <string name="transaction_deleted">Transaction deleted</string>
     <string name="transaction_ignore">Ignore in calculations</string>
     <string name="transaction_shortcut_long_label">Add a new transaction</string>
     <string name="transfer">Transfer</string>
-    <string name="transfer_deleted">Transfer deleted</string>
     <string name="transfers">Transfers</string>
     <string name="uncategorized">Uncategorized</string>
     <string name="undo">Undo</string>

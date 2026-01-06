@@ -159,27 +159,29 @@ private fun TransactionScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        FilledIconButton(
-                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                            onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
-                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                        ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Redo,
-                                contentDescription = stringResource(localesR.string.repeat),
-                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                            )
-                        }
-                        FilledIconButton(
-                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                            onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
-                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                        ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Edit,
-                                contentDescription = stringResource(localesR.string.edit),
-                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                            )
+                        if (transaction.transferId == null) {
+                            FilledIconButton(
+                                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                                onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
+                                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+                            ) {
+                                Icon(
+                                    imageVector = CsIcons.Outlined.Redo,
+                                    contentDescription = stringResource(localesR.string.repeat),
+                                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                                )
+                            }
+                            FilledIconButton(
+                                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                                onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
+                                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+                            ) {
+                                Icon(
+                                    imageVector = CsIcons.Outlined.Edit,
+                                    contentDescription = stringResource(localesR.string.edit),
+                                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                                )
+                            }
                         }
                         var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
                         FilledIconButton(
