@@ -39,6 +39,7 @@ fun LazyListScope.transactions(
     hazeStyle: HazeStyle,
     onClick: (Transaction?) -> Unit,
     selectedTransaction: Transaction? = null,
+    shouldHighlightSelectedTransaction: Boolean = false,
 ) {
     groupedTransactions.forEach { transactionGroup ->
         stickyHeader(
@@ -64,7 +65,7 @@ fun LazyListScope.transactions(
             key = { _, transaction -> transaction.id },
             contentType = { _, _ -> "Transaction" }
         ) { index, transaction ->
-            val selected = selectedTransaction == transaction
+            val selected = shouldHighlightSelectedTransaction && selectedTransaction == transaction
             val motionScheme = MaterialTheme.motionScheme
             TransactionItem(
                 transaction = transaction,

@@ -85,6 +85,7 @@ internal fun WalletScreen(
     onEditWallet: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: WalletViewModel = hiltViewModel(),
@@ -94,6 +95,7 @@ internal fun WalletScreen(
     WalletScreen(
         walletState = walletState,
         shouldShowNavigationIcon = shouldShowNavigationIcon,
+        shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
@@ -126,6 +128,7 @@ internal fun WalletScreen(
 private fun WalletScreen(
     walletState: WalletUiState,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -216,6 +219,7 @@ private fun WalletScreen(
                             hazeStyle = hazeStyle,
                             onClick = onTransactionSelect,
                             selectedTransaction = walletState.selectedTransaction,
+                            shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                         )
                     }
                     WalletToolbar(
@@ -439,6 +443,7 @@ private fun WalletScreenPopulatedPreview(
                 formattedCurrentBalance = "$57,500",
             ),
             shouldShowNavigationIcon = true,
+            shouldHighlightSelectedTransaction = false,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
             onEditWallet = {},
@@ -482,6 +487,7 @@ private fun WalletScreenEmptyPreview() {
                 formattedCurrentBalance = "$57,500",
             ),
             shouldShowNavigationIcon = true,
+            shouldHighlightSelectedTransaction = false,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
             onEditWallet = {},
