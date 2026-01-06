@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">订阅为空</string>
   <string name="subscription_deleted">订阅已删除</string>
   <string name="category_title">类别</string>
-  <string name="transactions_empty">交易为空</string>
   <string name="add_transaction">添加交易</string>
   <string name="edit_transaction">编辑交易</string>
   <string name="new_transaction">新建交易</string>
@@ -87,9 +86,7 @@
   <string name="exchange_rate">汇率</string>
   <string name="choose_wallet">选择钱包</string>
   <string name="uncategorized">未分类</string>
-  <string name="show_more">显示更多</string>
-  <string name="show_less">显示更少</string>
-  <string name="from_wallet">从钱包</string>
+    <string name="from_wallet">从钱包</string>
   <string name="to_wallet">至钱包</string>
   <string name="converted_amount">兑换金额</string>
   <string name="primary_icon_description">设为主要</string>

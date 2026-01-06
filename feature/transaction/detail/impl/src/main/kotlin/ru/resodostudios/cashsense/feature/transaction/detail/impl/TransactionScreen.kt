@@ -24,6 +24,9 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -177,15 +181,29 @@ private fun TransactionScreen(
                                 modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
                             )
                         }
+                        var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
                         FilledIconButton(
                             shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                            onClick = { onDeleteClick(transaction) },
+                            onClick = { shouldShowDeletionDialog = true },
                             modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
                         ) {
                             Icon(
                                 imageVector = CsIcons.Outlined.Delete,
                                 contentDescription = stringResource(localesR.string.delete),
                                 modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                            )
+                        }
+                        if (shouldShowDeletionDialog) {
+                            CsAlertDialog(
+                                titleRes = localesR.string.permanently_delete,
+                                icon = CsIcons.Outlined.Delete,
+                                confirmButtonTextRes = localesR.string.delete,
+                                dismissButtonTextRes = localesR.string.cancel,
+                                onConfirm = {
+                                    onDeleteClick(transaction)
+                                    shouldShowDeletionDialog = false
+                                },
+                                onDismiss = { shouldShowDeletionDialog = false },
                             )
                         }
                     }

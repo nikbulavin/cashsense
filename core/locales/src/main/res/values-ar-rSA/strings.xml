@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">لا يوجد اشتراكات</string>
   <string name="subscription_deleted">تم حذف الاشتراك</string>
   <string name="category_title">الفئة</string>
-  <string name="transactions_empty">لا يوجد معاملات</string>
   <string name="add_transaction">إضافة معاملة</string>
   <string name="edit_transaction">تحرير المعاملة</string>
   <string name="new_transaction">معاملة جديدة</string>
@@ -87,9 +86,7 @@
   <string name="exchange_rate">سعر الصرف</string>
   <string name="choose_wallet">اختر محفظة</string>
   <string name="uncategorized">غير مصنف</string>
-  <string name="show_more">عرض المزيد</string>
-  <string name="show_less">عرض أقل</string>
-  <string name="from_wallet">من المحفظة</string>
+    <string name="from_wallet">من المحفظة</string>
   <string name="to_wallet">إلى المحفظة</string>
   <string name="converted_amount">المبلغ المحول</string>
   <string name="primary_icon_description">جعله رئيسياً</string>

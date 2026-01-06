@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">サブスクリプションに何もありません</string>
   <string name="subscription_deleted">サブスクリプションが削除されました</string>
   <string name="category_title">カテゴリー</string>
-  <string name="transactions_empty">取引に何もありません</string>
   <string name="add_transaction">取引を追加</string>
   <string name="edit_transaction">取引を編集</string>
   <string name="new_transaction">新しい取引</string>
@@ -87,9 +86,7 @@
   <string name="exchange_rate">為替レート</string>
   <string name="choose_wallet">ウォレットを選択</string>
   <string name="uncategorized">未分類</string>
-  <string name="show_more">もっと見る</string>
-  <string name="show_less">表示を減らす</string>
-  <string name="from_wallet">ウォレットから</string>
+    <string name="from_wallet">ウォレットから</string>
   <string name="to_wallet">ウォレットへ</string>
   <string name="converted_amount">変換された金額</string>
   <string name="primary_icon_description">主要に設定</string>

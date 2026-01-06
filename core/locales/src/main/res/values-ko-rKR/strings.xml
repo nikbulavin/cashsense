@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">구독에 항목이 없습니다</string>
   <string name="subscription_deleted">구독이 삭제되었습니다</string>
   <string name="category_title">범주</string>
-  <string name="transactions_empty">거래에 항목이 없습니다</string>
   <string name="add_transaction">거래 추가</string>
   <string name="edit_transaction">거래 편집</string>
   <string name="new_transaction">새 거래</string>
@@ -87,9 +86,7 @@
   <string name="exchange_rate">환율</string>
   <string name="choose_wallet">지갑 선택</string>
   <string name="uncategorized">분류되지 않음</string>
-  <string name="show_more">더 보기</string>
-  <string name="show_less">간단히 보기</string>
-  <string name="from_wallet">지갑에서</string>
+    <string name="from_wallet">지갑에서</string>
   <string name="to_wallet">지갑으로</string>
   <string name="converted_amount">변환된 금액</string>
   <string name="primary_icon_description">주요로 설정</string>

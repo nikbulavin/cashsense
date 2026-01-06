@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">Здесь будут ваши подписки</string>
   <string name="subscription_deleted">Подписка удалена</string>
   <string name="category_title">Категория</string>
-  <string name="transactions_empty">Здесь будут ваши транзакции</string>
   <string name="add_transaction">Добавить транзакцию</string>
   <string name="edit_transaction">Изменение транзакции</string>
   <string name="new_transaction">Новая транзакция</string>
@@ -87,9 +86,7 @@
   <string name="exchange_rate">Валютный курс</string>
   <string name="choose_wallet">Выберите кошелёк</string>
   <string name="uncategorized">Без категории</string>
-  <string name="show_more">показать больше</string>
-  <string name="show_less">показать меньше</string>
-  <string name="from_wallet">С кошелька</string>
+    <string name="from_wallet">С кошелька</string>
   <string name="to_wallet">На кошелёк</string>
   <string name="converted_amount">Конвертированная сумма</string>
   <string name="primary_icon_description">Сделать основным</string>
