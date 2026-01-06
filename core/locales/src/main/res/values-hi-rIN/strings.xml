@@ -89,6 +89,7 @@
   <string name="uncategorized">अवर्गीकृत</string>
   <string name="show_more">और दिखाएँ</string>
   <string name="show_less">कम दिखाएँ</string>
+  <string name="permanently_delete">स्थायी रूप से हटाएँ?</string>
   <string name="from_wallet">वॉलेट से</string>
   <string name="to_wallet">वॉलेट तक</string>
   <string name="converted_amount">परिवर्तित राशि</string>

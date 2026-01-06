@@ -89,6 +89,7 @@
   <string name="uncategorized">غير مصنف</string>
   <string name="show_more">عرض المزيد</string>
   <string name="show_less">عرض أقل</string>
+  <string name="permanently_delete">حذف نهائي؟</string>
   <string name="from_wallet">من المحفظة</string>
   <string name="to_wallet">إلى المحفظة</string>
   <string name="converted_amount">المبلغ المحول</string>

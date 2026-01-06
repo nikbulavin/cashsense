@@ -89,6 +89,7 @@
   <string name="uncategorized">Sin categorizar</string>
   <string name="show_more">mostrar más</string>
   <string name="show_less">mostrar menos</string>
+  <string name="permanently_delete">¿Eliminar permanentemente?</string>
   <string name="from_wallet">Desde la billetera</string>
   <string name="to_wallet">Hacia la billetera</string>
   <string name="converted_amount">Cantidad convertida</string>
