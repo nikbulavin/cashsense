@@ -89,6 +89,7 @@
   <string name="uncategorized">未分類</string>
   <string name="show_more">もっと見る</string>
   <string name="show_less">表示を減らす</string>
+  <string name="permanently_delete">完全に削除しますか？</string>
   <string name="from_wallet">ウォレットから</string>
   <string name="to_wallet">ウォレットへ</string>
   <string name="converted_amount">変換された金額</string>
