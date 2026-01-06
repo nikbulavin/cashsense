@@ -12,6 +12,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.locales)
 
+    implementation(projects.feature.transaction.detail.api)
     implementation(projects.feature.transaction.dialog.api)
     implementation(projects.feature.transfer.api)
     implementation(projects.feature.wallet.detail.api)

@@ -1,6 +1,9 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import android.text.Layout
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
@@ -166,16 +169,25 @@ fun FinanceGraph(
             scrollState = scrollState,
             zoomState = zoomState,
             modifier = modifier,
-            placeholder = {
-                Text(
-                    text = stringResource(R.string.not_enough_data),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+            placeholder = { FinanceGraphPlaceholder() },
+        )
+    }
+}
+
+@Composable
+internal fun FinanceGraphPlaceholder() {
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.not_enough_data),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

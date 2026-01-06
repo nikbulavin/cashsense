@@ -16,13 +16,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
@@ -42,10 +41,8 @@ internal fun CategoryItem(
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
     val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
 
-    val actionButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-
     Column(modifier = modifier) {
-        CsListItemEmphasized(
+        CsListItem(
             headlineContent = {
                 Text(
                     text = category.title,
@@ -59,9 +56,6 @@ internal fun CategoryItem(
                     contentDescription = null,
                 )
             },
-            colors = ListItemDefaults.colors().copy(
-                containerColor = Color.Transparent,
-            ),
         )
         AnimatedVisibility(
             visible = selected,
@@ -70,11 +64,11 @@ internal fun CategoryItem(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             ) {
                 CsListItemEmphasized(
-                    headlineContent = { Text(stringResource(localesR.string.edit)) },
+                    content = { Text(stringResource(localesR.string.edit)) },
                     leadingContent = {
                         Icon(
                             imageVector = CsIcons.Outlined.Edit,
@@ -82,13 +76,11 @@ internal fun CategoryItem(
                         )
                     },
                     onClick = { onEditClick(category.id) },
-                    colors = ListItemDefaults.colors().copy(
-                        containerColor = actionButtonContainerColor,
-                    ),
-                    shape = ListItemPositionShapes.First,
+                    colors = ListItemDefaults.segmentedColors(),
+                    shapes = ListItemDefaults.segmentedShapes(0, 2),
                 )
                 CsListItemEmphasized(
-                    headlineContent = { Text(stringResource(localesR.string.delete)) },
+                    content = { Text(stringResource(localesR.string.delete)) },
                     leadingContent = {
                         Icon(
                             imageVector = CsIcons.Outlined.Delete,
@@ -96,10 +88,8 @@ internal fun CategoryItem(
                         )
                     },
                     onClick = { onDeleteClick(category.id) },
-                    colors = ListItemDefaults.colors().copy(
-                        containerColor = actionButtonContainerColor,
-                    ),
-                    shape = ListItemPositionShapes.Last,
+                    colors = ListItemDefaults.segmentedColors(),
+                    shapes = ListItemDefaults.segmentedShapes(1, 2),
                 )
             }
         }

@@ -4,9 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsModalBottomSheet
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -32,6 +37,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun SubscriptionBottomSheet(
     subscription: Subscription,
@@ -72,7 +78,9 @@ internal fun SubscriptionBottomSheet(
                     icon = CsIcons.Outlined.Calendar,
                 )
                 AnimatedVisibility(subscription.reminder != null) {
-                    val repeatingIntervalType = getRepeatingIntervalType(subscription.reminder?.repeatingInterval)
+                    val repeatingIntervalType = getRepeatingIntervalType(
+                        subscription.reminder?.repeatingInterval
+                    )
                     val reminderTitle = when (repeatingIntervalType) {
                         DAILY -> stringResource(localesR.string.repeat_daily)
                         WEEKLY -> stringResource(localesR.string.repeat_weekly)
@@ -87,8 +95,8 @@ internal fun SubscriptionBottomSheet(
                 }
             }
             HorizontalDivider(Modifier.padding(16.dp))
-            CsListItem(
-                headlineContent = { Text(stringResource(localesR.string.edit)) },
+            CsListItemEmphasized(
+                content = { Text(stringResource(localesR.string.edit)) },
                 leadingContent = {
                     Icon(
                         imageVector = CsIcons.Outlined.Edit,
@@ -99,9 +107,13 @@ internal fun SubscriptionBottomSheet(
                     onDismiss()
                     onEdit(subscription.id)
                 },
+                shapes = ListItemDefaults.segmentedShapes(0, 2),
+                colors = ListItemDefaults.segmentedColors(),
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
-            CsListItem(
-                headlineContent = { Text(stringResource(localesR.string.delete)) },
+            Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
+            CsListItemEmphasized(
+                content = { Text(stringResource(localesR.string.delete)) },
                 leadingContent = {
                     Icon(
                         imageVector = CsIcons.Outlined.Delete,
@@ -112,7 +124,11 @@ internal fun SubscriptionBottomSheet(
                     onDismiss()
                     onDelete()
                 },
+                shapes = ListItemDefaults.segmentedShapes(1, 2),
+                colors = ListItemDefaults.segmentedColors(),
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

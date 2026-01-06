@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,8 +36,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
@@ -80,12 +77,13 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun WalletScreen(
     onBackClick: () -> Unit,
+    onTransactionClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
@@ -93,24 +91,21 @@ internal fun WalletScreen(
     WalletScreen(
         walletState = walletState,
         shouldShowNavigationIcon = shouldShowNavigationIcon,
+        shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onEditWallet = onEditWallet,
         onDeleteWallet = onDeleteClick,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
-        onTransactionSelect = viewModel::updateSelectedTransaction,
-        onTransactionDelete = viewModel::deleteTransaction,
+        onTransactionSelect = {
+            viewModel.updateSelectedTransaction(it)
+            it?.id?.let { transaction -> onTransactionClick(transaction) }
+        },
         onDateTypeUpdate = viewModel::updateDateType,
         onFinanceTypeUpdate = viewModel::updateFinanceType,
         onSelectedDateUpdate = viewModel::updateSelectedDate,
         onCategoryFilterUpdate = viewModel::updateSelectedCategories,
-        onShowSnackbar = onShowSnackbar,
-        shouldDisplayUndoTransaction = viewModel.shouldDisplayUndoTransaction,
-        undoTransactionRemoval = viewModel::undoTransactionRemoval,
-        shouldDisplayUndoTransfer = viewModel.shouldDisplayUndoTransfer,
-        undoTransferRemoval = viewModel::undoTransferRemoval,
-        clearUndoState = viewModel::clearUndoState,
     )
 }
 
@@ -123,6 +118,7 @@ internal fun WalletScreen(
 private fun WalletScreen(
     walletState: WalletUiState,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
@@ -133,35 +129,8 @@ private fun WalletScreen(
     onSelectedDateUpdate: (Int) -> Unit,
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
     onTransactionSelect: (Transaction?) -> Unit = {},
-    onTransactionDelete: () -> Unit = {},
-    shouldDisplayUndoTransaction: Boolean = false,
-    undoTransactionRemoval: () -> Unit = {},
-    shouldDisplayUndoTransfer: Boolean = false,
-    undoTransferRemoval: () -> Unit = {},
-    clearUndoState: () -> Unit = {},
 ) {
-    val transactionDeletedMessage = stringResource(localesR.string.transaction_deleted)
-    val transferDeletedMessage = stringResource(localesR.string.transfer_deleted)
-    val undoText = stringResource(localesR.string.undo)
-
-    LaunchedEffect(shouldDisplayUndoTransaction) {
-        if (shouldDisplayUndoTransaction) {
-            val snackBarResult = onShowSnackbar(transactionDeletedMessage, undoText)
-            if (snackBarResult) undoTransactionRemoval() else clearUndoState()
-        }
-    }
-    LaunchedEffect(shouldDisplayUndoTransfer) {
-        if (shouldDisplayUndoTransfer) {
-            val snackBarResult = onShowSnackbar(transferDeletedMessage, undoText)
-            if (snackBarResult) undoTransferRemoval() else clearUndoState()
-        }
-    }
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-        clearUndoState()
-    }
-
     when (walletState) {
         WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
@@ -214,21 +183,7 @@ private fun WalletScreen(
                             hazeStyle = hazeStyle,
                             onClick = onTransactionSelect,
                             selectedTransaction = walletState.selectedTransaction,
-                            onRepeatClick = { transactionId ->
-                                navigateToTransactionDialog(
-                                    walletState.wallet.id,
-                                    transactionId,
-                                    true,
-                                )
-                            },
-                            onEditClick = { transactionId ->
-                                navigateToTransactionDialog(
-                                    walletState.wallet.id,
-                                    transactionId,
-                                    false,
-                                )
-                            },
-                            onDeleteClick = onTransactionDelete,
+                            shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                         )
                     }
                     WalletToolbar(
@@ -349,7 +304,12 @@ private fun WalletTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletTitle(wallet.id, wallet.title)),
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey.WalletTitle(
+                                walletId = wallet.id,
+                                title = wallet.title,
+                            ),
+                        ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -362,7 +322,12 @@ private fun WalletTopBar(
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletBalance(wallet.id, formattedCurrentBalance)),
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey.WalletBalance(
+                                walletId = wallet.id,
+                                balance = formattedCurrentBalance,
+                            ),
+                        ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -442,6 +407,7 @@ private fun WalletScreenPopulatedPreview(
                 formattedCurrentBalance = "$57,500",
             ),
             shouldShowNavigationIcon = true,
+            shouldHighlightSelectedTransaction = false,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
             onEditWallet = {},
@@ -452,7 +418,6 @@ private fun WalletScreenPopulatedPreview(
             onSelectedDateUpdate = {},
             onCategoryFilterUpdate = { _, _ -> },
             navigateToTransactionDialog = { _, _, _ -> },
-            onShowSnackbar = { _, _ -> false },
         )
     }
 }
@@ -485,6 +450,7 @@ private fun WalletScreenEmptyPreview() {
                 formattedCurrentBalance = "$57,500",
             ),
             shouldShowNavigationIcon = true,
+            shouldHighlightSelectedTransaction = false,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
             onEditWallet = {},
@@ -495,7 +461,6 @@ private fun WalletScreenEmptyPreview() {
             onSelectedDateUpdate = {},
             onCategoryFilterUpdate = { _, _ -> },
             navigateToTransactionDialog = { _, _, _ -> },
-            onShowSnackbar = { _, _ -> false },
         )
     }
 }

@@ -334,6 +334,8 @@ private fun DetailedFinanceSection(
                     currency = currency,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                 )
+            } else {
+                FinanceGraphPlaceholder()
             }
             if (transactionFilter.financeType != NOT_SET) {
                 CategorySelectionRow(

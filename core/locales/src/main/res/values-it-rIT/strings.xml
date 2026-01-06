@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">Niente negli Abbonamenti</string>
   <string name="subscription_deleted">Abbonamento eliminato</string>
   <string name="category_title">Categoria</string>
-  <string name="transactions_empty">Niente nelle Transazioni</string>
   <string name="add_transaction">Aggiungi transazione</string>
   <string name="edit_transaction">Modifica transazione</string>
   <string name="new_transaction">Nuova transazione</string>
@@ -87,9 +86,7 @@
   <string name="exchange_rate">Tasso di cambio</string>
   <string name="choose_wallet">Scegli un portafoglio</string>
   <string name="uncategorized">Non categorizzato</string>
-  <string name="show_more">mostra di più</string>
-  <string name="show_less">mostra di meno</string>
-  <string name="from_wallet">Dal portafoglio</string>
+    <string name="from_wallet">Dal portafoglio</string>
   <string name="to_wallet">Al portafoglio</string>
   <string name="converted_amount">Importo convertito</string>
   <string name="primary_icon_description">Imposta come principale</string>

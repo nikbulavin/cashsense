@@ -13,10 +13,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -48,6 +52,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
@@ -58,7 +63,7 @@ import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-fun SubscriptionDialog(
+internal fun SubscriptionDialog(
     onDismiss: () -> Unit,
     viewModel: SubscriptionDialogViewModel = hiltViewModel(),
 ) {
@@ -71,8 +76,9 @@ fun SubscriptionDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SubscriptionDialog(
+private fun SubscriptionDialog(
     subscriptionDialogState: SubscriptionDialogUiState,
     onSubscriptionEvent: (SubscriptionDialogEvent) -> Unit,
     onDismiss: () -> Unit,
@@ -162,12 +168,10 @@ fun SubscriptionDialog(
             )
             CsToggableListItem(
                 checked = subscriptionDialogState.isReminderEnabled,
-                onCheckedChange = { onSubscriptionEvent(
-                    SubscriptionDialogEvent.UpdateReminderSwitch(
-                        it
-                    )
-                ) },
-                headlineContent = { Text(stringResource(localesR.string.reminder)) },
+                onCheckedChange = {
+                    onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
+                },
+                content = { Text(stringResource(localesR.string.reminder)) },
                 supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
                 leadingContent = {
                     Icon(
@@ -181,15 +185,14 @@ fun SubscriptionDialog(
                         onCheckedChange = null,
                     )
                 },
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
                     interval = subscriptionDialogState.repeatingInterval,
-                    onIntervalChange = { onSubscriptionEvent(
-                        SubscriptionDialogEvent.UpdateRepeatingInterval(
-                            it
-                        )
-                    ) },
+                    onIntervalChange = {
+                        onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it))
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
@@ -197,9 +200,7 @@ fun SubscriptionDialog(
             }
         }
         LaunchedEffect(subscriptionDialogState.id) {
-            if (subscriptionDialogState.id.isEmpty()) {
-                focusRequester.requestFocus()
-            }
+            if (subscriptionDialogState.id.isEmpty()) focusRequester.requestFocus()
         }
 
         if (subscriptionDialogState.isReminderEnabled) NotificationPermissionEffect()
@@ -207,9 +208,9 @@ fun SubscriptionDialog(
     TrackScreenViewEvent(screenName = "SubscriptionDialog")
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun RepeatingIntervalDropdownMenu(
+private fun RepeatingIntervalDropdownMenu(
     interval: RepeatingIntervalType,
     onIntervalChange: (RepeatingIntervalType) -> Unit,
     modifier: Modifier = Modifier,
@@ -231,18 +232,18 @@ fun RepeatingIntervalDropdownMenu(
         OutlinedTextField(
             value = intervalNames[interval.ordinal],
             onValueChange = {},
-            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-            ),
             label = { Text(stringResource(localesR.string.repeating_interval)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            shape = MenuDefaults.standaloneGroupShape,
+            containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
             intervalNames.forEachIndexed { index, label ->
                 DropdownMenuItem(
@@ -252,6 +253,9 @@ fun RepeatingIntervalDropdownMenu(
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    shapes = MenuDefaults.itemShape(index, intervalNames.size),
+                    selected = index == interval.ordinal,
+                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
                 )
             }
         }

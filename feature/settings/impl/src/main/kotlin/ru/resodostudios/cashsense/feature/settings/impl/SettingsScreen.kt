@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -52,7 +53,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
@@ -242,6 +242,7 @@ fun SettingsScreenPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.general(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
@@ -257,8 +258,8 @@ private fun LazyListScope.general(
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.First,
-            headlineContent = { Text(stringResource(localesR.string.currency)) },
+            shapes = ListItemDefaults.segmentedShapes(0, 2),
+            content = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.UniversalCurrencyAlt,
@@ -281,8 +282,8 @@ private fun LazyListScope.general(
         var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Last,
-            headlineContent = { Text(stringResource(localesR.string.language)) },
+            shapes = ListItemDefaults.segmentedShapes(1, 2),
+            content = { Text(stringResource(localesR.string.language)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Language,
@@ -314,8 +315,13 @@ private fun LazyListScope.appearance(
     item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
     item {
         CsListItemEmphasized(
-            shape = if (supportDynamicColor) ListItemPositionShapes.First else ListItemPositionShapes.Single,
-            headlineContent = { Text(stringResource(localesR.string.theme)) },
+            onClick = {},
+            shapes = if (supportDynamicColor) {
+                ListItemDefaults.segmentedShapes(0, 2)
+            } else {
+                ListItemDefaults.segmentedShapes(0, 1)
+            },
+            content = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Palette,
@@ -374,8 +380,8 @@ private fun LazyListScope.appearance(
     item {
         AnimatedVisibility(supportDynamicColor) {
             CsToggableListItem(
-                shape = ListItemPositionShapes.Last,
-                headlineContent = { Text(stringResource(localesR.string.dynamic_color)) },
+                shapes = ListItemDefaults.segmentedShapes(1, 2),
+                content = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
                         imageVector = CsIcons.Outlined.FormatPaint,
@@ -395,6 +401,7 @@ private fun LazyListScope.appearance(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.backupAndRestore(
     onDataExport: (Uri) -> Unit,
     onDataImport: (Uri, Boolean) -> Unit,
@@ -410,8 +417,8 @@ private fun LazyListScope.backupAndRestore(
         val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
         val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.First,
-            headlineContent = { Text(stringResource(localesR.string.backup)) },
+            shapes = ListItemDefaults.segmentedShapes(0, 2),
+            content = { Text(stringResource(localesR.string.backup)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.FolderZip,
@@ -436,8 +443,8 @@ private fun LazyListScope.backupAndRestore(
                 it?.let { onDataImport(it, true) }
             }
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Last,
-            headlineContent = { Text(stringResource(localesR.string.restore)) },
+            shapes = ListItemDefaults.segmentedShapes(1, 2),
+            content = { Text(stringResource(localesR.string.restore)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.SettingsBackupRestore,
@@ -456,6 +463,7 @@ private fun LazyListScope.backupAndRestore(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyListScope.about(
     onLicensesClick: () -> Unit,
 ) {
@@ -465,8 +473,8 @@ private fun LazyListScope.about(
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.First,
-            headlineContent = { Text(stringResource(localesR.string.feedback)) },
+            shapes = ListItemDefaults.segmentedShapes(0, 4),
+            content = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Feedback,
@@ -474,7 +482,7 @@ private fun LazyListScope.about(
                 )
             },
             onClick = {
-                launchCustomChromeTab(
+                launchCustomTab(
                     context = context,
                     uri = FEEDBACK_URL.toUri(),
                     toolbarColor = backgroundColor,
@@ -487,8 +495,8 @@ private fun LazyListScope.about(
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Middle,
-            headlineContent = { Text(stringResource(localesR.string.privacy_policy)) },
+            shapes = ListItemDefaults.segmentedShapes(1, 4),
+            content = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.Policy,
@@ -496,7 +504,7 @@ private fun LazyListScope.about(
                 )
             },
             onClick = {
-                launchCustomChromeTab(
+                launchCustomTab(
                     context = context,
                     uri = PRIVACY_POLICY_URL.toUri(),
                     toolbarColor = backgroundColor,
@@ -506,8 +514,8 @@ private fun LazyListScope.about(
     }
     item {
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Middle,
-            headlineContent = { Text(stringResource(localesR.string.licenses)) },
+            shapes = ListItemDefaults.segmentedShapes(2, 4),
+            content = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
                     imageVector = CsIcons.Outlined.HistoryEdu,
@@ -524,8 +532,9 @@ private fun LazyListScope.about(
         val versionCode = "(${packageInfo?.longVersionCode})"
 
         CsListItemEmphasized(
-            shape = ListItemPositionShapes.Last,
-            headlineContent = { Text(stringResource(localesR.string.version)) },
+            onClick = {},
+            shapes = ListItemDefaults.segmentedShapes(3, 4),
+            content = { Text(stringResource(localesR.string.version)) },
             supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {
                 Icon(
@@ -537,7 +546,7 @@ private fun LazyListScope.about(
     }
 }
 
-private fun launchCustomChromeTab(
+private fun launchCustomTab(
     context: Context,
     uri: Uri,
     @ColorInt toolbarColor: Int,
