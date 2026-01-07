@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">Niente negli Abbonamenti</string>
   <string name="subscription_deleted">Abbonamento eliminato</string>
   <string name="category_title">Categoria</string>
-  <string name="transactions_empty">Niente nelle Transazioni</string>
   <string name="add_transaction">Aggiungi transazione</string>
   <string name="edit_transaction">Modifica transazione</string>
   <string name="new_transaction">Nuova transazione</string>
@@ -87,8 +86,6 @@
   <string name="exchange_rate">Tasso di cambio</string>
   <string name="choose_wallet">Scegli un portafoglio</string>
   <string name="uncategorized">Non categorizzato</string>
-  <string name="show_more">mostra di più</string>
-  <string name="show_less">mostra di meno</string>
   <string name="permanently_delete">Eliminare definitivamente?</string>
   <string name="from_wallet">Dal portafoglio</string>
   <string name="to_wallet">Al portafoglio</string>
@@ -110,10 +107,9 @@
   <string name="close">Chiudi</string>
   <string name="next_date">Data successiva</string>
   <string name="previous_date">Data precedente</string>
-  <string name="transaction_deleted">Transazione eliminata</string>
-  <string name="transfer_deleted">Trasferimento eliminato</string>
   <string name="collapsed">Crollato</string>
   <string name="expanded">Ampliato</string>
   <string name="financial_health">Salute finanziaria</string>
   <string name="toggle_menu">Attiva/Disattiva menu</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
 </resources>
