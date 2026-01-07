@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">サブスクリプションに何もありません</string>
   <string name="subscription_deleted">サブスクリプションが削除されました</string>
   <string name="category_title">カテゴリー</string>
-  <string name="transactions_empty">取引に何もありません</string>
   <string name="add_transaction">取引を追加</string>
   <string name="edit_transaction">取引を編集</string>
   <string name="new_transaction">新しい取引</string>
@@ -87,8 +86,6 @@
   <string name="exchange_rate">為替レート</string>
   <string name="choose_wallet">ウォレットを選択</string>
   <string name="uncategorized">未分類</string>
-  <string name="show_more">もっと見る</string>
-  <string name="show_less">表示を減らす</string>
   <string name="permanently_delete">完全に削除しますか？</string>
   <string name="from_wallet">ウォレットから</string>
   <string name="to_wallet">ウォレットへ</string>
@@ -110,10 +107,9 @@
   <string name="close">閉じる</string>
   <string name="next_date">次の日付</string>
   <string name="previous_date">前の日付</string>
-  <string name="transaction_deleted">トランザクションが削除されました</string>
-  <string name="transfer_deleted">削除済み転送</string>
   <string name="collapsed">崩壊した</string>
   <string name="expanded">拡張された</string>
   <string name="financial_health">財務健全性</string>
   <string name="toggle_menu">メニューを切り替える</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
 </resources>
