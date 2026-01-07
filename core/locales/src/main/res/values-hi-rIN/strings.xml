@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">सदस्यता में कुछ भी नहीं</string>
   <string name="subscription_deleted">सदस्यता हटाई गई</string>
   <string name="category_title">श्रेणी</string>
-  <string name="transactions_empty">लेनदेन में कुछ भी नहीं</string>
   <string name="add_transaction">लेनदेन जोड़ें</string>
   <string name="edit_transaction">लेनदेन संपादित करें</string>
   <string name="new_transaction">नया लेनदेन</string>
@@ -87,8 +86,6 @@
   <string name="exchange_rate">विनिमय दर</string>
   <string name="choose_wallet">वॉलेट चुनें</string>
   <string name="uncategorized">अवर्गीकृत</string>
-  <string name="show_more">और दिखाएँ</string>
-  <string name="show_less">कम दिखाएँ</string>
   <string name="permanently_delete">स्थायी रूप से हटाएँ?</string>
   <string name="from_wallet">वॉलेट से</string>
   <string name="to_wallet">वॉलेट तक</string>
@@ -110,10 +107,9 @@
   <string name="close">बंद करें</string>
   <string name="next_date">अगली तिथि</string>
   <string name="previous_date">पिछली तिथि</string>
-  <string name="transaction_deleted">लेनदेन हटाया गया</string>
-  <string name="transfer_deleted">स्थानांतरण हटाया गया</string>
   <string name="collapsed">ध्वस्त</string>
   <string name="expanded">विस्तारित</string>
   <string name="financial_health">वित्तीय स्वास्थ्य</string>
   <string name="toggle_menu">मेनू टॉगल करें</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
 </resources>
