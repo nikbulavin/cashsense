@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">لا يوجد اشتراكات</string>
   <string name="subscription_deleted">تم حذف الاشتراك</string>
   <string name="category_title">الفئة</string>
-  <string name="transactions_empty">لا يوجد معاملات</string>
   <string name="add_transaction">إضافة معاملة</string>
   <string name="edit_transaction">تحرير المعاملة</string>
   <string name="new_transaction">معاملة جديدة</string>
@@ -87,8 +86,6 @@
   <string name="exchange_rate">سعر الصرف</string>
   <string name="choose_wallet">اختر محفظة</string>
   <string name="uncategorized">غير مصنف</string>
-  <string name="show_more">عرض المزيد</string>
-  <string name="show_less">عرض أقل</string>
   <string name="permanently_delete">حذف نهائي؟</string>
   <string name="from_wallet">من المحفظة</string>
   <string name="to_wallet">إلى المحفظة</string>
@@ -110,10 +107,9 @@
   <string name="close">إغلاق</string>
   <string name="next_date">التاريخ التالي</string>
   <string name="previous_date">التاريخ السابق</string>
-  <string name="transaction_deleted">تم حذف المعاملة</string>
-  <string name="transfer_deleted">تم حذف التحويل</string>
   <string name="collapsed">انهار</string>
   <string name="expanded">موسع</string>
   <string name="financial_health">الصحة المالية</string>
   <string name="toggle_menu">تبديل القائمة</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
 </resources>
