@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">Здесь будут ваши подписки</string>
   <string name="subscription_deleted">Подписка удалена</string>
   <string name="category_title">Категория</string>
-  <string name="transactions_empty">Здесь будут ваши транзакции</string>
   <string name="add_transaction">Добавить транзакцию</string>
   <string name="edit_transaction">Изменение транзакции</string>
   <string name="new_transaction">Новая транзакция</string>
@@ -87,8 +86,6 @@
   <string name="exchange_rate">Валютный курс</string>
   <string name="choose_wallet">Выберите кошелёк</string>
   <string name="uncategorized">Без категории</string>
-  <string name="show_more">показать больше</string>
-  <string name="show_less">показать меньше</string>
   <string name="permanently_delete">Удалить навсегда?</string>
   <string name="from_wallet">С кошелька</string>
   <string name="to_wallet">На кошелёк</string>
@@ -110,10 +107,9 @@
   <string name="close">Закрыть</string>
   <string name="next_date">Следующая дата</string>
   <string name="previous_date">Предыдущая дата</string>
-  <string name="transaction_deleted">Транзакция удалена</string>
-  <string name="transfer_deleted">Перевод удалён</string>
   <string name="collapsed">Свёрнуто</string>
   <string name="expanded">Расширено</string>
   <string name="financial_health">Финансовое здоровье</string>
   <string name="toggle_menu">Переключить меню</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
 </resources>
