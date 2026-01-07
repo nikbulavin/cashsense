@@ -55,7 +55,6 @@
   <string name="subscriptions_empty">No hay nada en Suscripciones</string>
   <string name="subscription_deleted">Suscripción eliminada</string>
   <string name="category_title">Categoría</string>
-  <string name="transactions_empty">No hay nada en Transacciones</string>
   <string name="add_transaction">Añadir transacción</string>
   <string name="edit_transaction">Editar transacción</string>
   <string name="new_transaction">Nueva transacción</string>
@@ -87,8 +86,6 @@
   <string name="exchange_rate">Tipo de cambio</string>
   <string name="choose_wallet">Elige una billetera</string>
   <string name="uncategorized">Sin categorizar</string>
-  <string name="show_more">mostrar más</string>
-  <string name="show_less">mostrar menos</string>
   <string name="permanently_delete">¿Eliminar permanentemente?</string>
   <string name="from_wallet">Desde la billetera</string>
   <string name="to_wallet">Hacia la billetera</string>
@@ -110,10 +107,9 @@
   <string name="close">Cerrar</string>
   <string name="next_date">Fecha siguiente</string>
   <string name="previous_date">Fecha anterior</string>
-  <string name="transaction_deleted">Transacción eliminada</string>
-  <string name="transfer_deleted">Transferencia eliminada</string>
   <string name="collapsed">Colapsado</string>
   <string name="expanded">Ampliado</string>
   <string name="financial_health">Salud financiera</string>
   <string name="toggle_menu">Alternar menú</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
 </resources>
