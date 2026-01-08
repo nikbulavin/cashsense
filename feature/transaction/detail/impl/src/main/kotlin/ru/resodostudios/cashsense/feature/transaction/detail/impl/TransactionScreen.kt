@@ -197,7 +197,7 @@ private fun TransactionScreen(
                         }
                         if (shouldShowDeletionDialog) {
                             CsAlertDialog(
-                                titleRes = localesR.string.permanently_delete,
+                                titleRes = localesR.string.delete_transaction,
                                 icon = CsIcons.Outlined.Delete,
                                 confirmButtonTextRes = localesR.string.delete,
                                 dismissButtonTextRes = localesR.string.cancel,
@@ -206,6 +206,7 @@ private fun TransactionScreen(
                                     shouldShowDeletionDialog = false
                                 },
                                 onDismiss = { shouldShowDeletionDialog = false },
+                                content = { Text(stringResource(localesR.string.permanently_delete_transaction)) },
                             )
                         }
                     }

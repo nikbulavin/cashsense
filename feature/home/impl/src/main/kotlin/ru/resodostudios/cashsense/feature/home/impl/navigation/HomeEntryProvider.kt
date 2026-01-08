@@ -30,10 +30,6 @@ fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {
             onSettingsClick = navigator::navigateToSettings,
             onTotalBalanceClick = navigator::navigateToTransactionOverview,
             highlightSelectedWallet = false,
-            onShowSnackbar = { _, _ -> false },
-            shouldDisplayUndoWallet = false,
-            undoWalletRemoval = {},
-            clearUndoState = {},
             viewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { it.create(key) },
         )
     }

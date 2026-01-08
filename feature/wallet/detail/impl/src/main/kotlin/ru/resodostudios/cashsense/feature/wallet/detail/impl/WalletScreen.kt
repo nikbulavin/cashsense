@@ -41,6 +41,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -80,7 +81,6 @@ internal fun WalletScreen(
     onTransactionClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
-    onDeleteClick: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
     shouldHighlightSelectedTransaction: Boolean,
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -94,8 +94,8 @@ internal fun WalletScreen(
         shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
-        onEditWallet = onEditWallet,
-        onDeleteWallet = onDeleteClick,
+        onWalletEdit = onEditWallet,
+        onWalletDelete = viewModel::deleteWallet,
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
         onTransactionSelect = {
@@ -121,8 +121,8 @@ private fun WalletScreen(
     shouldHighlightSelectedTransaction: Boolean,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
     onTransfer: (String) -> Unit,
-    onEditWallet: (String) -> Unit,
-    onDeleteWallet: (String) -> Unit,
+    onWalletEdit: (String) -> Unit,
+    onWalletDelete: (String) -> Unit,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
@@ -187,11 +187,11 @@ private fun WalletScreen(
                         )
                     }
                     WalletToolbar(
+                        walletId = walletState.wallet.id,
                         expanded = expanded,
                         onTransfer = onTransfer,
-                        walletId = walletState.wallet.id,
-                        onEditWallet = onEditWallet,
-                        onDeleteWallet = onDeleteWallet,
+                        onWalletEdit = onWalletEdit,
+                        onWalletDelete = onWalletDelete,
                         navigateToTransactionDialog = navigateToTransactionDialog,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
@@ -207,14 +207,15 @@ private fun WalletScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WalletToolbar(
+    walletId: String,
     expanded: Boolean,
     onTransfer: (String) -> Unit,
-    walletId: String,
-    onEditWallet: (String) -> Unit,
-    onDeleteWallet: (String) -> Unit,
+    onWalletEdit: (String) -> Unit,
+    onWalletDelete: (String) -> Unit,
     navigateToTransactionDialog: (String, String?, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
     HorizontalFloatingToolbar(
         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
         modifier = modifier,
@@ -248,7 +249,7 @@ private fun WalletToolbar(
                 },
             ) {
                 clickableItem(
-                    onClick = { onEditWallet(walletId) },
+                    onClick = { onWalletEdit(walletId) },
                     icon = {
                         Icon(
                             imageVector = CsIcons.Outlined.Edit,
@@ -258,7 +259,7 @@ private fun WalletToolbar(
                     label = editButtonLabel,
                 )
                 clickableItem(
-                    onClick = { onDeleteWallet(walletId) },
+                    onClick = { shouldShowDeletionDialog = true },
                     icon = {
                         Icon(
                             imageVector = CsIcons.Outlined.Delete,
@@ -281,6 +282,20 @@ private fun WalletToolbar(
             }
         }
     )
+    if (shouldShowDeletionDialog) {
+        CsAlertDialog(
+            titleRes = localesR.string.delete_wallet,
+            icon = CsIcons.Outlined.Delete,
+            confirmButtonTextRes = localesR.string.delete,
+            dismissButtonTextRes = localesR.string.cancel,
+            onConfirm = {
+                onWalletDelete(walletId)
+                shouldShowDeletionDialog = false
+            },
+            onDismiss = { shouldShowDeletionDialog = false },
+            content = { Text(stringResource(localesR.string.permanently_delete_wallet)) },
+        )
+    }
 }
 
 @OptIn(
@@ -410,8 +425,8 @@ private fun WalletScreenPopulatedPreview(
             shouldHighlightSelectedTransaction = false,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
-            onEditWallet = {},
-            onDeleteWallet = {},
+            onWalletEdit = {},
+            onWalletDelete = {},
             onBackClick = {},
             onDateTypeUpdate = {},
             onFinanceTypeUpdate = {},
@@ -453,8 +468,8 @@ private fun WalletScreenEmptyPreview() {
             shouldHighlightSelectedTransaction = false,
             onPrimaryClick = { _, _ -> },
             onTransfer = {},
-            onEditWallet = {},
-            onDeleteWallet = {},
+            onWalletEdit = {},
+            onWalletDelete = {},
             onBackClick = {},
             onDateTypeUpdate = {},
             onFinanceTypeUpdate = {},
