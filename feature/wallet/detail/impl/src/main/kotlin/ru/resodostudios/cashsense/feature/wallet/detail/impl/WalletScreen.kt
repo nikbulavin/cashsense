@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.wallet.detail.impl
 
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -42,6 +43,7 @@ import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -53,6 +55,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
@@ -187,7 +190,8 @@ private fun WalletScreen(
                         )
                     }
                     WalletToolbar(
-                        walletId = walletState.wallet.id,
+                        wallet = walletState.wallet,
+                        formattedCurrentBalance = walletState.formattedCurrentBalance,
                         expanded = expanded,
                         onTransfer = onTransfer,
                         onWalletEdit = onWalletEdit,
@@ -207,7 +211,8 @@ private fun WalletScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun WalletToolbar(
-    walletId: String,
+    wallet: Wallet,
+    formattedCurrentBalance: String,
     expanded: Boolean,
     onTransfer: (String) -> Unit,
     onWalletEdit: (String) -> Unit,
@@ -222,7 +227,7 @@ private fun WalletToolbar(
         expanded = expanded,
         leadingContent = {
             IconButton(
-                onClick = { onTransfer(walletId) },
+                onClick = { onTransfer(wallet.id) },
             ) {
                 Icon(
                     imageVector = CsIcons.Outlined.SendMoney,
@@ -249,7 +254,7 @@ private fun WalletToolbar(
                 },
             ) {
                 clickableItem(
-                    onClick = { onWalletEdit(walletId) },
+                    onClick = { onWalletEdit(wallet.id) },
                     icon = {
                         Icon(
                             imageVector = CsIcons.Outlined.Edit,
@@ -273,7 +278,7 @@ private fun WalletToolbar(
         content = {
             FilledIconButton(
                 modifier = Modifier.width(64.dp),
-                onClick = { navigateToTransactionDialog(walletId, null, false) },
+                onClick = { navigateToTransactionDialog(wallet.id, null, false) },
             ) {
                 Icon(
                     imageVector = CsIcons.Outlined.Add,
@@ -289,11 +294,32 @@ private fun WalletToolbar(
             confirmButtonTextRes = localesR.string.delete,
             dismissButtonTextRes = localesR.string.cancel,
             onConfirm = {
-                onWalletDelete(walletId)
+                onWalletDelete(wallet.id)
                 shouldShowDeletionDialog = false
             },
             onDismiss = { shouldShowDeletionDialog = false },
-            content = { Text(stringResource(localesR.string.permanently_delete_wallet)) },
+            content = {
+                Column {
+                    Text(stringResource(localesR.string.permanently_delete_wallet))
+                    CsListItem(
+                        headlineContent = {
+                            Text(
+                                text = wallet.title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = formattedCurrentBalance,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        leadingContent = { Icon(imageVector = CsIcons.Outlined.Wallet, contentDescription = null) },
+                    )
+                }
+            },
         )
     }
 }

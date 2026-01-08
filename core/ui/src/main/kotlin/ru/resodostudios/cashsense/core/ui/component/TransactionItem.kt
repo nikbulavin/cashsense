@@ -51,7 +51,7 @@ internal fun TransactionItem(
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
-    val (icon, categoryTitle) = if (transaction.transferId != null) {
+    val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
     } else {
         val iconId = transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId
@@ -128,7 +128,7 @@ internal fun TransactionItem(
                 }
             }
         },
-        leadingContent = { Icon(imageVector = icon, contentDescription = null) },
+        leadingContent = { Icon(imageVector = categoryIcon, contentDescription = null) },
     )
 }
 

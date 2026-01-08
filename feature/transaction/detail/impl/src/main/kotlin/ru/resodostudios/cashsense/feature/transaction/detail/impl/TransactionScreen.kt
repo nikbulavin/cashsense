@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -162,7 +163,12 @@ private fun TransactionScreen(
                         if (transaction.transferId == null) {
                             FilledIconButton(
                                 shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                                onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
+                                onClick = {
+                                    onRepeatClick(
+                                        transaction.walletOwnerId,
+                                        transaction.id
+                                    )
+                                },
                                 modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
                             ) {
                                 Icon(
@@ -173,7 +179,12 @@ private fun TransactionScreen(
                             }
                             FilledIconButton(
                                 shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                                onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
+                                onClick = {
+                                    onEditClick(
+                                        transaction.walletOwnerId,
+                                        transaction.id
+                                    )
+                                },
                                 modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
                             ) {
                                 Icon(
@@ -206,7 +217,28 @@ private fun TransactionScreen(
                                     shouldShowDeletionDialog = false
                                 },
                                 onDismiss = { shouldShowDeletionDialog = false },
-                                content = { Text(stringResource(localesR.string.permanently_delete_transaction)) },
+                                content = {
+                                    Column {
+                                        Text(stringResource(localesR.string.permanently_delete_transaction))
+                                        CsListItem(
+                                            headlineContent = {
+                                                Text(
+                                                    text = transaction.amount.formatAmount(transaction.currency, true),
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            },
+                                            supportingContent = {
+                                                Text(
+                                                    text = categoryTitle,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                )
+                                            },
+                                            leadingContent = { Icon(imageVector = categoryIcon, contentDescription = null) },
+                                        )
+                                    }
+                                },
                             )
                         }
                     }
