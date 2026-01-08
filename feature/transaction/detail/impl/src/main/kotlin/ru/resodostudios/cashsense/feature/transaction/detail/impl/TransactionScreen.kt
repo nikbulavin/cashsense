@@ -1,7 +1,16 @@
 package ru.resodostudios.cashsense.feature.transaction.detail.impl
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateBounds
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -36,11 +46,14 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
@@ -146,6 +159,10 @@ private fun TransactionScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+                    TagsSection(
+                        isTransactionIgnored = transaction.ignored,
+                        isTransactionPending = !transaction.completed,
+                    )
                     Text(
                         text = transaction.amount.formatAmount(
                             currency = transactionState.transaction.currency,
@@ -248,6 +265,54 @@ private fun TransactionScreen(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
+@Composable
+private fun TagsSection(
+    isTransactionIgnored: Boolean,
+    isTransactionPending: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    LookaheadScope {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = modifier.animateContentSize(),
+        ) {
+            val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+            val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+            AnimatedVisibility(
+                visible = isTransactionIgnored,
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsTag(
+                    text = stringResource(localesR.string.transaction_ignored),
+                    icon = CsIcons.Outlined.Block,
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    textColor = MaterialTheme.colorScheme.onErrorContainer,
+                )
+            }
+            AnimatedVisibility(
+                visible = isTransactionPending,
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsTag(
+                    text = stringResource(localesR.string.pending),
+                    icon = CsIcons.Outlined.Pending,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    textColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
             }
         }
     }
