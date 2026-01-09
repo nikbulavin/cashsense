@@ -24,7 +24,6 @@
   <string name="categories_empty">Nichts in Kategorien</string>
   <string name="category_deleted">Kategorie entfernt</string>
   <string name="home_title">Startseite</string>
-  <string name="wallet_deleted">Wallet gelöscht</string>
   <string name="wallet_menu_icon_description">Brieftasche Menü</string>
   <string name="home_empty">Nichts in Wallets</string>
   <string name="settings_general">Allgemein</string>
@@ -86,7 +85,6 @@
   <string name="exchange_rate">Wechselkurs</string>
   <string name="choose_wallet">Wählen Sie eine Brieftasche</string>
   <string name="uncategorized">Ohne Kategorie</string>
-  <string name="permanently_delete">Dauerhaft löschen?</string>
   <string name="from_wallet">Von Wallet</string>
   <string name="to_wallet">Zu Wallet</string>
   <string name="converted_amount">Umgewandelter Betrag</string>
@@ -112,4 +110,9 @@
   <string name="financial_health">Finanzielle Gesundheit</string>
   <string name="toggle_menu">Menü umschalten</string>
   <string name="app_update_in_progress">Update is downloading…</string>
+  <string name="delete_transaction">Delete transaction?</string>
+  <string name="delete_wallet">Delete wallet?</string>
+  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
+  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
+  <string name="transaction_ignored">Ignored</string>
 </resources>
