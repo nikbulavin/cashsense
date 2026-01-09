@@ -62,6 +62,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.SectionTitle
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -349,13 +350,8 @@ private fun TransactionDescription(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(localesR.string.description),
-            style = MaterialTheme.typography.labelLarge,
-            modifier = modifier.padding(vertical = 12.dp),
-            color = MaterialTheme.colorScheme.primary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        SectionTitle(
+            titleRes = localesR.string.description,
         )
         Surface(
             modifier = Modifier.fillMaxWidth(),
