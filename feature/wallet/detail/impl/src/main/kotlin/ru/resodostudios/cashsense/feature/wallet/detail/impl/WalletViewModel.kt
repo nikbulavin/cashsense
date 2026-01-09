@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -51,6 +52,7 @@ internal class WalletViewModel @AssistedInject constructor(
     getExtendedUserWallet: GetExtendedUserWalletUseCase,
     @Assisted val key: WalletNavKey,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
+    private val walletsRepository: WalletsRepository,
 ) : ViewModel() {
 
     private val transactionFilterState = MutableStateFlow(
@@ -160,6 +162,12 @@ internal class WalletViewModel @AssistedInject constructor(
             }
 
             ALL, WEEK -> {}
+        }
+    }
+
+    fun deleteWallet(walletId: String) {
+        viewModelScope.launch {
+            walletsRepository.deleteWallet(walletId)
         }
     }
 

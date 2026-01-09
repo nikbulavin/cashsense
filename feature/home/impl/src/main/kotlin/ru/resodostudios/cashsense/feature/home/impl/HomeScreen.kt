@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -22,8 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
@@ -39,10 +36,6 @@ internal fun HomeScreen(
     onTransfer: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-    shouldDisplayUndoWallet: Boolean,
-    undoWalletRemoval: () -> Unit,
-    clearUndoState: () -> Unit,
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
@@ -58,10 +51,6 @@ internal fun HomeScreen(
         onTransfer = onTransfer,
         onTransactionCreate = onTransactionCreate,
         highlightSelectedWallet = highlightSelectedWallet,
-        onShowSnackbar = onShowSnackbar,
-        shouldDisplayUndoWallet = shouldDisplayUndoWallet,
-        undoWalletRemoval = undoWalletRemoval,
-        clearUndoState = clearUndoState,
         onTotalBalanceClick = onTotalBalanceClick,
         onSettingsClick = onSettingsClick,
     )
@@ -78,26 +67,9 @@ private fun HomeScreen(
     onTransfer: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     highlightSelectedWallet: Boolean,
-    onShowSnackbar: suspend (String, String?) -> Boolean = { _, _ -> false },
-    shouldDisplayUndoWallet: Boolean = false,
-    undoWalletRemoval: () -> Unit = {},
-    clearUndoState: () -> Unit = {},
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
 ) {
-    val walletDeletedMessage = stringResource(localesR.string.wallet_deleted)
-    val undoActionLabel = stringResource(localesR.string.undo)
-
-    LaunchedEffect(shouldDisplayUndoWallet) {
-        if (shouldDisplayUndoWallet) {
-            val snackBarResult = onShowSnackbar(walletDeletedMessage, undoActionLabel)
-            if (snackBarResult) undoWalletRemoval() else clearUndoState()
-        }
-    }
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-        clearUndoState()
-    }
-
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     Scaffold(

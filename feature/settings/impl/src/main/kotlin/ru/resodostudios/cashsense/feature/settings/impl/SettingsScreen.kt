@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -76,6 +75,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.SectionTitle
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -172,22 +172,6 @@ private fun SettingsScreen(
     TrackScreenViewEvent(screenName = "Settings")
 }
 
-@Composable
-private fun SectionTitle(
-    text: String,
-    modifier: Modifier = Modifier,
-    topPadding: Dp = 30.dp,
-) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelLarge,
-        modifier = modifier.padding(top = topPadding, bottom = 12.dp),
-        color = MaterialTheme.colorScheme.primary,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TopBar(
@@ -248,12 +232,7 @@ private fun LazyListScope.general(
     onCurrencyUpdate: (Currency) -> Unit,
     onLanguageUpdate: (String) -> Unit,
 ) {
-    item {
-        SectionTitle(
-            text = stringResource(localesR.string.settings_general),
-            topPadding = 8.dp,
-        )
-    }
+    item { SectionTitle(localesR.string.settings_general) }
     item {
         var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -312,7 +291,7 @@ private fun LazyListScope.appearance(
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
 ) {
-    item { SectionTitle(stringResource(localesR.string.settings_appearance)) }
+    item { SectionTitle(localesR.string.settings_appearance) }
     item {
         CsListItemEmphasized(
             onClick = {},
@@ -406,7 +385,7 @@ private fun LazyListScope.backupAndRestore(
     onDataExport: (Uri) -> Unit,
     onDataImport: (Uri, Boolean) -> Unit,
 ) {
-    item { SectionTitle(stringResource(localesR.string.backup_and_restore)) }
+    item { SectionTitle(localesR.string.backup_and_restore) }
     item {
         val exportDbLauncher =
             rememberLauncherForActivityResult(
@@ -436,12 +415,11 @@ private fun LazyListScope.backupAndRestore(
         )
     }
     item {
-        val importDbLauncher =
-            rememberLauncherForActivityResult(
-                ActivityResultContracts.OpenDocument(),
-            ) {
-                it?.let { onDataImport(it, true) }
-            }
+        val importDbLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocument(),
+        ) {
+            it?.let { onDataImport(it, true) }
+        }
         CsListItemEmphasized(
             shapes = ListItemDefaults.segmentedShapes(1, 2),
             content = { Text(stringResource(localesR.string.restore)) },
@@ -467,7 +445,7 @@ private fun LazyListScope.backupAndRestore(
 private fun LazyListScope.about(
     onLicensesClick: () -> Unit,
 ) {
-    item { SectionTitle(stringResource(localesR.string.about)) }
+    item { SectionTitle(localesR.string.about) }
     item {
         val context = LocalContext.current
         val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
