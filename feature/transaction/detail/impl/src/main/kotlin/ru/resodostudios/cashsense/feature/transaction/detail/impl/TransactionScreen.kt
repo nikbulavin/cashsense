@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -38,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -137,7 +140,7 @@ private fun TransactionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(innerPadding)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -172,100 +175,119 @@ private fun TransactionScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Row(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (transaction.transferId == null) {
-                            FilledIconButton(
-                                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                                onClick = {
-                                    onRepeatClick(
-                                        transaction.walletOwnerId,
-                                        transaction.id
-                                    )
-                                },
-                                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                            ) {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.Redo,
-                                    contentDescription = stringResource(localesR.string.repeat),
-                                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                                )
-                            }
-                            FilledIconButton(
-                                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                                onClick = {
-                                    onEditClick(
-                                        transaction.walletOwnerId,
-                                        transaction.id
-                                    )
-                                },
-                                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                            ) {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.Edit,
-                                    contentDescription = stringResource(localesR.string.edit),
-                                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                                )
-                            }
-                        }
-                        var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
-                        FilledIconButton(
-                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                            onClick = { shouldShowDeletionDialog = true },
-                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                        ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Delete,
-                                contentDescription = stringResource(localesR.string.delete),
-                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                            )
-                        }
-                        if (shouldShowDeletionDialog) {
-                            CsAlertDialog(
-                                titleRes = localesR.string.delete_transaction,
-                                icon = CsIcons.Outlined.Delete,
-                                confirmButtonTextRes = localesR.string.delete,
-                                dismissButtonTextRes = localesR.string.cancel,
-                                onConfirm = {
-                                    onDeleteClick(transaction)
-                                    shouldShowDeletionDialog = false
-                                },
-                                onDismiss = { shouldShowDeletionDialog = false },
-                                content = {
-                                    Column {
-                                        Text(stringResource(localesR.string.permanently_delete_transaction))
-                                        CsListItem(
-                                            headlineContent = {
-                                                Text(
-                                                    text = transaction.amount.formatAmount(transaction.currency, true),
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                )
-                                            },
-                                            supportingContent = {
-                                                Text(
-                                                    text = categoryTitle,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                )
-                                            },
-                                            leadingContent = { Icon(imageVector = categoryIcon, contentDescription = null) },
-                                        )
-                                    }
-                                },
-                            )
-                        }
-                    }
-                    transaction.description?.let {
+                    ActionButtons(
+                        transaction = transaction,
+                        onRepeatClick = onRepeatClick,
+                        onEditClick = onEditClick,
+                        onDeleteClick = onDeleteClick,
+                        categoryTitle = categoryTitle,
+                        categoryIcon = categoryIcon,
+                    )
+                    transaction.description?.let { description ->
                         TransactionDescription(
-                            description = it,
+                            description = description,
+                            modifier = Modifier.padding(horizontal = 16.dp),
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun ActionButtons(
+    transaction: Transaction,
+    onRepeatClick: (String, String) -> Unit,
+    onEditClick: (String, String) -> Unit,
+    onDeleteClick: (Transaction) -> Unit,
+    categoryTitle: String,
+    categoryIcon: ImageVector,
+) {
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (transaction.transferId == null) {
+            FilledIconButton(
+                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
+                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+            ) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Redo,
+                    contentDescription = stringResource(localesR.string.repeat),
+                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                )
+            }
+            FilledIconButton(
+                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
+                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+            ) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Edit,
+                    contentDescription = stringResource(localesR.string.edit),
+                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                )
+            }
+        }
+        var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
+        FilledIconButton(
+            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+            onClick = { shouldShowDeletionDialog = true },
+            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+        ) {
+            Icon(
+                imageVector = CsIcons.Outlined.Delete,
+                contentDescription = stringResource(localesR.string.delete),
+                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+            )
+        }
+        if (shouldShowDeletionDialog) {
+            CsAlertDialog(
+                titleRes = localesR.string.delete_transaction,
+                icon = CsIcons.Outlined.Delete,
+                confirmButtonTextRes = localesR.string.delete,
+                dismissButtonTextRes = localesR.string.cancel,
+                onConfirm = {
+                    onDeleteClick(transaction)
+                    shouldShowDeletionDialog = false
+                },
+                onDismiss = { shouldShowDeletionDialog = false },
+                content = {
+                    Column {
+                        Text(stringResource(localesR.string.permanently_delete_transaction))
+                        CsListItem(
+                            headlineContent = {
+                                Text(
+                                    text = transaction.amount.formatAmount(
+                                        transaction.currency,
+                                        true,
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = categoryTitle,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = categoryIcon,
+                                    contentDescription = null,
+                                )
+                            },
+                        )
+                    }
+                },
+            )
         }
     }
 }
