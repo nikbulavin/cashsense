@@ -24,7 +24,6 @@
   <string name="categories_empty">类别为空</string>
   <string name="category_deleted">类别已删除</string>
   <string name="home_title">主页</string>
-  <string name="wallet_deleted">钱包已删除</string>
   <string name="wallet_menu_icon_description">钱包菜单</string>
   <string name="home_empty">钱包为空</string>
   <string name="settings_general">常规</string>
@@ -86,7 +85,6 @@
   <string name="exchange_rate">汇率</string>
   <string name="choose_wallet">选择钱包</string>
   <string name="uncategorized">未分类</string>
-  <string name="permanently_delete">要永久删除吗？</string>
   <string name="from_wallet">从钱包</string>
   <string name="to_wallet">至钱包</string>
   <string name="converted_amount">兑换金额</string>
@@ -112,4 +110,9 @@
   <string name="financial_health">财务健康状况</string>
   <string name="toggle_menu">切换菜单</string>
   <string name="app_update_in_progress">下载更新中…</string>
+  <string name="delete_transaction">Delete transaction?</string>
+  <string name="delete_wallet">Delete wallet?</string>
+  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
+  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
+  <string name="transaction_ignored">Ignored</string>
 </resources>
