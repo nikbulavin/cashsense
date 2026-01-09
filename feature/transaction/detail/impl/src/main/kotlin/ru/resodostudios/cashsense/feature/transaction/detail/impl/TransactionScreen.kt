@@ -1,13 +1,24 @@
 package ru.resodostudios.cashsense.feature.transaction.detail.impl
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateBounds
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -29,22 +40,29 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
+import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.SectionTitle
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -123,7 +141,7 @@ private fun TransactionScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(innerPadding)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -145,6 +163,10 @@ private fun TransactionScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+                    TagsSection(
+                        isTransactionIgnored = transaction.ignored,
+                        isTransactionPending = !transaction.completed,
+                    )
                     Text(
                         text = transaction.amount.formatAmount(
                             currency = transactionState.transaction.currency,
@@ -154,67 +176,166 @@ private fun TransactionScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Row(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (transaction.transferId == null) {
-                            FilledIconButton(
-                                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                                onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
-                                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                            ) {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.Redo,
-                                    contentDescription = stringResource(localesR.string.repeat),
-                                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                                )
-                            }
-                            FilledIconButton(
-                                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                                onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
-                                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                            ) {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.Edit,
-                                    contentDescription = stringResource(localesR.string.edit),
-                                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                                )
-                            }
-                        }
-                        var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
-                        FilledIconButton(
-                            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                            onClick = { shouldShowDeletionDialog = true },
-                            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-                        ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Delete,
-                                contentDescription = stringResource(localesR.string.delete),
-                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                            )
-                        }
-                        if (shouldShowDeletionDialog) {
-                            CsAlertDialog(
-                                titleRes = localesR.string.permanently_delete,
-                                icon = CsIcons.Outlined.Delete,
-                                confirmButtonTextRes = localesR.string.delete,
-                                dismissButtonTextRes = localesR.string.cancel,
-                                onConfirm = {
-                                    onDeleteClick(transaction)
-                                    shouldShowDeletionDialog = false
-                                },
-                                onDismiss = { shouldShowDeletionDialog = false },
-                            )
-                        }
-                    }
-                    transaction.description?.let {
+                    ActionButtons(
+                        transaction = transaction,
+                        onRepeatClick = onRepeatClick,
+                        onEditClick = onEditClick,
+                        onDeleteClick = onDeleteClick,
+                        categoryTitle = categoryTitle,
+                        categoryIcon = categoryIcon,
+                    )
+                    transaction.description?.let { description ->
                         TransactionDescription(
-                            description = it,
+                            description = description,
+                            modifier = Modifier.padding(horizontal = 16.dp),
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+private fun ActionButtons(
+    transaction: Transaction,
+    onRepeatClick: (String, String) -> Unit,
+    onEditClick: (String, String) -> Unit,
+    onDeleteClick: (Transaction) -> Unit,
+    categoryTitle: String,
+    categoryIcon: ImageVector,
+) {
+    Row(
+        modifier = Modifier.padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (transaction.transferId == null) {
+            FilledIconButton(
+                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
+                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+            ) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Redo,
+                    contentDescription = stringResource(localesR.string.repeat),
+                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                )
+            }
+            FilledIconButton(
+                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+                onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
+                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+            ) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Edit,
+                    contentDescription = stringResource(localesR.string.edit),
+                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                )
+            }
+        }
+        var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
+        FilledIconButton(
+            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
+            onClick = { shouldShowDeletionDialog = true },
+            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
+        ) {
+            Icon(
+                imageVector = CsIcons.Outlined.Delete,
+                contentDescription = stringResource(localesR.string.delete),
+                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+            )
+        }
+        if (shouldShowDeletionDialog) {
+            CsAlertDialog(
+                titleRes = localesR.string.delete_transaction,
+                icon = CsIcons.Outlined.Delete,
+                confirmButtonTextRes = localesR.string.delete,
+                dismissButtonTextRes = localesR.string.cancel,
+                onConfirm = {
+                    onDeleteClick(transaction)
+                    shouldShowDeletionDialog = false
+                },
+                onDismiss = { shouldShowDeletionDialog = false },
+                content = {
+                    Column {
+                        Text(stringResource(localesR.string.permanently_delete_transaction))
+                        CsListItem(
+                            headlineContent = {
+                                Text(
+                                    text = transaction.amount.formatAmount(
+                                        transaction.currency,
+                                        true,
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = categoryTitle,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = categoryIcon,
+                                    contentDescription = null,
+                                )
+                            },
+                        )
+                    }
+                },
+            )
+        }
+    }
+}
+
+@OptIn(
+    ExperimentalSharedTransitionApi::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
+@Composable
+private fun TagsSection(
+    isTransactionIgnored: Boolean,
+    isTransactionPending: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    LookaheadScope {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = modifier.animateContentSize(),
+        ) {
+            val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+            val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+            AnimatedVisibility(
+                visible = isTransactionIgnored,
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsTag(
+                    text = stringResource(localesR.string.transaction_ignored),
+                    icon = CsIcons.Outlined.Block,
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    textColor = MaterialTheme.colorScheme.onErrorContainer,
+                )
+            }
+            AnimatedVisibility(
+                visible = isTransactionPending,
+                enter = fadeIn(effectsSpec) + scaleIn(spatialSpec),
+                exit = fadeOut(effectsSpec) + scaleOut(spatialSpec),
+                modifier = Modifier.animateBounds(this@LookaheadScope),
+            ) {
+                CsTag(
+                    text = stringResource(localesR.string.pending),
+                    icon = CsIcons.Outlined.Pending,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    textColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
             }
         }
     }
@@ -229,13 +350,8 @@ private fun TransactionDescription(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(localesR.string.description),
-            style = MaterialTheme.typography.labelLarge,
-            modifier = modifier.padding(vertical = 12.dp),
-            color = MaterialTheme.colorScheme.primary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        SectionTitle(
+            titleRes = localesR.string.description,
         )
         Surface(
             modifier = Modifier.fillMaxWidth(),

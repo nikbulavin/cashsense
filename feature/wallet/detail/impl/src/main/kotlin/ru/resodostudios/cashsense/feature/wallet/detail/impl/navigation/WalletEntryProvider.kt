@@ -27,7 +27,6 @@ fun EntryProviderScope<NavKey>.walletEntry(navigator: Navigator) {
             navigateToTransactionDialog = navigator::navigateToTransactionDialog,
             shouldShowNavigationIcon = true,
             shouldHighlightSelectedTransaction = false,
-            onDeleteClick = {},
             viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory> { it.create(key) },
         )
     }

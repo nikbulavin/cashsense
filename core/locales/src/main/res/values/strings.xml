@@ -24,6 +24,8 @@
     <string name="currency_not_found">Currency not found</string>
     <string name="date">Date</string>
     <string name="delete">Delete</string>
+    <string name="delete_transaction">Delete transaction?</string>
+    <string name="delete_wallet">Delete wallet?</string>
     <string name="description">Description</string>
     <string name="dynamic_color">Dynamic Color</string>
     <string name="edit">Edit</string>
@@ -61,7 +63,8 @@
     <string name="ok">OK</string>
     <string name="payment_date">Payment date</string>
     <string name="pending">Pending</string>
-    <string name="permanently_delete">Permanently delete?</string>
+    <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
+    <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
     <string name="previous_date">Previous date</string>
     <string name="primary">Primary</string>
     <string name="primary_icon_description">Make primary</string>
@@ -98,6 +101,7 @@
     <string name="toggle_menu">Toggle menu</string>
     <string name="total_balance">Total balance</string>
     <string name="transaction_ignore">Ignore in calculations</string>
+    <string name="transaction_ignored">Ignored</string>
     <string name="transaction_shortcut_long_label">Add a new transaction</string>
     <string name="transfer">Transfer</string>
     <string name="transfers">Transfers</string>
