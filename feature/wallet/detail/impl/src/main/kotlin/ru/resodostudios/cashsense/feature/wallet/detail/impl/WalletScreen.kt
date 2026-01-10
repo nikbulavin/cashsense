@@ -98,7 +98,10 @@ internal fun WalletScreen(
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onWalletEdit = onEditWallet,
-        onWalletDelete = viewModel::deleteWallet,
+        onWalletDelete = {
+            viewModel.deleteWallet(it)
+            onBackClick()
+        },
         onBackClick = onBackClick,
         navigateToTransactionDialog = navigateToTransactionDialog,
         onTransactionSelect = {
@@ -316,7 +319,12 @@ private fun WalletToolbar(
                                 overflow = TextOverflow.Ellipsis,
                             )
                         },
-                        leadingContent = { Icon(imageVector = CsIcons.Outlined.Wallet, contentDescription = null) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Wallet,
+                                contentDescription = null,
+                            )
+                        },
                     )
                 }
             },

@@ -19,6 +19,7 @@ dependencies {
     api(libs.haze.materials)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation3.ui)
     implementation(libs.lottie.compose)
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
