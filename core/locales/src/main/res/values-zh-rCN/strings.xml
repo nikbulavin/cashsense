@@ -110,9 +110,9 @@
   <string name="financial_health">财务健康状况</string>
   <string name="toggle_menu">切换菜单</string>
   <string name="app_update_in_progress">下载更新中…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
+  <string name="delete_transaction">删除交易？</string>
+  <string name="delete_wallet">删除钱包？</string>
+  <string name="permanently_delete_transaction">此交易将从您的设备中永久删除</string>
+  <string name="permanently_delete_wallet">此钱包将从您的设备中永久删除</string>
+  <string name="transaction_ignored">已忽略</string>
 </resources>
