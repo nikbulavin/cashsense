@@ -142,7 +142,7 @@ private fun SettingsScreen(
             is SettingsUiState.Success -> {
                 LazyColumn(
                     contentPadding = PaddingValues(
-                        top = 16.dp + innerPadding.calculateTopPadding(),
+                        top = innerPadding.calculateTopPadding(),
                         bottom = 16.dp + innerPadding.calculateBottomPadding(),
                         start = 16.dp,
                         end = 16.dp,
