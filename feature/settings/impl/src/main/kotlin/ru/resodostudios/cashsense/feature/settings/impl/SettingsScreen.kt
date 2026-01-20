@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -298,7 +299,7 @@ private fun LazyListScope.appearance(
             shapes = if (supportDynamicColor) {
                 ListItemDefaults.segmentedShapes(0, 2)
             } else {
-                ListItemDefaults.segmentedShapes(0, 1)
+                ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
             },
             content = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {

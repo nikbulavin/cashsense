@@ -7,6 +7,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,7 @@ import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.filterTransactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -53,6 +55,7 @@ internal class WalletViewModel @AssistedInject constructor(
     @Assisted val key: WalletNavKey,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
     private val walletsRepository: WalletsRepository,
+    @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
     private val transactionFilterState = MutableStateFlow(
@@ -166,7 +169,7 @@ internal class WalletViewModel @AssistedInject constructor(
     }
 
     fun deleteWallet(walletId: String) {
-        viewModelScope.launch {
+        appScope.launch {
             walletsRepository.deleteWallet(walletId)
         }
     }
