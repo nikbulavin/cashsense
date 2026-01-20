@@ -37,7 +37,10 @@ fun rememberCsAppState(
 
     return remember(
         timeZoneMonitor,
+        inAppUpdateManager,
         coroutineScope,
+        windowAdaptiveInfo,
+        navigationState,
     ) {
         CsAppState(
             timeZoneMonitor = timeZoneMonitor,
