@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
@@ -129,7 +131,7 @@ fun SubscriptionCard(
             DropdownMenu(
                 onEditClick = { onEditClick(subscription.id) },
                 onDeleteClick = { onDeleteClick(subscription.id) },
-                modifier = Modifier.padding(top = 2.dp, end = 4.dp),
+                modifier = Modifier.padding(top = 6.dp, end = 10.dp),
             )
         }
     }
@@ -150,6 +152,7 @@ private fun DropdownMenu(
             onClick = { expanded = true },
             icon = CsIcons.Outlined.MoreVert,
             contentDescription = stringResource(localesR.string.toggle_menu),
+            modifier = Modifier.size(IconButtonDefaults.smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
         )
         DropdownMenu(
             expanded = expanded,
