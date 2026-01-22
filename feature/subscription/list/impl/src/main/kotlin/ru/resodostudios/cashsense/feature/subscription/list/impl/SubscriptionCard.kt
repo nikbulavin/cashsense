@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,9 +38,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
@@ -67,6 +71,7 @@ fun SubscriptionCard(
     onEditClick: (String) -> Unit = {},
     onDeleteClick: (String) -> Unit = {},
 ) {
+    var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
     OutlinedCard(
         shape = shape,
         modifier = modifier,
@@ -130,10 +135,50 @@ fun SubscriptionCard(
             }
             DropdownMenu(
                 onEditClick = { onEditClick(subscription.id) },
-                onDeleteClick = { onDeleteClick(subscription.id) },
+                onDeleteClick = { shouldShowDeletionDialog = true },
                 modifier = Modifier.padding(top = 6.dp, end = 10.dp),
             )
         }
+    }
+    if (shouldShowDeletionDialog) {
+        CsAlertDialog(
+            titleRes = localesR.string.delete_subscription,
+            icon = CsIcons.Outlined.Delete,
+            confirmButtonTextRes = localesR.string.delete,
+            dismissButtonTextRes = localesR.string.cancel,
+            onConfirm = {
+                onDeleteClick(subscription.id)
+                shouldShowDeletionDialog = false
+            },
+            onDismiss = { shouldShowDeletionDialog = false },
+            content = {
+                Column {
+                    Text(stringResource(localesR.string.permanently_delete_subscription))
+                    CsListItem(
+                        headlineContent = {
+                            Text(
+                                text = subscription.title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = subscription.amount.formatAmount(subscription.currency),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Autorenew,
+                                contentDescription = null,
+                            )
+                        },
+                    )
+                }
+            },
+        )
     }
 }
 
