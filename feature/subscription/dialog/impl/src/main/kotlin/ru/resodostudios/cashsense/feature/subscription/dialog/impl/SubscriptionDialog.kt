@@ -1,8 +1,5 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog.impl
 
-import android.Manifest
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,16 +31,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus.Denied
-import com.google.accompanist.permissions.rememberPermissionState
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
@@ -57,6 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Notifications
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
+import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffect
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
@@ -202,8 +196,7 @@ private fun SubscriptionDialog(
         LaunchedEffect(subscriptionDialogState.id) {
             if (subscriptionDialogState.id.isEmpty()) focusRequester.requestFocus()
         }
-
-        if (subscriptionDialogState.isReminderEnabled) NotificationPermissionEffect()
+        NotificationPermissionEffect(subscriptionDialogState.isReminderEnabled)
     }
     TrackScreenViewEvent(screenName = "SubscriptionDialog")
 }
@@ -258,25 +251,6 @@ private fun RepeatingIntervalDropdownMenu(
                     checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
                 )
             }
-        }
-    }
-}
-
-@Composable
-@OptIn(ExperimentalPermissionsApi::class)
-private fun NotificationPermissionEffect() {
-
-    if (LocalInspectionMode.current) return
-    if (VERSION.SDK_INT < VERSION_CODES.TIRAMISU) return
-
-    val notificationsPermissionState = rememberPermissionState(
-        Manifest.permission.POST_NOTIFICATIONS,
-    )
-
-    LaunchedEffect(notificationsPermissionState) {
-        val status = notificationsPermissionState.status
-        if (status is Denied && !status.shouldShowRationale) {
-            notificationsPermissionState.launchPermissionRequest()
         }
     }
 }

@@ -58,6 +58,7 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
+import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffect
 import ru.resodostudios.cashsense.feature.category.dialog.api.navigateToCategoryDialog
 import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.categoryDialogEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
@@ -89,6 +90,7 @@ fun CsApp(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
+    val shouldRequestNotifications by appState.shouldRequestNotifications.collectAsStateWithLifecycle()
     val activity = LocalActivity.current
 
     InAppUpdateSnackbarHandler(
@@ -96,6 +98,7 @@ fun CsApp(
         snackbarHostState = snackbarHostState,
         activity = activity,
     )
+    NotificationPermissionEffect(shouldRequestNotifications)
 
     val navigator = remember { Navigator(appState.navigationState) }
 
