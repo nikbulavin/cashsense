@@ -104,7 +104,6 @@ internal class SubscriptionDialogViewModel @AssistedInject constructor(
 
     private fun loadUserData() {
         viewModelScope.launch {
-            _subscriptionDialogUiState.update { SubscriptionDialogUiState(isLoading = true) }
             val userData = userDataRepository.userData.first()
             _subscriptionDialogUiState.update {
                 SubscriptionDialogUiState(
@@ -115,19 +114,17 @@ internal class SubscriptionDialogViewModel @AssistedInject constructor(
     }
 
     private fun loadSubscription(id: String) {
+        _subscriptionDialogUiState.update { it.copy(id = id) }
         viewModelScope.launch {
-            _subscriptionDialogUiState.update { SubscriptionDialogUiState(isLoading = true) }
             val subscription = subscriptionsRepository.getSubscription(id).first()
             _subscriptionDialogUiState.update {
                 it.copy(
-                    id = subscription.id,
                     title = subscription.title,
                     amount = subscription.amount.toString(),
                     paymentDate = subscription.paymentDate,
                     currency = subscription.currency,
                     isReminderEnabled = subscription.reminder != null,
                     repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval),
-                    isLoading = false,
                 )
             }
         }
@@ -148,7 +145,6 @@ data class SubscriptionDialogUiState(
     val currency: Currency = getUsdCurrency(),
     val isReminderEnabled: Boolean = false,
     val repeatingInterval: RepeatingIntervalType = NONE,
-    val isLoading: Boolean = false,
 )
 
 fun SubscriptionDialogUiState.asSubscription(): Subscription {
