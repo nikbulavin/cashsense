@@ -5,4 +5,6 @@ interface ShortcutManager {
     fun addTransactionShortcut(walletId: String)
 
     fun removeShortcuts()
+
+    fun syncTransactionShortcut()
 }
