@@ -15,14 +15,14 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun NotificationPermissionEffect(
     shouldRequestPermission: Boolean = false,
 ) {
-    if (LocalInspectionMode.current) return
+    if (LocalInspectionMode.current || !shouldRequestPermission) return
     if (VERSION.SDK_INT < VERSION_CODES.TIRAMISU) return
 
     val notificationsPermissionState = rememberPermissionState(
         Manifest.permission.POST_NOTIFICATIONS,
     )
 
-    LaunchedEffect(notificationsPermissionState, shouldRequestPermission) {
+    LaunchedEffect(notificationsPermissionState) {
         val status = notificationsPermissionState.status
         if (status is PermissionStatus.Denied && !status.shouldShowRationale && shouldRequestPermission) {
             notificationsPermissionState.launchPermissionRequest()
