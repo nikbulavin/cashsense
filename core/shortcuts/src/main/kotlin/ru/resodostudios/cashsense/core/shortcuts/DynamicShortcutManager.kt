@@ -32,7 +32,19 @@ internal class DynamicShortcutManager @Inject constructor(
     private val userDataRepository: UserDataRepository,
 ) : ShortcutManager {
 
-    override fun addTransactionShortcut(walletId: String) {
+    override fun syncTransactionShortcut() {
+        userDataRepository.userData
+            .map { it.primaryWalletId }
+            .onEach { primaryWalletId ->
+                if (primaryWalletId.isBlank()) return@onEach removeShortcuts()
+                runCatching { walletsRepository.getExtendedWallet(primaryWalletId).first() }
+                    .onSuccess { addTransactionShortcut(primaryWalletId) }
+                    .onFailure { removeShortcuts() }
+            }
+            .launchIn(appScope)
+    }
+
+    private fun addTransactionShortcut(walletId: String) {
         val shortcutInfo = ShortcutInfoCompat.Builder(context, DYNAMIC_TRANSACTION_SHORTCUT_ID)
             .setShortLabel(context.getString(localesR.string.new_transaction))
             .setLongLabel(context.getString(localesR.string.transaction_shortcut_long_label))
@@ -52,17 +64,5 @@ internal class DynamicShortcutManager @Inject constructor(
         ShortcutManagerCompat.pushDynamicShortcut(context, shortcutInfo)
     }
 
-    override fun removeShortcuts() = ShortcutManagerCompat.removeAllDynamicShortcuts(context)
-
-    override fun syncTransactionShortcut() {
-        userDataRepository.userData
-            .map { it.primaryWalletId }
-            .onEach { primaryWalletId ->
-                if (primaryWalletId.isBlank()) return@onEach removeShortcuts()
-                runCatching { walletsRepository.getExtendedWallet(primaryWalletId).first() }
-                    .onSuccess { addTransactionShortcut(primaryWalletId) }
-                    .onFailure { removeShortcuts() }
-            }
-            .launchIn(appScope)
-    }
+    private fun removeShortcuts() = ShortcutManagerCompat.removeAllDynamicShortcuts(context)
 }
