@@ -32,6 +32,7 @@ import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.PermissionManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
+import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
 import ru.resodostudios.cashsense.ui.CsApp
@@ -59,6 +60,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var permissionManager: PermissionManager
+
+    @Inject
+    lateinit var shortcutManager: ShortcutManager
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -104,11 +108,11 @@ class MainActivity : AppCompatActivity() {
             }
             inAppReviewManager.openReviewDialog(this@MainActivity)
         }
+        shortcutManager.syncTransactionShortcut()
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
         val startKey = intent.data.toKey()
-
         val syntheticBackStack = buildBackStack(
             startKey = startKey,
         )
