@@ -33,6 +33,7 @@ import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.subscription.dialog.api.SubscriptionDialogNavKey
 import java.util.Currency
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -141,7 +142,7 @@ data class SubscriptionDialogUiState(
     val id: String = "",
     val title: String = "",
     val amount: String = "",
-    val paymentDate: Instant = Clock.System.now(),
+    val paymentDate: Instant = Clock.System.now() + 1.days,
     val currency: Currency = getUsdCurrency(),
     val isReminderEnabled: Boolean = false,
     val repeatingInterval: RepeatingIntervalType = NONE,
