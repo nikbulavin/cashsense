@@ -29,19 +29,14 @@ internal class ReminderSchedulerImpl @Inject constructor(
     }
 
     override fun schedule(reminder: Reminder) {
-        alarmManager.setInexactRepeating(
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             reminder.notificationDate?.toEpochMilliseconds() ?: 0L,
-            reminder.repeatingInterval ?: 0,
             createPendingIntent(reminder.id ?: 0),
         )
     }
 
-    override fun cancel(reminderId: Int) {
-        alarmManager.cancel(
-            createPendingIntent(reminderId)
-        )
-    }
+    override fun cancel(reminderId: Int) = alarmManager.cancel(createPendingIntent(reminderId))
 }
 
 internal const val EXTRA_REMINDER_ID = "reminder-id"

@@ -8,6 +8,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.notifications.Notifier
@@ -30,7 +38,6 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
     lateinit var appScope: CoroutineScope
 
     override fun onReceive(context: Context, intent: Intent) {
-
         val reminderId = intent.getIntExtra(EXTRA_REMINDER_ID, 0)
 
         appScope.launch {
@@ -50,6 +57,36 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
     private suspend fun findSubscriptionAndPostNotification(reminderId: Int) {
         subscriptionsRepository.getSubscriptions().firstOrNull()
             ?.find { it.id.hashCode() == reminderId }
-            ?.let { notifier.postSubscriptionNotification(it) }
+            ?.let { subscription ->
+                notifier.postSubscriptionNotification(subscription)
+
+                val reminder = subscription.reminder
+                val repeatingInterval = reminder?.repeatingInterval
+
+                if (reminder != null && repeatingInterval != null && repeatingInterval > 0) {
+                    val newPaymentDate = subscription.paymentDate.plus(
+                        repeatingInterval,
+                        DateTimeUnit.MILLISECOND,
+                    )
+
+                    val timeZone = TimeZone.currentSystemDefault()
+                    val newNotificationDate = LocalDateTime(
+                        date = newPaymentDate.toLocalDateTime(timeZone).date.minus(
+                            1,
+                            DateTimeUnit.DAY,
+                        ),
+                        time = LocalTime(9, 0),
+                    ).toInstant(timeZone)
+
+                    val updatedSubscription = subscription.copy(
+                        paymentDate = newPaymentDate,
+                        reminder = reminder.copy(
+                            notificationDate = newNotificationDate,
+                        ),
+                    )
+
+                    subscriptionsRepository.upsertSubscription(updatedSubscription)
+                }
+            }
     }
 }
