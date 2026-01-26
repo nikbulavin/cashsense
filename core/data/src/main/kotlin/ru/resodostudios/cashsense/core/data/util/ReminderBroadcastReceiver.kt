@@ -20,12 +20,13 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
     lateinit var subscriptionsRepository: SubscriptionsRepository
 
     @Inject
-    lateinit var reminderSchedulerImpl: ReminderSchedulerImpl
+    lateinit var reminderScheduler: ReminderScheduler
 
     @Inject
     lateinit var notifier: Notifier
 
-    @Inject @ApplicationScope
+    @Inject
+    @ApplicationScope
     lateinit var appScope: CoroutineScope
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -33,13 +34,9 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
         val reminderId = intent.getIntExtra(EXTRA_REMINDER_ID, 0)
 
         appScope.launch {
-            withTimeoutOrNull(4500L)  {
-                if (reminderId != 0) {
-                    findSubscriptionAndPostNotification(reminderId)
-                }
-                if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-                    rescheduleSubscriptionReminders()
-                }
+            withTimeoutOrNull(4500L) {
+                if (reminderId != 0) findSubscriptionAndPostNotification(reminderId)
+                if (intent.action == Intent.ACTION_BOOT_COMPLETED) rescheduleSubscriptionReminders()
             }
         }
     }
@@ -47,11 +44,7 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
     private suspend fun rescheduleSubscriptionReminders() {
         subscriptionsRepository.getSubscriptions().firstOrNull()
             ?.filter { it.reminder != null }
-            ?.forEach { subscription ->
-                subscription.reminder?.let {
-                    reminderSchedulerImpl.schedule(it)
-                }
-            }
+            ?.forEach { it.reminder?.let(reminderScheduler::schedule) }
     }
 
     private suspend fun findSubscriptionAndPostNotification(reminderId: Int) {
