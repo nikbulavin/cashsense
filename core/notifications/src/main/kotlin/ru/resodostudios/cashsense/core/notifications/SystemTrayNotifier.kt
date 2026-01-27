@@ -46,7 +46,7 @@ internal class SystemTrayNotifier @Inject constructor(
 
     override fun postSubscriptionNotification(
         subscription: Subscription,
-    ) = with(context) {
+    ): Unit = with(context) {
         if (checkSelfPermission(this, permission.POST_NOTIFICATIONS) != PERMISSION_GRANTED) return
 
         val subscriptionNotification = createSubscriptionNotification {
