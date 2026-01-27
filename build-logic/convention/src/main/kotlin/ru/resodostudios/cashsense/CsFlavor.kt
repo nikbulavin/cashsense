@@ -17,7 +17,7 @@ enum class CsFlavor(val dimension: FlavorDimension, val applicationIdSuffix: Str
 }
 
 fun configureFlavors(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    commonExtension: CommonExtension,
     flavorConfigurationBlock: ProductFlavor.(flavor: CsFlavor) -> Unit = {},
 ) {
     commonExtension.apply {
@@ -30,7 +30,7 @@ fun configureFlavors(
                 register(csFlavor.name) {
                     dimension = csFlavor.dimension.name
                     flavorConfigurationBlock(this, csFlavor)
-                    if (this@apply is ApplicationExtension && this is ApplicationProductFlavor) {
+                    if (commonExtension is ApplicationExtension && this is ApplicationProductFlavor) {
                         if (csFlavor.applicationIdSuffix != null) {
                             applicationIdSuffix = csFlavor.applicationIdSuffix
                         }
