@@ -13,6 +13,7 @@ class HiltConventionPlugin : Plugin<Project> {
 
             dependencies {
                 "ksp"(libs.findLibrary("hilt.compiler").get())
+                "ksp"(libs.findLibrary("kotlin.metadata").get())
             }
 
             pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
