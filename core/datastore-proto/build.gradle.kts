@@ -1,10 +1,6 @@
 plugins {
-    alias(libs.plugins.cashsense.android.library)
+    alias(libs.plugins.cashsense.jvm.library)
     alias(libs.plugins.protobuf)
-}
-
-android {
-    namespace = "ru.resodostudios.cashsense.core.datastore.proto"
 }
 
 protobuf {
@@ -12,9 +8,9 @@ protobuf {
         artifact = libs.protobuf.protoc.get().toString()
     }
     generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                register("java") {
+        all().configureEach {
+            builtins {
+                named("java") {
                     option("lite")
                 }
                 register("kotlin") {
