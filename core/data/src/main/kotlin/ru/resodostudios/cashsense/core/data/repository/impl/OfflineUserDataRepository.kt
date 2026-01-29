@@ -8,12 +8,10 @@ import ru.resodostudios.cashsense.core.database.util.DatabaseTransferManager
 import ru.resodostudios.cashsense.core.datastore.CsPreferencesDataSource
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.UserData
-import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import javax.inject.Inject
 
 internal class OfflineUserDataRepository @Inject constructor(
     private val csPreferencesDataSource: CsPreferencesDataSource,
-    private val shortcutManager: ShortcutManager,
     private val databaseTransferManager: DatabaseTransferManager,
 ) : UserDataRepository {
 
@@ -30,10 +28,8 @@ internal class OfflineUserDataRepository @Inject constructor(
     override suspend fun setPrimaryWallet(id: String, isPrimary: Boolean) {
         if (isPrimary) {
             csPreferencesDataSource.setPrimaryWalletId(id)
-            shortcutManager.addTransactionShortcut(id)
         } else if (csPreferencesDataSource.userData.first().primaryWalletId == id) {
             csPreferencesDataSource.setPrimaryWalletId("")
-            shortcutManager.removeShortcuts()
         }
     }
 
