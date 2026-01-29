@@ -10,13 +10,11 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,11 +22,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
-import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
@@ -77,33 +70,14 @@ private fun HomeScreen(
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     Scaffold(
         topBar = {
-            CsTopAppBar(
-                titleRes = R.string.app_name,
+            CsAppBarWithSearch(
                 scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults.topAppBarColors().copy(
-                    scrolledContainerColor = Color.Transparent,
-                    containerColor = Color.Transparent,
-                ),
-                navigationIcon = {
-                    CsIconButton(
-                        onClick = onTotalBalanceClick,
-                        icon = CsIcons.Outlined.AccountBalance,
-                        contentDescription = stringResource(localesR.string.total_balance),
-                        tooltipPosition = TooltipAnchorPosition.Right,
-                    )
-                },
-                actions = {
-                    CsIconButton(
-                        onClick = onSettingsClick,
-                        icon = CsIcons.Outlined.Settings,
-                        contentDescription = stringResource(localesR.string.settings_title),
-                        tooltipPosition = TooltipAnchorPosition.Left,
-                    )
-                },
+                onTotalBalanceClick = onTotalBalanceClick,
+                onSettingsClick = onSettingsClick,
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -121,7 +95,7 @@ private fun HomeScreen(
                         start = 16.dp,
                         end = 16.dp,
                         bottom = 110.dp + innerPadding.calculateBottomPadding(),
-                        top = innerPadding.calculateTopPadding(),
+                        top = 12.dp + innerPadding.calculateTopPadding(),
                     ),
                 ) {
                     wallets(
