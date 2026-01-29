@@ -12,6 +12,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
@@ -58,34 +59,63 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
         subscriptionsRepository.getSubscriptions().firstOrNull()
             ?.find { it.id.hashCode() == reminderId }
             ?.let { subscription ->
-                notifier.postSubscriptionNotification(subscription)
+                val timeZone = TimeZone.currentSystemDefault()
+                val paymentDate = subscription.paymentDate.toLocalDateTime(timeZone).date
+                val reminderDate = subscription.reminder?.notificationDate?.toLocalDateTime(timeZone)?.date
+                    ?: return@let
+                val daysUntil = reminderDate.daysUntil(paymentDate)
 
-                val reminder = subscription.reminder
-                val repeatingInterval = reminder?.repeatingInterval
+                if (daysUntil > 1) {
+                    notifier.postSubscriptionNotification(subscription)
 
-                if (reminder != null && repeatingInterval != null && repeatingInterval > 0) {
-                    val newPaymentDate = subscription.paymentDate.plus(
-                        repeatingInterval,
-                        DateTimeUnit.MILLISECOND,
-                    )
-
-                    val timeZone = TimeZone.currentSystemDefault()
-                    val newNotificationDate = LocalDateTime(
-                        date = newPaymentDate.toLocalDateTime(timeZone).date.minus(
-                            1,
-                            DateTimeUnit.DAY,
-                        ),
-                        time = LocalTime(9, 0),
+                    val nextNotificationDate = LocalDateTime(
+                        paymentDate.minus(1, DateTimeUnit.DAY),
+                        LocalTime(9, 0),
                     ).toInstant(timeZone)
 
                     val updatedSubscription = subscription.copy(
-                        paymentDate = newPaymentDate,
-                        reminder = reminder.copy(
-                            notificationDate = newNotificationDate,
+                        reminder = subscription.reminder?.copy(
+                            notificationDate = nextNotificationDate,
                         ),
                     )
-
                     subscriptionsRepository.upsertSubscription(updatedSubscription)
+                } else if (daysUntil == 1) {
+                    notifier.postSubscriptionNotification(subscription)
+
+                    val nextNotificationDate = LocalDateTime(
+                        paymentDate,
+                        LocalTime(9, 0),
+                    ).toInstant(timeZone)
+
+                    val updatedSubscription = subscription.copy(
+                        reminder = subscription.reminder?.copy(
+                            notificationDate = nextNotificationDate,
+                        ),
+                    )
+                    subscriptionsRepository.upsertSubscription(updatedSubscription)
+                } else {
+                    val reminder = subscription.reminder
+                    val repeatingInterval = reminder?.repeatingInterval
+
+                    if (reminder != null && repeatingInterval != null && repeatingInterval > 0) {
+                        val newPaymentDate = subscription.paymentDate.plus(
+                            repeatingInterval,
+                            DateTimeUnit.MILLISECOND,
+                        )
+                        val newPaymentDateLocal = newPaymentDate.toLocalDateTime(timeZone).date
+                        val newNotificationDate = LocalDateTime(
+                            newPaymentDateLocal.minus(7, DateTimeUnit.DAY),
+                            LocalTime(9, 0),
+                        ).toInstant(timeZone)
+
+                        val updatedSubscription = subscription.copy(
+                            paymentDate = newPaymentDate,
+                            reminder = reminder.copy(
+                                notificationDate = newNotificationDate,
+                            ),
+                        )
+                        subscriptionsRepository.upsertSubscription(updatedSubscription)
+                    }
                 }
             }
     }
