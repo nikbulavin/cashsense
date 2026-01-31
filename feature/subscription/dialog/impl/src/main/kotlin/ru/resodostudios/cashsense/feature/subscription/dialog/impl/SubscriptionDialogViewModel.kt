@@ -170,7 +170,6 @@ fun SubscriptionDialogUiState.asSubscription(): Subscription {
         val notificationDate = if (now > notificationDateMinus7) notificationDateMinus1 else notificationDateMinus7
 
         reminder = Reminder(
-            id = subscriptionId.hashCode(),
             notificationDate = notificationDate,
             repeatingInterval = repeatingInterval.period,
         )

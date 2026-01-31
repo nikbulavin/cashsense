@@ -25,7 +25,6 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
-                        id = 0,
                         notificationDate = Instant.DISTANT_PAST,
                         repeatingInterval = MONTHLY.period,
                     ),
@@ -45,7 +44,6 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
-                        id = 0,
                         notificationDate = Instant.DISTANT_PAST,
                         repeatingInterval = YEARLY.period,
                     ),
@@ -57,7 +55,6 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
                     reminder = Reminder(
-                        id = 0,
                         notificationDate = Instant.DISTANT_PAST,
                         repeatingInterval = MONTHLY.period,
                     ),

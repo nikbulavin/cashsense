@@ -27,8 +27,9 @@ internal class OfflineSubscriptionsRepository @Inject constructor(
 
     override suspend fun upsertSubscription(subscription: Subscription) {
         subscriptionDao.upsertSubscription(subscription.asEntity())
-        if (subscription.reminder != null) {
-            reminderScheduler.schedule(subscription.reminder!!)
+        val reminder = subscription.reminder
+        if (reminder?.notificationDate != null) {
+            reminderScheduler.schedule(subscription.id.hashCode(), reminder.notificationDate!!)
         } else {
             reminderScheduler.cancel(subscription.id.hashCode())
         }

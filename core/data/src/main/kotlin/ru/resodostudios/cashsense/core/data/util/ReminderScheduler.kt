@@ -1,10 +1,10 @@
 package ru.resodostudios.cashsense.core.data.util
 
-import ru.resodostudios.cashsense.core.model.data.Reminder
+import kotlin.time.Instant
 
 interface ReminderScheduler {
 
-    fun schedule(reminder: Reminder)
+    fun schedule(reminderId: Int, time: Instant)
 
     fun cancel(reminderId: Int)
 }
