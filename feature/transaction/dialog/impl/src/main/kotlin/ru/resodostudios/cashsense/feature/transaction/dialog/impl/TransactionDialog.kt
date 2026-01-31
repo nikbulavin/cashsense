@@ -189,7 +189,7 @@ private fun TransactionDialog(
                 )
                 CsTonalToggleButton(
                     checked = transactionDialogState.ignored,
-                    icon = CsIcons.Outlined.Block,
+                    icon = if (transactionDialogState.ignored) CsIcons.Outlined.Check else CsIcons.Outlined.Block,
                     titleRes = localesR.string.transaction_ignore,
                     onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
                     modifier = Modifier.fillMaxWidth(),
@@ -279,7 +279,7 @@ private fun CategoryDropdownMenu(
                     shapes = MenuDefaults.itemShape(index, categories.size),
                     text = {
                         Text(
-                            text = category?.title?: stringResource(localesR.string.none),
+                            text = category?.title ?: stringResource(localesR.string.none),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -297,7 +297,12 @@ private fun CategoryDropdownMenu(
                             contentDescription = null,
                         )
                     },
-                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
+                    checkedLeadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Check,
+                            contentDescription = null,
+                        )
+                    },
                 )
             }
         }
