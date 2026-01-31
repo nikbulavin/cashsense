@@ -52,7 +52,7 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
 
     private suspend fun rescheduleSubscriptionReminders() {
         subscriptionsRepository.getSubscriptions().firstOrNull()
-            ?.filter { it.reminder != null && it.reminder?.notificationDate != null }
+            ?.filter { it.reminder?.notificationDate != null }
             ?.forEach { subscription ->
                 subscription.reminder?.notificationDate?.let { date ->
                     reminderScheduler.schedule(subscription.id.hashCode(), date)

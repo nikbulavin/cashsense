@@ -15,7 +15,6 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -40,8 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
-import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
@@ -160,26 +157,12 @@ private fun SubscriptionDialog(
                     .padding(bottom = 16.dp),
                 onlyFutureDates = true,
             )
-            CsToggableListItem(
+            CsTonalToggleButton(
                 checked = subscriptionDialogState.isReminderEnabled,
-                onCheckedChange = {
-                    onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
-                },
-                content = { Text(stringResource(localesR.string.reminder)) },
-                supportingContent = { Text(stringResource(localesR.string.reminder_description)) },
-                leadingContent = {
-                    Icon(
-                        imageVector = CsIcons.Outlined.Notifications,
-                        contentDescription = null,
-                    )
-                },
-                trailingContent = {
-                    CsSwitch(
-                        checked = subscriptionDialogState.isReminderEnabled,
-                        onCheckedChange = null,
-                    )
-                },
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Outlined.Check else CsIcons.Outlined.Notifications,
+                titleRes = localesR.string.reminder,
+                onCheckedChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it)) },
+                modifier = Modifier.fillMaxWidth(),
             )
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
