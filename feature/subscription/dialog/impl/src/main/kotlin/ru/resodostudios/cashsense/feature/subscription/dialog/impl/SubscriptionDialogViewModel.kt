@@ -22,11 +22,9 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
-import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -124,8 +122,8 @@ internal class SubscriptionDialogViewModel @AssistedInject constructor(
                     amount = subscription.amount.toString(),
                     paymentDate = subscription.paymentDate,
                     currency = subscription.currency,
-                    isReminderEnabled = subscription.reminder != null,
-                    repeatingInterval = getRepeatingIntervalType(subscription.reminder?.repeatingInterval),
+                    isReminderEnabled = subscription.notificationDate != null,
+                    repeatingInterval = subscription.repeatingInterval,
                 )
             }
         }
@@ -150,7 +148,7 @@ data class SubscriptionDialogUiState(
 
 fun SubscriptionDialogUiState.asSubscription(): Subscription {
     val subscriptionId = id.ifBlank { Uuid.random().toHexString() }
-    var reminder: Reminder? = null
+    var notificationDate: Instant? = null
 
     if (isReminderEnabled) {
         val timeZone = TimeZone.currentSystemDefault()
@@ -167,12 +165,7 @@ fun SubscriptionDialogUiState.asSubscription(): Subscription {
         ).toInstant(timeZone)
 
         val now = Clock.System.now()
-        val notificationDate = if (now > notificationDateMinus7) notificationDateMinus1 else notificationDateMinus7
-
-        reminder = Reminder(
-            notificationDate = notificationDate,
-            repeatingInterval = repeatingInterval.period,
-        )
+        notificationDate = if (now > notificationDateMinus7) notificationDateMinus1 else notificationDateMinus7
     }
 
     return Subscription(
@@ -181,6 +174,7 @@ fun SubscriptionDialogUiState.asSubscription(): Subscription {
         amount = amount.toBigDecimal(),
         paymentDate = paymentDate,
         currency = currency,
-        reminder = reminder,
+        notificationDate = notificationDate,
+        repeatingInterval = repeatingInterval,
     )
 }

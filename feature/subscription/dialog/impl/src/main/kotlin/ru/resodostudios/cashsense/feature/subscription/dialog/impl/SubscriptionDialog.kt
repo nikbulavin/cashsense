@@ -193,10 +193,7 @@ private fun RepeatingIntervalDropdownMenu(
 ) {
     val intervalNames = listOf(
         stringResource(localesR.string.repeat_none),
-        stringResource(localesR.string.repeat_daily),
-        stringResource(localesR.string.repeat_weekly),
         stringResource(localesR.string.repeat_monthly),
-        stringResource(localesR.string.repeat_yearly),
     )
     var expanded by remember { mutableStateOf(false) }
 

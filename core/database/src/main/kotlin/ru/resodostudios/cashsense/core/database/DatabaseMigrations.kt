@@ -55,6 +55,17 @@ internal object DatabaseMigrations {
         columnName = "alarm_id",
     )
     class Schema12to13 : AutoMigrationSpec
+
+    @RenameColumn(
+        tableName = "subscriptions",
+        fromColumnName = "alarm_notificationDate",
+        toColumnName = "notification_date",
+    )
+    @DeleteColumn(
+        tableName = "subscriptions",
+        columnName = "alarm_repeatingInterval",
+    )
+    class Schema13to14 : AutoMigrationSpec
 }
 
 internal val Schema11to12 = object : Migration(11, 12) {

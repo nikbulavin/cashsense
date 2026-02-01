@@ -18,6 +18,7 @@ import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.util.BigDecimalConverter
 import ru.resodostudios.cashsense.core.database.util.CurrencyConverter
 import ru.resodostudios.cashsense.core.database.util.InstantConverter
+import ru.resodostudios.cashsense.core.database.util.RepeatingIntervalTypeConverter
 import ru.resodostudios.cashsense.core.database.util.UuidConverter
 
 @Database(
@@ -29,7 +30,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         TransactionCategoryCrossRefEntity::class,
         WalletEntity::class,
     ],
-    version = 13,
+    version = 14,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),
@@ -42,6 +43,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         AutoMigration(from = 9, to = 10, spec = DatabaseMigrations.Schema9to10::class),
         AutoMigration(from = 10, to = 11),
         AutoMigration(from = 12, to = 13, spec = DatabaseMigrations.Schema12to13::class),
+        AutoMigration(from = 13, to = 14, spec = DatabaseMigrations.Schema13to14::class),
     ],
     exportSchema = true,
 )
@@ -49,6 +51,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
     BigDecimalConverter::class,
     CurrencyConverter::class,
     InstantConverter::class,
+    RepeatingIntervalTypeConverter::class,
     UuidConverter::class,
 )
 internal abstract class CsDatabase : RoomDatabase() {

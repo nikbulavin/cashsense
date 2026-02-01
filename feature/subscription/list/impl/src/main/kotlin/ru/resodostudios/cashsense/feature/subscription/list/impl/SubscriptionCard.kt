@@ -50,17 +50,15 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.NotificationsActive
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.DAILY
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.WEEKLY
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
 import ru.resodostudios.cashsense.core.model.data.Subscription
-import ru.resodostudios.cashsense.core.model.data.getRepeatingIntervalType
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -112,19 +110,13 @@ fun SubscriptionCard(
                         icon = CsIcons.Outlined.Calendar,
                     )
                     AnimatedVisibility(
-                        visible = subscription.reminder != null,
+                        visible = subscription.notificationDate != null && subscription.repeatingInterval != NONE,
                         enter = fadeIn() + scaleIn(),
                         exit = fadeOut() + scaleOut(),
                     ) {
-                        val repeatingIntervalType = subscription.reminder?.repeatingInterval?.let {
-                            getRepeatingIntervalType(it)
-                        }
-                        val reminderTitle = when (repeatingIntervalType) {
-                            DAILY -> stringResource(localesR.string.repeat_daily)
-                            WEEKLY -> stringResource(localesR.string.repeat_weekly)
+                        val reminderTitle = when (subscription.repeatingInterval) {
+                            NONE -> stringResource(localesR.string.repeat_none)
                             MONTHLY -> stringResource(localesR.string.repeat_monthly)
-                            YEARLY -> stringResource(localesR.string.repeat_yearly)
-                            else -> stringResource(localesR.string.reminder)
                         }
                         CsTag(
                             text = reminderTitle,
@@ -253,7 +245,8 @@ fun SubscriptionCardPreview() {
                     amount = BigDecimal(10.99),
                     currency = getUsdCurrency(),
                     paymentDate = Clock.System.now(),
-                    reminder = null,
+                    notificationDate = Clock.System.now() + 30.days,
+                    repeatingInterval = MONTHLY,
                 ),
                 modifier = Modifier.padding(16.dp),
             )

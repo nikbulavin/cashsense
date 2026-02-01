@@ -15,7 +15,7 @@ internal class PermissionManagerImpl @Inject constructor(
     override val shouldRequestNotifications: Flow<Boolean> =
         subscriptionsRepository.getSubscriptions()
             .map { subscriptions ->
-                subscriptions.any { it.reminder != null }
+                subscriptions.any { it.notificationDate != null }
             }
             .distinctUntilChanged()
 }
