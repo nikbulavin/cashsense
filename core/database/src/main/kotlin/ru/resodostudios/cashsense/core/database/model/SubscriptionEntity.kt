@@ -24,6 +24,8 @@ data class SubscriptionEntity(
     val notificationDate: Instant?,
     @ColumnInfo(name = "repeating_interval", defaultValue = "NONE")
     val repeatingInterval: RepeatingIntervalType,
+    @ColumnInfo(name = "fixed_interval", defaultValue = "0")
+    val fixedInterval: Boolean,
 )
 
 fun SubscriptionEntity.asExternalModel(): Subscription {
@@ -35,5 +37,6 @@ fun SubscriptionEntity.asExternalModel(): Subscription {
         paymentDate = paymentDate,
         notificationDate = notificationDate,
         repeatingInterval = repeatingInterval,
+        fixedInterval = fixedInterval,
     )
 }

@@ -247,6 +247,7 @@ fun SubscriptionCardPreview() {
                     paymentDate = Clock.System.now(),
                     notificationDate = Clock.System.now() + 30.days,
                     repeatingInterval = MONTHLY,
+                    fixedInterval = false,
                 ),
                 modifier = Modifier.padding(16.dp),
             )

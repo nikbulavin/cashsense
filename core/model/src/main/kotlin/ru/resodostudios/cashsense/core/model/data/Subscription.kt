@@ -12,4 +12,5 @@ data class Subscription(
     val paymentDate: Instant,
     val notificationDate: Instant?,
     val repeatingInterval: RepeatingIntervalType,
+    val fixedInterval: Boolean,
 )

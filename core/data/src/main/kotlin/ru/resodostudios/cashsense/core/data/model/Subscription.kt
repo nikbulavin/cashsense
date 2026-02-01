@@ -12,5 +12,6 @@ fun Subscription.asEntity(): SubscriptionEntity {
         paymentDate = paymentDate,
         notificationDate = notificationDate,
         repeatingInterval = repeatingInterval,
+        fixedInterval = fixedInterval,
     )
 }

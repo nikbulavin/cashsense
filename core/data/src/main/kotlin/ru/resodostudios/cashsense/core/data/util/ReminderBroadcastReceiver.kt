@@ -95,15 +95,21 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
                     )
                     subscriptionsRepository.upsertSubscription(updatedSubscription)
                 } else {
-                    val repeatingInterval: Long = when (subscription.repeatingInterval) {
-                        RepeatingIntervalType.NONE -> return@let
-                        RepeatingIntervalType.MONTHLY -> 30.days.inWholeMilliseconds
-                    }
-                    if (repeatingInterval > 0) {
-                        val newPaymentDate = subscription.paymentDate.plus(
-                            repeatingInterval,
-                            DateTimeUnit.MILLISECOND,
-                        )
+                    if (subscription.repeatingInterval != RepeatingIntervalType.NONE) {
+                        val newPaymentDate = if (subscription.fixedInterval) {
+                            val millis = when (subscription.repeatingInterval) {
+                                RepeatingIntervalType.MONTHLY -> 30.days.inWholeMilliseconds
+                                else -> 0L
+                            }
+                            subscription.paymentDate.plus(millis, DateTimeUnit.MILLISECOND)
+                        } else {
+                            val (quantity, unit) = when (subscription.repeatingInterval) {
+                                RepeatingIntervalType.MONTHLY -> 1 to DateTimeUnit.MONTH
+                                else -> 0 to DateTimeUnit.DAY
+                            }
+                            subscription.paymentDate.plus(quantity, unit, timeZone)
+                        }
+
                         val newPaymentDateLocal = newPaymentDate.toLocalDateTime(timeZone).date
 
                         val notificationDateMinus7 = LocalDateTime(
@@ -116,7 +122,8 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
                             LocalTime(9, 0),
                         ).toInstant(timeZone)
 
-                        val newNotificationDate = if (Clock.System.now() > notificationDateMinus7) {
+                        val now = Clock.System.now()
+                        val newNotificationDate = if (now > notificationDateMinus7) {
                             notificationDateMinus1
                         } else {
                             notificationDateMinus7

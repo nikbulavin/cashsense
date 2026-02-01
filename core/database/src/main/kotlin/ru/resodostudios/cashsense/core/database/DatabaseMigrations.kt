@@ -50,22 +50,22 @@ internal object DatabaseMigrations {
     )
     class Schema9to10 : AutoMigrationSpec
 
-    @DeleteColumn(
-        tableName = "subscriptions",
-        columnName = "alarm_id",
-    )
-    class Schema12to13 : AutoMigrationSpec
-
     @RenameColumn(
         tableName = "subscriptions",
         fromColumnName = "alarm_notificationDate",
         toColumnName = "notification_date",
     )
-    @DeleteColumn(
-        tableName = "subscriptions",
-        columnName = "alarm_repeatingInterval",
+    @DeleteColumn.Entries(
+        DeleteColumn(
+            tableName = "subscriptions",
+            columnName = "alarm_repeatingInterval",
+        ),
+        DeleteColumn(
+            tableName = "subscriptions",
+            columnName = "alarm_id",
+        ),
     )
-    class Schema13to14 : AutoMigrationSpec
+    class Schema12to13 : AutoMigrationSpec
 }
 
 internal val Schema11to12 = object : Migration(11, 12) {

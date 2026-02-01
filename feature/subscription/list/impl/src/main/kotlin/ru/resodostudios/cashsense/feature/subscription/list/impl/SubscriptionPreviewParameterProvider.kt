@@ -25,6 +25,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     paymentDate = Instant.DISTANT_PAST,
                     notificationDate = Instant.DISTANT_PAST,
                     repeatingInterval = MONTHLY,
+                    fixedInterval = true,
                 ),
                 Subscription(
                     id = "0",
@@ -34,6 +35,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     paymentDate = Instant.DISTANT_PAST,
                     notificationDate = null,
                     repeatingInterval = NONE,
+                    fixedInterval = false,
                 ),
                 Subscription(
                     id = "0",
@@ -43,6 +45,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     paymentDate = Instant.DISTANT_PAST,
                     notificationDate = Instant.DISTANT_PAST,
                     repeatingInterval = MONTHLY,
+                    fixedInterval = false,
                 ),
                 Subscription(
                     id = "0",
@@ -52,6 +55,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     paymentDate = Instant.DISTANT_PAST,
                     notificationDate = Instant.DISTANT_PAST,
                     repeatingInterval = MONTHLY,
+                    fixedInterval = true,
                 ),
                 Subscription(
                     id = "0",
@@ -61,6 +65,7 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     paymentDate = Instant.DISTANT_PAST,
                     notificationDate = null,
                     repeatingInterval = NONE,
+                    fixedInterval = false,
                 ),
             ),
         )

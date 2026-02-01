@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 13,
-    "identityHash": "ab301e0d6aaa1a98b720364b102e2e67",
+    "identityHash": "4f04ed03bcd8e176261399f46a086883",
     "entities": [
       {
         "tableName": "categories",
@@ -79,7 +79,7 @@
       },
       {
         "tableName": "subscriptions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `amount` TEXT NOT NULL, `currency` TEXT NOT NULL, `payment_date` INTEGER NOT NULL, `alarm_notificationDate` INTEGER, `alarm_repeatingInterval` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `amount` TEXT NOT NULL, `currency` TEXT NOT NULL, `payment_date` INTEGER NOT NULL, `notification_date` INTEGER, `repeating_interval` TEXT NOT NULL DEFAULT 'NONE', `fixed_interval` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -112,14 +112,23 @@
             "notNull": true
           },
           {
-            "fieldPath": "reminder.notificationDate",
-            "columnName": "alarm_notificationDate",
+            "fieldPath": "notificationDate",
+            "columnName": "notification_date",
             "affinity": "INTEGER"
           },
           {
-            "fieldPath": "reminder.repeatingInterval",
-            "columnName": "alarm_repeatingInterval",
-            "affinity": "INTEGER"
+            "fieldPath": "repeatingInterval",
+            "columnName": "repeating_interval",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'NONE'"
+          },
+          {
+            "fieldPath": "fixedInterval",
+            "columnName": "fixed_interval",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -330,7 +339,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ab301e0d6aaa1a98b720364b102e2e67')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4f04ed03bcd8e176261399f46a086883')"
     ]
   }
 }

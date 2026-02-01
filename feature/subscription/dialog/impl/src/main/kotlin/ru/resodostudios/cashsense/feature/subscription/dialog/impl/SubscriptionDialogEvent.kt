@@ -21,5 +21,7 @@ sealed interface SubscriptionDialogEvent {
 
     data class UpdateRepeatingInterval(val repeatingInterval: RepeatingIntervalType) : SubscriptionDialogEvent
 
+    data class UpdateFixedSwitch(val isFixed: Boolean) : SubscriptionDialogEvent
+
     data class Save(val subscription: Subscription) : SubscriptionDialogEvent
 }
