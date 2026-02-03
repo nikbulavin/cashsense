@@ -31,7 +31,7 @@ import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.ui.component.CurrencyDropdownMenu
@@ -155,16 +155,14 @@ private fun WalletDialog(
                 )
                 CsTonalToggleButton(
                     checked = walletDialogState.isPrimary,
-                    icon = if (walletDialogState.isPrimary) CsIcons.Filled.Star else CsIcons.Outlined.Star,
+                    icon = if (walletDialogState.isPrimary) CsIcons.Outlined.Check else CsIcons.Outlined.Star,
                     title = stringResource(localesR.string.primary),
                     onCheckedChange = onPrimaryUpdate,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
             LaunchedEffect(walletDialogState.id) {
-                if (walletDialogState.id.isBlank()) {
-                    focusRequester.requestFocus()
-                }
+                if (walletDialogState.id.isBlank()) focusRequester.requestFocus()
             }
         }
     }
