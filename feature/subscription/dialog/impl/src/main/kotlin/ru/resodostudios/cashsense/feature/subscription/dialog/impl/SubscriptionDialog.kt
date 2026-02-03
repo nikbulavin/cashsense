@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog.impl
 
+import android.icu.text.MeasureFormat
+import android.icu.util.Measure
+import android.icu.util.MeasureUnit
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -45,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Notifications
@@ -59,6 +63,7 @@ import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffec
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
+import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -185,15 +190,31 @@ private fun SubscriptionDialog(
                 }
             }
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
-                RepeatingIntervalDropdownMenu(
-                    interval = subscriptionDialogState.repeatingInterval,
-                    onIntervalChange = {
-                        onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp),
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.padding(top = 10.dp),
+                ) {
+                    RepeatingIntervalDropdownMenu(
+                        interval = subscriptionDialogState.repeatingInterval,
+                        onIntervalChange = {
+                            onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    CsConnectedButtonGroup(
+                        selectedIndex = if (subscriptionDialogState.fixedInterval) 1 else 0,
+                        options = listOf(
+                            stringResource(localesR.string.by_date),
+                            MeasureFormat
+                                .getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.WIDE)
+                                .format(Measure(30, MeasureUnit.DAY)),
+                        ),
+                        checkedIcon = CsIcons.Outlined.Check,
+                        onClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateFixedSwitch(it == 1)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = subscriptionDialogState.repeatingInterval == RepeatingIntervalType.MONTHLY,
+                    )
+                }
             }
         }
         LaunchedEffect(subscriptionDialogState.id) {

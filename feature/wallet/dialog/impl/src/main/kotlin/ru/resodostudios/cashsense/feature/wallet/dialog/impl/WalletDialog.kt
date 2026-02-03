@@ -156,7 +156,7 @@ private fun WalletDialog(
                 CsTonalToggleButton(
                     checked = walletDialogState.isPrimary,
                     icon = if (walletDialogState.isPrimary) CsIcons.Filled.Star else CsIcons.Outlined.Star,
-                    titleRes = localesR.string.primary,
+                    title = stringResource(localesR.string.primary),
                     onCheckedChange = onPrimaryUpdate,
                     modifier = Modifier.fillMaxWidth(),
                 )

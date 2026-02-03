@@ -10,6 +10,7 @@
     <string name="backup">Backup</string>
     <string name="backup_and_restore">Backup &amp; restore</string>
     <string name="backup_description">Export all data to a file</string>
+    <string name="by_date">By date</string>
     <string name="cancel">Cancel</string>
     <string name="categories_empty">Nothing in Categories</string>
     <string name="categories_title">Categories</string>
