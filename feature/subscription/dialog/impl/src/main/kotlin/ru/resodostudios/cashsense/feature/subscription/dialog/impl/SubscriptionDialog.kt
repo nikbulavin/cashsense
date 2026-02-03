@@ -1,9 +1,14 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog.impl
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,6 +20,7 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
@@ -38,8 +45,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Notifications
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Autorenew
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
@@ -119,7 +127,7 @@ private fun SubscriptionDialog(
                 supportingText = { Text(stringResource(localesR.string.required)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 6.dp)
                     .focusRequester(focusRequester),
             )
             OutlinedTextField(
@@ -138,32 +146,44 @@ private fun SubscriptionDialog(
                 supportingText = { Text(stringResource(localesR.string.required)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 6.dp),
             )
             CurrencyDropdownMenu(
                 currency = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 6.dp),
             )
-            DatePickerTextField(
-                timestamp = subscriptionDialogState.paymentDate,
-                labelRes = localesR.string.payment_date,
-                icon = CsIcons.Outlined.Calendar,
-                onDateSelect = { onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                onlyFutureDates = true,
-            )
-            CsTonalToggleButton(
-                checked = subscriptionDialogState.isReminderEnabled,
-                icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Outlined.Check else CsIcons.Outlined.Notifications,
-                titleRes = localesR.string.reminder,
-                onCheckedChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it)) },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            BoxWithConstraints {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    DatePickerTextField(
+                        timestamp = subscriptionDialogState.paymentDate,
+                        labelRes = localesR.string.payment_date,
+                        icon = CsIcons.Outlined.Calendar,
+                        onDateSelect = {
+                            onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(it))
+                        },
+                        modifier = Modifier.width(this@BoxWithConstraints.maxWidth - 56.dp),
+                        onlyFutureDates = true,
+                    )
+                    CsFilledTonalIconToggleButton(
+                        checked = subscriptionDialogState.isReminderEnabled,
+                        icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Filled.Notifications else CsIcons.Outlined.Notifications,
+                        contentDescription = stringResource(localesR.string.reminder),
+                        onCheckedChange = {
+                            onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
+                        },
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .size(IconButtonDefaults.mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                    )
+                }
+            }
             AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
                 RepeatingIntervalDropdownMenu(
                     interval = subscriptionDialogState.repeatingInterval,
@@ -172,7 +192,7 @@ private fun SubscriptionDialog(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        .padding(top = 6.dp),
                 )
             }
         }
@@ -228,7 +248,12 @@ private fun RepeatingIntervalDropdownMenu(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     shapes = MenuDefaults.itemShape(index, intervalNames.size),
                     selected = index == interval.ordinal,
-                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
+                    checkedLeadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Check,
+                            contentDescription = null,
+                        )
+                    },
                 )
             }
         }

@@ -101,7 +101,7 @@ internal class SubscriptionDialogViewModel @AssistedInject constructor(
 
             is SubscriptionDialogEvent.UpdateFixedSwitch -> {
                 _subscriptionDialogUiState.update {
-                    it.copy(isFixed = event.isFixed)
+                    it.copy(fixedInterval = event.isFixed)
                 }
             }
         }
@@ -130,7 +130,7 @@ internal class SubscriptionDialogViewModel @AssistedInject constructor(
                     currency = subscription.currency,
                     isReminderEnabled = subscription.notificationDate != null,
                     repeatingInterval = subscription.repeatingInterval,
-                    isFixed = subscription.fixedInterval,
+                    fixedInterval = subscription.fixedInterval,
                 )
             }
         }
@@ -151,7 +151,7 @@ data class SubscriptionDialogUiState(
     val currency: Currency = getUsdCurrency(),
     val isReminderEnabled: Boolean = false,
     val repeatingInterval: RepeatingIntervalType = NONE,
-    val isFixed: Boolean = false,
+    val fixedInterval: Boolean = false,
 )
 
 fun SubscriptionDialogUiState.asSubscription(): Subscription {
@@ -184,6 +184,6 @@ fun SubscriptionDialogUiState.asSubscription(): Subscription {
         currency = currency,
         notificationDate = notificationDate,
         repeatingInterval = repeatingInterval,
-        fixedInterval = isFixed,
+        fixedInterval = fixedInterval,
     )
 }
