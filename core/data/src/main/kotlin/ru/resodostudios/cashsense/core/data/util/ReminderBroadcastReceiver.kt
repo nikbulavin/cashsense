@@ -19,11 +19,13 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.notifications.Notifier
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Instant
 
 @AndroidEntryPoint
 internal class ReminderBroadcastReceiver : BroadcastReceiver() {
@@ -63,79 +65,78 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
     }
 
     private suspend fun findSubscriptionAndPostNotification(reminderId: Int) {
-        subscriptionsRepository.getSubscriptions().firstOrNull()
-            ?.find { it.id.hashCode() == reminderId }
-            ?.let { subscription ->
-                val timeZone = TimeZone.currentSystemDefault()
-                val paymentDate = subscription.paymentDate.toLocalDateTime(timeZone).date
-                val notificationDate = subscription.notificationDate ?: return@let
-                val reminderDate = notificationDate.toLocalDateTime(timeZone).date
-                val daysUntil = reminderDate.daysUntil(paymentDate)
+        val subscription = subscriptionsRepository.getSubscriptions().firstOrNull()
+            ?.find { it.id.hashCode() == reminderId } ?: return
 
-                if (daysUntil > 1) {
-                    notifier.postSubscriptionNotification(subscription)
-                    val nextNotificationDate = LocalDateTime(
-                        paymentDate.minus(1, DateTimeUnit.DAY),
-                        LocalTime(9, 0),
-                    ).toInstant(timeZone)
+        val timeZone = TimeZone.currentSystemDefault()
+        val paymentDate = subscription.paymentDate.toLocalDateTime(timeZone).date
+        val notificationDate = subscription.notificationDate ?: return
+        val reminderDate = notificationDate.toLocalDateTime(timeZone).date
+        val daysUntil = reminderDate.daysUntil(paymentDate)
 
-                    val updatedSubscription = subscription.copy(
-                        notificationDate = nextNotificationDate,
-                    )
-                    subscriptionsRepository.upsertSubscription(updatedSubscription)
-                } else if (daysUntil == 1) {
-                    notifier.postSubscriptionNotification(subscription)
-                    val nextNotificationDate = LocalDateTime(
-                        paymentDate,
-                        LocalTime(9, 0),
-                    ).toInstant(timeZone)
+        if (daysUntil > 0) {
+            notifier.postSubscriptionNotification(subscription)
+            val daysToSubtract = if (daysUntil > 1) 1 else 0
+            val nextNotificationDate = LocalDateTime(
+                paymentDate.minus(daysToSubtract, DateTimeUnit.DAY),
+                LocalTime(9, 0)
+            ).toInstant(timeZone)
 
-                    val updatedSubscription = subscription.copy(
-                        notificationDate = nextNotificationDate,
-                    )
-                    subscriptionsRepository.upsertSubscription(updatedSubscription)
-                } else {
-                    if (subscription.repeatingInterval != RepeatingIntervalType.NONE) {
-                        val newPaymentDate = if (subscription.fixedInterval) {
-                            val millis = when (subscription.repeatingInterval) {
-                                RepeatingIntervalType.MONTHLY -> 30.days.inWholeMilliseconds
-                                else -> 0L
-                            }
-                            subscription.paymentDate.plus(millis, DateTimeUnit.MILLISECOND)
-                        } else {
-                            val (quantity, unit) = when (subscription.repeatingInterval) {
-                                RepeatingIntervalType.MONTHLY -> 1 to DateTimeUnit.MONTH
-                                else -> 0 to DateTimeUnit.DAY
-                            }
-                            subscription.paymentDate.plus(quantity, unit, timeZone)
-                        }
+            subscriptionsRepository.upsertSubscription(
+                subscription.copy(notificationDate = nextNotificationDate)
+            )
+        } else {
+            handleRepeatingSubscription(subscription, timeZone)
+        }
+    }
 
-                        val newPaymentDateLocal = newPaymentDate.toLocalDateTime(timeZone).date
+    private suspend fun handleRepeatingSubscription(subscription: Subscription, timeZone: TimeZone) {
+        if (subscription.repeatingInterval == RepeatingIntervalType.NONE) return
 
-                        val notificationDateMinus7 = LocalDateTime(
-                            newPaymentDateLocal.minus(7, DateTimeUnit.DAY),
-                            LocalTime(9, 0),
-                        ).toInstant(timeZone)
+        val newPaymentDate = calculateNewPaymentDate(subscription, timeZone)
+        val newNotificationDate = calculateNewNotificationDate(newPaymentDate, timeZone)
 
-                        val notificationDateMinus1 = LocalDateTime(
-                            newPaymentDateLocal.minus(1, DateTimeUnit.DAY),
-                            LocalTime(9, 0),
-                        ).toInstant(timeZone)
+        subscriptionsRepository.upsertSubscription(
+            subscription.copy(
+                paymentDate = newPaymentDate,
+                notificationDate = newNotificationDate
+            )
+        )
+    }
 
-                        val now = Clock.System.now()
-                        val newNotificationDate = if (now > notificationDateMinus7) {
-                            notificationDateMinus1
-                        } else {
-                            notificationDateMinus7
-                        }
-
-                        val updatedSubscription = subscription.copy(
-                            paymentDate = newPaymentDate,
-                            notificationDate = newNotificationDate,
-                        )
-                        subscriptionsRepository.upsertSubscription(updatedSubscription)
-                    }
-                }
+    private fun calculateNewPaymentDate(subscription: Subscription, timeZone: TimeZone): Instant {
+        return if (subscription.fixedInterval) {
+            val millis = when (subscription.repeatingInterval) {
+                RepeatingIntervalType.MONTHLY -> 30.days.inWholeMilliseconds
+                else -> 0L
             }
+            subscription.paymentDate.plus(millis, DateTimeUnit.MILLISECOND)
+        } else {
+            val (quantity, unit) = when (subscription.repeatingInterval) {
+                RepeatingIntervalType.MONTHLY -> 1 to DateTimeUnit.MONTH
+                else -> 0 to DateTimeUnit.DAY
+            }
+            subscription.paymentDate.plus(quantity, unit, timeZone)
+        }
+    }
+
+    private fun calculateNewNotificationDate(newPaymentDate: Instant, timeZone: TimeZone): Instant {
+        val newPaymentDateLocal = newPaymentDate.toLocalDateTime(timeZone).date
+
+        val notificationDateMinus7 = LocalDateTime(
+            newPaymentDateLocal.minus(7, DateTimeUnit.DAY),
+            LocalTime(9, 0),
+        ).toInstant(timeZone)
+
+        val notificationDateMinus1 = LocalDateTime(
+            newPaymentDateLocal.minus(1, DateTimeUnit.DAY),
+            LocalTime(9, 0),
+        ).toInstant(timeZone)
+
+        return if (Clock.System.now() > notificationDateMinus7) {
+            notificationDateMinus1
+        } else {
+            notificationDateMinus7
+        }
     }
 }
