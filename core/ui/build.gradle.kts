@@ -12,14 +12,13 @@ dependencies {
     api(projects.core.designsystem)
     api(projects.core.locales)
     api(projects.core.model)
-
     implementation(projects.core.common)
 
-    api(libs.haze)
-    api(libs.haze.materials)
-
+    implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation3.ui)
+    api(libs.haze)
+    api(libs.haze.materials)
     implementation(libs.lottie.compose)
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)

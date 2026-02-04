@@ -1,10 +1,9 @@
 package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.resodostudios.cashsense.core.model.data.Reminder
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import java.math.BigDecimal
 import java.util.Currency
@@ -21,8 +20,12 @@ data class SubscriptionEntity(
     val currency: Currency,
     @ColumnInfo(name = "payment_date")
     val paymentDate: Instant,
-    @Embedded(prefix = "alarm_")
-    val reminder: Reminder?,
+    @ColumnInfo(name = "notification_date")
+    val notificationDate: Instant?,
+    @ColumnInfo(name = "repeating_interval", defaultValue = "NONE")
+    val repeatingInterval: RepeatingIntervalType,
+    @ColumnInfo(name = "fixed_interval", defaultValue = "0")
+    val fixedInterval: Boolean,
 )
 
 fun SubscriptionEntity.asExternalModel(): Subscription {
@@ -32,6 +35,8 @@ fun SubscriptionEntity.asExternalModel(): Subscription {
         amount = amount,
         currency = currency,
         paymentDate = paymentDate,
-        reminder = reminder,
+        notificationDate = notificationDate,
+        repeatingInterval = repeatingInterval,
+        fixedInterval = fixedInterval,
     )
 }

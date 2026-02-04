@@ -14,9 +14,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -46,10 +43,9 @@ internal fun SubscriptionsScreen(
 
     SubscriptionsScreen(
         subscriptionsState = subscriptionsState,
-        onEditSubscription = onEditSubscription,
+        onSubscriptionEdit = onEditSubscription,
         onShowSnackbar = onShowSnackbar,
-        onSelectSubscription = viewModel::updateSelectedSubscription,
-        onDeleteSubscription = viewModel::deleteSubscription,
+        onSubscriptionDelete = viewModel::deleteSubscription,
         undoSubscriptionRemoval = viewModel::undoSubscriptionRemoval,
         clearUndoState = viewModel::clearUndoState,
     )
@@ -59,10 +55,9 @@ internal fun SubscriptionsScreen(
 @Composable
 private fun SubscriptionsScreen(
     subscriptionsState: SubscriptionsUiState,
-    onEditSubscription: (String) -> Unit,
     onShowSnackbar: suspend (String, String?) -> Boolean,
-    onSelectSubscription: (Subscription) -> Unit,
-    onDeleteSubscription: () -> Unit = {},
+    onSubscriptionEdit: (String) -> Unit = {},
+    onSubscriptionDelete: (String) -> Unit = {},
     undoSubscriptionRemoval: () -> Unit = {},
     clearUndoState: () -> Unit = {},
 ) {
@@ -109,8 +104,6 @@ private fun SubscriptionsScreen(
                     clearUndoState()
                 }
 
-                var showSubscriptionBottomSheet by rememberSaveable { mutableStateOf(false) }
-
                 if (subscriptionsState.subscriptions.isNotEmpty()) {
                     LazyVerticalGrid(
                         columns = GridCells.Adaptive(300.dp),
@@ -127,21 +120,11 @@ private fun SubscriptionsScreen(
                         items(subscriptionsState.subscriptions) { subscription ->
                             SubscriptionCard(
                                 subscription = subscription,
-                                onClick = {
-                                    onSelectSubscription(it)
-                                    showSubscriptionBottomSheet = true
-                                },
+                                onEditClick = onSubscriptionEdit,
+                                onDeleteClick = onSubscriptionDelete,
                                 modifier = Modifier.animateItem(),
                             )
                         }
-                    }
-                    if (showSubscriptionBottomSheet && subscriptionsState.selectedSubscription != null) {
-                        SubscriptionBottomSheet(
-                            subscription = subscriptionsState.selectedSubscription,
-                            onDismiss = { showSubscriptionBottomSheet = false },
-                            onEdit = onEditSubscription,
-                            onDelete = onDeleteSubscription,
-                        )
                     }
                 } else {
                     EmptyState(
@@ -170,9 +153,8 @@ private fun SubscriptionsGridPreview(
                     shouldDisplayUndoSubscription = false,
                     selectedSubscription = null,
                 ),
-                onEditSubscription = {},
+                onSubscriptionEdit = {},
                 onShowSnackbar = { _, _ -> false },
-                onSelectSubscription = {},
             )
         }
     }

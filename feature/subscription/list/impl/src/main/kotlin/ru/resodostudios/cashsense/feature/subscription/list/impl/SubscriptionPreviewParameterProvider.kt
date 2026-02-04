@@ -1,9 +1,8 @@
 package ru.resodostudios.cashsense.feature.subscription.list.impl
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import ru.resodostudios.cashsense.core.model.data.Reminder
 import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.YEARLY
+import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
 import ru.resodostudios.cashsense.core.model.data.Subscription
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
@@ -24,11 +23,9 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     amount = BigDecimal(9.99),
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
-                    reminder = Reminder(
-                        id = 0,
-                        notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = MONTHLY.period,
-                    ),
+                    notificationDate = Instant.DISTANT_PAST,
+                    repeatingInterval = MONTHLY,
+                    fixedInterval = true,
                 ),
                 Subscription(
                     id = "0",
@@ -36,7 +33,9 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     amount = BigDecimal(39.99),
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
-                    reminder = null,
+                    notificationDate = null,
+                    repeatingInterval = NONE,
+                    fixedInterval = false,
                 ),
                 Subscription(
                     id = "0",
@@ -44,11 +43,9 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     amount = BigDecimal(399.99),
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
-                    reminder = Reminder(
-                        id = 0,
-                        notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = YEARLY.period,
-                    ),
+                    notificationDate = Instant.DISTANT_PAST,
+                    repeatingInterval = MONTHLY,
+                    fixedInterval = false,
                 ),
                 Subscription(
                     id = "0",
@@ -56,11 +53,9 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     amount = BigDecimal(99),
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
-                    reminder = Reminder(
-                        id = 0,
-                        notificationDate = Instant.DISTANT_PAST,
-                        repeatingInterval = MONTHLY.period,
-                    ),
+                    notificationDate = Instant.DISTANT_PAST,
+                    repeatingInterval = MONTHLY,
+                    fixedInterval = true,
                 ),
                 Subscription(
                     id = "0",
@@ -68,7 +63,9 @@ internal class SubscriptionPreviewParameterProvider : PreviewParameterProvider<L
                     amount = BigDecimal(19.99),
                     currency = getUsdCurrency(),
                     paymentDate = Instant.DISTANT_PAST,
-                    reminder = null,
+                    notificationDate = null,
+                    repeatingInterval = NONE,
+                    fixedInterval = false,
                 ),
             ),
         )

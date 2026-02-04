@@ -22,6 +22,8 @@ import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.data.util.InAppReviewManagerImpl
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManagerImpl
+import ru.resodostudios.cashsense.core.data.util.PermissionManager
+import ru.resodostudios.cashsense.core.data.util.PermissionManagerImpl
 import ru.resodostudios.cashsense.core.data.util.ReminderScheduler
 import ru.resodostudios.cashsense.core.data.util.ReminderSchedulerImpl
 import ru.resodostudios.cashsense.core.data.util.TimeZoneBroadcastMonitor
@@ -63,4 +65,7 @@ internal interface DataModule {
 
     @Binds
     fun bindsAppLocaleManager(impl: AppLocaleManagerImpl): AppLocaleManager
+
+    @Binds
+    fun bindsPermissionManager(impl: PermissionManagerImpl): PermissionManager
 }

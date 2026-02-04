@@ -128,7 +128,7 @@ private fun TransactionDialog(
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
                 TransactionTypeChoiceRow(
@@ -189,8 +189,8 @@ private fun TransactionDialog(
                 )
                 CsTonalToggleButton(
                     checked = transactionDialogState.ignored,
-                    icon = CsIcons.Outlined.Block,
-                    titleRes = localesR.string.transaction_ignore,
+                    icon = if (transactionDialogState.ignored) CsIcons.Outlined.Check else CsIcons.Outlined.Block,
+                    title = stringResource(localesR.string.transaction_ignore),
                     onCheckedChange = { onTransactionEvent(UpdateTransactionIgnoring(it)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -212,7 +212,10 @@ private fun TransactionTypeChoiceRow(
 ) {
     CsConnectedButtonGroup(
         selectedIndex = transactionState.transactionType.ordinal,
-        options = listOf(localesR.string.expense, localesR.string.income_singular),
+        options = listOf(
+            stringResource(localesR.string.expense),
+            stringResource(localesR.string.income_singular),
+        ),
         checkedIcon = CsIcons.Outlined.Check,
         uncheckedIcons = listOf(CsIcons.Outlined.TrendingDown, CsIcons.Outlined.TrendingUp),
         onClick = { onTransactionEvent(UpdateTransactionType(TransactionType.entries[it])) },
@@ -227,7 +230,10 @@ private fun TransactionStatusChoiceRow(
 ) {
     CsConnectedButtonGroup(
         selectedIndex = if (transactionState.completed) 1 else 0,
-        options = listOf(localesR.string.pending, localesR.string.completed),
+        options = listOf(
+            stringResource(localesR.string.pending),
+            stringResource(localesR.string.completed),
+        ),
         checkedIcon = CsIcons.Outlined.Check,
         uncheckedIcons = listOf(CsIcons.Outlined.Pending, CsIcons.Outlined.CheckCircle),
         onClick = { onTransactionEvent(UpdateCompletionStatus(it == 1)) },
@@ -279,7 +285,7 @@ private fun CategoryDropdownMenu(
                     shapes = MenuDefaults.itemShape(index, categories.size),
                     text = {
                         Text(
-                            text = category?.title?: stringResource(localesR.string.none),
+                            text = category?.title ?: stringResource(localesR.string.none),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -297,7 +303,12 @@ private fun CategoryDropdownMenu(
                             contentDescription = null,
                         )
                     },
-                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
+                    checkedLeadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Check,
+                            contentDescription = null,
+                        )
+                    },
                 )
             }
         }

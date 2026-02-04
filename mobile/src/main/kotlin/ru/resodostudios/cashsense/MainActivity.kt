@@ -29,6 +29,7 @@ import ru.resodostudios.cashsense.core.analytics.AnalyticsHelper
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
+import ru.resodostudios.cashsense.core.data.util.PermissionManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
@@ -56,6 +57,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var inAppReviewManager: InAppReviewManager
+
+    @Inject
+    lateinit var permissionManager: PermissionManager
 
     @Inject
     lateinit var shortcutManager: ShortcutManager
@@ -117,6 +121,7 @@ class MainActivity : AppCompatActivity() {
             val appState = rememberCsAppState(
                 timeZoneMonitor = timeZoneMonitor,
                 inAppUpdateManager = inAppUpdateManager,
+                permissionManager = permissionManager,
                 navigationState = rememberNavigationState(syntheticBackStack, TOP_LEVEL_NAV_ITEMS.keys),
             )
 

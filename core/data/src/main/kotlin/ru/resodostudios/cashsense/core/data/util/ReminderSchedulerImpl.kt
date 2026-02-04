@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
-import ru.resodostudios.cashsense.core.model.data.Reminder
 import javax.inject.Inject
+import kotlin.time.Instant
 
 internal class ReminderSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -28,20 +28,15 @@ internal class ReminderSchedulerImpl @Inject constructor(
         )
     }
 
-    override fun schedule(reminder: Reminder) {
-        alarmManager.setInexactRepeating(
+    override fun schedule(reminderId: Int, time: Instant) {
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
-            reminder.notificationDate?.toEpochMilliseconds() ?: 0L,
-            reminder.repeatingInterval ?: 0,
-            createPendingIntent(reminder.id ?: 0),
+            time.toEpochMilliseconds(),
+            createPendingIntent(reminderId),
         )
     }
 
-    override fun cancel(reminderId: Int) {
-        alarmManager.cancel(
-            createPendingIntent(reminderId)
-        )
-    }
+    override fun cancel(reminderId: Int) = alarmManager.cancel(createPendingIntent(reminderId))
 }
 
 internal const val EXTRA_REMINDER_ID = "reminder-id"

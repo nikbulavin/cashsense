@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.database
 
+import androidx.room.DeleteColumn
 import androidx.room.RenameColumn
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
@@ -48,6 +49,23 @@ internal object DatabaseMigrations {
         toColumnName = "id",
     )
     class Schema9to10 : AutoMigrationSpec
+
+    @RenameColumn(
+        tableName = "subscriptions",
+        fromColumnName = "alarm_notificationDate",
+        toColumnName = "notification_date",
+    )
+    @DeleteColumn.Entries(
+        DeleteColumn(
+            tableName = "subscriptions",
+            columnName = "alarm_repeatingInterval",
+        ),
+        DeleteColumn(
+            tableName = "subscriptions",
+            columnName = "alarm_id",
+        ),
+    )
+    class Schema12to13 : AutoMigrationSpec
 }
 
 internal val Schema11to12 = object : Migration(11, 12) {

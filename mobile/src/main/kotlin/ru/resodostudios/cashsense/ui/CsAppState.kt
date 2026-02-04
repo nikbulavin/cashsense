@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
+import ru.resodostudios.cashsense.core.data.util.PermissionManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
@@ -30,18 +31,27 @@ import kotlin.time.Duration.Companion.seconds
 fun rememberCsAppState(
     timeZoneMonitor: TimeZoneMonitor,
     inAppUpdateManager: InAppUpdateManager,
+    permissionManager: PermissionManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
-    navigationState: NavigationState = rememberNavigationState(listOf(HomeNavKey()), TOP_LEVEL_NAV_ITEMS.keys),
+    navigationState: NavigationState = rememberNavigationState(
+        initialBackStack = listOf(HomeNavKey()),
+        topLevelKeys = TOP_LEVEL_NAV_ITEMS.keys,
+    ),
 ): CsAppState {
 
     return remember(
         timeZoneMonitor,
+        inAppUpdateManager,
+        permissionManager,
         coroutineScope,
+        windowAdaptiveInfo,
+        navigationState,
     ) {
         CsAppState(
             timeZoneMonitor = timeZoneMonitor,
             inAppUpdateManager = inAppUpdateManager,
+            permissionManager = permissionManager,
             coroutineScope = coroutineScope,
             windowAdaptiveInfo = windowAdaptiveInfo,
             navigationState = navigationState,
@@ -53,6 +63,7 @@ fun rememberCsAppState(
 class CsAppState(
     timeZoneMonitor: TimeZoneMonitor,
     inAppUpdateManager: InAppUpdateManager,
+    permissionManager: PermissionManager,
     coroutineScope: CoroutineScope,
     val windowAdaptiveInfo: WindowAdaptiveInfo,
     val navigationState: NavigationState,
@@ -70,6 +81,13 @@ class CsAppState(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = InAppUpdateResult.NotAvailable,
+        )
+
+    val shouldRequestNotifications = permissionManager.shouldRequestNotifications
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = false,
         )
 
     val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
