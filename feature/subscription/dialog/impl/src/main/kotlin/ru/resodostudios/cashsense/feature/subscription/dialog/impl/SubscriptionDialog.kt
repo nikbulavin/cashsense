@@ -4,6 +4,10 @@ import android.icu.text.MeasureFormat
 import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -24,6 +28,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -42,6 +47,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -189,9 +195,14 @@ private fun SubscriptionDialog(
                     )
                 }
             }
-            AnimatedVisibility(subscriptionDialogState.isReminderEnabled) {
+            val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+            val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+            AnimatedVisibility(
+                visible = subscriptionDialogState.isReminderEnabled,
+                enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+                exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
+            ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.padding(top = 10.dp),
                 ) {
                     RepeatingIntervalDropdownMenu(
@@ -201,19 +212,31 @@ private fun SubscriptionDialog(
                         },
                         modifier = Modifier.fillMaxWidth(),
                     )
-                    CsConnectedButtonGroup(
-                        selectedIndex = if (subscriptionDialogState.fixedInterval) 1 else 0,
-                        options = listOf(
-                            stringResource(localesR.string.by_date),
-                            MeasureFormat
-                                .getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.WIDE)
-                                .format(Measure(30, MeasureUnit.DAY)),
-                        ),
-                        checkedIcon = CsIcons.Outlined.Check,
-                        onClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateFixedSwitch(it == 1)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = subscriptionDialogState.repeatingInterval == RepeatingIntervalType.MONTHLY,
-                    )
+                    AnimatedVisibility(
+                        visible = subscriptionDialogState.repeatingInterval == RepeatingIntervalType.MONTHLY,
+                        enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
+                        exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
+                    ) {
+                        CsConnectedButtonGroup(
+                            selectedIndex = if (subscriptionDialogState.fixedInterval) 1 else 0,
+                            options = listOf(
+                                stringResource(localesR.string.by_date),
+                                MeasureFormat
+                                    .getInstance(
+                                        Locale.getDefault(),
+                                        MeasureFormat.FormatWidth.WIDE,
+                                    )
+                                    .format(Measure(30, MeasureUnit.DAY)),
+                            ),
+                            checkedIcon = CsIcons.Outlined.Check,
+                            onClick = {
+                                onSubscriptionEvent(SubscriptionDialogEvent.UpdateFixedSwitch(it == 1))
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp),
+                        )
+                    }
                 }
             }
         }
