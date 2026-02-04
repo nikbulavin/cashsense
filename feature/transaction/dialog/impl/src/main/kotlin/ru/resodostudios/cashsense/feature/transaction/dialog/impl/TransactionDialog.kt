@@ -128,7 +128,7 @@ private fun TransactionDialog(
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
                 TransactionTypeChoiceRow(
