@@ -4,7 +4,9 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -151,6 +153,7 @@ private fun WalletScreen(
                         onPrimaryClick = onPrimaryClick,
                     )
                 },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { paddingValues ->
                 var expanded by rememberSaveable { mutableStateOf(true) }
                 val hazeState = rememberHazeState()
@@ -202,6 +205,7 @@ private fun WalletScreen(
                         navigateToTransactionDialog = navigateToTransactionDialog,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
                             .offset(y = -ScreenOffset),
                     )
                 }

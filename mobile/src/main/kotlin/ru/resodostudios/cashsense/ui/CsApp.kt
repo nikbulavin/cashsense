@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.ui
 
-import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,10 +28,14 @@ import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -86,21 +90,33 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun CsApp(
     appState: CsAppState,
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
     val shouldRequestNotifications by appState.shouldRequestNotifications.collectAsStateWithLifecycle()
-    val activity = LocalActivity.current
 
     InAppUpdateSnackbarHandler(
         inAppUpdateResult = inAppUpdateResult,
         snackbarHostState = snackbarHostState,
-        activity = activity,
     )
     NotificationPermissionEffect(shouldRequestNotifications)
 
     val navigator = remember { Navigator(appState.navigationState) }
+
+    val navSuiteType = NavigationSuiteScaffoldDefaults.navigationSuiteType(windowAdaptiveInfo)
+    val navSuiteState = rememberNavigationSuiteScaffoldState()
+
+    val navRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
+            navSuiteType == NavigationSuiteType.WideNavigationRailExpanded
+
+    val shouldShowNavigation = navRailVisible ||
+            appState.navigationState.currentSubStack.all { it !is WalletNavKey }
+
+    LaunchedEffect(shouldShowNavigation) {
+        if (shouldShowNavigation) navSuiteState.show() else navSuiteState.hide()
+    }
 
     NavigationSuiteScaffold(
         navigationItems = {
@@ -124,8 +140,9 @@ fun CsApp(
                 )
             }
         },
-        navigationSuiteType = appState.navigationSuiteType,
+        navigationSuiteType = navSuiteType,
         navigationItemVerticalArrangement = Arrangement.Center,
+        state = navSuiteState,
     ) {
         Scaffold(
             snackbarHost = {
@@ -134,10 +151,10 @@ fun CsApp(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
-                            if (appState.navigationSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
+                            if (navSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
                                 SettingsNavKey !in appState.navigationState.currentSubStack
                             ) {
-                                Modifier.padding(bottom = appState.snackbarBottomPadding)
+                                Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
                             } else {
                                 Modifier
                             },
@@ -207,7 +224,7 @@ fun CsApp(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .windowInsetsPadding(WindowInsets.systemBars),
-                        toggleContainerSize = if (appState.navigationSuiteType == NavigationSuiteType.NavigationRail) {
+                        toggleContainerSize = if (navRailVisible) {
                             ToggleFloatingActionButtonDefaults.containerSizeMedium()
                         } else {
                             ToggleFloatingActionButtonDefaults.containerSize()
@@ -223,9 +240,10 @@ fun CsApp(
 private fun InAppUpdateSnackbarHandler(
     inAppUpdateResult: InAppUpdateResult,
     snackbarHostState: SnackbarHostState,
-    activity: Activity?,
 ) {
     var isUpdateInProgressSnackbarShown by rememberSaveable { mutableStateOf(false) }
+
+    val activity = LocalActivity.current
 
     val updateAvailableMessage = stringResource(localesR.string.app_update_available)
     val updateInProgressMessage = stringResource(localesR.string.app_update_in_progress)
@@ -235,10 +253,7 @@ private fun InAppUpdateSnackbarHandler(
 
     LaunchedEffect(inAppUpdateResult) {
         when (inAppUpdateResult) {
-            InAppUpdateResult.NotAvailable -> {
-                isUpdateInProgressSnackbarShown = false
-            }
-
+            InAppUpdateResult.NotAvailable -> isUpdateInProgressSnackbarShown = false
             is InAppUpdateResult.Available -> {
                 val snackbarResult = snackbarHostState.showSnackbar(
                     message = updateAvailableMessage,
