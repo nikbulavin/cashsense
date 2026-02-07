@@ -55,6 +55,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
@@ -98,7 +99,12 @@ internal fun WalletCard(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletTitle(wallet.id, wallet.title)),
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey.Wallet(
+                                walletId = wallet.id,
+                                type = WalletSharedElementType.Title,
+                            ),
+                        ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -110,12 +116,18 @@ internal fun WalletCard(
                     label = "WalletBalance",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(SharedElementKey.WalletBalance(wallet.id, balance)),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    ),
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey.Wallet(
+                                    walletId = wallet.id,
+                                    type = WalletSharedElementType.Balance,
+                                ),
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        ),
                 )
                 TagsSection(
                     formattedExpenses = uiWallet.expenses.formatAmount(wallet.currency),
@@ -129,7 +141,12 @@ internal fun WalletCard(
             val addTransactionText = stringResource(localesR.string.add_transaction)
             val addTransferText = stringResource(localesR.string.transfer)
             ButtonGroup(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp, top = 16.dp),
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 12.dp,
+                    top = 16.dp,
+                ),
                 overflowIndicator = { menuState ->
                     CsIconButton(
                         onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },

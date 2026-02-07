@@ -24,7 +24,6 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
@@ -63,6 +62,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -146,22 +146,18 @@ private fun WalletScreen(
         is WalletUiState.Success -> {
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
-            Scaffold(
-                topBar = {
-                    WalletTopBar(
-                        wallet = walletState.wallet,
-                        formattedCurrentBalance = walletState.formattedCurrentBalance,
-                        isPrimary = walletState.isPrimary,
-                        showNavigationIcon = shouldShowNavigationIcon,
-                        onBackClick = onBackClick,
-                        onPrimaryClick = onPrimaryClick,
-                    )
-                },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            ) { paddingValues ->
+            Column {
+                WalletTopBar(
+                    wallet = walletState.wallet,
+                    formattedCurrentBalance = walletState.formattedCurrentBalance,
+                    isPrimary = walletState.isPrimary,
+                    showNavigationIcon = shouldShowNavigationIcon,
+                    onBackClick = onBackClick,
+                    onPrimaryClick = onPrimaryClick,
+                )
                 var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
 
-                Box(modifier = Modifier.padding(paddingValues)) {
+                Box {
                     LazyColumn(
                         contentPadding = PaddingValues(
                             bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
@@ -362,9 +358,9 @@ private fun WalletTopBar(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.WalletTitle(
+                            key = SharedElementKey.Wallet(
                                 walletId = wallet.id,
-                                title = wallet.title,
+                                type = WalletSharedElementType.Title,
                             ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -378,17 +374,18 @@ private fun WalletTopBar(
                     formattedAmount = formattedCurrentBalance,
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.WalletBalance(
-                                walletId = wallet.id,
-                                balance = formattedCurrentBalance,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey.Wallet(
+                                    walletId = wallet.id,
+                                    type = WalletSharedElementType.Balance,
+                                ),
                             ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    ),
                 )
             },
             navigationIcon = {
