@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
@@ -52,13 +53,13 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
-import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.ui.CsThemePreview
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -305,9 +306,10 @@ private fun CsAnimatedTag(
 }
 
 @PreviewLightDark
+@Preview("Large font", fontScale = 2f)
 @Composable
 private fun WalletCardPreview() {
-    CsTheme {
+    CsThemePreview {
         Surface {
             WalletCard(
                 uiWallet = UiWallet(
@@ -337,9 +339,10 @@ private fun WalletCardPreview() {
 }
 
 @PreviewLightDark
+@Preview("Large font", fontScale = 2f)
 @Composable
 private fun WalletCardSelectedPreview() {
-    CsTheme {
+    CsThemePreview {
         Surface {
             WalletCard(
                 uiWallet = UiWallet(
