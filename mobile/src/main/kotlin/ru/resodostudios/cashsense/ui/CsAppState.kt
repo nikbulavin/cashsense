@@ -1,17 +1,9 @@
 package ru.resodostudios.cashsense.ui
 
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -33,7 +25,6 @@ fun rememberCsAppState(
     inAppUpdateManager: InAppUpdateManager,
     permissionManager: PermissionManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
     navigationState: NavigationState = rememberNavigationState(
         initialBackStack = listOf(HomeNavKey()),
         topLevelKeys = TOP_LEVEL_NAV_ITEMS.keys,
@@ -45,7 +36,6 @@ fun rememberCsAppState(
         inAppUpdateManager,
         permissionManager,
         coroutineScope,
-        windowAdaptiveInfo,
         navigationState,
     ) {
         CsAppState(
@@ -53,7 +43,6 @@ fun rememberCsAppState(
             inAppUpdateManager = inAppUpdateManager,
             permissionManager = permissionManager,
             coroutineScope = coroutineScope,
-            windowAdaptiveInfo = windowAdaptiveInfo,
             navigationState = navigationState,
         )
     }
@@ -65,7 +54,6 @@ class CsAppState(
     inAppUpdateManager: InAppUpdateManager,
     permissionManager: PermissionManager,
     coroutineScope: CoroutineScope,
-    val windowAdaptiveInfo: WindowAdaptiveInfo,
     val navigationState: NavigationState,
 ) {
 
@@ -89,14 +77,4 @@ class CsAppState(
             started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = false,
         )
-
-    val navigationSuiteType = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
-
-    var snackbarBottomPadding by mutableStateOf(
-        if (navigationSuiteType == NavigationSuiteType.NavigationRail) {
-            110.dp
-        } else {
-            76.dp
-        }
-    )
 }

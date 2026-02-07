@@ -90,7 +90,6 @@
     <string name="settings_appearance">Appearance</string>
     <string name="settings_general">General</string>
     <string name="settings_title">Settings</string>
-    <string name="subscription_deleted">Subscription deleted</string>
     <string name="subscriptions_empty">Nothing in Subscriptions</string>
     <string name="subscriptions_notification_channel_description">Reminders of expiring subscriptions</string>
     <string name="subscriptions_notification_content_text">You need to pay %1$s for a subscription on %2$s</string>
@@ -113,7 +112,6 @@
     <string name="undo">Undo</string>
     <string name="update">Update</string>
     <string name="version">Version</string>
-    <string name="wallet_deleted">Wallet deleted</string>
     <string name="wallet_menu_icon_description">Wallet menu</string>
     <string name="wallet_widget_description">Your wallets</string>
     <string name="wallet_widget_empty">You don\'t have any wallets</string>

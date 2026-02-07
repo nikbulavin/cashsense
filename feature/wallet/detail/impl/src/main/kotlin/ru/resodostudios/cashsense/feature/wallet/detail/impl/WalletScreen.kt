@@ -4,7 +4,11 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -140,6 +144,8 @@ private fun WalletScreen(
     when (walletState) {
         WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
         is WalletUiState.Success -> {
+            val hazeState = rememberHazeState()
+            val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
             Scaffold(
                 topBar = {
                     WalletTopBar(
@@ -151,21 +157,22 @@ private fun WalletScreen(
                         onPrimaryClick = onPrimaryClick,
                     )
                 },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
             ) { paddingValues ->
-                var expanded by rememberSaveable { mutableStateOf(true) }
-                val hazeState = rememberHazeState()
-                val hazeStyle =
-                    HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
+                var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
 
                 Box(modifier = Modifier.padding(paddingValues)) {
                     LazyColumn(
-                        contentPadding = PaddingValues(bottom = 96.dp),
+                        contentPadding = PaddingValues(
+                            bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
+                                .calculateBottomPadding(),
+                        ),
                         modifier = Modifier
                             .fillMaxSize()
                             .floatingToolbarVerticalNestedScroll(
-                                expanded = expanded,
-                                onExpand = { expanded = true },
-                                onCollapse = { expanded = false },
+                                expanded = isFabMenuExpanded,
+                                onExpand = { isFabMenuExpanded = true },
+                                onCollapse = { isFabMenuExpanded = false },
                             ),
                     ) {
                         item {
@@ -195,13 +202,14 @@ private fun WalletScreen(
                     WalletToolbar(
                         wallet = walletState.wallet,
                         formattedCurrentBalance = walletState.formattedCurrentBalance,
-                        expanded = expanded,
+                        expanded = isFabMenuExpanded,
                         onTransfer = onTransfer,
                         onWalletEdit = onWalletEdit,
                         onWalletDelete = onWalletDelete,
                         navigateToTransactionDialog = navigateToTransactionDialog,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
                             .offset(y = -ScreenOffset),
                     )
                 }
