@@ -200,6 +200,7 @@ private fun LazyListScope.header(
         is FinancePanelUiState.Shown -> {
             item {
                 FinancePanel(
+                    walletId = "",
                     availableCategories = financePanelUiState.availableCategories,
                     currency = financePanelUiState.userCurrency,
                     formattedExpenses = financePanelUiState.formattedExpenses,

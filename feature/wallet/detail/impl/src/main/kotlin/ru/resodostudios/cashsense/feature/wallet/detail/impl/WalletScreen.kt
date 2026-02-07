@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.impl
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -59,7 +60,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
-import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
@@ -70,6 +70,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.ui.CsThemePreview
 import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
@@ -120,7 +121,6 @@ internal fun WalletScreen(
 }
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalHazeMaterialsApi::class,
 )
@@ -146,7 +146,9 @@ private fun WalletScreen(
         is WalletUiState.Success -> {
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
-            Column {
+            Column(
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+            ) {
                 WalletTopBar(
                     wallet = walletState.wallet,
                     formattedCurrentBalance = walletState.formattedCurrentBalance,
@@ -173,6 +175,7 @@ private fun WalletScreen(
                     ) {
                         item {
                             FinancePanel(
+                                walletId = walletState.wallet.id,
                                 availableCategories = walletState.availableCategories,
                                 currency = walletState.wallet.currency,
                                 formattedExpenses = walletState.formattedExpenses,
@@ -408,7 +411,7 @@ private fun WalletTopBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PrimaryToggleButton(
     isPrimary: Boolean,
@@ -436,7 +439,7 @@ private fun WalletScreenPopulatedPreview(
     @PreviewParameter(TransactionPreviewParameterProvider::class)
     transactions: List<Transaction>,
 ) {
-    CsTheme {
+    CsThemePreview {
         WalletScreen(
             walletState = WalletUiState.Success(
                 transactionFilter = TransactionFilter(
@@ -479,7 +482,7 @@ private fun WalletScreenPopulatedPreview(
 @PreviewLightDark
 @Composable
 private fun WalletScreenEmptyPreview() {
-    CsTheme {
+    CsThemePreview {
         WalletScreen(
             walletState = WalletUiState.Success(
                 transactionFilter = TransactionFilter(

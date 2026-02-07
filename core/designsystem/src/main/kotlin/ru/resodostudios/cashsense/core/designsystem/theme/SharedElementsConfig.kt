@@ -4,8 +4,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.compositionLocalOf
 
 sealed interface SharedElementKey {
-    data object Expenses : SharedElementKey
-    data object Income : SharedElementKey
     data class Wallet(val walletId: String, val type: WalletSharedElementType)
     data class CategoryIcon(val transactionId: String) : SharedElementKey
     data class CategoryTitle(val transactionId: String, val title: String) : SharedElementKey
@@ -13,8 +11,12 @@ sealed interface SharedElementKey {
 }
 
 enum class WalletSharedElementType {
-    Title,
     Balance,
+    Expenses,
+    ExpensesTitle,
+    Income,
+    IncomeTitle,
+    Title,
 }
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
