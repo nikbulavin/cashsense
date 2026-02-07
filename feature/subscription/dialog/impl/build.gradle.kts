@@ -12,6 +12,5 @@ dependencies {
 
     implementation(projects.feature.subscription.dialog.api)
 
-    implementation(libs.accompanist.permissions)
     implementation(libs.androidx.navigation3.ui)
 }

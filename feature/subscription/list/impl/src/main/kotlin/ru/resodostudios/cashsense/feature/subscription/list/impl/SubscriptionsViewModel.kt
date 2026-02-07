@@ -36,18 +36,10 @@ class SubscriptionsViewModel @Inject constructor(
             initialValue = SubscriptionsUiState.Loading,
         )
 
-    fun deleteSubscription() {
+    fun deleteSubscription(subscriptionId: String) {
         viewModelScope.launch {
-            lastRemovedSubscriptionState.value = selectedSubscriptionState.value
-            selectedSubscriptionState.value?.id?.let {
-                subscriptionsRepository.deleteSubscription(it)
-            }
-            shouldDisplayUndoSubscriptionState.value = true
+            subscriptionsRepository.deleteSubscription(subscriptionId)
         }
-    }
-
-    fun updateSelectedSubscription(subscription: Subscription) {
-        selectedSubscriptionState.value = subscription
     }
 
     fun undoSubscriptionRemoval() {

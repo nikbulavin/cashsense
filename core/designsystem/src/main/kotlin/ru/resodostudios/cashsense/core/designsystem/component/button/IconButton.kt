@@ -5,6 +5,7 @@ package ru.resodostudios.cashsense.core.designsystem.component.button
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -105,6 +106,44 @@ fun CsIconToggleButton(
     ) {
         val hapticFeedback = LocalHapticFeedback.current
         IconToggleButton(
+            shapes = IconButtonDefaults.toggleableShapes(),
+            checked = checked,
+            onCheckedChange = { isChecked ->
+                hapticFeedback.performHapticFeedback(
+                    if (isChecked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+                )
+                onCheckedChange(isChecked)
+            },
+            modifier = modifier,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun CsFilledTonalIconToggleButton(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        val hapticFeedback = LocalHapticFeedback.current
+        FilledTonalIconToggleButton(
             shapes = IconButtonDefaults.toggleableShapes(),
             checked = checked,
             onCheckedChange = { isChecked ->

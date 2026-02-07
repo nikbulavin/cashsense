@@ -356,11 +356,13 @@ private fun FilterDateTypeSelectorRow(
     onDateTypeUpdate: (DateType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val dateTypes = listOf(localesR.string.week, localesR.string.month, localesR.string.year)
-
     CsConnectedButtonGroup(
         selectedIndex = transactionFilter.dateType.ordinal,
-        options = dateTypes,
+        options = listOf(
+            stringResource(localesR.string.week),
+            stringResource(localesR.string.month),
+            stringResource(localesR.string.year),
+        ),
         onClick = { onDateTypeUpdate(DateType.entries[it]) },
         modifier = modifier,
     )
@@ -444,7 +446,7 @@ private fun FinancePanelDefaultPreview(
                 onDateTypeUpdate = {},
                 onFinanceTypeUpdate = {},
                 onSelectedDateUpdate = {},
-                onCategoryFilterUpdate = { _ , _ -> },
+                onCategoryFilterUpdate = { _, _ -> },
             )
         }
     }
@@ -481,7 +483,7 @@ private fun FinancePanelOpenedPreview(
                 onDateTypeUpdate = {},
                 onFinanceTypeUpdate = {},
                 onSelectedDateUpdate = {},
-                onCategoryFilterUpdate = { _ , _ -> },
+                onCategoryFilterUpdate = { _, _ -> },
             )
         }
     }

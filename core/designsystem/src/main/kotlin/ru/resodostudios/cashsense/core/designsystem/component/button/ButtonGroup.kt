@@ -12,11 +12,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 @Composable
 fun CsConnectedButtonGroup(
     selectedIndex: Int,
-    options: List<Int>,
+    options: List<String>,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     checkedIcon: ImageVector? = null,
     uncheckedIcons: List<ImageVector>? = null,
+    enabled: Boolean = true,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
@@ -33,10 +34,9 @@ fun CsConnectedButtonGroup(
                     else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                 },
                 modifier = Modifier.weight(1f),
-                icon = if (checkedIcon != null && uncheckedIcons != null) {
-                    if (checked) checkedIcon else uncheckedIcons[index]
-                } else null,
-                titleRes = label,
+                icon = if (checked) checkedIcon else uncheckedIcons?.getOrNull(index),
+                title = label,
+                enabled = enabled,
             )
         }
     }
