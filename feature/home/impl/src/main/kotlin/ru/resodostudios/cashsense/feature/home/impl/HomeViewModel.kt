@@ -8,9 +8,11 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -34,6 +36,30 @@ internal class HomeViewModel @AssistedInject constructor(
         key = SELECTED_WALLET_ID_KEY,
         initialValue = key.walletId,
     )
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    val searchResults = combine(
+        getExtendedUserWallets.invoke(),
+        searchQuery,
+    ) { extendedUserWallets, query ->
+        if (query.isBlank()) {
+            emptyList()
+        } else {
+            extendedUserWallets.flatMap { it.transactions }
+                .filter { transaction ->
+                    transaction.description?.contains(query, ignoreCase = true) == true ||
+                            transaction.amount.toPlainString().contains(query)
+                }
+        }
+    }
+        .flowOn(defaultDispatcher)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = emptyList(),
+        )
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
         selectedWalletId,
@@ -74,6 +100,10 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun onWalletClick(walletId: String?) {
         savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
+    }
+
+    fun onSearch(query: String) {
+        _searchQuery.value = query
     }
 
     @AssistedFactory

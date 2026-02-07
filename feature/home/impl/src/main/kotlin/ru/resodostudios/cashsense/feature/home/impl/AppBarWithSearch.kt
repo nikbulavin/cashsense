@@ -1,12 +1,14 @@
 package ru.resodostudios.cashsense.feature.home.impl
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarValue
@@ -14,12 +16,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -27,18 +35,33 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
+import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.ui.groupByDate
+import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalHazeMaterialsApi::class,
+)
 internal fun CsAppBarWithSearch(
     scrollBehavior: SearchBarScrollBehavior,
+    searchResults: List<Transaction>,
+    onSearch: (String) -> Unit,
+    onTransactionClick: (transactionId: String) -> Unit,
     onTotalBalanceClick: () -> Unit,
     onSettingsClick: () -> Unit,
 ) {
     val textFieldState = rememberTextFieldState()
     val searchBarState = rememberSearchBarState()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(textFieldState) {
+        snapshotFlow { textFieldState.text }
+            .collectLatest { onSearch(it.toString()) }
+    }
 
     val appBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors(
         searchBarColors = SearchBarDefaults.containedColors(state = searchBarState),
@@ -110,6 +133,19 @@ internal fun CsAppBarWithSearch(
         inputField = inputField,
         colors = appBarWithSearchColors.searchBarColors,
     ) {
-
+        val hazeState = rememberHazeState()
+        val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
+        LazyColumn {
+            transactions(
+                groupedTransactions = searchResults.groupByDate(),
+                hazeState = hazeState,
+                hazeStyle = hazeStyle,
+                onClick = { transaction ->
+                    if (transaction != null) {
+                        onTransactionClick(transaction.id)
+                    }
+                },
+            )
+        }
     }
 }

@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.core.locales)
 
     implementation(projects.feature.home.api)
+    implementation(projects.feature.transaction.detail.api)
     implementation(projects.feature.transaction.dialog.api)
     implementation(projects.feature.transaction.overview.api)
     implementation(projects.feature.transfer.api)

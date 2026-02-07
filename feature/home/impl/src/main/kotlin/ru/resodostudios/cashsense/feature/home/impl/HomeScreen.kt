@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -24,6 +23,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -36,20 +36,25 @@ internal fun HomeScreen(
     onTransfer: (String) -> Unit,
     highlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
+    onTransactionClick: (String) -> Unit,
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
+    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
+        searchResults = searchResults,
+        onSearch = viewModel::onSearch,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
         },
         onTransfer = onTransfer,
         onTransactionCreate = onTransactionCreate,
+        onTransactionClick = onTransactionClick,
         highlightSelectedWallet = highlightSelectedWallet,
         onTotalBalanceClick = onTotalBalanceClick,
         onSettingsClick = onSettingsClick,
@@ -63,9 +68,12 @@ internal fun HomeScreen(
 @Composable
 private fun HomeScreen(
     walletsState: WalletsUiState,
+    searchResults: List<Transaction>,
+    onSearch: (String) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
+    onTransactionClick: (String) -> Unit,
     highlightSelectedWallet: Boolean,
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
@@ -76,6 +84,9 @@ private fun HomeScreen(
         topBar = {
             CsAppBarWithSearch(
                 scrollBehavior = scrollBehavior,
+                searchResults = searchResults,
+                onSearch = onSearch,
+                onTransactionClick = onTransactionClick,
                 onTotalBalanceClick = onTotalBalanceClick,
                 onSettingsClick = onSettingsClick,
             )
@@ -156,9 +167,12 @@ private fun HomeScreenPopulatedPreview(
                         )
                     },
                 ),
+                searchResults = emptyList(),
+                onSearch = {},
                 onWalletClick = {},
                 onTransfer = {},
                 onTransactionCreate = {},
+                onTransactionClick = { _ -> },
                 highlightSelectedWallet = false,
             )
         }

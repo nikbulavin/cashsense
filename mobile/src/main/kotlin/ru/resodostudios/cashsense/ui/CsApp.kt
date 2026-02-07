@@ -57,6 +57,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
+import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
@@ -210,6 +211,7 @@ fun CsApp(
                         transitionSpec = { enterTransition togetherWith exitTransition },
                         popTransitionSpec = { popEnterTransition togetherWith exitTransition },
                         predictivePopTransitionSpec = { popEnterTransition togetherWith exitTransition },
+                        sharedTransitionScope = LocalSharedTransitionScope.current,
                     )
                     FabMenu(
                         visible = SettingsNavKey !in appState.navigationState.currentSubStack &&
