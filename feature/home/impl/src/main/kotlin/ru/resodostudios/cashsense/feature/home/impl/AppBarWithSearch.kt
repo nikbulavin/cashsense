@@ -112,7 +112,10 @@ internal fun CsAppBarWithSearch(
             textFieldState = textFieldState,
             searchBarState = searchBarState,
             colors = appBarWithSearchColors.searchBarColors.inputFieldColors,
-            onSearch = { scope.launch { searchBarState.animateToCollapsed() } },
+            onSearch = {
+                scope.launch { searchBarState.animateToCollapsed() }
+                textFieldState.clearText()
+            },
             placeholder = {
                 Text(
                     modifier = Modifier
@@ -127,7 +130,10 @@ internal fun CsAppBarWithSearch(
             leadingIcon = if (isSearchBarExpanded) {
                 {
                     CsIconButton(
-                        onClick = { scope.launch { searchBarState.animateToCollapsed() } },
+                        onClick = {
+                            scope.launch { searchBarState.animateToCollapsed() }
+                            textFieldState.clearText()
+                        },
                         icon = CsIcons.Outlined.ArrowBack,
                         contentDescription = stringResource(localesR.string.navigation_back_icon_description),
                         tooltipPosition = TooltipAnchorPosition.Right,
