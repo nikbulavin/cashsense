@@ -13,10 +13,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
@@ -40,25 +45,29 @@ internal class HomeViewModel @AssistedInject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    val searchResults = combine(
-        getExtendedUserWallets.invoke(),
-        searchQuery,
-    ) { extendedUserWallets, query ->
+    val searchResultUiState = searchQuery.flatMapLatest { query ->
         if (query.isBlank()) {
-            emptyList()
+            flowOf(SearchResultUiState.EmptyQuery)
         } else {
-            extendedUserWallets.flatMap { it.transactions }
-                .filter { transaction ->
-                    transaction.description?.contains(query, ignoreCase = true) == true ||
-                            transaction.amount.toPlainString().contains(query)
+            getExtendedUserWallets.invoke()
+                .map { extendedUserWallets ->
+                    SearchResultUiState.Success(
+                        transactions = extendedUserWallets
+                            .flatMap { it.transactions }
+                            .filter { transaction ->
+                                transaction.description?.contains(query, true) == true ||
+                                        transaction.amount.toPlainString().contains(query)
+                            },
+                    )
                 }
+                .catch { SearchResultUiState.LoadFailed }
         }
     }
         .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
-            initialValue = emptyList(),
+            initialValue = SearchResultUiState.Loading,
         )
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
@@ -122,6 +131,19 @@ sealed interface WalletsUiState {
         val selectedWalletId: String?,
         val uiWallets: List<UiWallet>,
     ) : WalletsUiState
+}
+
+sealed interface SearchResultUiState {
+
+    data object Loading : SearchResultUiState
+
+    data object EmptyQuery : SearchResultUiState
+
+    data object LoadFailed : SearchResultUiState
+
+    data class Success(
+        val transactions: List<Transaction> = emptyList(),
+    ) : SearchResultUiState
 }
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

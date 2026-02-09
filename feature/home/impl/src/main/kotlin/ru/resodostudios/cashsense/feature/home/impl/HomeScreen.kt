@@ -23,7 +23,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -42,11 +41,11 @@ internal fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
-    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
+    val searchResultState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
-        searchResults = searchResults,
+        searchResultState = searchResultState,
         onSearch = viewModel::onSearch,
         onWalletClick = {
             viewModel.onWalletClick(it)
@@ -68,7 +67,7 @@ internal fun HomeScreen(
 @Composable
 private fun HomeScreen(
     walletsState: WalletsUiState,
-    searchResults: List<Transaction>,
+    searchResultState: SearchResultUiState,
     onSearch: (String) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
@@ -84,7 +83,7 @@ private fun HomeScreen(
         topBar = {
             CsAppBarWithSearch(
                 scrollBehavior = scrollBehavior,
-                searchResults = searchResults,
+                searchResultState = searchResultState,
                 onSearch = onSearch,
                 onTransactionClick = onTransactionClick,
                 onTotalBalanceClick = onTotalBalanceClick,
@@ -167,7 +166,7 @@ private fun HomeScreenPopulatedPreview(
                         )
                     },
                 ),
-                searchResults = emptyList(),
+                searchResultState = SearchResultUiState.EmptyQuery,
                 onSearch = {},
                 onWalletClick = {},
                 onTransfer = {},
