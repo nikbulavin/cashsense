@@ -52,7 +52,6 @@
   <string name="repeat_yearly">Ежегодно</string>
   <string name="subscriptions_title">Подписки</string>
   <string name="subscriptions_empty">Здесь будут ваши подписки</string>
-  <string name="subscription_deleted">Подписка удалена</string>
   <string name="category_title">Категория</string>
   <string name="add_transaction">Добавить транзакцию</string>
   <string name="edit_transaction">Изменение транзакции</string>
@@ -115,4 +114,9 @@
   <string name="permanently_delete_transaction">Эта транзакция будет навсегда удалена с вашего устройства</string>
   <string name="permanently_delete_wallet">Этот кошелёк будет навсегда удален с вашего устройства</string>
   <string name="transaction_ignored">Не учитывается</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
