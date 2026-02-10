@@ -52,7 +52,6 @@
   <string name="repeat_yearly">वार्षिक</string>
   <string name="subscriptions_title">सदस्यता</string>
   <string name="subscriptions_empty">सदस्यता में कुछ भी नहीं</string>
-  <string name="subscription_deleted">सदस्यता हटाई गई</string>
   <string name="category_title">श्रेणी</string>
   <string name="add_transaction">लेनदेन जोड़ें</string>
   <string name="edit_transaction">लेनदेन संपादित करें</string>
@@ -115,4 +114,9 @@
   <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
   <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
   <string name="transaction_ignored">Ignored</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
