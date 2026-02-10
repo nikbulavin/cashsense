@@ -12,12 +12,14 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 fun CsThemePreview(content: @Composable () -> Unit) {
     CsTheme {
         SharedTransitionLayout {
-            AnimatedContent(true) { _ ->
-                CompositionLocalProvider(
-                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
-                    LocalNavAnimatedContentScope provides this,
-                ) {
-                    content()
+            AnimatedContent(true) {
+                if (it) {
+                    CompositionLocalProvider(
+                        LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                        LocalNavAnimatedContentScope provides this,
+                    ) {
+                        content()
+                    }
                 }
             }
         }
