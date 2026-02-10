@@ -57,7 +57,9 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
@@ -80,6 +82,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
 import java.util.Currency
+import kotlin.time.Duration.Companion.milliseconds
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(
@@ -87,6 +90,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
     ExperimentalMaterial3Api::class,
     ExperimentalHazeMaterialsApi::class,
     ExperimentalHazeApi::class,
+    FlowPreview::class,
 )
 @Composable
 internal fun CsAppBarWithSearch(
@@ -103,6 +107,7 @@ internal fun CsAppBarWithSearch(
 
     LaunchedEffect(textFieldState) {
         snapshotFlow { textFieldState.text }
+            .debounce(300.milliseconds)
             .collectLatest { onSearch(it.toString()) }
     }
 
