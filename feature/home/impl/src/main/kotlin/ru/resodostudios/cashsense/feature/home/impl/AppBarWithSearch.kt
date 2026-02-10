@@ -73,6 +73,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.MessageWithAnimation
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -182,66 +183,75 @@ internal fun CsAppBarWithSearch(
         colors = appBarWithSearchColors.searchBarColors,
     ) {
         when (searchResultState) {
-            SearchResultUiState.EmptyQuery -> LoadingState(Modifier.fillMaxSize())
-            SearchResultUiState.LoadFailed -> LoadingState(Modifier.fillMaxSize())
+            SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
             SearchResultUiState.Loading -> LoadingState(Modifier.fillMaxSize())
             is SearchResultUiState.Success -> {
-                val hazeState = rememberHazeState()
-                val hazeStyle = HazeMaterials.ultraThin(
-                    MaterialTheme.colorScheme.secondaryContainer,
-                )
-                LazyColumn {
-                    searchResultState.transactions.groupByDate().forEach { transactionGroup ->
-                        stickyHeader(
-                            contentType = "Date",
-                        ) {
-                            CsTag(
-                                text = transactionGroup.key.formatDate(
-                                    DateFormatType.DATE,
-                                    FormatStyle.MEDIUM
-                                ),
-                                color = Color.Transparent,
-                                modifier = Modifier
-                                    .padding(start = 16.dp, top = 16.dp)
-                                    .clip(CircleShape)
-                                    .hazeEffect(hazeState, hazeStyle) {
-                                        blurEnabled = true
-                                        blurRadius = 10.dp
-                                        noiseFactor = 0f
-                                        inputScale = HazeInputScale.Auto
-                                    },
-                            )
-                        }
-                        item { Spacer(Modifier.height(16.dp)) }
-                        itemsIndexed(
-                            items = transactionGroup.value,
-                            key = { _, transaction -> transaction.id },
-                            contentType = { _, _ -> "Transaction" }
-                        ) { index, transaction ->
-                            val motionScheme = MaterialTheme.motionScheme
-                            SearchResultItem(
-                                transaction = transaction,
-                                currency = transaction.currency,
-                                modifier = Modifier
-                                    .hazeSource(hazeState)
-                                    .padding(horizontal = 16.dp)
-                                    .animateItem(
-                                        fadeInSpec = motionScheme.defaultEffectsSpec(),
-                                        fadeOutSpec = motionScheme.defaultEffectsSpec(),
-                                        placementSpec = motionScheme.defaultSpatialSpec(),
+                if (searchResultState.transactions.isEmpty()) {
+                    MessageWithAnimation(
+                        messageRes = localesR.string.search_no_results,
+                        animationRes = R.raw.anim_search_no_results,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                    )
+                } else {
+                    val hazeState = rememberHazeState()
+                    val hazeStyle = HazeMaterials.ultraThin(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                    )
+                    LazyColumn {
+                        searchResultState.transactions.groupByDate().forEach { transactionGroup ->
+                            stickyHeader(
+                                contentType = "Date",
+                            ) {
+                                CsTag(
+                                    text = transactionGroup.key.formatDate(
+                                        DateFormatType.DATE,
+                                        FormatStyle.MEDIUM
                                     ),
-                                onClick = { onTransactionClick(transaction.id) },
-                                shapes = if (transactionGroup.value.size == 1) {
-                                    ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
-                                } else {
-                                    ListItemDefaults.segmentedShapes(
-                                        index,
-                                        transactionGroup.value.size
-                                    )
-                                },
-                            )
-                            if (index != transactionGroup.value.lastIndex) {
-                                Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
+                                    color = Color.Transparent,
+                                    modifier = Modifier
+                                        .padding(start = 16.dp, top = 16.dp)
+                                        .clip(CircleShape)
+                                        .hazeEffect(hazeState, hazeStyle) {
+                                            blurEnabled = true
+                                            blurRadius = 10.dp
+                                            noiseFactor = 0f
+                                            inputScale = HazeInputScale.Auto
+                                        },
+                                )
+                            }
+                            item { Spacer(Modifier.height(16.dp)) }
+                            itemsIndexed(
+                                items = transactionGroup.value,
+                                key = { _, transaction -> transaction.id },
+                                contentType = { _, _ -> "Transaction" }
+                            ) { index, transaction ->
+                                val motionScheme = MaterialTheme.motionScheme
+                                SearchResultItem(
+                                    transaction = transaction,
+                                    currency = transaction.currency,
+                                    modifier = Modifier
+                                        .hazeSource(hazeState)
+                                        .padding(horizontal = 16.dp)
+                                        .animateItem(
+                                            fadeInSpec = motionScheme.defaultEffectsSpec(),
+                                            fadeOutSpec = motionScheme.defaultEffectsSpec(),
+                                            placementSpec = motionScheme.defaultSpatialSpec(),
+                                        ),
+                                    onClick = { onTransactionClick(transaction.id) },
+                                    shapes = if (transactionGroup.value.size == 1) {
+                                        ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
+                                    } else {
+                                        ListItemDefaults.segmentedShapes(
+                                            index,
+                                            transactionGroup.value.size
+                                        )
+                                    },
+                                )
+                                if (index != transactionGroup.value.lastIndex) {
+                                    Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
+                                }
                             }
                         }
                     }

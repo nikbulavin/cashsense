@@ -23,8 +23,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.MessageWithAnimation
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -94,7 +94,7 @@ private fun HomeScreen(
     ) { innerPadding ->
         when (walletsState) {
             WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-            WalletsUiState.Empty -> EmptyState(localesR.string.home_empty, R.raw.anim_wallets_empty)
+            WalletsUiState.Empty -> MessageWithAnimation(localesR.string.home_empty, R.raw.anim_wallets_empty)
             is WalletsUiState.Success -> {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),

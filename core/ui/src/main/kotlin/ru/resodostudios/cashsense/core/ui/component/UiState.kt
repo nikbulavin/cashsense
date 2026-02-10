@@ -48,7 +48,7 @@ fun LoadingState(
 }
 
 @Composable
-fun EmptyState(
+fun MessageWithAnimation(
     @StringRes messageRes: Int,
     @RawRes animationRes: Int,
     modifier: Modifier = Modifier,
@@ -88,7 +88,7 @@ fun EmptyState(
             )
             Text(
                 text = stringResource(messageRes),
-                maxLines = 2,
+                maxLines = 3,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
