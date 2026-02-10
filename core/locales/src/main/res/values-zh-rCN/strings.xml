@@ -52,7 +52,6 @@
   <string name="repeat_yearly">每年</string>
   <string name="subscriptions_title">订阅</string>
   <string name="subscriptions_empty">订阅为空</string>
-  <string name="subscription_deleted">订阅已删除</string>
   <string name="category_title">类别</string>
   <string name="add_transaction">添加交易</string>
   <string name="edit_transaction">编辑交易</string>
@@ -115,4 +114,9 @@
   <string name="permanently_delete_transaction">此交易将从您的设备中永久删除</string>
   <string name="permanently_delete_wallet">此钱包将从您的设备中永久删除</string>
   <string name="transaction_ignored">已忽略</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
