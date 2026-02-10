@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,12 +43,12 @@ fun LoadingState(
     Box(
         modifier = modifier.testTag("loadingCircle"),
         contentAlignment = Alignment.Center,
-        content = { ContainedLoadingIndicator() },
+        content = { LoadingIndicator() },
     )
 }
 
 @Composable
-fun EmptyState(
+fun MessageWithAnimation(
     @StringRes messageRes: Int,
     @RawRes animationRes: Int,
     modifier: Modifier = Modifier,
@@ -88,7 +88,7 @@ fun EmptyState(
             )
             Text(
                 text = stringResource(messageRes),
-                maxLines = 2,
+                maxLines = 3,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,

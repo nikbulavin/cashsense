@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.snap
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -52,6 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -75,12 +74,10 @@ import java.util.Currency
 import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FinancePanel(
+    walletId: String,
     availableCategories: List<Category>,
     currency: Currency,
     formattedExpenses: String,
@@ -114,25 +111,39 @@ fun FinancePanel(
                     ) {
                         FinanceCard(
                             formattedAmount = formattedExpenses,
-                            subtitleRes = localesR.string.expenses,
+                            titleRes = localesR.string.expenses,
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 onFinanceTypeUpdate(EXPENSES)
                                 onDateTypeUpdate(MONTH)
                             },
                             animatedVisibilityScope = this@AnimatedContent,
-                            sharedContentState = SharedElementKey.Expenses,
+                            amountSharedContentState = SharedElementKey.Wallet(
+                                walletId = walletId,
+                                type = WalletSharedElementType.Expenses,
+                            ),
+                            titleSharedContentState = SharedElementKey.Wallet(
+                                walletId = walletId,
+                                type = WalletSharedElementType.ExpensesTitle,
+                            ),
                         )
                         FinanceCard(
                             formattedAmount = formattedIncome,
-                            subtitleRes = localesR.string.income_plural,
+                            titleRes = localesR.string.income_plural,
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 onFinanceTypeUpdate(INCOME)
                                 onDateTypeUpdate(MONTH)
                             },
                             animatedVisibilityScope = this@AnimatedContent,
-                            sharedContentState = SharedElementKey.Income,
+                            amountSharedContentState = SharedElementKey.Wallet(
+                                walletId = walletId,
+                                type = WalletSharedElementType.Income,
+                            ),
+                            titleSharedContentState = SharedElementKey.Wallet(
+                                walletId = walletId,
+                                type = WalletSharedElementType.IncomeTitle,
+                            ),
                         )
                     }
                 }
@@ -143,7 +154,7 @@ fun FinancePanel(
                         graphData = graphData,
                         transactionFilter = transactionFilter,
                         currency = currency,
-                        subtitleRes = localesR.string.expenses,
+                        titleRes = localesR.string.expenses,
                         onBackClick = {
                             onFinanceTypeUpdate(NOT_SET)
                             onDateTypeUpdate(ALL)
@@ -154,7 +165,14 @@ fun FinancePanel(
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
-                        sharedContentState = SharedElementKey.Expenses,
+                        amountSharedContentState = SharedElementKey.Wallet(
+                            walletId = walletId,
+                            type = WalletSharedElementType.Expenses,
+                        ),
+                        titleSharedContentState = SharedElementKey.Wallet(
+                            walletId = walletId,
+                            type = WalletSharedElementType.ExpensesTitle,
+                        ),
                     )
                 }
 
@@ -164,7 +182,7 @@ fun FinancePanel(
                         graphData = graphData,
                         transactionFilter = transactionFilter,
                         currency = currency,
-                        subtitleRes = localesR.string.income_plural,
+                        titleRes = localesR.string.income_plural,
                         onBackClick = {
                             onFinanceTypeUpdate(NOT_SET)
                             onDateTypeUpdate(ALL)
@@ -175,7 +193,14 @@ fun FinancePanel(
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
-                        sharedContentState = SharedElementKey.Income,
+                        amountSharedContentState = SharedElementKey.Wallet(
+                            walletId = walletId,
+                            type = WalletSharedElementType.Income,
+                        ),
+                        titleSharedContentState = SharedElementKey.Wallet(
+                            walletId = walletId,
+                            type = WalletSharedElementType.IncomeTitle,
+                        ),
                     )
                 }
             }
@@ -183,16 +208,14 @@ fun FinancePanel(
     }
 }
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FinanceCard(
     formattedAmount: String,
-    @StringRes subtitleRes: Int,
+    @StringRes titleRes: Int,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedContentState: SharedElementKey,
+    amountSharedContentState: Any,
+    titleSharedContentState: Any,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
@@ -213,20 +236,20 @@ private fun FinanceCard(
                     label = "FinanceCardTitle",
                     modifier = Modifier.sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(sharedContentState),
+                        sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = stringResource(subtitleRes),
+                    text = stringResource(titleRes),
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(subtitleRes),
+                        sharedContentState = rememberSharedContentState(titleSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
@@ -237,11 +260,7 @@ private fun FinanceCard(
     }
 }
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DetailedFinanceSection(
     formattedAmount: String,
@@ -249,13 +268,14 @@ private fun DetailedFinanceSection(
     graphData: Map<Int, BigDecimal>,
     transactionFilter: TransactionFilter,
     currency: Currency,
-    @StringRes subtitleRes: Int,
+    @StringRes titleRes: Int,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedContentState: SharedElementKey,
+    amountSharedContentState: Any,
+    titleSharedContentState: Any,
     modifier: Modifier = Modifier,
 ) {
     with(LocalSharedTransitionScope.current) {
@@ -299,19 +319,19 @@ private fun DetailedFinanceSection(
                     .padding(start = 16.dp, end = 16.dp)
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(sharedContentState),
+                        sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
-                text = stringResource(subtitleRes),
+                text = stringResource(titleRes),
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp)
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(subtitleRes),
+                        sharedContentState = rememberSharedContentState(titleSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
@@ -368,7 +388,6 @@ private fun FilterDateTypeSelectorRow(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FilterBySelectedDateTypeRow(
     onSelectedDateUpdate: (Int) -> Unit,
@@ -431,6 +450,7 @@ private fun FinancePanelDefaultPreview(
         Surface {
             val categories = transactions.mapNotNullTo(HashSet()) { it.category }
             FinancePanel(
+                walletId = "",
                 transactionFilter = TransactionFilter(
                     selectedCategories = categories.take(3).toSet(),
                     financeType = NOT_SET,
@@ -462,6 +482,7 @@ private fun FinancePanelOpenedPreview(
         Surface {
             val categories = transactions.mapNotNull { it.category }
             FinancePanel(
+                walletId = "",
                 transactionFilter = TransactionFilter(
                     selectedCategories = categories.take(3).toSet(),
                     financeType = EXPENSES,

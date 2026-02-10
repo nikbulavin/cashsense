@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.impl
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +25,6 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
@@ -60,9 +60,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
-import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -70,6 +70,7 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.ui.CsThemePreview
 import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
@@ -120,7 +121,6 @@ internal fun WalletScreen(
 }
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalHazeMaterialsApi::class,
 )
@@ -146,22 +146,20 @@ private fun WalletScreen(
         is WalletUiState.Success -> {
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
-            Scaffold(
-                topBar = {
-                    WalletTopBar(
-                        wallet = walletState.wallet,
-                        formattedCurrentBalance = walletState.formattedCurrentBalance,
-                        isPrimary = walletState.isPrimary,
-                        showNavigationIcon = shouldShowNavigationIcon,
-                        onBackClick = onBackClick,
-                        onPrimaryClick = onPrimaryClick,
-                    )
-                },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            ) { paddingValues ->
+            Column(
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+            ) {
+                WalletTopBar(
+                    wallet = walletState.wallet,
+                    formattedCurrentBalance = walletState.formattedCurrentBalance,
+                    isPrimary = walletState.isPrimary,
+                    showNavigationIcon = shouldShowNavigationIcon,
+                    onBackClick = onBackClick,
+                    onPrimaryClick = onPrimaryClick,
+                )
                 var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
 
-                Box(modifier = Modifier.padding(paddingValues)) {
+                Box {
                     LazyColumn(
                         contentPadding = PaddingValues(
                             bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
@@ -177,6 +175,7 @@ private fun WalletScreen(
                     ) {
                         item {
                             FinancePanel(
+                                walletId = walletState.wallet.id,
                                 availableCategories = walletState.availableCategories,
                                 currency = walletState.wallet.currency,
                                 formattedExpenses = walletState.formattedExpenses,
@@ -362,9 +361,9 @@ private fun WalletTopBar(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.WalletTitle(
+                            key = SharedElementKey.Wallet(
                                 walletId = wallet.id,
-                                title = wallet.title,
+                                type = WalletSharedElementType.Title,
                             ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -378,17 +377,18 @@ private fun WalletTopBar(
                     formattedAmount = formattedCurrentBalance,
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.WalletBalance(
-                                walletId = wallet.id,
-                                balance = formattedCurrentBalance,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey.Wallet(
+                                    walletId = wallet.id,
+                                    type = WalletSharedElementType.Balance,
+                                ),
                             ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    ),
                 )
             },
             navigationIcon = {
@@ -411,7 +411,7 @@ private fun WalletTopBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PrimaryToggleButton(
     isPrimary: Boolean,
@@ -439,7 +439,7 @@ private fun WalletScreenPopulatedPreview(
     @PreviewParameter(TransactionPreviewParameterProvider::class)
     transactions: List<Transaction>,
 ) {
-    CsTheme {
+    CsThemePreview {
         WalletScreen(
             walletState = WalletUiState.Success(
                 transactionFilter = TransactionFilter(
@@ -482,7 +482,7 @@ private fun WalletScreenPopulatedPreview(
 @PreviewLightDark
 @Composable
 private fun WalletScreenEmptyPreview() {
-    CsTheme {
+    CsThemePreview {
         WalletScreen(
             walletState = WalletUiState.Success(
                 transactionFilter = TransactionFilter(

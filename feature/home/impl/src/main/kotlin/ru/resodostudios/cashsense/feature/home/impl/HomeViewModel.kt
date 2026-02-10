@@ -8,13 +8,20 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
@@ -34,6 +41,34 @@ internal class HomeViewModel @AssistedInject constructor(
         key = SELECTED_WALLET_ID_KEY,
         initialValue = key.walletId,
     )
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    val searchResultUiState = searchQuery.flatMapLatest { query ->
+        if (query.isBlank()) {
+            flowOf(SearchResultUiState.EmptyQuery)
+        } else {
+            getExtendedUserWallets.invoke()
+                .map { extendedUserWallets ->
+                    SearchResultUiState.Success(
+                        transactions = extendedUserWallets
+                            .flatMap { it.transactions }
+                            .filter { transaction ->
+                                transaction.description?.contains(query, true) == true ||
+                                        transaction.amount.toPlainString().contains(query)
+                            },
+                    )
+                }
+                .catch { SearchResultUiState.LoadFailed }
+        }
+    }
+        .flowOn(defaultDispatcher)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5.seconds),
+            initialValue = SearchResultUiState.Loading,
+        )
 
     val walletsUiState: StateFlow<WalletsUiState> = combine(
         selectedWalletId,
@@ -76,6 +111,10 @@ internal class HomeViewModel @AssistedInject constructor(
         savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
     }
 
+    fun onSearch(query: String) {
+        _searchQuery.value = query
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(key: HomeNavKey): HomeViewModel
@@ -92,6 +131,19 @@ sealed interface WalletsUiState {
         val selectedWalletId: String?,
         val uiWallets: List<UiWallet>,
     ) : WalletsUiState
+}
+
+sealed interface SearchResultUiState {
+
+    data object Loading : SearchResultUiState
+
+    data object EmptyQuery : SearchResultUiState
+
+    data object LoadFailed : SearchResultUiState
+
+    data class Success(
+        val transactions: List<Transaction> = emptyList(),
+    ) : SearchResultUiState
 }
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

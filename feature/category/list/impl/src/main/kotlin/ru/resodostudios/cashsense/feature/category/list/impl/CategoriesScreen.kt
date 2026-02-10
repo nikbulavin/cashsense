@@ -34,8 +34,8 @@ import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Empty
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
 import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
-import ru.resodostudios.cashsense.core.ui.component.EmptyState
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
+import ru.resodostudios.cashsense.core.ui.component.MessageWithAnimation
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -113,7 +113,7 @@ private fun CategoriesScreen(
             }
 
             Empty -> {
-                EmptyState(
+                MessageWithAnimation(
                     messageRes = localesR.string.categories_empty,
                     animationRes = R.raw.anim_categories_empty,
                     modifier = Modifier.padding(innerPadding),
