@@ -52,7 +52,6 @@
   <string name="repeat_yearly">Jährlich</string>
   <string name="subscriptions_title">Abonnements</string>
   <string name="subscriptions_empty">Nichts in Abonnements</string>
-  <string name="subscription_deleted">Abonnement gelöscht</string>
   <string name="category_title">Kategorie</string>
   <string name="add_transaction">Transaktion hinzufügen</string>
   <string name="edit_transaction">Transaktion bearbeiten</string>
@@ -115,4 +114,9 @@
   <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
   <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
   <string name="transaction_ignored">Ignored</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
