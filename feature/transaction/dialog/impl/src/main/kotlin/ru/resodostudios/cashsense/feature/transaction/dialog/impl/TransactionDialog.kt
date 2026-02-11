@@ -303,7 +303,7 @@ private fun CategoryDropdownMenu(
                             contentDescription = null,
                         )
                     },
-                    checkedLeadingIcon = {
+                    selectedLeadingIcon = {
                         Icon(
                             imageVector = CsIcons.Outlined.Check,
                             contentDescription = null,

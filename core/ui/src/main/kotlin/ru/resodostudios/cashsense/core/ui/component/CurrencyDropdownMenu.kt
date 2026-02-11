@@ -113,10 +113,10 @@ fun CurrencyDropdownMenu(
                         focusManager.clearFocus()
                     },
                     selected = currency == option,
-                    checkedLeadingIcon = {
+                    selectedLeadingIcon = {
                         Icon(
-                            CsIcons.Outlined.Check,
-                            contentDescription = null
+                            imageVector = CsIcons.Outlined.Check,
+                            contentDescription = null,
                         )
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,

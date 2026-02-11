@@ -244,7 +244,12 @@ private fun WalletDropdownMenu(
                 DropdownMenuItem(
                     shapes = MenuDefaults.itemShape(index, availableWallets.size),
                     selected = selectedWallet == wallet,
-                    checkedLeadingIcon = { Icon(CsIcons.Outlined.Check, contentDescription = null) },
+                    selectedLeadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Check,
+                            contentDescription = null,
+                        )
+                    },
                     text = {
                         Text(
                             text = menuText,

@@ -292,7 +292,7 @@ private fun RepeatingIntervalDropdownMenu(
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     shapes = MenuDefaults.itemShape(index, intervalNames.size),
                     selected = index == interval.ordinal,
-                    checkedLeadingIcon = {
+                    selectedLeadingIcon = {
                         Icon(
                             imageVector = CsIcons.Outlined.Check,
                             contentDescription = null,
