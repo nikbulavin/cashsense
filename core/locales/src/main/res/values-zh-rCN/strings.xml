@@ -114,9 +114,9 @@
   <string name="permanently_delete_transaction">此交易将从您的设备中永久删除</string>
   <string name="permanently_delete_wallet">此钱包将从您的设备中永久删除</string>
   <string name="transaction_ignored">已忽略</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="by_date">按日期</string>
+  <string name="delete_subscription">删除订阅？</string>
+  <string name="permanently_delete_subscription">此订阅将从您的设备中永久删除</string>
+  <string name="search">搜索</string>
+  <string name="search_no_results">未找到结果。请检查拼写或尝试其他关键词。</string>
 </resources>
