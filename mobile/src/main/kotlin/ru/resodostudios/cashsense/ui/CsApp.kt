@@ -112,6 +112,7 @@ fun CsApp(
             navSuiteType == NavigationSuiteType.WideNavigationRailExpanded
 
     val shouldShowNavigation = navRailVisible ||
+            navSuiteType == NavigationSuiteType.ShortNavigationBarMedium ||
             appState.navigationState.currentSubStack.all { it !is WalletNavKey }
 
     LaunchedEffect(shouldShowNavigation) {
