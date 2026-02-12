@@ -24,7 +24,6 @@
   <string name="categories_empty">Rien dans les catégories</string>
   <string name="category_deleted">Catégorie supprimée</string>
   <string name="home_title">Accueil</string>
-  <string name="wallet_deleted">Portefeuille supprimé</string>
   <string name="wallet_menu_icon_description">Menu du portefeuille</string>
   <string name="home_empty">Rien dans les portefeuilles</string>
   <string name="settings_general">Général</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">Annuel</string>
   <string name="subscriptions_title">Abonnements</string>
   <string name="subscriptions_empty">Rien dans les abonnements</string>
-  <string name="subscription_deleted">Abonnement supprimé</string>
   <string name="category_title">Catégorie</string>
   <string name="add_transaction">Ajouter une transaction</string>
   <string name="edit_transaction">Modifier la transaction</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">Taux de change</string>
   <string name="choose_wallet">Choisissez un portefeuille</string>
   <string name="uncategorized">Non catégorisé</string>
-    <string name="from_wallet">Du portefeuille</string>
+  <string name="from_wallet">Du portefeuille</string>
   <string name="to_wallet">Au portefeuille</string>
   <string name="converted_amount">Montant converti</string>
   <string name="primary_icon_description">Définir comme principal</string>
@@ -106,10 +104,19 @@
   <string name="close">Fermer</string>
   <string name="next_date">Date suivante</string>
   <string name="previous_date">Date précédente</string>
-  <string name="transaction_deleted">Transaction supprimée</string>
-  <string name="transfer_deleted">Transfert supprimé</string>
   <string name="collapsed">Effondré</string>
   <string name="expanded">Élargi</string>
   <string name="financial_health">Santé financière</string>
   <string name="toggle_menu">Menu bascule</string>
+  <string name="app_update_in_progress">Téléchargement de la mise à jour…</string>
+  <string name="delete_transaction">Supprimer la transaction ?</string>
+  <string name="delete_wallet">Supprimer le portefeuille ?</string>
+  <string name="permanently_delete_transaction">Cette transaction sera définitivement supprimée de votre appareil</string>
+  <string name="permanently_delete_wallet">Ce portefeuille sera définitivement supprimé de votre appareil</string>
+  <string name="transaction_ignored">Ignoré</string>
+  <string name="by_date">Par date</string>
+  <string name="delete_subscription">Supprimer l\'abonnement ?</string>
+  <string name="permanently_delete_subscription">Cet abonnement sera définitivement supprimé de votre appareil</string>
+  <string name="search">Rechercher</string>
+  <string name="search_no_results">Aucun résultat. Veuillez vérifier l\'orthographe ou essayer d\'autres mots-clés.</string>
 </resources>

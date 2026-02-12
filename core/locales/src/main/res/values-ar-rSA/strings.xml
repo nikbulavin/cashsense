@@ -24,7 +24,6 @@
   <string name="categories_empty">لا شيء في الفئات</string>
   <string name="category_deleted">تم حذف الفئة</string>
   <string name="home_title">الرئيسية</string>
-  <string name="wallet_deleted">تم حذف المحفظة</string>
   <string name="wallet_menu_icon_description">قائمة المحفظة</string>
   <string name="home_empty">لا يوجد محافظ</string>
   <string name="settings_general">عام</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">سنوي</string>
   <string name="subscriptions_title">الاشتراكات</string>
   <string name="subscriptions_empty">لا يوجد اشتراكات</string>
-  <string name="subscription_deleted">تم حذف الاشتراك</string>
   <string name="category_title">الفئة</string>
   <string name="add_transaction">إضافة معاملة</string>
   <string name="edit_transaction">تحرير المعاملة</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">سعر الصرف</string>
   <string name="choose_wallet">اختر محفظة</string>
   <string name="uncategorized">غير مصنف</string>
-    <string name="from_wallet">من المحفظة</string>
+  <string name="from_wallet">من المحفظة</string>
   <string name="to_wallet">إلى المحفظة</string>
   <string name="converted_amount">المبلغ المحول</string>
   <string name="primary_icon_description">جعله رئيسياً</string>
@@ -106,10 +104,19 @@
   <string name="close">إغلاق</string>
   <string name="next_date">التاريخ التالي</string>
   <string name="previous_date">التاريخ السابق</string>
-  <string name="transaction_deleted">تم حذف المعاملة</string>
-  <string name="transfer_deleted">تم حذف التحويل</string>
   <string name="collapsed">انهار</string>
   <string name="expanded">موسع</string>
   <string name="financial_health">الصحة المالية</string>
   <string name="toggle_menu">تبديل القائمة</string>
+  <string name="app_update_in_progress">جارٍ تنزيل التحديث…</string>
+  <string name="delete_transaction">هل تريد حذف المعاملة؟</string>
+  <string name="delete_wallet">هل تريد حذف المحفظة؟</string>
+  <string name="permanently_delete_transaction">سيتم حذف هذه المعاملة نهائياً من جهازك</string>
+  <string name="permanently_delete_wallet">سيتم حذف هذه المحفظة نهائياً من جهازك</string>
+  <string name="transaction_ignored">تم التجاهل</string>
+  <string name="by_date">حسب التاريخ</string>
+  <string name="delete_subscription">هل تريد حذف الاشتراك؟</string>
+  <string name="permanently_delete_subscription">سيتم حذف هذا الاشتراك نهائياً من جهازك</string>
+  <string name="search">بحث</string>
+  <string name="search_no_results">لا توجد نتائج. يرجى التحقق من الإملاء أو تجربة كلمات مفتاحية مختلفة.</string>
 </resources>

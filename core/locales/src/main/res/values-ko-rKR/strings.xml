@@ -24,7 +24,6 @@
   <string name="categories_empty">범주에 항목이 없습니다</string>
   <string name="category_deleted">범주가 삭제되었습니다</string>
   <string name="home_title">홈</string>
-  <string name="wallet_deleted">지갑이 삭제되었습니다</string>
   <string name="wallet_menu_icon_description">지갑 메뉴</string>
   <string name="home_empty">지갑에 항목이 없습니다</string>
   <string name="settings_general">일반</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">매년</string>
   <string name="subscriptions_title">구독</string>
   <string name="subscriptions_empty">구독에 항목이 없습니다</string>
-  <string name="subscription_deleted">구독이 삭제되었습니다</string>
   <string name="category_title">범주</string>
   <string name="add_transaction">거래 추가</string>
   <string name="edit_transaction">거래 편집</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">환율</string>
   <string name="choose_wallet">지갑 선택</string>
   <string name="uncategorized">분류되지 않음</string>
-    <string name="from_wallet">지갑에서</string>
+  <string name="from_wallet">지갑에서</string>
   <string name="to_wallet">지갑으로</string>
   <string name="converted_amount">변환된 금액</string>
   <string name="primary_icon_description">주요로 설정</string>
@@ -106,10 +104,19 @@
   <string name="close">닫기</string>
   <string name="next_date">다음 날짜</string>
   <string name="previous_date">이전 날짜</string>
-  <string name="transaction_deleted">거래가 삭제되었습니다</string>
-  <string name="transfer_deleted">삭제된 전송</string>
   <string name="collapsed">붕괴된</string>
   <string name="expanded">확장된</string>
   <string name="financial_health">재정 건전성</string>
   <string name="toggle_menu">메뉴 전환</string>
+  <string name="app_update_in_progress">업데이트 다운로드 중…</string>
+  <string name="delete_transaction">거래 내역을 삭제하시겠습니까?</string>
+  <string name="delete_wallet">지갑을 삭제하시겠습니까?</string>
+  <string name="permanently_delete_transaction">이 거래 내역은 기기에서 영구적으로 삭제됩니다</string>
+  <string name="permanently_delete_wallet">이 지갑은 기기에서 영구적으로 삭제됩니다</string>
+  <string name="transaction_ignored">제외됨</string>
+  <string name="by_date">날짜순</string>
+  <string name="delete_subscription">구독을 삭제하시겠습니까?</string>
+  <string name="permanently_delete_subscription">이 구독은 기기에서 영구적으로 삭제됩니다</string>
+  <string name="search">검색</string>
+  <string name="search_no_results">검색 결과가 없습니다. 철자를 확인하거나 다른 검색어를 입력해 주세요.</string>
 </resources>

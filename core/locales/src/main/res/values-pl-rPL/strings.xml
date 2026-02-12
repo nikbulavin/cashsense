@@ -24,7 +24,6 @@
   <string name="categories_empty">Brak kategorii</string>
   <string name="category_deleted">Kategoria usunięta</string>
   <string name="home_title">Dom</string>
-  <string name="wallet_deleted">Portfel usunięty</string>
   <string name="wallet_menu_icon_description">Menu portfela</string>
   <string name="home_empty">Brak portfeli</string>
   <string name="settings_general">Ogólne</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">Co roku</string>
   <string name="subscriptions_title">Subskrypcje</string>
   <string name="subscriptions_empty">Brak subskrypcji</string>
-  <string name="subscription_deleted">Subskrypcja usunięta</string>
   <string name="category_title">Kategoria</string>
   <string name="add_transaction">Dodaj transakcję</string>
   <string name="edit_transaction">Edytuj transakcję</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">Kurs wymiany</string>
   <string name="choose_wallet">Wybierz portfel</string>
   <string name="uncategorized">Bez kategorii</string>
-    <string name="from_wallet">Z portfela</string>
+  <string name="from_wallet">Z portfela</string>
   <string name="to_wallet">Do portfela</string>
   <string name="converted_amount">Przeliczona kwota</string>
   <string name="primary_icon_description">Ustaw jako główny</string>
@@ -106,10 +104,19 @@
   <string name="close">Zamknij</string>
   <string name="next_date">Następna data</string>
   <string name="previous_date">Poprzednia data</string>
-  <string name="transaction_deleted">Transakcja usunięta</string>
-  <string name="transfer_deleted">Przeniesienie usunięte</string>
   <string name="collapsed">Zawalił się</string>
   <string name="expanded">Rozszerzone</string>
   <string name="financial_health">Kondycja finansowa</string>
   <string name="toggle_menu">Przełącz menu</string>
+  <string name="app_update_in_progress">Pobieranie aktualizacji…</string>
+  <string name="delete_transaction">Usunąć transakcję?</string>
+  <string name="delete_wallet">Usunąć portfel?</string>
+  <string name="permanently_delete_transaction">Ta transakcja zostanie trwale usunięta z Twojego urządzenia</string>
+  <string name="permanently_delete_wallet">Ten portfel zostanie trwale usunięty z Twojego urządzenia</string>
+  <string name="transaction_ignored">Ignorowane</string>
+  <string name="by_date">Według daty</string>
+  <string name="delete_subscription">Usunąć subskrypcję?</string>
+  <string name="permanently_delete_subscription">Ta subskrypcja zostanie trwale usunięta z Twojego urządzenia</string>
+  <string name="search">Szukaj</string>
+  <string name="search_no_results">Nie znaleziono wyników. Sprawdź pisownię lub spróbuj innych słów kluczowych.</string>
 </resources>
