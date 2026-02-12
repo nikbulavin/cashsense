@@ -108,15 +108,15 @@
   <string name="expanded">Élargi</string>
   <string name="financial_health">Santé financière</string>
   <string name="toggle_menu">Menu bascule</string>
-  <string name="app_update_in_progress">Update is downloading…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="app_update_in_progress">Téléchargement de la mise à jour…</string>
+  <string name="delete_transaction">Supprimer la transaction ?</string>
+  <string name="delete_wallet">Supprimer le portefeuille ?</string>
+  <string name="permanently_delete_transaction">Cette transaction sera définitivement supprimée de votre appareil</string>
+  <string name="permanently_delete_wallet">Ce portefeuille sera définitivement supprimé de votre appareil</string>
+  <string name="transaction_ignored">Ignoré</string>
+  <string name="by_date">Par date</string>
+  <string name="delete_subscription">Supprimer l\'abonnement ?</string>
+  <string name="permanently_delete_subscription">Cet abonnement sera définitivement supprimé de votre appareil</string>
+  <string name="search">Rechercher</string>
+  <string name="search_no_results">Aucun résultat. Veuillez vérifier l\'orthographe ou essayer d\'autres mots-clés.</string>
 </resources>
