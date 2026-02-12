@@ -152,9 +152,7 @@ fun CsApp(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
-                            if (navSuiteType != NavigationSuiteType.ShortNavigationBarCompact &&
-                                SettingsNavKey !in appState.navigationState.currentSubStack
-                            ) {
+                            if (SettingsNavKey !in appState.navigationState.currentSubStack) {
                                 Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
                             } else {
                                 Modifier
