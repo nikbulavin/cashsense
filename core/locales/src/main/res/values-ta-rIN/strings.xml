@@ -24,7 +24,6 @@
   <string name="categories_empty">வகைகளில் எதுவும் இல்லை</string>
   <string name="category_deleted">வகை நீக்கப்பட்டது</string>
   <string name="home_title">முகப்பு</string>
-  <string name="wallet_deleted">பணப்பை நீக்கப்பட்டது</string>
   <string name="wallet_menu_icon_description">பணப்பை மெனு</string>
   <string name="home_empty">பணப்பைகளில் எதுவும் இல்லை</string>
   <string name="settings_general">பொது</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">ஆண்டாந்திர</string>
   <string name="subscriptions_title">சந்தாக்கள்</string>
   <string name="subscriptions_empty">சந்தாக்களில் எதுவும் இல்லை</string>
-  <string name="subscription_deleted">சந்தா நீக்கப்பட்டது</string>
   <string name="category_title">வகை</string>
   <string name="add_transaction">பரிவர்த்தனையைச் சேர்க்கவும்</string>
   <string name="edit_transaction">பரிவர்த்தனையை திருத்துக</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">மாற்று விகிதம்</string>
   <string name="choose_wallet">பணப்பையைத் தேர்ந்தெடுக்கவும்</string>
   <string name="uncategorized">வகைப்படுத்தப்படாதது</string>
-    <string name="from_wallet">பணப்பையிலிருந்து</string>
+  <string name="from_wallet">பணப்பையிலிருந்து</string>
   <string name="to_wallet">பணப்பைக்கு</string>
   <string name="converted_amount">மாற்றிய மொத்தம்</string>
   <string name="primary_icon_description">முதன்மையாக்கு</string>
@@ -106,10 +104,19 @@
   <string name="close">மூடு</string>
   <string name="next_date">அடுத்த தேதி</string>
   <string name="previous_date">முந்தைய தேதி</string>
-  <string name="transaction_deleted">பரிவர்த்தனை நீக்கப்பட்டது</string>
-  <string name="transfer_deleted">பணமாற்றம் நீக்கப்பட்டது</string>
   <string name="collapsed">இடிந்து விழுந்தது</string>
   <string name="expanded">விரிவாக்கப்பட்டது</string>
   <string name="financial_health">நிதி ஆரோக்கியம்</string>
   <string name="toggle_menu">மாற்று மெனு</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
+  <string name="delete_transaction">Delete transaction?</string>
+  <string name="delete_wallet">Delete wallet?</string>
+  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
+  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
+  <string name="transaction_ignored">Ignored</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
