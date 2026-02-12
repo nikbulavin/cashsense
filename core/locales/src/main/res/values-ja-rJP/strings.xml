@@ -108,15 +108,15 @@
   <string name="expanded">拡張された</string>
   <string name="financial_health">財務健全性</string>
   <string name="toggle_menu">メニューを切り替える</string>
-  <string name="app_update_in_progress">Update is downloading…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="app_update_in_progress">更新をダウンロード中…</string>
+  <string name="delete_transaction">取引を削除しますか？</string>
+  <string name="delete_wallet">ウォレットを削除しますか？</string>
+  <string name="permanently_delete_transaction">この取引はお使いの端末から完全に削除されます</string>
+  <string name="permanently_delete_wallet">このウォレットはお使いの端末から完全に削除されます</string>
+  <string name="transaction_ignored">除外済み</string>
+  <string name="by_date">日付順</string>
+  <string name="delete_subscription">サブスクリプションを削除しますか？</string>
+  <string name="permanently_delete_subscription">のサブスクリプションはお使いの端末から完全に削除されます</string>
+  <string name="search">検索</string>
+  <string name="search_no_results">結果が見つかりませんでした。入力内容を確認するか、別のキーワードで検索してください。</string>
 </resources>
