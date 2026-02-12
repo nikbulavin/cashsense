@@ -24,7 +24,6 @@
   <string name="categories_empty">カテゴリーに何もありません</string>
   <string name="category_deleted">カテゴリーが削除されました</string>
   <string name="home_title">ホーム</string>
-  <string name="wallet_deleted">ウォレットが削除されました</string>
   <string name="wallet_menu_icon_description">ウォレットメニュー</string>
   <string name="home_empty">ウォレットに何もありません</string>
   <string name="settings_general">一般</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">毎年</string>
   <string name="subscriptions_title">サブスクリプション</string>
   <string name="subscriptions_empty">サブスクリプションに何もありません</string>
-  <string name="subscription_deleted">サブスクリプションが削除されました</string>
   <string name="category_title">カテゴリー</string>
   <string name="add_transaction">取引を追加</string>
   <string name="edit_transaction">取引を編集</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">為替レート</string>
   <string name="choose_wallet">ウォレットを選択</string>
   <string name="uncategorized">未分類</string>
-    <string name="from_wallet">ウォレットから</string>
+  <string name="from_wallet">ウォレットから</string>
   <string name="to_wallet">ウォレットへ</string>
   <string name="converted_amount">変換された金額</string>
   <string name="primary_icon_description">主要に設定</string>
@@ -106,10 +104,19 @@
   <string name="close">閉じる</string>
   <string name="next_date">次の日付</string>
   <string name="previous_date">前の日付</string>
-  <string name="transaction_deleted">トランザクションが削除されました</string>
-  <string name="transfer_deleted">削除済み転送</string>
   <string name="collapsed">崩壊した</string>
   <string name="expanded">拡張された</string>
   <string name="financial_health">財務健全性</string>
   <string name="toggle_menu">メニューを切り替える</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
+  <string name="delete_transaction">Delete transaction?</string>
+  <string name="delete_wallet">Delete wallet?</string>
+  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
+  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
+  <string name="transaction_ignored">Ignored</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
