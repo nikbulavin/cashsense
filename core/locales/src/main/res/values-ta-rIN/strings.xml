@@ -108,15 +108,15 @@
   <string name="expanded">விரிவாக்கப்பட்டது</string>
   <string name="financial_health">நிதி ஆரோக்கியம்</string>
   <string name="toggle_menu">மாற்று மெனு</string>
-  <string name="app_update_in_progress">Update is downloading…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="app_update_in_progress">அப்டேட் பதிவிறக்கம் செய்யப்படுகிறது…</string>
+  <string name="delete_transaction">பரிவர்த்தனையை நீக்கவா?</string>
+  <string name="delete_wallet">வாலட்டை நீக்கவா?</string>
+  <string name="permanently_delete_transaction">இப்பரிவர்த்தனை உங்கள் சாதனத்திலிருந்து நிரந்தரமாக நீக்கப்படும்</string>
+  <string name="permanently_delete_wallet">இந்த வாலட் உங்கள் சாதனத்திலிருந்து நிரந்தரமாக நீக்கப்படும்</string>
+  <string name="transaction_ignored">தவிர்க்கப்பட்டது</string>
+  <string name="by_date">தேதி வாரியாக</string>
+  <string name="delete_subscription">சந்தாவை நீக்கவா?</string>
+  <string name="permanently_delete_subscription">இந்தச் சந்தா உங்கள் சாதனத்திலிருந்து நிரந்தரமாக நீக்கப்படும்</string>
+  <string name="search">தேடுக</string>
+  <string name="search_no_results">முடிவுகள் எதுவும் இல்லை. எழுத்துப்பிழையைச் சரிபார்க்கவும் அல்லது வேறு சொற்களைப் பயன்படுத்தவும்.</string>
 </resources>
