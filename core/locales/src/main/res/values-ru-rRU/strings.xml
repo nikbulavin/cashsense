@@ -24,7 +24,6 @@
   <string name="categories_empty">Здесь будут ваши категории</string>
   <string name="category_deleted">Категория удалена</string>
   <string name="home_title">Главная</string>
-  <string name="wallet_deleted">Кошелёк удалён</string>
   <string name="wallet_menu_icon_description">Меню кошелька</string>
   <string name="home_empty">Здесь будут ваши кошельки</string>
   <string name="settings_general">Основные</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">Ежегодно</string>
   <string name="subscriptions_title">Подписки</string>
   <string name="subscriptions_empty">Здесь будут ваши подписки</string>
-  <string name="subscription_deleted">Подписка удалена</string>
   <string name="category_title">Категория</string>
   <string name="add_transaction">Добавить транзакцию</string>
   <string name="edit_transaction">Изменение транзакции</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">Валютный курс</string>
   <string name="choose_wallet">Выберите кошелёк</string>
   <string name="uncategorized">Без категории</string>
-    <string name="from_wallet">С кошелька</string>
+  <string name="from_wallet">С кошелька</string>
   <string name="to_wallet">На кошелёк</string>
   <string name="converted_amount">Конвертированная сумма</string>
   <string name="primary_icon_description">Сделать основным</string>
@@ -106,10 +104,19 @@
   <string name="close">Закрыть</string>
   <string name="next_date">Следующая дата</string>
   <string name="previous_date">Предыдущая дата</string>
-  <string name="transaction_deleted">Транзакция удалена</string>
-  <string name="transfer_deleted">Перевод удалён</string>
   <string name="collapsed">Свёрнуто</string>
   <string name="expanded">Расширено</string>
   <string name="financial_health">Финансовое здоровье</string>
   <string name="toggle_menu">Переключить меню</string>
+  <string name="app_update_in_progress">Обновление загружается…</string>
+  <string name="delete_transaction">Удалить транзакцию?</string>
+  <string name="delete_wallet">Удалить кошелёк?</string>
+  <string name="permanently_delete_transaction">Эта транзакция будет навсегда удалена с вашего устройства</string>
+  <string name="permanently_delete_wallet">Этот кошелёк будет навсегда удален с вашего устройства</string>
+  <string name="transaction_ignored">Не учитывается</string>
+  <string name="by_date">По дате</string>
+  <string name="delete_subscription">Удалить подписку?</string>
+  <string name="permanently_delete_subscription">Эта подписка будет навсегда удалена с вашего устройства</string>
+  <string name="search">Поиск</string>
+  <string name="search_no_results">Ничего не найдено. Пожалуйста, проверьте правильность написания или попробуйте другие ключевые слова.</string>
 </resources>
