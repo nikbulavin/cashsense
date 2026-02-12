@@ -108,15 +108,15 @@
   <string name="expanded">विस्तारित</string>
   <string name="financial_health">वित्तीय स्वास्थ्य</string>
   <string name="toggle_menu">मेनू टॉगल करें</string>
-  <string name="app_update_in_progress">Update is downloading…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="app_update_in_progress">अपडेट डाउनलोड हो रहा है…</string>
+  <string name="delete_transaction">लेन-देन हटाएँ?</string>
+  <string name="delete_wallet">वॉलेट हटाएँ?</string>
+  <string name="permanently_delete_transaction">यह लेन-देन आपके डिवाइस से हमेशा के लिए हटा दिया जाएगा</string>
+  <string name="permanently_delete_wallet">यह वॉलेट आपके डिवाइस से हमेशा के लिए हटा दिया जाएगा</string>
+  <string name="transaction_ignored">अनदेखा किया गया</string>
+  <string name="by_date">तिथि के अनुसार</string>
+  <string name="delete_subscription">सब्सक्रिप्शन हटाएँ?</string>
+  <string name="permanently_delete_subscription">यह सब्सक्रिप्शन आपके डिवाइस से हमेशा के लिए हटा दिया जाएगा</string>
+  <string name="search">खोजें</string>
+  <string name="search_no_results">कोई परिणाम नहीं मिला. कृपया अपनी वर्तनी जाँचें या अलग कीवर्ड आज़माएँ.</string>
 </resources>
