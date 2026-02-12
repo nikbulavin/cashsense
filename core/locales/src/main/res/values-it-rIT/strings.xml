@@ -24,7 +24,6 @@
   <string name="categories_empty">Niente nelle Categorie</string>
   <string name="category_deleted">Categoria eliminata</string>
   <string name="home_title">Home</string>
-  <string name="wallet_deleted">Portafoglio eliminato</string>
   <string name="wallet_menu_icon_description">Menu portafoglio</string>
   <string name="home_empty">Niente nei Portafogli</string>
   <string name="settings_general">Generale</string>
@@ -53,7 +52,6 @@
   <string name="repeat_yearly">Annuale</string>
   <string name="subscriptions_title">Abbonamenti</string>
   <string name="subscriptions_empty">Niente negli Abbonamenti</string>
-  <string name="subscription_deleted">Abbonamento eliminato</string>
   <string name="category_title">Categoria</string>
   <string name="add_transaction">Aggiungi transazione</string>
   <string name="edit_transaction">Modifica transazione</string>
@@ -86,7 +84,7 @@
   <string name="exchange_rate">Tasso di cambio</string>
   <string name="choose_wallet">Scegli un portafoglio</string>
   <string name="uncategorized">Non categorizzato</string>
-    <string name="from_wallet">Dal portafoglio</string>
+  <string name="from_wallet">Dal portafoglio</string>
   <string name="to_wallet">Al portafoglio</string>
   <string name="converted_amount">Importo convertito</string>
   <string name="primary_icon_description">Imposta come principale</string>
@@ -106,10 +104,19 @@
   <string name="close">Chiudi</string>
   <string name="next_date">Data successiva</string>
   <string name="previous_date">Data precedente</string>
-  <string name="transaction_deleted">Transazione eliminata</string>
-  <string name="transfer_deleted">Trasferimento eliminato</string>
   <string name="collapsed">Crollato</string>
   <string name="expanded">Ampliato</string>
   <string name="financial_health">Salute finanziaria</string>
   <string name="toggle_menu">Attiva/Disattiva menu</string>
+  <string name="app_update_in_progress">Update is downloading…</string>
+  <string name="delete_transaction">Delete transaction?</string>
+  <string name="delete_wallet">Delete wallet?</string>
+  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
+  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
+  <string name="transaction_ignored">Ignored</string>
+  <string name="by_date">By date</string>
+  <string name="delete_subscription">Delete subscription?</string>
+  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
+  <string name="search">Search</string>
+  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
 </resources>
