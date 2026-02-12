@@ -108,15 +108,15 @@
   <string name="expanded">확장된</string>
   <string name="financial_health">재정 건전성</string>
   <string name="toggle_menu">메뉴 전환</string>
-  <string name="app_update_in_progress">Update is downloading…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="app_update_in_progress">업데이트 다운로드 중…</string>
+  <string name="delete_transaction">거래 내역을 삭제하시겠습니까?</string>
+  <string name="delete_wallet">지갑을 삭제하시겠습니까?</string>
+  <string name="permanently_delete_transaction">이 거래 내역은 기기에서 영구적으로 삭제됩니다</string>
+  <string name="permanently_delete_wallet">이 지갑은 기기에서 영구적으로 삭제됩니다</string>
+  <string name="transaction_ignored">제외됨</string>
+  <string name="by_date">날짜순</string>
+  <string name="delete_subscription">구독을 삭제하시겠습니까?</string>
+  <string name="permanently_delete_subscription">이 구독은 기기에서 영구적으로 삭제됩니다</string>
+  <string name="search">검색</string>
+  <string name="search_no_results">검색 결과가 없습니다. 철자를 확인하거나 다른 검색어를 입력해 주세요.</string>
 </resources>
