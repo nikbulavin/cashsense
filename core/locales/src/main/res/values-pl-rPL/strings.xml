@@ -108,15 +108,15 @@
   <string name="expanded">Rozszerzone</string>
   <string name="financial_health">Kondycja finansowa</string>
   <string name="toggle_menu">Przełącz menu</string>
-  <string name="app_update_in_progress">Update is downloading…</string>
-  <string name="delete_transaction">Delete transaction?</string>
-  <string name="delete_wallet">Delete wallet?</string>
-  <string name="permanently_delete_transaction">This transaction will be permanently removed from your device</string>
-  <string name="permanently_delete_wallet">This wallet will be permanently removed from your device</string>
-  <string name="transaction_ignored">Ignored</string>
-  <string name="by_date">By date</string>
-  <string name="delete_subscription">Delete subscription?</string>
-  <string name="permanently_delete_subscription">This subscription will be permanently removed from your device</string>
-  <string name="search">Search</string>
-  <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
+  <string name="app_update_in_progress">Pobieranie aktualizacji…</string>
+  <string name="delete_transaction">Usunąć transakcję?</string>
+  <string name="delete_wallet">Usunąć portfel?</string>
+  <string name="permanently_delete_transaction">Ta transakcja zostanie trwale usunięta z Twojego urządzenia</string>
+  <string name="permanently_delete_wallet">Ten portfel zostanie trwale usunięty z Twojego urządzenia</string>
+  <string name="transaction_ignored">Ignorowane</string>
+  <string name="by_date">Według daty</string>
+  <string name="delete_subscription">Usunąć subskrypcję?</string>
+  <string name="permanently_delete_subscription">Ta subskrypcja zostanie trwale usunięta z Twojego urządzenia</string>
+  <string name="search">Szukaj</string>
+  <string name="search_no_results">Nie znaleziono wyników. Sprawdź pisownię lub spróbuj innych słów kluczowych.</string>
 </resources>
