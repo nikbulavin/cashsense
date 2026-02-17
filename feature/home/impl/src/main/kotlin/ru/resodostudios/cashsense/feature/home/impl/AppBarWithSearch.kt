@@ -65,13 +65,13 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListIt
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.AccountBalance
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Settings
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Settings
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -168,7 +168,7 @@ internal fun CsAppBarWithSearch(
         navigationIcon = {
             CsIconButton(
                 onClick = onTotalBalanceClick,
-                icon = CsIcons.Outlined.AccountBalance,
+                icon = CsIcons.Filled.AccountBalance,
                 contentDescription = stringResource(localesR.string.total_balance),
                 tooltipPosition = TooltipAnchorPosition.Right,
             )
@@ -176,7 +176,7 @@ internal fun CsAppBarWithSearch(
         actions = {
             CsIconButton(
                 onClick = onSettingsClick,
-                icon = CsIcons.Outlined.Settings,
+                icon = CsIcons.Filled.Settings,
                 contentDescription = stringResource(localesR.string.settings_title),
                 tooltipPosition = TooltipAnchorPosition.Left,
             )

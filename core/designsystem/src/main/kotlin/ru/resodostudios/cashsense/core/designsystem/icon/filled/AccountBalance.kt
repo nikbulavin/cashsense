@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.designsystem.icon.outlined
+package ru.resodostudios.cashsense.core.designsystem.icon.filled
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -7,13 +7,13 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 
-val CsIcons.Outlined.AccountBalance: ImageVector
+val CsIcons.Filled.AccountBalance: ImageVector
     get() {
         if (_AccountBalance != null) {
             return _AccountBalance!!
         }
         _AccountBalance = ImageVector.Builder(
-            name = "Outlined.AccountBalance",
+            name = "Filled.AccountBalance",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
@@ -50,16 +50,6 @@ val CsIcons.Outlined.AccountBalance: ImageVector
                 lineTo(880f, 240f)
                 lineTo(880f, 320f)
                 lineTo(80f, 320f)
-                close()
-                moveTo(258f, 240f)
-                lineTo(480f, 240f)
-                lineTo(702f, 240f)
-                lineTo(258f, 240f)
-                close()
-                moveTo(258f, 240f)
-                lineTo(702f, 240f)
-                lineTo(480f, 130f)
-                lineTo(258f, 240f)
                 close()
             }
         }.build()
