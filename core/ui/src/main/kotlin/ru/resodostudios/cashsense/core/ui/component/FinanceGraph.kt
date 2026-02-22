@@ -1,10 +1,10 @@
 package ru.resodostudios.cashsense.core.ui.component
 
-import android.text.Layout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -15,54 +15,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.ColorUtils
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.compose.cartesian.Zoom
+import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
+import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerMargins
+import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
+import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.common.Insets
+import com.patrykandpatrick.vico.compose.common.LayeredComponent
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.component.shadow
-import com.patrykandpatrick.vico.compose.common.fill
-import com.patrykandpatrick.vico.compose.common.insets
-import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
-import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
-import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
-import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerDimensions
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayerMargins
-import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
-import com.patrykandpatrick.vico.core.common.Fill
-import com.patrykandpatrick.vico.core.common.LayeredComponent
-import com.patrykandpatrick.vico.core.common.component.Shadow
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
-import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
@@ -77,7 +69,6 @@ import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.time.format.TextStyle
@@ -142,9 +133,12 @@ fun FinanceGraph(
                             LineCartesianLayer.rememberLine(
                                 pointConnector = LineCartesianLayer.PointConnector.cubic(),
                                 areaFill = LineCartesianLayer.AreaFill.single(
-                                    fill(
-                                        ShaderProvider.verticalGradient(
-                                            arrayOf(color.copy(alpha = 0.15f), Color.Transparent),
+                                    Fill(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                color.copy(alpha = 0.15f),
+                                                Color.Transparent,
+                                            ),
                                         )
                                     )
                                 ),
@@ -159,7 +153,7 @@ fun FinanceGraph(
                 ),
                 marker = rememberMarker(
                     DefaultCartesianMarker.ValueFormatter.default(
-                        getDecimalFormat(currency)
+                        prefix = currency.symbol,
                     )
                 ),
                 markerVisibilityListener = markerVisibilityListener,
@@ -199,28 +193,27 @@ private fun rememberMarker(
     showIndicator: Boolean = true,
 ): CartesianMarker {
     val labelBackground = rememberShapeComponent(
-        fill = fill(MaterialTheme.colorScheme.surfaceContainer),
-        shape = markerCorneredShape(CorneredShape.Corner.Rounded),
-        shadow = shadow(
-            radius = 4.dp,
-            y = 2.dp,
-            color = MaterialTheme.colorScheme.inverseSurface.copy(0.35f),
+        fill = Fill(MaterialTheme.colorScheme.surfaceContainer),
+        shape = CircleShape,
+        shadows = listOf(
+            Shadow(
+                radius = 4.dp,
+                color = MaterialTheme.colorScheme.inverseSurface.copy(0.35f),
+            ),
         ),
     )
     val label = rememberTextComponent(
-        textSize = MaterialTheme.typography.bodyMedium.fontSize,
-        color = MaterialTheme.colorScheme.onSurface,
-        textAlignment = Layout.Alignment.ALIGN_CENTER,
-        padding = insets(8.dp, 4.dp),
+        style = MaterialTheme.typography.bodyMedium,
+        padding = Insets(8.dp, 4.dp),
         background = labelBackground,
     )
 
-    val indicatorRearShape = MaterialShapes.Cookie7Sided.toShape().toVicoShape()
-    val indicatorCenterShape = MaterialShapes.Clover4Leaf.toShape().toVicoShape()
+    val indicatorRearShape = MaterialShapes.Cookie7Sided.toShape()
+    val indicatorCenterShape = MaterialShapes.Clover4Leaf.toShape()
 
     val indicatorFrontComponent = rememberShapeComponent(
-        fill = fill(MaterialTheme.colorScheme.surface),
-        shape = CorneredShape.Pill,
+        fill = Fill(MaterialTheme.colorScheme.surface),
+        shape = CircleShape,
     )
 
     val guideline = rememberAxisGuidelineComponent()
@@ -234,25 +227,25 @@ private fun rememberMarker(
                     { color ->
                         LayeredComponent(
                             back = ShapeComponent(
-                                Fill(ColorUtils.setAlphaComponent(color, 38)),
-                                indicatorRearShape,
+                                fill = Fill(color.copy(alpha = 0.38f)),
+                                shape = indicatorRearShape,
                             ),
                             front = LayeredComponent(
                                 back = ShapeComponent(
                                     fill = Fill(color),
                                     shape = indicatorCenterShape,
-                                    shadow = Shadow(radiusDp = 12f, color = color),
+                                    shadows = listOf(Shadow(radius = 12.dp, color = color)),
                                 ),
                                 front = indicatorFrontComponent,
-                                padding = insets(5.dp),
+                                padding = Insets(5.dp),
                             ),
-                            padding = insets(10.dp),
+                            padding = Insets(10.dp),
                         )
                     }
                 } else {
                     null
                 },
-                indicatorSizeDp = 36f,
+                indicatorSize = 36.dp,
                 guideline = guideline,
             ) {
 
@@ -264,13 +257,14 @@ private fun rememberMarker(
             ) {
                 with(context) {
                     val baseShadowMarginDp = 1.4f * 4f
-                    var topMargin = (baseShadowMarginDp - 2f).pixels
-                    var bottomMargin = (baseShadowMarginDp + 2f).pixels
+                    var topMargin = (baseShadowMarginDp - 2f)
+                    var bottomMargin = (baseShadowMarginDp + 2f)
                     when (labelPosition) {
                         LabelPosition.Top,
-                        LabelPosition.AbovePoint -> topMargin += label.getHeight(context) + tickSizeDp.pixels
+                        LabelPosition.AbovePoint,
+                            -> topMargin += label.getHeight(context)
 
-                        LabelPosition.Bottom -> bottomMargin += label.getHeight(context) + tickSizeDp.pixels
+                        LabelPosition.Bottom -> bottomMargin += label.getHeight(context)
                         else -> {}
                     }
                     layerMargins.ensureValuesAtLeast(top = topMargin, bottom = bottomMargin)
