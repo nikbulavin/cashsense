@@ -1,5 +1,8 @@
 package ru.resodostudios.cashsense.core.ui.component
 
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -25,16 +29,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.compose.cartesian.Zoom
 import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
-import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerDimensions
-import com.patrykandpatrick.vico.compose.cartesian.layer.CartesianLayerMargins
 import com.patrykandpatrick.vico.compose.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
@@ -42,6 +42,7 @@ import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.compose.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.marker.LineCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.compose.cartesian.marker.rememberDefaultCartesianMarker
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
@@ -49,8 +50,10 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.Fill
 import com.patrykandpatrick.vico.compose.common.Insets
 import com.patrykandpatrick.vico.compose.common.LayeredComponent
+import com.patrykandpatrick.vico.compose.common.MarkerCornerBasedShape
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.TextComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
@@ -69,6 +72,7 @@ import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
+import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.time.format.TextStyle
@@ -152,9 +156,34 @@ fun FinanceGraph(
                     line = null,
                 ),
                 marker = rememberMarker(
-                    DefaultCartesianMarker.ValueFormatter.default(
-                        prefix = currency.symbol,
-                    )
+                    remember(currency, locale) {
+                        DefaultCartesianMarker.ValueFormatter { _, targets ->
+                            val decimalFormat = getDecimalFormat(currency, locale)
+                            val builder = SpannableStringBuilder()
+                            targets.forEach { target ->
+                                when (target) {
+                                    is LineCartesianLayerMarkerTarget -> {
+                                        target.points.forEach { point ->
+                                            val formattedValue = decimalFormat.format(point.entry.y)
+                                            val startIndex = builder.length
+                                            builder.append(formattedValue)
+                                            builder.setSpan(
+                                                ForegroundColorSpan(point.color.toArgb()),
+                                                startIndex,
+                                                builder.length,
+                                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                            )
+                                            builder.append("\n")
+                                        }
+                                    }
+                                }
+                            }
+                            if (builder.isNotEmpty()) {
+                                builder.delete(builder.length - 1, builder.length)
+                            }
+                            builder
+                        }
+                    }
                 ),
                 markerVisibilityListener = markerVisibilityListener,
                 fadingEdges = rememberFadingEdges(),
@@ -192,9 +221,12 @@ private fun rememberMarker(
     valueFormatter: DefaultCartesianMarker.ValueFormatter = DefaultCartesianMarker.ValueFormatter.default(),
     showIndicator: Boolean = true,
 ): CartesianMarker {
+    val labelBackgroundShape = MarkerCornerBasedShape(CircleShape)
     val labelBackground = rememberShapeComponent(
-        fill = Fill(MaterialTheme.colorScheme.surfaceContainer),
-        shape = CircleShape,
+        fill = Fill(MaterialTheme.colorScheme.background),
+        shape = labelBackgroundShape,
+        strokeFill = Fill(MaterialTheme.colorScheme.outlineVariant),
+        strokeThickness = 1.dp,
         shadows = listOf(
             Shadow(
                 radius = 4.dp,
@@ -203,75 +235,39 @@ private fun rememberMarker(
         ),
     )
     val label = rememberTextComponent(
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
         padding = Insets(8.dp, 4.dp),
         background = labelBackground,
+        minWidth = TextComponent.MinWidth.fixed(40.dp),
     )
-
-    val indicatorRearShape = MaterialShapes.Cookie7Sided.toShape()
-    val indicatorCenterShape = MaterialShapes.Clover4Leaf.toShape()
-
     val indicatorFrontComponent = rememberShapeComponent(
         fill = Fill(MaterialTheme.colorScheme.surface),
         shape = CircleShape,
     )
-
+    val indicatorBackShape = MaterialShapes.Cookie7Sided.toShape()
+    val indicatorFrontShape = MaterialShapes.Clover4Leaf.toShape()
     val guideline = rememberAxisGuidelineComponent()
-
-    return remember(label, valueFormatter, showIndicator, guideline) {
-        object :
-            DefaultCartesianMarker(
-                label = label,
-                valueFormatter = valueFormatter,
-                indicator = if (showIndicator) {
-                    { color ->
-                        LayeredComponent(
-                            back = ShapeComponent(
-                                fill = Fill(color.copy(alpha = 0.38f)),
-                                shape = indicatorRearShape,
-                            ),
-                            front = LayeredComponent(
-                                back = ShapeComponent(
-                                    fill = Fill(color),
-                                    shape = indicatorCenterShape,
-                                    shadows = listOf(Shadow(radius = 12.dp, color = color)),
-                                ),
-                                front = indicatorFrontComponent,
-                                padding = Insets(5.dp),
-                            ),
-                            padding = Insets(10.dp),
-                        )
-                    }
-                } else {
-                    null
-                },
-                indicatorSize = 36.dp,
-                guideline = guideline,
-            ) {
-
-            override fun updateLayerMargins(
-                context: CartesianMeasuringContext,
-                layerMargins: CartesianLayerMargins,
-                layerDimensions: CartesianLayerDimensions,
-                model: CartesianChartModel,
-            ) {
-                with(context) {
-                    val baseShadowMarginDp = 1.4f * 4f
-                    var topMargin = (baseShadowMarginDp - 2f)
-                    var bottomMargin = (baseShadowMarginDp + 2f)
-                    when (labelPosition) {
-                        LabelPosition.Top,
-                        LabelPosition.AbovePoint,
-                            -> topMargin += label.getHeight(context)
-
-                        LabelPosition.Bottom -> bottomMargin += label.getHeight(context)
-                        else -> {}
-                    }
-                    layerMargins.ensureValuesAtLeast(top = topMargin, bottom = bottomMargin)
-                }
+    return rememberDefaultCartesianMarker(
+        label = label,
+        valueFormatter = valueFormatter,
+        indicator = if (showIndicator) {
+            { color ->
+                LayeredComponent(
+                    back = ShapeComponent(Fill(color.copy(alpha = 0.15f)), indicatorBackShape),
+                    front = LayeredComponent(
+                        back = ShapeComponent(fill = Fill(color), shape = indicatorFrontShape),
+                        front = indicatorFrontComponent,
+                        padding = Insets(5.dp),
+                    ),
+                    padding = Insets(10.dp),
+                )
             }
-        }
-    }
+        } else {
+            null
+        },
+        indicatorSize = 36.dp,
+        guideline = guideline,
+    )
 }
 
 @Preview
