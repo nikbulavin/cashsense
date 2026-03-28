@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -23,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +32,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,7 +69,7 @@ import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun WalletCard(
     uiWallet: UiWallet,
@@ -110,7 +111,8 @@ internal fun WalletCard(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     ),
                 )
-                val balance = uiWallet.extendedUserWallet.currentBalance.formatAmount(wallet.currency)
+                val balance = uiWallet.extendedUserWallet.currentBalance
+                    .formatAmount(wallet.currency)
                 AnimatedAmount(
                     formattedAmount = balance,
                     label = "WalletBalance",
@@ -138,15 +140,16 @@ internal fun WalletCard(
                     isPrimary = uiWallet.extendedUserWallet.isPrimary,
                 )
             }
-            val addTransactionText = stringResource(localesR.string.add_transaction)
-            val addTransferText = stringResource(localesR.string.transfer)
+            val newTransactionText = stringResource(localesR.string.new_transaction)
+            val transferText = stringResource(localesR.string.transfer)
             ButtonGroup(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 12.dp,
-                    top = 16.dp,
-                ),
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 12.dp,
+                        top = 16.dp,
+                    ),
                 overflowIndicator = { menuState ->
                     CsIconButton(
                         onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
@@ -157,18 +160,23 @@ internal fun WalletCard(
             ) {
                 customItem(
                     buttonGroupContent = {
+                        val interactionSource = remember { MutableInteractionSource() }
                         Button(
                             onClick = { onNewTransactionClick(wallet.id) },
                             shapes = ButtonDefaults.shapes(),
+                            interactionSource = interactionSource,
+                            modifier = Modifier
+                                .weight(1f)
+                                .animateWidth(interactionSource),
                         ) {
                             Icon(
                                 imageVector = CsIcons.Outlined.Add,
-                                contentDescription = addTransactionText,
+                                contentDescription = newTransactionText,
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = addTransactionText,
+                                text = newTransactionText,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -182,7 +190,7 @@ internal fun WalletCard(
                                 contentDescription = null,
                             )
                         },
-                        text = { Text(addTransactionText) },
+                        text = { Text(newTransactionText) },
                         onClick = {
                             onNewTransactionClick(wallet.id)
                             state.dismiss()
@@ -191,18 +199,21 @@ internal fun WalletCard(
                 }
                 customItem(
                     buttonGroupContent = {
+                        val interactionSource = remember { MutableInteractionSource() }
                         OutlinedButton(
                             onClick = { onTransferClick(wallet.id) },
                             shapes = ButtonDefaults.shapes(),
+                            interactionSource = interactionSource,
+                            modifier = Modifier.animateWidth(interactionSource),
                         ) {
                             Icon(
                                 imageVector = CsIcons.Outlined.SendMoney,
-                                contentDescription = addTransactionText,
+                                contentDescription = newTransactionText,
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                             Text(
-                                text = addTransferText,
+                                text = transferText,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -216,7 +227,7 @@ internal fun WalletCard(
                                 contentDescription = null,
                             )
                         },
-                        text = { Text(addTransferText) },
+                        text = { Text(transferText) },
                         onClick = {
                             onTransferClick(wallet.id)
                             state.dismiss()
