@@ -19,7 +19,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
+internal class SettingsViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val appLocaleManager: AppLocaleManager,
 ) : ViewModel() {

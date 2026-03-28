@@ -171,7 +171,7 @@ internal fun WalletCard(
                         ) {
                             Icon(
                                 imageVector = CsIcons.Outlined.Add,
-                                contentDescription = newTransactionText,
+                                contentDescription = null,
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -208,7 +208,7 @@ internal fun WalletCard(
                         ) {
                             Icon(
                                 imageVector = CsIcons.Outlined.SendMoney,
-                                contentDescription = newTransactionText,
+                                contentDescription = null,
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
