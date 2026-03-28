@@ -7,16 +7,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorInt
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -140,30 +139,33 @@ private fun SettingsScreen(
             }
 
             is SettingsUiState.Success -> {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        top = innerPadding.calculateTopPadding(),
-                        bottom = 16.dp + innerPadding.calculateBottomPadding(),
-                        start = 16.dp,
-                        end = 16.dp,
-                    ),
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            bottom = 16.dp + innerPadding.calculateBottomPadding(),
+                            start = 16.dp,
+                            end = 16.dp,
+                        ),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
-                    general(
+                    General(
                         settings = settingsState.settings,
                         onCurrencyUpdate = onCurrencyUpdate,
                         onLanguageUpdate = onLanguageUpdate,
                     )
-                    appearance(
+                    Appearance(
                         settings = settingsState.settings,
                         onDynamicColorPreferenceUpdate = onDynamicColorPreferenceUpdate,
                         onDarkThemeConfigUpdate = onDarkThemeConfigUpdate,
                     )
-                    backupAndRestore(
+                    BackupAndRestore(
                         onDataExport = onDataExport,
                         onDataImport = onDataImport,
                     )
-                    about(
+                    About(
                         onLicensesClick = onLicensesClick,
                     )
                 }
@@ -212,7 +214,7 @@ fun SettingsScreenPreview() {
                         currency = getUsdCurrency(),
                         language = Language.ENGLISH,
                         availableLanguages = emptyList(),
-                    )
+                    ),
                 ),
                 onBackClick = {},
                 onLicensesClick = {},
@@ -228,300 +230,292 @@ fun SettingsScreenPreview() {
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyListScope.general(
+@Composable
+private fun General(
     settings: UserEditableSettings,
     onCurrencyUpdate: (Currency) -> Unit,
     onLanguageUpdate: (String) -> Unit,
 ) {
-    item { SectionTitle(localesR.string.settings_general) }
-    item {
-        var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
+    SectionTitle(localesR.string.settings_general)
+    
+    var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(0, 2),
-            content = { Text(stringResource(localesR.string.currency)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Filled.UniversalCurrencyAlt,
-                    contentDescription = null,
-                )
-            },
-            supportingContent = { Text(settings.currency.currencyCode) },
-            onClick = { showCurrencyDialog = true },
-        )
-
-        if (showCurrencyDialog) {
-            CurrencyDialog(
-                currency = settings.currency,
-                onDismiss = { showCurrencyDialog = false },
-                onCurrencyClick = onCurrencyUpdate,
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(0, 2),
+        content = { Text(stringResource(localesR.string.currency)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.UniversalCurrencyAlt,
+                contentDescription = null,
             )
-        }
+        },
+        supportingContent = { Text(settings.currency.currencyCode) },
+        onClick = { showCurrencyDialog = true },
+    )
+
+    if (showCurrencyDialog) {
+        CurrencyDialog(
+            currency = settings.currency,
+            onDismiss = { showCurrencyDialog = false },
+            onCurrencyClick = onCurrencyUpdate,
+        )
     }
-    item {
-        var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(1, 2),
-            content = { Text(stringResource(localesR.string.language)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Outlined.Language,
-                    contentDescription = null,
-                )
-            },
-            supportingContent = { Text(settings.language.displayName) },
-            onClick = { showLanguageDialog = true },
-        )
+    var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
-        if (showLanguageDialog) {
-            LanguageDialog(
-                language = settings.language.code,
-                availableLanguages = settings.availableLanguages,
-                onLanguageClick = onLanguageUpdate,
-                onDismiss = { showLanguageDialog = false },
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(1, 2),
+        content = { Text(stringResource(localesR.string.language)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Outlined.Language,
+                contentDescription = null,
             )
-        }
+        },
+        supportingContent = { Text(settings.language.displayName) },
+        onClick = { showLanguageDialog = true },
+    )
+
+    if (showLanguageDialog) {
+        LanguageDialog(
+            language = settings.language.code,
+            availableLanguages = settings.availableLanguages,
+            onLanguageClick = onLanguageUpdate,
+            onDismiss = { showLanguageDialog = false },
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyListScope.appearance(
+@Composable
+private fun Appearance(
     settings: UserEditableSettings,
     supportDynamicColor: Boolean = supportsDynamicTheming(),
     onDynamicColorPreferenceUpdate: (Boolean) -> Unit,
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
 ) {
-    item { SectionTitle(localesR.string.settings_appearance) }
-    item {
-        CsListItemEmphasized(
-            onClick = {},
-            shapes = if (supportDynamicColor) {
-                ListItemDefaults.segmentedShapes(0, 2)
-            } else {
-                ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
-            },
-            content = { Text(stringResource(localesR.string.theme)) },
+    SectionTitle(localesR.string.settings_appearance)
+    
+    CsListItemEmphasized(
+        onClick = {},
+        shapes = if (supportDynamicColor) {
+            ListItemDefaults.segmentedShapes(0, 2)
+        } else {
+            ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
+        },
+        content = { Text(stringResource(localesR.string.theme)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.Palette,
+                contentDescription = null,
+            )
+        },
+        trailingContent = {
+            val themeOptions = listOf(
+                stringResource(localesR.string.theme_system_default),
+                stringResource(localesR.string.theme_light),
+                stringResource(localesR.string.theme_dark),
+            )
+            val uncheckedIcons = listOf(
+                CsIcons.Outlined.Android,
+                CsIcons.Outlined.LightMode,
+                CsIcons.Outlined.DarkMode,
+            )
+            val checkedIcons = listOf(
+                CsIcons.Outlined.Android,
+                CsIcons.Filled.LightMode,
+                CsIcons.Filled.DarkMode,
+            )
+            val selectedIndex = settings.darkThemeConfig.ordinal
+            val hapticFeedback = LocalHapticFeedback.current
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            ) {
+                themeOptions.forEachIndexed { index, label ->
+                    ToggleButton(
+                        checked = selectedIndex == index,
+                        onCheckedChange = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
+                        },
+                        shapes = when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors().copy(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        ),
+                    ) {
+                        Icon(
+                            imageVector = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
+                            contentDescription = label,
+                            modifier = Modifier.size(ToggleButtonDefaults.IconSize),
+                        )
+                    }
+                }
+            }
+        },
+    )
+
+    if (supportDynamicColor) {
+        CsToggableListItem(
+            shapes = ListItemDefaults.segmentedShapes(1, 2),
+            content = { Text(stringResource(localesR.string.dynamic_color)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Filled.Palette,
+                    imageVector = CsIcons.Filled.FormatPaint,
                     contentDescription = null,
                 )
             },
             trailingContent = {
-                val themeOptions = listOf(
-                    stringResource(localesR.string.theme_system_default),
-                    stringResource(localesR.string.theme_light),
-                    stringResource(localesR.string.theme_dark),
+                CsSwitch(
+                    checked = settings.useDynamicColor,
+                    onCheckedChange = null,
                 )
-                val uncheckedIcons = listOf(
-                    CsIcons.Outlined.Android,
-                    CsIcons.Outlined.LightMode,
-                    CsIcons.Outlined.DarkMode,
-                )
-                val checkedIcons = listOf(
-                    CsIcons.Outlined.Android,
-                    CsIcons.Filled.LightMode,
-                    CsIcons.Filled.DarkMode,
-                )
-                val selectedIndex = settings.darkThemeConfig.ordinal
-                val hapticFeedback = LocalHapticFeedback.current
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-                ) {
-                    themeOptions.forEachIndexed { index, label ->
-                        ToggleButton(
-                            checked = selectedIndex == index,
-                            onCheckedChange = {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
-                            },
-                            shapes = when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                            colors = ToggleButtonDefaults.toggleButtonColors().copy(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            ),
-                        ) {
-                            Icon(
-                                imageVector = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
-                                contentDescription = label,
-                                modifier = Modifier.size(ToggleButtonDefaults.IconSize),
-                            )
-                        }
-                    }
-                }
-            }
+            },
+            checked = settings.useDynamicColor,
+            onCheckedChange = onDynamicColorPreferenceUpdate,
         )
-    }
-    item {
-        AnimatedVisibility(supportDynamicColor) {
-            CsToggableListItem(
-                shapes = ListItemDefaults.segmentedShapes(1, 2),
-                content = { Text(stringResource(localesR.string.dynamic_color)) },
-                leadingContent = {
-                    Icon(
-                        imageVector = CsIcons.Filled.FormatPaint,
-                        contentDescription = null,
-                    )
-                },
-                trailingContent = {
-                    CsSwitch(
-                        checked = settings.useDynamicColor,
-                        onCheckedChange = null,
-                    )
-                },
-                checked = settings.useDynamicColor,
-                onCheckedChange = onDynamicColorPreferenceUpdate,
-            )
-        }
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyListScope.backupAndRestore(
+@Composable
+private fun BackupAndRestore(
     onDataExport: (Uri) -> Unit,
     onDataImport: (Uri, Boolean) -> Unit,
 ) {
-    item { SectionTitle(localesR.string.backup_and_restore) }
-    item {
-        val exportDbLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.CreateDocument("application/zip"),
-        ) {
-            it?.let { onDataExport(it) }
-        }
-        val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
-        val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(0, 2),
-            content = { Text(stringResource(localesR.string.backup)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Filled.FolderZip,
-                    contentDescription = null,
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = stringResource(localesR.string.backup_description),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            onClick = { exportDbLauncher.launch(fileName) },
-        )
+    SectionTitle(localesR.string.backup_and_restore)
+    
+    val exportDbLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/zip"),
+    ) {
+        it?.let { onDataExport(it) }
     }
-    item {
-        val importDbLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument(),
-        ) {
-            it?.let { onDataImport(it, true) }
-        }
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(1, 2),
-            content = { Text(stringResource(localesR.string.restore)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Outlined.SettingsBackupRestore,
-                    contentDescription = null,
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = stringResource(localesR.string.restore_description),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            onClick = { importDbLauncher.launch(arrayOf("application/zip")) },
-        )
+    val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
+    val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(0, 2),
+        content = { Text(stringResource(localesR.string.backup)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.FolderZip,
+                contentDescription = null,
+            )
+        },
+        supportingContent = {
+            Text(
+                text = stringResource(localesR.string.backup_description),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        onClick = { exportDbLauncher.launch(fileName) },
+    )
+
+    val importDbLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) {
+        it?.let { onDataImport(it, true) }
     }
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(1, 2),
+        content = { Text(stringResource(localesR.string.restore)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Outlined.SettingsBackupRestore,
+                contentDescription = null,
+            )
+        },
+        supportingContent = {
+            Text(
+                text = stringResource(localesR.string.restore_description),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        onClick = { importDbLauncher.launch(arrayOf("application/zip")) },
+    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-private fun LazyListScope.about(
+@Composable
+private fun About(
     onLicensesClick: () -> Unit,
 ) {
-    item { SectionTitle(localesR.string.about) }
-    item {
-        val context = LocalContext.current
-        val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+    SectionTitle(localesR.string.about)
+    
+    val context = LocalContext.current
+    val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(0, 4),
-            content = { Text(stringResource(localesR.string.feedback)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Filled.Feedback,
-                    contentDescription = null,
-                )
-            },
-            onClick = {
-                launchCustomTab(
-                    context = context,
-                    uri = FEEDBACK_URL.toUri(),
-                    toolbarColor = backgroundColor,
-                )
-            },
-        )
-    }
-    item {
-        val context = LocalContext.current
-        val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(0, 4),
+        content = { Text(stringResource(localesR.string.feedback)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.Feedback,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            launchCustomTab(
+                context = context,
+                uri = FEEDBACK_URL.toUri(),
+                toolbarColor = backgroundColor,
+            )
+        },
+    )
 
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(1, 4),
-            content = { Text(stringResource(localesR.string.privacy_policy)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Filled.Policy,
-                    contentDescription = null,
-                )
-            },
-            onClick = {
-                launchCustomTab(
-                    context = context,
-                    uri = PRIVACY_POLICY_URL.toUri(),
-                    toolbarColor = backgroundColor,
-                )
-            },
-        )
-    }
-    item {
-        CsListItemEmphasized(
-            shapes = ListItemDefaults.segmentedShapes(2, 4),
-            content = { Text(stringResource(localesR.string.licenses)) },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Filled.Gavel,
-                    contentDescription = null,
-                )
-            },
-            onClick = onLicensesClick,
-        )
-    }
-    item {
-        val context = LocalContext.current
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        val versionName = packageInfo?.versionName ?: "?.?.?"
-        val versionCode = "(${packageInfo?.longVersionCode})"
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(1, 4),
+        content = { Text(stringResource(localesR.string.privacy_policy)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.Policy,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            launchCustomTab(
+                context = context,
+                uri = PRIVACY_POLICY_URL.toUri(),
+                toolbarColor = backgroundColor,
+            )
+        },
+    )
 
-        CsListItemEmphasized(
-            onClick = {},
-            shapes = ListItemDefaults.segmentedShapes(3, 4),
-            content = { Text(stringResource(localesR.string.version)) },
-            supportingContent = { Text("$versionName $versionCode") },
-            leadingContent = {
-                Icon(
-                    imageVector = CsIcons.Filled.Info,
-                    contentDescription = null,
-                )
-            },
-        )
-    }
+    CsListItemEmphasized(
+        shapes = ListItemDefaults.segmentedShapes(2, 4),
+        content = { Text(stringResource(localesR.string.licenses)) },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.Gavel,
+                contentDescription = null,
+            )
+        },
+        onClick = onLicensesClick,
+    )
+
+    val packageInfo = runCatching {
+        context.packageManager.getPackageInfo(context.packageName, 0)
+    }.getOrNull()
+    val versionName = packageInfo?.versionName ?: "?.?.?"
+    val versionCode = "(${packageInfo?.longVersionCode})"
+
+    CsListItemEmphasized(
+        onClick = {},
+        shapes = ListItemDefaults.segmentedShapes(3, 4),
+        content = { Text(stringResource(localesR.string.version)) },
+        supportingContent = { Text("$versionName $versionCode") },
+        leadingContent = {
+            Icon(
+                imageVector = CsIcons.Filled.Info,
+                contentDescription = null,
+            )
+        },
+    )
 }
 
 private fun launchCustomTab(
