@@ -17,22 +17,22 @@ val CsIcons.Outlined.Add: ImageVector
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f,
+            viewportHeight = 960f
         ).apply {
-            path(fill = SolidColor(Color(0xFF000000))) {
-                moveTo(440f, 520f)
-                lineTo(200f, 520f)
-                verticalLineToRelative(-80f)
-                horizontalLineToRelative(240f)
-                verticalLineToRelative(-240f)
-                horizontalLineToRelative(80f)
-                verticalLineToRelative(240f)
-                horizontalLineToRelative(240f)
-                verticalLineToRelative(80f)
+            path(fill = SolidColor(Color.White)) {
+                moveTo(440f, 840f)
+                lineTo(440f, 520f)
+                lineTo(120f, 520f)
+                lineTo(120f, 440f)
+                lineTo(440f, 440f)
+                lineTo(440f, 120f)
+                lineTo(520f, 120f)
+                lineTo(520f, 440f)
+                lineTo(840f, 440f)
+                lineTo(840f, 520f)
                 lineTo(520f, 520f)
-                verticalLineToRelative(240f)
-                horizontalLineToRelative(-80f)
-                verticalLineToRelative(-240f)
+                lineTo(520f, 840f)
+                lineTo(440f, 840f)
                 close()
             }
         }.build()
