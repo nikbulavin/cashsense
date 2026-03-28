@@ -52,11 +52,11 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
+import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
@@ -170,9 +170,6 @@ fun CsApp(
                     .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
             ) {
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                    val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>()
-                    val dialogStrategy = remember { DialogSceneStrategy<NavKey>() }
-
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
                         categoriesEntry(navigator)
@@ -204,11 +201,15 @@ fun CsApp(
 
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
-                        sceneStrategy = dialogStrategy then listDetailStrategy,
+                        sceneStrategies = listOf(
+                            rememberListDetailSceneStrategy(),
+                            remember { DialogSceneStrategy() },
+                        ),
                         onBack = navigator::goBack,
                         transitionSpec = { enterTransition togetherWith exitTransition },
                         popTransitionSpec = { popEnterTransition togetherWith exitTransition },
                         predictivePopTransitionSpec = { popEnterTransition togetherWith exitTransition },
+                        sharedTransitionScope = LocalSharedTransitionScope.current,
                     )
                     FabMenu(
                         visible = SettingsNavKey !in appState.navigationState.currentSubStack &&

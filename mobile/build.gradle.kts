@@ -17,6 +17,22 @@ android {
         versionName = "2.0.0-beta03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        androidResources.localeFilters += setOf(
+            "en",
+            "ar-rSA",
+            "de-rDE",
+            "es-rES",
+            "fr-rFR",
+            "hi-rIN",
+            "it-rIT",
+            "ja-rJP",
+            "ko-rKR",
+            "pl-rPL",
+            "ru-rRU",
+            "ta-rIN",
+            "zh-rCN",
+        )
     }
 
     buildTypes {
@@ -106,7 +122,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
-    debugImplementation(libs.leakcanary.android)
 
     baselineProfile(projects.baselineprofile)
 }

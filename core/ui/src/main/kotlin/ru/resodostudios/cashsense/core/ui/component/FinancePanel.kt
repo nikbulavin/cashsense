@@ -3,12 +3,10 @@ package ru.resodostudios.cashsense.core.ui.component
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.snap
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -30,15 +28,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
+import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaMonth
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
@@ -69,9 +69,11 @@ import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.time.temporal.TemporalAdjusters
+import java.time.temporal.WeekFields
 import java.util.Currency
-import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -302,16 +304,11 @@ private fun DetailedFinanceSection(
                     modifier = Modifier.padding(start = 12.dp),
                 )
             }
-            AnimatedVisibility(
-                visible = transactionFilter.dateType != WEEK,
-                enter = fadeIn() + expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
-            ) {
-                FilterBySelectedDateTypeRow(
-                    onSelectedDateUpdate = onSelectedDateUpdate,
-                    transactionFilter = transactionFilter,
-                    modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
-                )
-            }
+            FilterBySelectedDateTypeRow(
+                onSelectedDateUpdate = onSelectedDateUpdate,
+                transactionFilter = transactionFilter,
+                modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+            )
             AnimatedAmount(
                 formattedAmount = formattedAmount,
                 label = "DetailedFinanceCard",
@@ -394,6 +391,7 @@ private fun FilterBySelectedDateTypeRow(
     transactionFilter: TransactionFilter,
     modifier: Modifier = Modifier,
 ) {
+    val locale = LocalLocale.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -412,7 +410,7 @@ private fun FilterBySelectedDateTypeRow(
                     .toJavaMonth()
                     .getDisplayName(
                         TextStyle.FULL_STANDALONE,
-                        Locale.getDefault()
+                        locale.platformLocale,
                     )
                     .replaceFirstChar { it.uppercaseChar() }
 
@@ -422,8 +420,17 @@ private fun FilterBySelectedDateTypeRow(
                     monthName
                 }
             }
-
-            ALL, WEEK -> ""
+            WEEK -> {
+                val date = transactionFilter.selectedDate.toJavaLocalDate()
+                val firstDayOfWeek = WeekFields.of(locale.platformLocale).firstDayOfWeek
+                val weekStart = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek))
+                val weekEnd = weekStart.plusDays(6)
+                val formatter = DateTimeFormatter.ofPattern("d MMM", locale.platformLocale)
+                runCatching {
+                    "${formatter.format(weekStart)} — ${formatter.format(weekEnd)}"
+                }.getOrDefault("")
+            }
+            ALL -> ""
         }
 
         Text(

@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
@@ -146,20 +147,33 @@ private fun WalletScreen(
         is WalletUiState.Success -> {
             val hazeState = rememberHazeState()
             val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
-            Column(
-                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-            ) {
-                WalletTopBar(
+            Box {
+                var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
+                WalletToolbar(
                     wallet = walletState.wallet,
                     formattedCurrentBalance = walletState.formattedCurrentBalance,
-                    isPrimary = walletState.isPrimary,
-                    showNavigationIcon = shouldShowNavigationIcon,
-                    onBackClick = onBackClick,
-                    onPrimaryClick = onPrimaryClick,
+                    expanded = isFabMenuExpanded,
+                    onTransfer = onTransfer,
+                    onWalletEdit = onWalletEdit,
+                    onWalletDelete = onWalletDelete,
+                    navigateToTransactionDialog = navigateToTransactionDialog,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .offset(y = -ScreenOffset)
+                        .zIndex(1f),
                 )
-                var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
-
-                Box {
+                Column(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                ) {
+                    WalletTopBar(
+                        wallet = walletState.wallet,
+                        formattedCurrentBalance = walletState.formattedCurrentBalance,
+                        isPrimary = walletState.isPrimary,
+                        showNavigationIcon = shouldShowNavigationIcon,
+                        onBackClick = onBackClick,
+                        onPrimaryClick = onPrimaryClick,
+                    )
                     LazyColumn(
                         contentPadding = PaddingValues(
                             bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
@@ -198,19 +212,6 @@ private fun WalletScreen(
                             shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                         )
                     }
-                    WalletToolbar(
-                        wallet = walletState.wallet,
-                        formattedCurrentBalance = walletState.formattedCurrentBalance,
-                        expanded = isFabMenuExpanded,
-                        onTransfer = onTransfer,
-                        onWalletEdit = onWalletEdit,
-                        onWalletDelete = onWalletDelete,
-                        navigateToTransactionDialog = navigateToTransactionDialog,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .navigationBarsPadding()
-                            .offset(y = -ScreenOffset),
-                    )
                 }
             }
         }
