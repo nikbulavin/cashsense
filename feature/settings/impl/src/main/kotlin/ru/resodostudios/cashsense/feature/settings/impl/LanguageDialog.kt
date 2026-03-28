@@ -1,15 +1,10 @@
 package ru.resodostudios.cashsense.feature.settings.impl
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -18,19 +13,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LanguageDialog(
+internal fun LanguageDialog(
     language: String,
     availableLanguages: List<Language>,
     onLanguageClick: (String) -> Unit,
@@ -51,33 +45,35 @@ fun LanguageDialog(
         onDismiss = onDismiss,
         modifier = modifier,
     ) {
-        LazyColumn(Modifier.selectableGroup()) {
-            items(availableLanguages) { language ->
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+        ) {
+            itemsIndexed(
+                items = availableLanguages,
+                key = { _, language -> language.code },
+            ) { index, language ->
                 val selected = language.code == languageState
-                Box(Modifier.clip(RoundedCornerShape(18.dp))) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .selectable(
-                                selected = selected,
-                                onClick = { languageState = language.code },
-                                role = Role.RadioButton,
-                            )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                CsSelectableListItem(
+                    content = {
+                        Text(
+                            text = language.displayName,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    selected = selected,
+                    onClick = { languageState = language.code },
+                    trailingContent = {
                         RadioButton(
                             selected = selected,
                             onClick = null,
                         )
-                        Text(
-                            text = language.displayName,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(start = 16.dp),
-                        )
-                    }
-                }
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index, availableLanguages.size),
+                    colors = ListItemDefaults.segmentedColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                )
             }
         }
     }
