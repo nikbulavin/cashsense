@@ -56,21 +56,21 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Feedback
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.FolderZip
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.FormatPaint
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Gavel
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Info
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Palette
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Policy
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Feedback
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FolderZip
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.FormatPaint
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.HistoryEdu
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Info
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LightMode
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Palette
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Policy
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SettingsBackupRestore
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
@@ -242,7 +242,7 @@ private fun LazyListScope.general(
             content = { Text(stringResource(localesR.string.currency)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.UniversalCurrencyAlt,
+                    imageVector = CsIcons.Filled.UniversalCurrencyAlt,
                     contentDescription = null,
                 )
             },
@@ -304,7 +304,7 @@ private fun LazyListScope.appearance(
             content = { Text(stringResource(localesR.string.theme)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.Palette,
+                    imageVector = CsIcons.Filled.Palette,
                     contentDescription = null,
                 )
             },
@@ -364,7 +364,7 @@ private fun LazyListScope.appearance(
                 content = { Text(stringResource(localesR.string.dynamic_color)) },
                 leadingContent = {
                     Icon(
-                        imageVector = CsIcons.Outlined.FormatPaint,
+                        imageVector = CsIcons.Filled.FormatPaint,
                         contentDescription = null,
                     )
                 },
@@ -388,12 +388,11 @@ private fun LazyListScope.backupAndRestore(
 ) {
     item { SectionTitle(localesR.string.backup_and_restore) }
     item {
-        val exportDbLauncher =
-            rememberLauncherForActivityResult(
-                ActivityResultContracts.CreateDocument("application/zip"),
-            ) {
-                it?.let { onDataExport(it) }
-            }
+        val exportDbLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.CreateDocument("application/zip"),
+        ) {
+            it?.let { onDataExport(it) }
+        }
         val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
         val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
         CsListItemEmphasized(
@@ -401,7 +400,7 @@ private fun LazyListScope.backupAndRestore(
             content = { Text(stringResource(localesR.string.backup)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.FolderZip,
+                    imageVector = CsIcons.Filled.FolderZip,
                     contentDescription = null,
                 )
             },
@@ -456,7 +455,7 @@ private fun LazyListScope.about(
             content = { Text(stringResource(localesR.string.feedback)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.Feedback,
+                    imageVector = CsIcons.Filled.Feedback,
                     contentDescription = null,
                 )
             },
@@ -478,7 +477,7 @@ private fun LazyListScope.about(
             content = { Text(stringResource(localesR.string.privacy_policy)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.Policy,
+                    imageVector = CsIcons.Filled.Policy,
                     contentDescription = null,
                 )
             },
@@ -497,7 +496,7 @@ private fun LazyListScope.about(
             content = { Text(stringResource(localesR.string.licenses)) },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.HistoryEdu,
+                    imageVector = CsIcons.Filled.Gavel,
                     contentDescription = null,
                 )
             },
@@ -517,7 +516,7 @@ private fun LazyListScope.about(
             supportingContent = { Text("$versionName $versionCode") },
             leadingContent = {
                 Icon(
-                    imageVector = CsIcons.Outlined.Info,
+                    imageVector = CsIcons.Filled.Info,
                     contentDescription = null,
                 )
             },

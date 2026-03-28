@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.designsystem.icon.outlined
+package ru.resodostudios.cashsense.core.designsystem.icon.filled
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -7,19 +7,19 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 
-val CsIcons.Outlined.UniversalCurrencyAlt: ImageVector
+val CsIcons.Filled.UniversalCurrencyAlt: ImageVector
     get() {
         if (_UniversalCurrencyAlt != null) {
             return _UniversalCurrencyAlt!!
         }
         _UniversalCurrencyAlt = ImageVector.Builder(
-            name = "Outlined.UniversalCurrencyAlt",
+            name = "Filled.UniversalCurrencyAlt",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 960f,
-            viewportHeight = 960f,
+            viewportHeight = 960f
         ).apply {
-            path(fill = SolidColor(Color(0xFF000000))) {
+            path(fill = SolidColor(Color.White)) {
                 moveTo(600f, 640f)
                 lineTo(760f, 640f)
                 lineTo(760f, 480f)
@@ -51,17 +51,6 @@ val CsIcons.Outlined.UniversalCurrencyAlt: ImageVector
                 lineTo(880f, 200f)
                 lineTo(880f, 760f)
                 lineTo(80f, 760f)
-                close()
-                moveTo(160f, 680f)
-                lineTo(800f, 680f)
-                lineTo(800f, 280f)
-                lineTo(160f, 280f)
-                lineTo(160f, 680f)
-                close()
-                moveTo(160f, 680f)
-                lineTo(160f, 280f)
-                lineTo(160f, 280f)
-                lineTo(160f, 680f)
                 close()
             }
         }.build()
