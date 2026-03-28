@@ -9,14 +9,11 @@ import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -26,8 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -38,10 +33,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -66,9 +59,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.filled.Policy
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Language
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SettingsBackupRestore
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
@@ -295,9 +286,16 @@ private fun Appearance(
     onDarkThemeConfigUpdate: (DarkThemeConfig) -> Unit,
 ) {
     SectionTitle(localesR.string.settings_appearance)
+
+    var shouldShowThemeDialog by rememberSaveable { mutableStateOf(false) }
+    val themeOptions = listOf(
+        stringResource(localesR.string.theme_system_default) to CsIcons.Outlined.Android,
+        stringResource(localesR.string.theme_light) to CsIcons.Filled.LightMode,
+        stringResource(localesR.string.theme_dark) to CsIcons.Filled.DarkMode,
+    )
     
     CsListItemEmphasized(
-        onClick = {},
+        onClick = { shouldShowThemeDialog = true },
         shapes = if (supportDynamicColor) {
             ListItemDefaults.segmentedShapes(0, 2)
         } else {
@@ -310,54 +308,22 @@ private fun Appearance(
                 contentDescription = null,
             )
         },
-        trailingContent = {
-            val themeOptions = listOf(
-                stringResource(localesR.string.theme_system_default),
-                stringResource(localesR.string.theme_light),
-                stringResource(localesR.string.theme_dark),
+        supportingContent = {
+            Text(
+                text = themeOptions[settings.darkThemeConfig.ordinal].first,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-            val uncheckedIcons = listOf(
-                CsIcons.Outlined.Android,
-                CsIcons.Outlined.LightMode,
-                CsIcons.Outlined.DarkMode,
-            )
-            val checkedIcons = listOf(
-                CsIcons.Outlined.Android,
-                CsIcons.Filled.LightMode,
-                CsIcons.Filled.DarkMode,
-            )
-            val selectedIndex = settings.darkThemeConfig.ordinal
-            val hapticFeedback = LocalHapticFeedback.current
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            ) {
-                themeOptions.forEachIndexed { index, label ->
-                    ToggleButton(
-                        checked = selectedIndex == index,
-                        onCheckedChange = {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            onDarkThemeConfigUpdate(DarkThemeConfig.entries[index])
-                        },
-                        shapes = when (index) {
-                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                            themeOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors().copy(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        ),
-                    ) {
-                        Icon(
-                            imageVector = if (selectedIndex == index) checkedIcons[index] else uncheckedIcons[index],
-                            contentDescription = label,
-                            modifier = Modifier.size(ToggleButtonDefaults.IconSize),
-                        )
-                    }
-                }
-            }
         },
     )
+    if (shouldShowThemeDialog) {
+        ThemeDialog(
+            themeConfig = settings.darkThemeConfig,
+            themeOptions = themeOptions,
+            onThemeConfigUpdate = onDarkThemeConfigUpdate,
+            onDismiss = { shouldShowThemeDialog = false },
+        )
+    }
 
     if (supportDynamicColor) {
         CsToggableListItem(
