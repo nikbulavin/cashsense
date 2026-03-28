@@ -97,6 +97,8 @@ fun FinanceGraph(
             MONTH -> x.toInt().toString()
             ALL, WEEK -> DayOfWeek(x.toInt().coerceIn(1, 7)).toJavaDayOfWeek()
                 .getDisplayName(textStyle, locale)
+                .take(1)
+                .uppercase()
         }
     }
 
@@ -143,11 +145,11 @@ fun FinanceGraph(
                                                 color.copy(alpha = 0.15f),
                                                 Color.Transparent,
                                             ),
-                                        )
-                                    )
+                                        ),
+                                    ),
                                 ),
                             )
-                        }
+                        },
                     ),
                 ),
                 bottomAxis = HorizontalAxis.rememberBottom(
@@ -171,7 +173,7 @@ fun FinanceGraph(
                                                 ForegroundColorSpan(point.color.toArgb()),
                                                 startIndex,
                                                 builder.length,
-                                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
                                             )
                                             builder.append("\n")
                                         }
@@ -183,7 +185,7 @@ fun FinanceGraph(
                             }
                             builder
                         }
-                    }
+                    },
                 ),
                 markerVisibilityListener = markerVisibilityListener,
                 fadingEdges = rememberFadingEdges(),

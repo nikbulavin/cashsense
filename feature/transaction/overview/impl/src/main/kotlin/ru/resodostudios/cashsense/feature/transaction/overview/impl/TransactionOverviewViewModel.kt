@@ -237,7 +237,15 @@ internal class TransactionOverviewViewModel @Inject constructor(
                 }
             }
 
-            ALL, WEEK -> {}
+            WEEK -> {
+                transactionFilterState.update {
+                    it.copy(
+                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.WEEK),
+                    )
+                }
+            }
+
+            ALL -> {}
         }
     }
 

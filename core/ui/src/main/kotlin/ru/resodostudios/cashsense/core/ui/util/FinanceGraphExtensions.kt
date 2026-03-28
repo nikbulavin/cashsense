@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.util
 
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.DateType.ALL
@@ -21,7 +22,7 @@ fun List<Transaction>.getGraphData(
             when (dateType) {
                 YEAR -> zonedDateTime.month.number
                 ALL, MONTH -> zonedDateTime.day
-                WEEK -> zonedDateTime.dayOfWeek.ordinal
+                WEEK -> zonedDateTime.dayOfWeek.isoDayNumber
             }
         }
         .run {
