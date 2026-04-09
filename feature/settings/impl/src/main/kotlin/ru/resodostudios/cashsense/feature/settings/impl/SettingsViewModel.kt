@@ -67,7 +67,7 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     fun updateLanguage(language: String) {
-        appLocaleManager.updateLocale(language)
+        appLocaleManager.setApplicationLocale(language)
     }
 
     fun exportData(backupFileUri: Uri) {
