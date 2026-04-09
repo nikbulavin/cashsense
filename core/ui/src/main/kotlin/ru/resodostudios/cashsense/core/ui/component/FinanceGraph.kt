@@ -137,7 +137,7 @@ fun FinanceGraph(
                     lineProvider = LineCartesianLayer.LineProvider.series(
                         vicoTheme.lineCartesianLayerColors.map { color ->
                             LineCartesianLayer.rememberLine(
-                                pointConnector = LineCartesianLayer.PointConnector.cubic(),
+                                interpolator = LineCartesianLayer.Interpolator.cubic(),
                                 areaFill = LineCartesianLayer.AreaFill.single(
                                     Fill(
                                         Brush.verticalGradient(
