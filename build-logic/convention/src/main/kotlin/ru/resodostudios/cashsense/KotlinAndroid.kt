@@ -15,7 +15,7 @@ internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
-        compileSdk = 36
+        compileSdk = 37
 
         defaultConfig.apply {
             minSdk = 28
@@ -39,7 +39,7 @@ internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() 
         is KotlinJvmProjectExtension -> compilerOptions
         else -> TODO("Unsupported project extension $this ${T::class}")
     }.apply {
-        jvmToolchain(17)
+        jvmToolchain(25)
         allWarningsAsErrors = warningsAsErrors
         freeCompilerArgs.addAll(
             "-opt-in=kotlin.uuid.ExperimentalUuidApi",
