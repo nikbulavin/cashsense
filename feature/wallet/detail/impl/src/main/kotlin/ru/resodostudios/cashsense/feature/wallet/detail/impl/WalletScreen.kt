@@ -356,18 +356,20 @@ private fun WalletTopBar(
                     text = wallet.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = wallet.id,
-                                origin = wallet.title,
-                                type = SharedElementType.WalletTitle,
+                    modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(3f)
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = wallet.id,
+                                    type = SharedElementType.WalletTitle,
+                                ),
                             ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    ),
                 )
             },
             subtitle = {
@@ -376,11 +378,12 @@ private fun WalletTopBar(
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(3f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
                                     id = wallet.id,
-                                    origin = formattedCurrentBalance,
+                                    origin = wallet.id,
                                     type = SharedElementType.BalanceAmount,
                                 ),
                             ),

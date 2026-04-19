@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -99,7 +100,7 @@ fun FinancePanel(
         val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
         val expensesSharedState = SharedElementKey(
             id = walletId,
-            origin = formattedExpenses,
+            origin = walletId,
             type = SharedElementType.ExpensesAmount,
         )
         val expensesTitleSharedState = SharedElementKey(
@@ -109,7 +110,7 @@ fun FinancePanel(
         )
         val incomeSharedState = SharedElementKey(
             id = walletId,
-            origin = formattedIncome,
+            origin = walletId,
             type = SharedElementType.IncomeAmount,
         )
         val incomeTitleSharedState = SharedElementKey(
@@ -232,12 +233,14 @@ private fun FinanceCard(
                 AnimatedAmount(
                     formattedAmount = formattedAmount,
                     label = "FinanceCardTitle",
-                    modifier = Modifier.sharedBounds(
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(amountSharedContentState),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
+                    modifier = Modifier
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(amountSharedContentState),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        )
+                        .wrapContentWidth(),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
@@ -245,12 +248,13 @@ private fun FinanceCard(
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBounds(
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(titleSharedContentState),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
+                    modifier = Modifier
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(titleSharedContentState),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -315,7 +319,8 @@ private fun DetailedFinanceSection(
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
+                    )
+                    .wrapContentWidth(),
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
@@ -416,6 +421,7 @@ private fun FilterBySelectedDateTypeRow(
                     monthName
                 }
             }
+
             WEEK -> {
                 val date = transactionFilter.selectedDate.toJavaLocalDate()
                 val firstDayOfWeek = WeekFields.of(locale.platformLocale).firstDayOfWeek
@@ -426,6 +432,7 @@ private fun FilterBySelectedDateTypeRow(
                     "${formatter.format(weekStart)} — ${formatter.format(weekEnd)}"
                 }.getOrDefault("")
             }
+
             ALL -> ""
         }
 

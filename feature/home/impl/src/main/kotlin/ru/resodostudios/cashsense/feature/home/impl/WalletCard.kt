@@ -99,18 +99,20 @@ internal fun WalletCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = wallet.id,
-                                origin = wallet.title,
-                                type = SharedElementType.WalletTitle,
+                    modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(3f)
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = wallet.id,
+                                    type = SharedElementType.WalletTitle,
+                                ),
                             ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    ),
                 )
                 val balance = uiWallet.extendedUserWallet.currentBalance
                     .formatAmount(wallet.currency)
@@ -120,11 +122,12 @@ internal fun WalletCard(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
+                        .renderInSharedTransitionScopeOverlay(3f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
                                     id = wallet.id,
-                                    origin = balance,
+                                    origin = wallet.id,
                                     type = SharedElementType.BalanceAmount,
                                 ),
                             ),
