@@ -27,13 +27,13 @@ fun AnimatedAmount(
     style: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
 ) {
-    val slideAnimSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntOffset>()
-    val fadeAnimSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+    val slideAnimSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntOffset>()
+    val fadeAnimSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
     AnimatedContent(
         targetState = formattedAmount,
         transitionSpec = {
-            slideInVertically(slideAnimSpec) { -it } + fadeIn(fadeAnimSpec) togetherWith
-                    slideOutVertically { it } + fadeOut(fadeAnimSpec)
+            slideInVertically(slideAnimSpec) { -it / 2 } + fadeIn(fadeAnimSpec) togetherWith
+                    slideOutVertically { it / 2 } + fadeOut(fadeAnimSpec)
         },
         label = label,
         modifier = modifier,
