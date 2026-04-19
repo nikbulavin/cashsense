@@ -74,31 +74,28 @@ internal class HomeViewModel @AssistedInject constructor(
         selectedWalletId,
         getExtendedUserWallets.invoke(),
     ) { selectedWalletId, extendedUserWallets ->
-        if (extendedUserWallets.isEmpty()) {
-            WalletsUiState.Empty
-        } else {
-            val uiWallets = extendedUserWallets.map { walletData ->
-                val (expenses, income) = walletData.transactions
-                    .asSequence()
-                    .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-                    .partition { it.amount.signum() < 0 }
-                    .let { (expensesList, incomeList) ->
-                        val totalExpenses = expensesList.sumOf { it.amount }.abs()
-                        val totalIncome = incomeList.sumOf { it.amount }
-                        totalExpenses to totalIncome
-                    }
+        if (extendedUserWallets.isEmpty()) return@combine WalletsUiState.Empty
+        val uiWallets = extendedUserWallets.map { walletData ->
+            val (expenses, income) = walletData.transactions
+                .asSequence()
+                .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+                .partition { it.amount.signum() < 0 }
+                .let { (expensesList, incomeList) ->
+                    val totalExpenses = expensesList.sumOf { it.amount }.abs()
+                    val totalIncome = incomeList.sumOf { it.amount }
+                    totalExpenses to totalIncome
+                }
 
-                UiWallet(
-                    extendedUserWallet = walletData,
-                    expenses = expenses,
-                    income = income,
-                )
-            }
-            WalletsUiState.Success(
-                selectedWalletId = selectedWalletId,
-                uiWallets = uiWallets,
+            UiWallet(
+                extendedUserWallet = walletData,
+                expenses = expenses,
+                income = income,
             )
         }
+        WalletsUiState.Success(
+            selectedWalletId = selectedWalletId,
+            uiWallets = uiWallets,
+        )
     }
         .flowOn(defaultDispatcher)
         .stateIn(

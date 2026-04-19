@@ -202,8 +202,8 @@ fun CsApp(
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
                         sceneStrategies = listOf(
-                            rememberListDetailSceneStrategy(),
                             remember { DialogSceneStrategy() },
+                            rememberListDetailSceneStrategy(),
                         ),
                         onBack = navigator::goBack,
                         transitionSpec = { enterTransition togetherWith exitTransition },
