@@ -1,11 +1,9 @@
 package ru.resodostudios.cashsense.core.data.util
 
-import android.app.LocaleManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.tracing.trace
@@ -16,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -25,6 +24,7 @@ import ru.resodostudios.cashsense.core.network.CsDispatchers.IO
 import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 internal class AppLocaleManagerImpl @Inject constructor(
@@ -33,13 +33,13 @@ internal class AppLocaleManagerImpl @Inject constructor(
     @ApplicationScope appScope: CoroutineScope,
 ) : AppLocaleManager {
 
-    override val currentLocale: SharedFlow<String> = callbackFlow {
-        trySend(getLanguageCode())
+    override val currentLanguageTag: SharedFlow<String> = callbackFlow {
+        trySend(getCurrentLanguage())
 
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (intent.action != Intent.ACTION_LOCALE_CHANGED) return
-                trySend(getLanguageCode())
+                trySend(getCurrentLanguage())
             }
         }
 
@@ -47,7 +47,7 @@ internal class AppLocaleManagerImpl @Inject constructor(
             context.registerReceiver(receiver, IntentFilter(Intent.ACTION_LOCALE_CHANGED))
         }
 
-        trySend(getLanguageCode())
+        trySend(getCurrentLanguage())
 
         awaitClose {
             context.unregisterReceiver(receiver)
@@ -58,7 +58,7 @@ internal class AppLocaleManagerImpl @Inject constructor(
         .flowOn(ioDispatcher)
         .shareIn(
             scope = appScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5.seconds),
             replay = 1,
         )
 
@@ -75,12 +75,7 @@ internal class AppLocaleManagerImpl @Inject constructor(
         }
     }
 
-    private fun getLanguageCode(): String {
-        val languageCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.getSystemService(LocaleManager::class.java).applicationLocales.get(0)
-        } else {
-            AppCompatDelegate.getApplicationLocales().get(0)
-        }
-        return languageCode?.language ?: "en"
+    private fun getCurrentLanguage(): String {
+        return AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag() ?: ""
     }
 }

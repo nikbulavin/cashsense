@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AppLocaleManager {
 
-    val currentLocale: Flow<String>
+    val currentLanguageTag: Flow<String>
 
     fun setApplicationLocale(languageTag: String)
 }
