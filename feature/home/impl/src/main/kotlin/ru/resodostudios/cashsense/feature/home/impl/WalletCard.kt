@@ -85,7 +85,20 @@ internal fun WalletCard(
         OutlinedCard(
             onClick = { onWalletClick(wallet.id) },
             shape = shape,
-            modifier = modifier.then(if (selected) Modifier.dropShadow(shape) else Modifier),
+            modifier = modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = wallet.id,
+                            origin = wallet.id,
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                )
+                .then(if (selected) Modifier.dropShadow(shape) else Modifier),
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -100,7 +113,6 @@ internal fun WalletCard(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
-                        .renderInSharedTransitionScopeOverlay(3f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
@@ -122,7 +134,6 @@ internal fun WalletCard(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .renderInSharedTransitionScopeOverlay(3f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(

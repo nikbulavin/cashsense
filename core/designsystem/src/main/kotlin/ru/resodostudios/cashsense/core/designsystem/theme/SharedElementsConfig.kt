@@ -11,14 +11,15 @@ data class SharedElementKey(
 
 enum class SharedElementType {
     BalanceAmount,
+    Bounds,
+    CategoryIcon,
+    CategoryTitle,
     ExpensesAmount,
     ExpensesTitle,
     IncomeAmount,
     IncomeTitle,
-    WalletTitle,
     TransactionAmount,
-    CategoryTitle,
-    CategoryIcon,
+    WalletTitle,
 }
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {

@@ -141,75 +141,91 @@ private fun WalletScreen(
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onTransactionSelect: (Transaction?) -> Unit = {},
 ) {
-    when (walletState) {
-        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-        is WalletUiState.Success -> {
-            val hazeState = rememberHazeState()
-            val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
-            Box {
-                var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
-                WalletToolbar(
-                    wallet = walletState.wallet,
-                    formattedCurrentBalance = walletState.formattedCurrentBalance,
-                    expanded = isFabMenuExpanded,
-                    onTransfer = onTransfer,
-                    onWalletEdit = onWalletEdit,
-                    onWalletDelete = onWalletDelete,
-                    navigateToTransactionDialog = navigateToTransactionDialog,
+    with(LocalSharedTransitionScope.current) {
+        when (walletState) {
+            WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
+            is WalletUiState.Success -> {
+                val hazeState = rememberHazeState()
+                val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
+                Box(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .offset(y = -ScreenOffset)
-                        .zIndex(1f),
-                )
-                Column(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = walletState.wallet.id,
+                                    origin = walletState.wallet.id,
+                                    type = SharedElementType.Bounds,
+                                ),
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                        )
                 ) {
-                    WalletTopBar(
+                    var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
+                    WalletToolbar(
                         wallet = walletState.wallet,
                         formattedCurrentBalance = walletState.formattedCurrentBalance,
-                        isPrimary = walletState.isPrimary,
-                        showNavigationIcon = shouldShowNavigationIcon,
-                        onBackClick = onBackClick,
-                        onPrimaryClick = onPrimaryClick,
-                    )
-                    LazyColumn(
-                        contentPadding = PaddingValues(
-                            bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding(),
-                        ),
+                        expanded = isFabMenuExpanded,
+                        onTransfer = onTransfer,
+                        onWalletEdit = onWalletEdit,
+                        onWalletDelete = onWalletDelete,
+                        navigateToTransactionDialog = navigateToTransactionDialog,
                         modifier = Modifier
-                            .fillMaxSize()
-                            .floatingToolbarVerticalNestedScroll(
-                                expanded = isFabMenuExpanded,
-                                onExpand = { isFabMenuExpanded = true },
-                                onCollapse = { isFabMenuExpanded = false },
-                            ),
+                            .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
+                            .offset(y = -ScreenOffset)
+                            .zIndex(1f),
+                    )
+                    Column(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                     ) {
-                        item {
-                            FinancePanel(
-                                walletId = walletState.wallet.id,
-                                availableCategories = walletState.availableCategories,
-                                currency = walletState.wallet.currency,
-                                formattedExpenses = walletState.formattedExpenses,
-                                formattedIncome = walletState.formattedIncome,
-                                graphData = walletState.graphData,
-                                transactionFilter = walletState.transactionFilter,
-                                onDateTypeUpdate = onDateTypeUpdate,
-                                onFinanceTypeUpdate = onFinanceTypeUpdate,
-                                onSelectedDateUpdate = onSelectedDateUpdate,
-                                onCategoryFilterUpdate = onCategoryFilterUpdate,
-                                modifier = Modifier.padding(top = 6.dp),
+                        WalletTopBar(
+                            wallet = walletState.wallet,
+                            formattedCurrentBalance = walletState.formattedCurrentBalance,
+                            isPrimary = walletState.isPrimary,
+                            showNavigationIcon = shouldShowNavigationIcon,
+                            onBackClick = onBackClick,
+                            onPrimaryClick = onPrimaryClick,
+                        )
+                        LazyColumn(
+                            contentPadding = PaddingValues(
+                                bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding(),
+                            ),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .floatingToolbarVerticalNestedScroll(
+                                    expanded = isFabMenuExpanded,
+                                    onExpand = { isFabMenuExpanded = true },
+                                    onCollapse = { isFabMenuExpanded = false },
+                                ),
+                        ) {
+                            item {
+                                FinancePanel(
+                                    walletId = walletState.wallet.id,
+                                    availableCategories = walletState.availableCategories,
+                                    currency = walletState.wallet.currency,
+                                    formattedExpenses = walletState.formattedExpenses,
+                                    formattedIncome = walletState.formattedIncome,
+                                    graphData = walletState.graphData,
+                                    transactionFilter = walletState.transactionFilter,
+                                    onDateTypeUpdate = onDateTypeUpdate,
+                                    onFinanceTypeUpdate = onFinanceTypeUpdate,
+                                    onSelectedDateUpdate = onSelectedDateUpdate,
+                                    onCategoryFilterUpdate = onCategoryFilterUpdate,
+                                    modifier = Modifier.padding(top = 6.dp),
+                                )
+                            }
+                            transactions(
+                                groupedTransactions = walletState.groupedTransactions,
+                                hazeState = hazeState,
+                                hazeStyle = hazeStyle,
+                                onClick = onTransactionSelect,
+                                selectedTransaction = walletState.selectedTransaction,
+                                shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                             )
                         }
-                        transactions(
-                            groupedTransactions = walletState.groupedTransactions,
-                            hazeState = hazeState,
-                            hazeStyle = hazeStyle,
-                            onClick = onTransactionSelect,
-                            selectedTransaction = walletState.selectedTransaction,
-                            shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
-                        )
                     }
                 }
             }
@@ -357,7 +373,6 @@ private fun WalletTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .renderInSharedTransitionScopeOverlay(3f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
@@ -378,7 +393,6 @@ private fun WalletTopBar(
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .renderInSharedTransitionScopeOverlay(3f)
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
