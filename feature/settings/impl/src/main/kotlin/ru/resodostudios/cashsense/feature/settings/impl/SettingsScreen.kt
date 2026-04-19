@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -33,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -47,15 +47,27 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.China
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DarkMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Feedback
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.FolderZip
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.FormatPaint
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.France
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Gavel
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Germany
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.India
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Info
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Italy
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Japan
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.LightMode
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Palette
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Poland
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Policy
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Russia
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.SaudiArabia
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.SouthKorea
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Spain
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.UnitedStates
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.UniversalCurrencyAlt
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Android
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -64,7 +76,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SettingsBackup
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.supportsDynamicTheming
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.model.data.Language
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.SectionTitle
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -96,7 +107,6 @@ internal fun SettingsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
     settingsState: SettingsUiState,
@@ -166,7 +176,7 @@ private fun SettingsScreen(
     TrackScreenViewEvent(screenName = "Settings")
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TopBar(
     onBackClick: () -> Unit,
@@ -203,8 +213,7 @@ fun SettingsScreenPreview() {
                         useDynamicColor = true,
                         darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
                         currency = getUsdCurrency(),
-                        language = Language.ENGLISH,
-                        availableLanguages = emptyList(),
+                        languageTag = "en-US",
                     ),
                 ),
                 onBackClick = {},
@@ -228,7 +237,7 @@ private fun General(
     onLanguageUpdate: (String) -> Unit,
 ) {
     SectionTitle(localesR.string.settings_general)
-    
+
     var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
     CsListItemEmphasized(
@@ -263,14 +272,21 @@ private fun General(
                 contentDescription = null,
             )
         },
-        supportingContent = { Text(settings.language.displayName) },
+        supportingContent = {
+            Text(
+                text = availableLanguages.find { it.code == settings.languageTag }?.displayName
+                    ?: stringResource(localesR.string.theme_system_default),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
         onClick = { showLanguageDialog = true },
     )
 
     if (showLanguageDialog) {
         LanguageDialog(
-            language = settings.language.code,
-            availableLanguages = settings.availableLanguages,
+            languageTag = settings.languageTag,
+            availableLanguages = availableLanguages,
             onLanguageClick = onLanguageUpdate,
             onDismiss = { showLanguageDialog = false },
         )
@@ -293,7 +309,7 @@ private fun Appearance(
         stringResource(localesR.string.theme_light) to CsIcons.Filled.LightMode,
         stringResource(localesR.string.theme_dark) to CsIcons.Filled.DarkMode,
     )
-    
+
     CsListItemEmphasized(
         onClick = { shouldShowThemeDialog = true },
         shapes = if (supportDynamicColor) {
@@ -354,7 +370,7 @@ private fun BackupAndRestore(
     onDataImport: (Uri, Boolean) -> Unit,
 ) {
     SectionTitle(localesR.string.backup_and_restore)
-    
+
     val exportDbLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/zip"),
     ) {
@@ -412,7 +428,7 @@ private fun About(
     onLicensesClick: () -> Unit,
 ) {
     SectionTitle(localesR.string.about)
-    
+
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
@@ -498,7 +514,87 @@ private fun launchCustomTab(
     customTabsIntent.launchUrl(context, uri)
 }
 
+internal data class Language(
+    val code: String,
+    val displayName: String,
+    val icon: ImageVector,
+)
+
 private const val FEEDBACK_URL =
     "https://trusted-cowl-779.notion.site/14066ebc684d8010b4dbfd9e36d8cb1e?pvs=105"
 private const val PRIVACY_POLICY_URL =
     "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
+
+private val availableLanguages: List<Language>
+    @Composable get() = listOf(
+        Language(
+            code = "",
+            displayName = stringResource(localesR.string.theme_system_default),
+            icon = CsIcons.Outlined.Android,
+        ),
+        Language(
+            code = "en-US",
+            displayName = "English",
+            icon = CsIcons.Filled.UnitedStates,
+        ),
+        Language(
+            code = "ar-SA",
+            displayName = "العربية",
+            icon = CsIcons.Filled.SaudiArabia,
+        ),
+        Language(
+            code = "de-DE",
+            displayName = "Deutsch",
+            icon = CsIcons.Filled.Germany,
+        ),
+        Language(
+            code = "es-ES",
+            displayName = "Español",
+            icon = CsIcons.Filled.Spain,
+        ),
+        Language(
+            code = "fr-FR",
+            displayName = "Français",
+            icon = CsIcons.Filled.France,
+        ),
+        Language(
+            code = "hi-IN",
+            displayName = "हिंदी",
+            icon = CsIcons.Filled.India,
+        ),
+        Language(
+            code = "it-IT",
+            displayName = "Italiano",
+            icon = CsIcons.Filled.Italy,
+        ),
+        Language(
+            code = "ja-JP",
+            displayName = "日本語",
+            icon = CsIcons.Filled.Japan,
+        ),
+        Language(
+            code = "ko-KR",
+            displayName = "한국어",
+            icon = CsIcons.Filled.SouthKorea,
+        ),
+        Language(
+            code = "pl-PL",
+            displayName = "Polski",
+            icon = CsIcons.Filled.Poland,
+        ),
+        Language(
+            code = "ru-RU",
+            displayName = "Русский",
+            icon = CsIcons.Filled.Russia,
+        ),
+        Language(
+            code = "ta-IN",
+            displayName = "தமிழ்",
+            icon = CsIcons.Filled.India,
+        ),
+        Language(
+            code = "zh-CN",
+            displayName = "简体中文",
+            icon = CsIcons.Filled.China,
+        ),
+    )

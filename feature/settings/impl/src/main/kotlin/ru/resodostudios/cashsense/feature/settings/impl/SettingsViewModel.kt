@@ -4,16 +4,17 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.model.data.Language
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -24,21 +25,18 @@ internal class SettingsViewModel @Inject constructor(
     private val appLocaleManager: AppLocaleManager,
 ) : ViewModel() {
 
-    private val availableLanguages = Language.entries
+    private val _languageState = MutableStateFlow(appLocaleManager.getCurrentLanguage())
 
     val settingsUiState: StateFlow<SettingsUiState> = combine(
         userDataRepository.userData,
-        appLocaleManager.currentLocale,
-    ) { userData, currentLocale ->
-        val language = availableLanguages
-            .find { it.code == currentLocale } ?: availableLanguages.first()
+        _languageState.asStateFlow(),
+    ) { userData, currentLanguageTag ->
         SettingsUiState.Success(
             settings = UserEditableSettings(
                 useDynamicColor = userData.useDynamicColor,
                 darkThemeConfig = userData.darkThemeConfig,
                 currency = Currency.getInstance(userData.currency),
-                language = language,
-                availableLanguages = availableLanguages,
+                languageTag = currentLanguageTag,
             )
         )
     }
@@ -66,8 +64,9 @@ internal class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateLanguage(language: String) {
-        appLocaleManager.updateLocale(language)
+    fun updateLanguage(languageTag: String) {
+        appLocaleManager.setApplicationLocale(languageTag)
+        _languageState.value = languageTag
     }
 
     fun exportData(backupFileUri: Uri) {
@@ -83,8 +82,7 @@ data class UserEditableSettings(
     val useDynamicColor: Boolean,
     val darkThemeConfig: DarkThemeConfig,
     val currency: Currency,
-    val language: Language,
-    val availableLanguages: List<Language>,
+    val languageTag: String,
 )
 
 sealed interface SettingsUiState {

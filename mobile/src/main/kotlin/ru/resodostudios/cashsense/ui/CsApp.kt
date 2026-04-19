@@ -29,7 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -90,7 +90,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 fun CsApp(
     appState: CsAppState,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(true),
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 

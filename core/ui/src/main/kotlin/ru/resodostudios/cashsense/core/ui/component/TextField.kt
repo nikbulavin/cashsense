@@ -58,7 +58,6 @@ import java.util.Currency
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerTextField(
     timestamp: Instant,
