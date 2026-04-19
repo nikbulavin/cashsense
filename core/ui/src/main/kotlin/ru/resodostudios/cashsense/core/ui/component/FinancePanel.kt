@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -234,13 +233,13 @@ private fun FinanceCard(
                     formattedAmount = formattedAmount,
                     label = "FinanceCardTitle",
                     modifier = Modifier
+                        .fillMaxWidth()
                         .sharedBounds(
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(amountSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        )
-                        .wrapContentWidth(),
+                        ),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
@@ -282,13 +281,16 @@ private fun DetailedFinanceSection(
 ) {
     with(LocalSharedTransitionScope.current) {
         BackHandler { onBackClick() }
-        Column(modifier) {
+        Column(
+            modifier = modifier
+                .padding(horizontal = 16.dp),
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+                    .padding(bottom = 6.dp),
             ) {
                 FilterDateTypeSelectorRow(
                     transactionFilter = transactionFilter,
@@ -307,26 +309,24 @@ private fun DetailedFinanceSection(
             FilterBySelectedDateTypeRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,
-                modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(bottom = 6.dp),
             )
             AnimatedAmount(
                 formattedAmount = formattedAmount,
                 label = "DetailedFinanceCard",
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    )
-                    .wrapContentWidth(),
+                    ),
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
                 text = stringResource(titleRes),
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(titleSharedContentState),
@@ -350,7 +350,6 @@ private fun DetailedFinanceSection(
                     transactionFilter = transactionFilter,
                     modelProducer = modelProducer,
                     currency = currency,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                 )
             } else {
                 FinanceGraphPlaceholder()
@@ -360,7 +359,7 @@ private fun DetailedFinanceSection(
                     availableCategories = availableCategories,
                     selectedCategories = transactionFilter.selectedCategories,
                     onCategoryFilterUpdate = onCategoryFilterUpdate,
-                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                 )
             }
         }
