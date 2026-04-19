@@ -63,6 +63,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -163,7 +164,11 @@ private fun TransactionScreen(
                                     .padding(32.dp)
                                     .sharedBounds(
                                         sharedContentState = rememberSharedContentState(
-                                            SharedElementKey.CategoryIcon(transaction.id)
+                                            key = SharedElementKey(
+                                                id = transaction.id,
+                                                origin = categoryIcon.toString(),
+                                                type = SharedElementType.CategoryIcon,
+                                            ),
                                         ),
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
@@ -178,10 +183,11 @@ private fun TransactionScreen(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.sharedBounds(
                                 sharedContentState = rememberSharedContentState(
-                                    SharedElementKey.CategoryTitle(
-                                        transactionId = transaction.id,
-                                        title = categoryTitle,
-                                    )
+                                    key = SharedElementKey(
+                                        id = transaction.id,
+                                        origin = categoryTitle,
+                                        type = SharedElementType.CategoryTitle,
+                                    ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
@@ -203,10 +209,11 @@ private fun TransactionScreen(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.sharedBounds(
                                 sharedContentState = rememberSharedContentState(
-                                    SharedElementKey.TransactionAmount(
-                                        transactionId = transaction.id,
-                                        amount = formattedAmount,
-                                    )
+                                    key = SharedElementKey(
+                                        id = transaction.id,
+                                        origin = formattedAmount,
+                                        type = SharedElementType.TransactionAmount,
+                                    ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),

@@ -3,20 +3,22 @@ package ru.resodostudios.cashsense.core.designsystem.theme
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.compositionLocalOf
 
-sealed interface SharedElementKey {
-    data class Wallet(val walletId: String, val type: WalletSharedElementType)
-    data class CategoryIcon(val transactionId: String) : SharedElementKey
-    data class CategoryTitle(val transactionId: String, val title: String) : SharedElementKey
-    data class TransactionAmount(val transactionId: String, val amount: String) : SharedElementKey
-}
+data class SharedElementKey(
+    val id: String,
+    val origin: String,
+    val type: SharedElementType,
+)
 
-enum class WalletSharedElementType {
-    Balance,
-    Expenses,
+enum class SharedElementType {
+    BalanceAmount,
+    ExpensesAmount,
     ExpensesTitle,
-    Income,
+    IncomeAmount,
     IncomeTitle,
-    Title,
+    WalletTitle,
+    TransactionAmount,
+    CategoryTitle,
+    CategoryIcon,
 }
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {

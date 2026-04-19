@@ -56,7 +56,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
-import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
@@ -101,9 +101,10 @@ internal fun WalletCard(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.Wallet(
-                                walletId = wallet.id,
-                                type = WalletSharedElementType.Title,
+                            key = SharedElementKey(
+                                id = wallet.id,
+                                origin = wallet.title,
+                                type = SharedElementType.WalletTitle,
                             ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -121,9 +122,10 @@ internal fun WalletCard(
                     modifier = Modifier
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey.Wallet(
-                                    walletId = wallet.id,
-                                    type = WalletSharedElementType.Balance,
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = balance,
+                                    type = SharedElementType.BalanceAmount,
                                 ),
                             ),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,

@@ -36,6 +36,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -81,10 +82,11 @@ internal fun TransactionItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            SharedElementKey.TransactionAmount(
-                                transactionId = transaction.id,
-                                amount = formattedAmount,
-                            )
+                            key = SharedElementKey(
+                                id = transaction.id,
+                                origin = formattedAmount,
+                                type = SharedElementType.TransactionAmount,
+                            ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
@@ -99,10 +101,11 @@ internal fun TransactionItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            SharedElementKey.CategoryTitle(
-                                transactionId = transaction.id,
-                                title = categoryTitle,
-                            )
+                            key = SharedElementKey(
+                                id = transaction.id,
+                                origin = categoryTitle,
+                                type = SharedElementType.CategoryTitle,
+                            ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
@@ -162,7 +165,11 @@ internal fun TransactionItem(
                     contentDescription = null,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            SharedElementKey.CategoryIcon(transaction.id)
+                            key = SharedElementKey(
+                                id = transaction.id,
+                                origin = categoryIcon.toString(),
+                                type = SharedElementType.CategoryIcon,
+                            ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,

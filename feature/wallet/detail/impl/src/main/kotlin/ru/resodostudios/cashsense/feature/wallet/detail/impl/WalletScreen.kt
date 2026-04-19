@@ -62,7 +62,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
-import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -358,9 +358,10 @@ private fun WalletTopBar(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.Wallet(
-                                walletId = wallet.id,
-                                type = WalletSharedElementType.Title,
+                            key = SharedElementKey(
+                                id = wallet.id,
+                                origin = wallet.title,
+                                type = SharedElementType.WalletTitle,
                             ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -377,9 +378,10 @@ private fun WalletTopBar(
                     modifier = Modifier
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey.Wallet(
-                                    walletId = wallet.id,
-                                    type = WalletSharedElementType.Balance,
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = formattedCurrentBalance,
+                                    type = SharedElementType.BalanceAmount,
                                 ),
                             ),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,

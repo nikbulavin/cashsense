@@ -50,7 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
-import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -97,6 +97,26 @@ fun FinancePanel(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+        val expensesSharedState = SharedElementKey(
+            id = walletId,
+            origin = formattedExpenses,
+            type = SharedElementType.ExpensesAmount,
+        )
+        val expensesTitleSharedState = SharedElementKey(
+            id = walletId,
+            origin = localesR.string.expenses.toString(),
+            type = SharedElementType.ExpensesTitle,
+        )
+        val incomeSharedState = SharedElementKey(
+            id = walletId,
+            origin = formattedIncome,
+            type = SharedElementType.IncomeAmount,
+        )
+        val incomeTitleSharedState = SharedElementKey(
+            id = walletId,
+            origin = localesR.string.income_plural.toString(),
+            type = SharedElementType.IncomeTitle,
+        )
         AnimatedContent(
             targetState = transactionFilter.financeType,
             label = "FinancePanel",
@@ -120,14 +140,8 @@ fun FinancePanel(
                                 onDateTypeUpdate(MONTH)
                             },
                             animatedVisibilityScope = this@AnimatedContent,
-                            amountSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.Expenses,
-                            ),
-                            titleSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.ExpensesTitle,
-                            ),
+                            amountSharedContentState = expensesSharedState,
+                            titleSharedContentState = expensesTitleSharedState,
                         )
                         FinanceCard(
                             formattedAmount = formattedIncome,
@@ -138,14 +152,8 @@ fun FinancePanel(
                                 onDateTypeUpdate(MONTH)
                             },
                             animatedVisibilityScope = this@AnimatedContent,
-                            amountSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.Income,
-                            ),
-                            titleSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.IncomeTitle,
-                            ),
+                            amountSharedContentState = incomeSharedState,
+                            titleSharedContentState = incomeTitleSharedState,
                         )
                     }
                 }
@@ -167,14 +175,8 @@ fun FinancePanel(
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
-                        amountSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.Expenses,
-                        ),
-                        titleSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.ExpensesTitle,
-                        ),
+                        amountSharedContentState = expensesSharedState,
+                        titleSharedContentState = expensesTitleSharedState,
                     )
                 }
 
@@ -195,14 +197,8 @@ fun FinancePanel(
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
-                        amountSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.Income,
-                        ),
-                        titleSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.IncomeTitle,
-                        ),
+                        amountSharedContentState = incomeSharedState,
+                        titleSharedContentState = incomeTitleSharedState,
                     )
                 }
             }
