@@ -1,10 +1,15 @@
 package ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.metadata
+import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.TransactionScreen
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.TransactionViewModel
@@ -14,7 +19,17 @@ import ru.resodostudios.core.navigation.Navigator
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun EntryProviderScope<NavKey>.transactionEntry(navigator: Navigator) {
     entry<TransactionNavKey>(
-        metadata = ListDetailSceneStrategy.extraPane(),
+        metadata = ListDetailSceneStrategy.extraPane() + metadata {
+            put(NavDisplay.TransitionKey) {
+                fadeIn() togetherWith fadeOut()
+            }
+            put(NavDisplay.PopTransitionKey) {
+                fadeIn() togetherWith fadeOut()
+            }
+            put(NavDisplay.PredictivePopTransitionKey) {
+                fadeIn() togetherWith fadeOut()
+            }
+        },
     ) { key ->
         TransactionScreen(
             onBackClick = navigator::goBack,

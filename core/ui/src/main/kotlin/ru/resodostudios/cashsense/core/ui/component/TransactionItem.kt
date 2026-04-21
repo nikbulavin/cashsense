@@ -73,7 +73,19 @@ internal fun TransactionItem(
             shapes = shapes,
             onClick = onClick,
             selected = selected,
-            modifier = modifier,
+            modifier = modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = transaction.id,
+                            origin = transaction.id,
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                ),
             content = {
                 val formattedAmount = transaction.amount.formatAmount(currency, true)
                 Text(
