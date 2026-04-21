@@ -43,7 +43,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
-            baselineProfile.automaticGenerationDuringBuild = true
             signingConfig = signingConfigs.named("debug").get()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -68,8 +67,13 @@ android {
 }
 
 baselineProfile {
-    automaticGenerationDuringBuild = false
     dexLayoutOptimization = true
+    
+    variants {
+        register("prodRelease") {
+            automaticGenerationDuringBuild = true
+        }
+    }
 }
 
 dependencies {
