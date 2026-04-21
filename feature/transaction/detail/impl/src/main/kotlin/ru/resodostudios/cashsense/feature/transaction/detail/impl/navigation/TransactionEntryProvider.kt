@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
@@ -21,13 +21,13 @@ fun EntryProviderScope<NavKey>.transactionEntry(navigator: Navigator) {
     entry<TransactionNavKey>(
         metadata = ListDetailSceneStrategy.extraPane() + metadata {
             put(NavDisplay.TransitionKey) {
-                fadeIn() togetherWith fadeOut()
+                EnterTransition.None togetherWith ExitTransition.None
             }
             put(NavDisplay.PopTransitionKey) {
-                fadeIn() togetherWith fadeOut()
+                EnterTransition.None togetherWith ExitTransition.None
             }
             put(NavDisplay.PredictivePopTransitionKey) {
-                fadeIn() togetherWith fadeOut()
+                EnterTransition.None togetherWith ExitTransition.None
             }
         },
     ) { key ->

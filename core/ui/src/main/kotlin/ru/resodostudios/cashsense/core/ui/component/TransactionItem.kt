@@ -64,9 +64,10 @@ internal fun TransactionItem(
         StoredIcon.asImageVector(iconId) to title
     }
 
-    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-    val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
-    val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+    val motionScheme = MaterialTheme.motionScheme
+    val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
+    val floatSpatialSpec = motionScheme.defaultSpatialSpec<Float>()
+    val intSizeSpatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
 
     with(LocalSharedTransitionScope.current) {
         CsSelectableListItem(
@@ -85,6 +86,8 @@ internal fun TransactionItem(
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                     boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                    exit = fadeOut(effectsSpec),
+                    enter = fadeIn(effectsSpec),
                 ),
             content = {
                 val formattedAmount = transaction.amount.formatAmount(currency, true)
@@ -102,7 +105,7 @@ internal fun TransactionItem(
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                     ),
                 )
             },
@@ -121,7 +124,7 @@ internal fun TransactionItem(
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                     ),
                 )
             },
@@ -184,7 +187,7 @@ internal fun TransactionItem(
                             ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                     ),
                 )
             },

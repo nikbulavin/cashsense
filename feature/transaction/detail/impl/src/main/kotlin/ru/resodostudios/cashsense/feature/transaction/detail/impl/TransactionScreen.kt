@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -67,7 +66,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.SectionTitle
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -107,7 +105,7 @@ private fun TransactionScreen(
 ) {
     with(LocalSharedTransitionScope.current) {
         when (transactionState) {
-            TransactionUiState.Loading -> LoadingState(Modifier.fillMaxSize())
+            TransactionUiState.Loading -> Unit
             is TransactionUiState.Success -> {
                 val transaction = transactionState.transaction
                 val category = transactionState.transaction.category
@@ -118,6 +116,7 @@ private fun TransactionScreen(
                     val title = category?.title ?: stringResource(localesR.string.uncategorized)
                     StoredIcon.asImageVector(iconId) to title
                 }
+                val motionScheme = MaterialTheme.motionScheme
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -153,8 +152,10 @@ private fun TransactionScreen(
                                 ),
                             ),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            boundsTransform = motionScheme.sharedElementTransitionSpec,
                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                            exit = fadeOut(motionScheme.defaultEffectsSpec()),
+                            enter = fadeIn(motionScheme.defaultEffectsSpec()),
                         ),
                 ) { innerPadding ->
                     Column(
@@ -165,76 +166,74 @@ private fun TransactionScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        with(LocalSharedTransitionScope.current) {
-                            Surface(
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = MaterialShapes.Cookie7Sided.toShape(),
-                                modifier = Modifier.size(128.dp),
-                            ) {
-                                Icon(
-                                    imageVector = categoryIcon,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .padding(32.dp)
-                                        .sharedBounds(
-                                            sharedContentState = rememberSharedContentState(
-                                                key = SharedElementKey(
-                                                    id = transaction.id,
-                                                    origin = categoryIcon.toString(),
-                                                    type = SharedElementType.CategoryIcon,
-                                                ),
+                        Surface(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = MaterialShapes.Cookie7Sided.toShape(),
+                            modifier = Modifier.size(128.dp),
+                        ) {
+                            Icon(
+                                imageVector = categoryIcon,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(32.dp)
+                                    .sharedBounds(
+                                        sharedContentState = rememberSharedContentState(
+                                            key = SharedElementKey(
+                                                id = transaction.id,
+                                                origin = categoryIcon.toString(),
+                                                type = SharedElementType.CategoryIcon,
                                             ),
-                                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                                         ),
-                                )
-                            }
-                            Text(
-                                text = categoryTitle,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.sharedBounds(
-                                    sharedContentState = rememberSharedContentState(
-                                        key = SharedElementKey(
-                                            id = transaction.id,
-                                            origin = categoryTitle,
-                                            type = SharedElementType.CategoryTitle,
-                                        ),
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                                     ),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                ),
-                            )
-                            TagsSection(
-                                isTransactionIgnored = transaction.ignored,
-                                isTransactionPending = !transaction.completed,
-                            )
-                            val formattedAmount = transaction.amount.formatAmount(
-                                currency = transactionState.transaction.currency,
-                                plusPrefix = true,
-                            )
-                            Text(
-                                text = formattedAmount,
-                                style = MaterialTheme.typography.headlineLarge,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.sharedBounds(
-                                    sharedContentState = rememberSharedContentState(
-                                        key = SharedElementKey(
-                                            id = transaction.id,
-                                            origin = formattedAmount,
-                                            type = SharedElementType.TransactionAmount,
-                                        ),
-                                    ),
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                                ),
                             )
                         }
+                        Text(
+                            text = categoryTitle,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.sharedBounds(
+                                sharedContentState = rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = transaction.id,
+                                        origin = categoryTitle,
+                                        type = SharedElementType.CategoryTitle,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = motionScheme.sharedElementTransitionSpec,
+                            ),
+                        )
+                        TagsSection(
+                            isTransactionIgnored = transaction.ignored,
+                            isTransactionPending = !transaction.completed,
+                        )
+                        val formattedAmount = transaction.amount.formatAmount(
+                            currency = transactionState.transaction.currency,
+                            plusPrefix = true,
+                        )
+                        Text(
+                            text = formattedAmount,
+                            style = MaterialTheme.typography.headlineLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.sharedBounds(
+                                sharedContentState = rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = transaction.id,
+                                        origin = formattedAmount,
+                                        type = SharedElementType.TransactionAmount,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                boundsTransform = motionScheme.sharedElementTransitionSpec,
+                            ),
+                        )
                         ActionButtons(
                             transaction = transaction,
                             onRepeatClick = onRepeatClick,
