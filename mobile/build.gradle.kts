@@ -20,17 +20,17 @@ android {
 
         androidResources.localeFilters += setOf(
             "en",
-            "ar-rSA",
-            "de-rDE",
-            "es-rES",
-            "fr-rFR",
-            "hi-rIN",
-            "it-rIT",
-            "ja-rJP",
-            "ko-rKR",
-            "pl-rPL",
-            "ru-rRU",
-            "ta-rIN",
+            "ar",
+            "de",
+            "es",
+            "fr",
+            "hi",
+            "it",
+            "ja",
+            "ko",
+            "pl",
+            "ru",
+            "ta",
             "zh-rCN",
         )
     }
