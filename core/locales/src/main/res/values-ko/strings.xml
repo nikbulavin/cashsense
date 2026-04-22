@@ -104,7 +104,7 @@
   <string name="close">닫기</string>
   <string name="next_date">다음 날짜</string>
   <string name="previous_date">이전 날짜</string>
-  <string name="collapsed">붕괴된</string>
+  <string name="collapsed">축소됨</string>
   <string name="expanded">확장된</string>
   <string name="financial_health">재정 건전성</string>
   <string name="toggle_menu">메뉴 전환</string>

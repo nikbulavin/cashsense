@@ -2,7 +2,7 @@
 <resources>
   <string name="currency">Валюта</string>
   <string name="ok">ОК</string>
-  <string name="cancel">Отменить</string>
+  <string name="cancel">Отмена</string>
   <string name="icon_and_title">Иконка и название</string>
   <string name="date">Дата</string>
   <string name="undo">Вернуть</string>
@@ -17,7 +17,7 @@
   <string name="none">Отсутствует</string>
   <string name="amount">Сумма</string>
   <string name="subscriptions_notification_channel_description">Напоминания об истекающих подписках</string>
-  <string name="subscriptions_notification_content_text">%2$s вам необходимо заплатить %1$s за подписку </string>
+  <string name="subscriptions_notification_content_text">%2$s вам необходимо заплатить %1$s за подписку</string>
   <string name="new_category">Новая категория</string>
   <string name="edit_category">Изменение категории</string>
   <string name="categories_title">Категории</string>

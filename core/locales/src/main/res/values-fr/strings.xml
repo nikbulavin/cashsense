@@ -104,7 +104,7 @@
   <string name="close">Fermer</string>
   <string name="next_date">Date suivante</string>
   <string name="previous_date">Date précédente</string>
-  <string name="collapsed">Effondré</string>
+  <string name="collapsed">Réduit</string>
   <string name="expanded">Élargi</string>
   <string name="financial_health">Santé financière</string>
   <string name="toggle_menu">Menu bascule</string>

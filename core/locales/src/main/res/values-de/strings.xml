@@ -36,7 +36,7 @@
   <string name="theme_light">Hell</string>
   <string name="theme_dark">Dunkel</string>
   <string name="privacy_policy">Datenschutzerklärung</string>
-  <string name="licenses">Lizenz</string>
+  <string name="licenses">Lizenzen</string>
   <string name="version">Version</string>
   <string name="feedback">Feedback</string>
   <string name="new_subscription">Neues Abonnement</string>
@@ -104,7 +104,7 @@
   <string name="close">Schließen</string>
   <string name="next_date">Nächstes Datum</string>
   <string name="previous_date">Vorheriges Datum</string>
-  <string name="collapsed">Zusammengebrochen</string>
+  <string name="collapsed">Eingeklappt</string>
   <string name="expanded">Erweitert</string>
   <string name="financial_health">Finanzielle Gesundheit</string>
   <string name="toggle_menu">Menü umschalten</string>
