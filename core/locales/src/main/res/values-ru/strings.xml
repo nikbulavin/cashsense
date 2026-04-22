@@ -2,7 +2,7 @@
 <resources>
   <string name="currency">Валюта</string>
   <string name="ok">ОК</string>
-  <string name="cancel">Отменить</string>
+  <string name="cancel">Отмена</string>
   <string name="icon_and_title">Иконка и название</string>
   <string name="date">Дата</string>
   <string name="undo">Вернуть</string>
