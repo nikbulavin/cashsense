@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.core.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalLocale
 import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
@@ -48,7 +49,7 @@ fun Instant.formatDate(
         DateFormatType.DATE -> DateTimeFormatter.ofLocalizedDate(formatStyle)
         DateFormatType.TIME -> DateTimeFormatter.ofLocalizedTime(formatStyle)
     }
-        .withLocale(Locale.getDefault())
+        .withLocale(LocalLocale.current.platformLocale)
         .withZone(LocalTimeZone.current.toJavaZoneId())
         .format(toJavaInstant())
 }
