@@ -169,6 +169,11 @@ fun CsApp(
                     .consumeWindowInsets(innerPadding)
                     .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
             ) {
+                val motionScheme = MaterialTheme.motionScheme
+                val scaleSpec = motionScheme.defaultSpatialSpec<Float>()
+                val slideSpec = motionScheme.defaultSpatialSpec<IntOffset>()
+                val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
+
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                     val entryProvider = entryProvider {
                         homeEntry(navigator)
@@ -177,9 +182,12 @@ fun CsApp(
                         walletEntry(navigator)
                         settingsEntry(
                             navigator = navigator,
-                            animSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
+                            animSpec = slideSpec,
                         )
-                        licensesEntry(navigator)
+                        licensesEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         walletDialogEntry(navigator)
                         transactionOverviewEntry(navigator)
                         categoryDialogEntry(navigator)
@@ -188,11 +196,6 @@ fun CsApp(
                         transactionDialogEntry(navigator)
                         transferDialogEntry(navigator)
                     }
-
-                    val motionScheme = MaterialTheme.motionScheme
-                    val scaleSpec = motionScheme.slowSpatialSpec<Float>()
-                    val slideSpec = motionScheme.slowSpatialSpec<IntOffset>()
-                    val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
                     val enterTransition = scaleIn(scaleSpec, 0.96f) +
                             slideInVertically(slideSpec) { it / 28 } +
