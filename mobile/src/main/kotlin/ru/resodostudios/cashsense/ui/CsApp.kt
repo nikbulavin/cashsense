@@ -175,7 +175,10 @@ fun CsApp(
                         categoriesEntry(navigator)
                         subscriptionsEntry(navigator)
                         walletEntry(navigator)
-                        settingsEntry(navigator)
+                        settingsEntry(
+                            navigator = navigator,
+                            animSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
+                        )
                         licensesEntry(navigator)
                         walletDialogEntry(navigator)
                         transactionOverviewEntry(navigator)
