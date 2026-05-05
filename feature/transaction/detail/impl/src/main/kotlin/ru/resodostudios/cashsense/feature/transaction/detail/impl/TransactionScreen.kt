@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -63,10 +62,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Redo
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.SectionTitle
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -104,53 +103,69 @@ private fun TransactionScreen(
     onDeleteClick: (Transaction) -> Unit,
     transactionState: TransactionUiState,
 ) {
-    when (transactionState) {
-        TransactionUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-        is TransactionUiState.Success -> {
-            val transaction = transactionState.transaction
-            val category = transactionState.transaction.category
-            val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
-                CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
-            } else {
-                val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
-                val title = category?.title ?: stringResource(localesR.string.uncategorized)
-                StoredIcon.asImageVector(iconId) to title
-            }
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = transaction.timestamp.formatDate(
-                                    DateFormatType.DATE_TIME,
-                                    FormatStyle.MEDIUM,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        subtitle = {},
-                        navigationIcon = {
-                            CsIconButton(
-                                onClick = onBackClick,
-                                icon = CsIcons.Outlined.ArrowBack,
-                                contentDescription = stringResource(localesR.string.navigation_back_icon_description),
-                                tooltipPosition = TooltipAnchorPosition.Right,
-                            )
-                        },
-                        titleHorizontalAlignment = Alignment.CenterHorizontally,
-                    )
+    with(LocalSharedTransitionScope.current) {
+        when (transactionState) {
+            TransactionUiState.Loading -> Unit
+            is TransactionUiState.Success -> {
+                val transaction = transactionState.transaction
+                val category = transactionState.transaction.category
+                val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
+                    CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
+                } else {
+                    val iconId = category?.iconId ?: StoredIcon.TRANSACTION.storedId
+                    val title = category?.title ?: stringResource(localesR.string.uncategorized)
+                    StoredIcon.asImageVector(iconId) to title
                 }
-            ) { innerPadding ->
-                Column(
+                val motionScheme = MaterialTheme.motionScheme
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = transaction.timestamp.formatDate(
+                                        DateFormatType.DATE_TIME,
+                                        FormatStyle.MEDIUM,
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                            subtitle = {},
+                            navigationIcon = {
+                                CsIconButton(
+                                    onClick = onBackClick,
+                                    icon = CsIcons.Outlined.ArrowBack,
+                                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                                    tooltipPosition = TooltipAnchorPosition.Right,
+                                )
+                            },
+                            titleHorizontalAlignment = Alignment.CenterHorizontally,
+                        )
+                    },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    with(LocalSharedTransitionScope.current) {
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = transaction.id,
+                                    origin = transaction.id,
+                                    type = SharedElementType.Bounds,
+                                ),
+                            ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            boundsTransform = motionScheme.sharedElementTransitionSpec,
+                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                            exit = fadeOut(motionScheme.defaultEffectsSpec()),
+                            enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                        ),
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         Surface(
                             color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialShapes.Cookie7Sided.toShape(),
@@ -163,10 +178,14 @@ private fun TransactionScreen(
                                     .padding(32.dp)
                                     .sharedBounds(
                                         sharedContentState = rememberSharedContentState(
-                                            SharedElementKey.CategoryIcon(transaction.id)
+                                            key = SharedElementKey(
+                                                id = transaction.id,
+                                                origin = categoryIcon.toString(),
+                                                type = SharedElementType.CategoryIcon,
+                                            ),
                                         ),
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                                     ),
                             )
                         }
@@ -178,14 +197,15 @@ private fun TransactionScreen(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.sharedBounds(
                                 sharedContentState = rememberSharedContentState(
-                                    SharedElementKey.CategoryTitle(
-                                        transactionId = transaction.id,
-                                        title = categoryTitle,
-                                    )
+                                    key = SharedElementKey(
+                                        id = transaction.id,
+                                        origin = categoryTitle,
+                                        type = SharedElementType.CategoryTitle,
+                                    ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                boundsTransform = motionScheme.sharedElementTransitionSpec,
                             ),
                         )
                         TagsSection(
@@ -203,30 +223,31 @@ private fun TransactionScreen(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.sharedBounds(
                                 sharedContentState = rememberSharedContentState(
-                                    SharedElementKey.TransactionAmount(
-                                        transactionId = transaction.id,
-                                        amount = formattedAmount,
-                                    )
+                                    key = SharedElementKey(
+                                        id = transaction.id,
+                                        origin = formattedAmount,
+                                        type = SharedElementType.TransactionAmount,
+                                    ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                                boundsTransform = motionScheme.sharedElementTransitionSpec,
                             ),
                         )
-                    }
-                    ActionButtons(
-                        transaction = transaction,
-                        onRepeatClick = onRepeatClick,
-                        onEditClick = onEditClick,
-                        onDeleteClick = onDeleteClick,
-                        categoryTitle = categoryTitle,
-                        categoryIcon = categoryIcon,
-                    )
-                    transaction.description?.let { description ->
-                        TransactionDescription(
-                            description = description,
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                        ActionButtons(
+                            transaction = transaction,
+                            onRepeatClick = onRepeatClick,
+                            onEditClick = onEditClick,
+                            onDeleteClick = onDeleteClick,
+                            categoryTitle = categoryTitle,
+                            categoryIcon = categoryIcon,
                         )
+                        transaction.description?.let { description ->
+                            TransactionDescription(
+                                description = description,
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                            )
+                        }
                     }
                 }
             }

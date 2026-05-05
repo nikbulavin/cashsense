@@ -50,7 +50,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
-import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -97,6 +97,26 @@ fun FinancePanel(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+        val expensesSharedState = SharedElementKey(
+            id = walletId,
+            origin = walletId,
+            type = SharedElementType.ExpensesAmount,
+        )
+        val expensesTitleSharedState = SharedElementKey(
+            id = walletId,
+            origin = localesR.string.expenses.toString(),
+            type = SharedElementType.ExpensesTitle,
+        )
+        val incomeSharedState = SharedElementKey(
+            id = walletId,
+            origin = walletId,
+            type = SharedElementType.IncomeAmount,
+        )
+        val incomeTitleSharedState = SharedElementKey(
+            id = walletId,
+            origin = localesR.string.income_plural.toString(),
+            type = SharedElementType.IncomeTitle,
+        )
         AnimatedContent(
             targetState = transactionFilter.financeType,
             label = "FinancePanel",
@@ -120,14 +140,8 @@ fun FinancePanel(
                                 onDateTypeUpdate(MONTH)
                             },
                             animatedVisibilityScope = this@AnimatedContent,
-                            amountSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.Expenses,
-                            ),
-                            titleSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.ExpensesTitle,
-                            ),
+                            amountSharedContentState = expensesSharedState,
+                            titleSharedContentState = expensesTitleSharedState,
                         )
                         FinanceCard(
                             formattedAmount = formattedIncome,
@@ -138,14 +152,8 @@ fun FinancePanel(
                                 onDateTypeUpdate(MONTH)
                             },
                             animatedVisibilityScope = this@AnimatedContent,
-                            amountSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.Income,
-                            ),
-                            titleSharedContentState = SharedElementKey.Wallet(
-                                walletId = walletId,
-                                type = WalletSharedElementType.IncomeTitle,
-                            ),
+                            amountSharedContentState = incomeSharedState,
+                            titleSharedContentState = incomeTitleSharedState,
                         )
                     }
                 }
@@ -167,14 +175,8 @@ fun FinancePanel(
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
-                        amountSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.Expenses,
-                        ),
-                        titleSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.ExpensesTitle,
-                        ),
+                        amountSharedContentState = expensesSharedState,
+                        titleSharedContentState = expensesTitleSharedState,
                     )
                 }
 
@@ -195,14 +197,8 @@ fun FinancePanel(
                         modifier = Modifier.fillMaxWidth(),
                         animatedVisibilityScope = this@AnimatedContent,
                         availableCategories = availableCategories,
-                        amountSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.Income,
-                        ),
-                        titleSharedContentState = SharedElementKey.Wallet(
-                            walletId = walletId,
-                            type = WalletSharedElementType.IncomeTitle,
-                        ),
+                        amountSharedContentState = incomeSharedState,
+                        titleSharedContentState = incomeTitleSharedState,
                     )
                 }
             }
@@ -236,12 +232,14 @@ private fun FinanceCard(
                 AnimatedAmount(
                     formattedAmount = formattedAmount,
                     label = "FinanceCardTitle",
-                    modifier = Modifier.sharedBounds(
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(amountSharedContentState),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(amountSharedContentState),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        ),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
@@ -249,12 +247,13 @@ private fun FinanceCard(
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBounds(
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                        sharedContentState = rememberSharedContentState(titleSharedContentState),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
+                    modifier = Modifier
+                        .sharedBounds(
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            sharedContentState = rememberSharedContentState(titleSharedContentState),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -282,13 +281,16 @@ private fun DetailedFinanceSection(
 ) {
     with(LocalSharedTransitionScope.current) {
         BackHandler { onBackClick() }
-        Column(modifier) {
+        Column(
+            modifier = modifier
+                .padding(horizontal = 16.dp),
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+                    .padding(bottom = 6.dp),
             ) {
                 FilterDateTypeSelectorRow(
                     transactionFilter = transactionFilter,
@@ -307,13 +309,13 @@ private fun DetailedFinanceSection(
             FilterBySelectedDateTypeRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,
-                modifier = Modifier.padding(bottom = 6.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(bottom = 6.dp),
             )
             AnimatedAmount(
                 formattedAmount = formattedAmount,
                 label = "DetailedFinanceCard",
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
@@ -325,7 +327,6 @@ private fun DetailedFinanceSection(
             Text(
                 text = stringResource(titleRes),
                 modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(titleSharedContentState),
@@ -349,7 +350,6 @@ private fun DetailedFinanceSection(
                     transactionFilter = transactionFilter,
                     modelProducer = modelProducer,
                     currency = currency,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                 )
             } else {
                 FinanceGraphPlaceholder()
@@ -359,7 +359,7 @@ private fun DetailedFinanceSection(
                     availableCategories = availableCategories,
                     selectedCategories = transactionFilter.selectedCategories,
                     onCategoryFilterUpdate = onCategoryFilterUpdate,
-                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                 )
             }
         }
@@ -420,6 +420,7 @@ private fun FilterBySelectedDateTypeRow(
                     monthName
                 }
             }
+
             WEEK -> {
                 val date = transactionFilter.selectedDate.toJavaLocalDate()
                 val firstDayOfWeek = WeekFields.of(locale.platformLocale).firstDayOfWeek
@@ -430,6 +431,7 @@ private fun FilterBySelectedDateTypeRow(
                     "${formatter.format(weekStart)} — ${formatter.format(weekEnd)}"
                 }.getOrDefault("")
             }
+
             ALL -> ""
         }
 

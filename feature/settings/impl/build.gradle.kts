@@ -18,4 +18,5 @@ dependencies {
     implementation(libs.aboutlibraries.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.navigation3.ui)
 }

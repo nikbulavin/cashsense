@@ -1,6 +1,10 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.impl
 
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
@@ -62,7 +67,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
-import ru.resodostudios.cashsense.core.designsystem.theme.WalletSharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -74,7 +79,6 @@ import ru.resodostudios.cashsense.core.ui.CsThemePreview
 import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
-import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -141,75 +145,105 @@ private fun WalletScreen(
     navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onTransactionSelect: (Transaction?) -> Unit = {},
 ) {
-    when (walletState) {
-        WalletUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-        is WalletUiState.Success -> {
-            val hazeState = rememberHazeState()
-            val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
-            Box {
-                var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
-                WalletToolbar(
-                    wallet = walletState.wallet,
-                    formattedCurrentBalance = walletState.formattedCurrentBalance,
-                    expanded = isFabMenuExpanded,
-                    onTransfer = onTransfer,
-                    onWalletEdit = onWalletEdit,
-                    onWalletDelete = onWalletDelete,
-                    navigateToTransactionDialog = navigateToTransactionDialog,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .offset(y = -ScreenOffset)
-                        .zIndex(1f),
-                )
-                Column(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                ) {
-                    WalletTopBar(
-                        wallet = walletState.wallet,
-                        formattedCurrentBalance = walletState.formattedCurrentBalance,
-                        isPrimary = walletState.isPrimary,
-                        showNavigationIcon = shouldShowNavigationIcon,
-                        onBackClick = onBackClick,
-                        onPrimaryClick = onPrimaryClick,
-                    )
-                    LazyColumn(
-                        contentPadding = PaddingValues(
-                            bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding(),
-                        ),
+    with(LocalSharedTransitionScope.current) {
+        with(LocalNavAnimatedContentScope.current) {
+            val roundedCornerAnim by transition
+                .animateDp(label = "rounded_corner") { enterExit: EnterExitState ->
+                    when (enterExit) {
+                        EnterExitState.PreEnter -> 28.dp
+                        EnterExitState.Visible -> 0.dp
+                        EnterExitState.PostExit -> 28.dp
+                    }
+                }
+            when (walletState) {
+                WalletUiState.Loading -> Unit
+                is WalletUiState.Success -> {
+                    val motionScheme = MaterialTheme.motionScheme
+                    val hazeState = rememberHazeState()
+                    val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .floatingToolbarVerticalNestedScroll(
-                                expanded = isFabMenuExpanded,
-                                onExpand = { isFabMenuExpanded = true },
-                                onCollapse = { isFabMenuExpanded = false },
+                            .sharedBounds(
+                                sharedContentState = rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = walletState.wallet.id,
+                                        origin = walletState.wallet.id,
+                                        type = SharedElementType.Bounds,
+                                    ),
+                                ),
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                                clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(roundedCornerAnim)),
+                                exit = fadeOut(motionScheme.defaultEffectsSpec()),
+                                enter = fadeIn(motionScheme.defaultEffectsSpec()),
                             ),
                     ) {
-                        item {
-                            FinancePanel(
-                                walletId = walletState.wallet.id,
-                                availableCategories = walletState.availableCategories,
-                                currency = walletState.wallet.currency,
-                                formattedExpenses = walletState.formattedExpenses,
-                                formattedIncome = walletState.formattedIncome,
-                                graphData = walletState.graphData,
-                                transactionFilter = walletState.transactionFilter,
-                                onDateTypeUpdate = onDateTypeUpdate,
-                                onFinanceTypeUpdate = onFinanceTypeUpdate,
-                                onSelectedDateUpdate = onSelectedDateUpdate,
-                                onCategoryFilterUpdate = onCategoryFilterUpdate,
-                                modifier = Modifier.padding(top = 6.dp),
-                            )
-                        }
-                        transactions(
-                            groupedTransactions = walletState.groupedTransactions,
-                            hazeState = hazeState,
-                            hazeStyle = hazeStyle,
-                            onClick = onTransactionSelect,
-                            selectedTransaction = walletState.selectedTransaction,
-                            shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
+                        var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
+                        WalletToolbar(
+                            wallet = walletState.wallet,
+                            formattedCurrentBalance = walletState.formattedCurrentBalance,
+                            expanded = isFabMenuExpanded,
+                            onTransfer = onTransfer,
+                            onWalletEdit = onWalletEdit,
+                            onWalletDelete = onWalletDelete,
+                            navigateToTransactionDialog = navigateToTransactionDialog,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .navigationBarsPadding()
+                                .offset(y = -ScreenOffset)
+                                .zIndex(1f),
                         )
+                        Column(
+                            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                        ) {
+                            WalletTopBar(
+                                wallet = walletState.wallet,
+                                formattedCurrentBalance = walletState.formattedCurrentBalance,
+                                isPrimary = walletState.isPrimary,
+                                showNavigationIcon = shouldShowNavigationIcon,
+                                onBackClick = onBackClick,
+                                onPrimaryClick = onPrimaryClick,
+                            )
+                            LazyColumn(
+                                contentPadding = PaddingValues(
+                                    bottom = 96.dp + WindowInsets.navigationBars.asPaddingValues()
+                                        .calculateBottomPadding(),
+                                ),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .floatingToolbarVerticalNestedScroll(
+                                        expanded = isFabMenuExpanded,
+                                        onExpand = { isFabMenuExpanded = true },
+                                        onCollapse = { isFabMenuExpanded = false },
+                                    ),
+                            ) {
+                                item {
+                                    FinancePanel(
+                                        walletId = walletState.wallet.id,
+                                        availableCategories = walletState.availableCategories,
+                                        currency = walletState.wallet.currency,
+                                        formattedExpenses = walletState.formattedExpenses,
+                                        formattedIncome = walletState.formattedIncome,
+                                        graphData = walletState.graphData,
+                                        transactionFilter = walletState.transactionFilter,
+                                        onDateTypeUpdate = onDateTypeUpdate,
+                                        onFinanceTypeUpdate = onFinanceTypeUpdate,
+                                        onSelectedDateUpdate = onSelectedDateUpdate,
+                                        onCategoryFilterUpdate = onCategoryFilterUpdate,
+                                        modifier = Modifier.padding(top = 6.dp),
+                                    )
+                                }
+                                transactions(
+                                    groupedTransactions = walletState.groupedTransactions,
+                                    hazeState = hazeState,
+                                    hazeStyle = hazeStyle,
+                                    onClick = onTransactionSelect,
+                                    selectedTransaction = walletState.selectedTransaction,
+                                    shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -356,17 +390,19 @@ private fun WalletTopBar(
                     text = wallet.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey.Wallet(
-                                walletId = wallet.id,
-                                type = WalletSharedElementType.Title,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = wallet.id,
+                                    type = SharedElementType.WalletTitle,
+                                ),
                             ),
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                    ),
                 )
             },
             subtitle = {
@@ -377,9 +413,10 @@ private fun WalletTopBar(
                     modifier = Modifier
                         .sharedBounds(
                             sharedContentState = rememberSharedContentState(
-                                key = SharedElementKey.Wallet(
-                                    walletId = wallet.id,
-                                    type = WalletSharedElementType.Balance,
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = wallet.id,
+                                    type = SharedElementType.BalanceAmount,
                                 ),
                             ),
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,

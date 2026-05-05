@@ -77,6 +77,7 @@ private fun CategoryChip(
             )
         },
         modifier = modifier,
+        shapes = FilterChipDefaults.shapes(),
     )
 }
 

@@ -20,17 +20,17 @@ android {
 
         androidResources.localeFilters += setOf(
             "en",
-            "ar-rSA",
-            "de-rDE",
-            "es-rES",
-            "fr-rFR",
-            "hi-rIN",
-            "it-rIT",
-            "ja-rJP",
-            "ko-rKR",
-            "pl-rPL",
-            "ru-rRU",
-            "ta-rIN",
+            "ar",
+            "de",
+            "es",
+            "fr",
+            "hi",
+            "it",
+            "ja",
+            "ko",
+            "pl",
+            "ru",
+            "ta",
             "zh-rCN",
         )
     }
@@ -43,7 +43,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             applicationIdSuffix = CsBuildType.RELEASE.applicationIdSuffix
-            baselineProfile.automaticGenerationDuringBuild = true
             signingConfig = signingConfigs.named("debug").get()
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -68,7 +67,6 @@ android {
 }
 
 baselineProfile {
-    automaticGenerationDuringBuild = false
     dexLayoutOptimization = true
 }
 

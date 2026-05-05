@@ -36,6 +36,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -63,16 +64,31 @@ internal fun TransactionItem(
         StoredIcon.asImageVector(iconId) to title
     }
 
-    val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-    val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
-    val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+    val motionScheme = MaterialTheme.motionScheme
+    val effectsSpec = motionScheme.defaultEffectsSpec<Float>()
+    val floatSpatialSpec = motionScheme.defaultSpatialSpec<Float>()
+    val intSizeSpatialSpec = motionScheme.defaultSpatialSpec<IntSize>()
 
     with(LocalSharedTransitionScope.current) {
         CsSelectableListItem(
             shapes = shapes,
             onClick = onClick,
             selected = selected,
-            modifier = modifier,
+            modifier = modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = transaction.id,
+                            origin = transaction.id,
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                    boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                    exit = fadeOut(effectsSpec),
+                    enter = fadeIn(effectsSpec),
+                ),
             content = {
                 val formattedAmount = transaction.amount.formatAmount(currency, true)
                 Text(
@@ -81,14 +97,15 @@ internal fun TransactionItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            SharedElementKey.TransactionAmount(
-                                transactionId = transaction.id,
-                                amount = formattedAmount,
-                            )
+                            key = SharedElementKey(
+                                id = transaction.id,
+                                origin = formattedAmount,
+                                type = SharedElementType.TransactionAmount,
+                            ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                     ),
                 )
             },
@@ -99,14 +116,15 @@ internal fun TransactionItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            SharedElementKey.CategoryTitle(
-                                transactionId = transaction.id,
-                                title = categoryTitle,
-                            )
+                            key = SharedElementKey(
+                                id = transaction.id,
+                                origin = categoryTitle,
+                                type = SharedElementType.CategoryTitle,
+                            ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                     ),
                 )
             },
@@ -162,10 +180,14 @@ internal fun TransactionItem(
                     contentDescription = null,
                     modifier = Modifier.sharedBounds(
                         sharedContentState = rememberSharedContentState(
-                            SharedElementKey.CategoryIcon(transaction.id)
+                            key = SharedElementKey(
+                                id = transaction.id,
+                                origin = categoryIcon.toString(),
+                                type = SharedElementType.CategoryIcon,
+                            ),
                         ),
                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                     ),
                 )
             },
