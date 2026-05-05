@@ -68,12 +68,6 @@ android {
 
 baselineProfile {
     dexLayoutOptimization = true
-    
-    variants {
-        register("prodRelease") {
-            automaticGenerationDuringBuild = true
-        }
-    }
 }
 
 dependencies {
