@@ -54,15 +54,13 @@ fun AnimatedAmount(
                 val isEntering = targetAmount == formattedAmount
                 val isExiting = targetAmount == oldAmount
 
-                val shouldAnimate = runCatching {
-                    if (isEntering) {
-                        index >= oldAmount.length || char != oldAmount[index]
-                    } else if (isExiting) {
-                        index >= formattedAmount.length || char != formattedAmount[index]
-                    } else {
-                        false
-                    }
-                }.getOrDefault(true)
+                val shouldAnimate = if (isEntering) {
+                    index >= oldAmount.length || char != oldAmount[index]
+                } else if (isExiting) {
+                    index >= formattedAmount.length || char != formattedAmount[index]
+                } else {
+                    false
+                }
 
                 Text(
                     text = char.toString(),
