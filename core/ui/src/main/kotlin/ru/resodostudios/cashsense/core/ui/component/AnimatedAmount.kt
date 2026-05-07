@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,21 +46,17 @@ fun AnimatedAmount(
         label = label,
         modifier = modifier,
     ) { targetAmount ->
-        val oldAmount = previousAmount
+        val initialAmount = remember(targetAmount) { previousAmount }
+        val isEntering = targetAmount == formattedAmount
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             targetAmount.forEachIndexed { index, char ->
-                val isEntering = targetAmount == formattedAmount
-                val isExiting = targetAmount == oldAmount
-
                 val shouldAnimate = if (isEntering) {
-                    index >= oldAmount.length || char != oldAmount[index]
-                } else if (isExiting) {
-                    index >= formattedAmount.length || char != formattedAmount[index]
+                    index >= initialAmount.length || char != initialAmount[index]
                 } else {
-                    false
+                    index >= formattedAmount.length || char != formattedAmount[index]
                 }
 
                 Text(
@@ -78,7 +75,7 @@ fun AnimatedAmount(
                                 ),
                             )
                         } else {
-                            EnterTransition.None
+                            fadeIn(snap())
                         },
                         exit = if (shouldAnimate) {
                             slideOutVertically(
@@ -93,7 +90,7 @@ fun AnimatedAmount(
                                 ),
                             )
                         } else {
-                            ExitTransition.None
+                            fadeOut(snap())
                         },
                     ),
                     style = style,
