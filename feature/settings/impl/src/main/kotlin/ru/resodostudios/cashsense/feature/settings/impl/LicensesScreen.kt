@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.variant.LibraryActionMode
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -43,7 +44,7 @@ internal fun LicensesScreen(
             libraries = libraries,
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxSize(),
-            showDescription = true,
+            actionMode = LibraryActionMode.Icons,
         )
     }
 }
