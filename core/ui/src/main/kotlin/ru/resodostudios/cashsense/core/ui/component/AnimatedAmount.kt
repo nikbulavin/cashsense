@@ -1,9 +1,11 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -25,7 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.hazeEffect
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun AnimatedAmount(
     formattedAmount: String,
@@ -59,40 +66,63 @@ fun AnimatedAmount(
                     index >= formattedAmount.length || char != formattedAmount[index]
                 }
 
+                val blurRadius by transition.animateDp(
+                    transitionSpec = {
+                        if (shouldAnimate) {
+                            tween(
+                                durationMillis = 400,
+                                delayMillis = index * 50,
+                            )
+                        } else {
+                            snap()
+                        }
+                    },
+                    label = "BlurChar_$index",
+                ) { state ->
+                    if (shouldAnimate && state != EnterExitState.Visible) 10.dp else 0.dp
+                }
+
                 Text(
                     text = char.toString(),
-                    modifier = Modifier.animateEnterExit(
-                        enter = if (shouldAnimate) {
-                            slideInVertically(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            ) { -it / 2 } + fadeIn(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            )
-                        } else {
-                            fadeIn(snap())
-                        },
-                        exit = if (shouldAnimate) {
-                            slideOutVertically(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            ) { it / 2 } + fadeOut(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            )
-                        } else {
-                            fadeOut(snap())
-                        },
-                    ),
+                    modifier = Modifier
+                        .hazeEffect {
+                            this.blurRadius = blurRadius
+                            blurEnabled = blurRadius > 0.dp
+                            noiseFactor = 0f
+                            inputScale = HazeInputScale.Auto
+                        }
+                        .animateEnterExit(
+                            enter = if (shouldAnimate) {
+                                slideInVertically(
+                                    animationSpec = tween(
+                                        durationMillis = 400,
+                                        delayMillis = index * 50,
+                                    ),
+                                ) { -it / 2 } + fadeIn(
+                                    animationSpec = tween(
+                                        durationMillis = 400,
+                                        delayMillis = index * 50,
+                                    ),
+                                )
+                            } else {
+                                fadeIn(snap())
+                            },
+                            exit = if (shouldAnimate) {
+                                slideOutVertically(
+                                    animationSpec = tween(
+                                        durationMillis = 400,
+                                        delayMillis = index * 50,
+                                    ),
+                                ) { it / 2 } + fadeOut(
+                                    animationSpec = tween(
+                                        durationMillis = 400,
+                                        delayMillis = index * 50,
+                                    ),
+                                )
+                            } else {
+                                fadeOut(snap())
+                            },
+                        ),
                     style = style,
                     color = color,
                     maxLines = 1,
