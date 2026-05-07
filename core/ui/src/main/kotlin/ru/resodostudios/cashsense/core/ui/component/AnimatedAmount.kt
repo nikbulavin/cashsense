@@ -1,9 +1,12 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,7 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.hazeEffect
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun AnimatedAmount(
     formattedAmount: String,
@@ -45,57 +53,53 @@ fun AnimatedAmount(
         label = label,
         modifier = modifier,
     ) { targetAmount ->
-        val oldAmount = previousAmount
+        val initialAmount = remember(targetAmount) { previousAmount }
+        val isEntering = targetAmount == formattedAmount
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             targetAmount.forEachIndexed { index, char ->
-                val isEntering = targetAmount == formattedAmount
-                val isExiting = targetAmount == oldAmount
-
                 val shouldAnimate = if (isEntering) {
-                    index >= oldAmount.length || char != oldAmount[index]
-                } else if (isExiting) {
-                    index >= formattedAmount.length || char != formattedAmount[index]
+                    index >= initialAmount.length || char != initialAmount[index]
                 } else {
-                    false
+                    index >= formattedAmount.length || char != formattedAmount[index]
+                }
+                val animDuration = 400
+                val animDelay = index * 50
+
+                val animatedBlurRadius by transition.animateDp(
+                    transitionSpec = {
+                        if (shouldAnimate) tween(animDuration, animDelay) else snap()
+                    },
+                    label = "BlurChar_$index",
+                ) { state ->
+                    if (shouldAnimate && state != EnterExitState.Visible) 10.dp else 0.dp
                 }
 
                 Text(
                     text = char.toString(),
-                    modifier = Modifier.animateEnterExit(
-                        enter = if (shouldAnimate) {
-                            slideInVertically(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            ) { -it / 2 } + fadeIn(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            )
-                        } else {
-                            EnterTransition.None
-                        },
-                        exit = if (shouldAnimate) {
-                            slideOutVertically(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            ) { it / 2 } + fadeOut(
-                                animationSpec = tween(
-                                    durationMillis = 400,
-                                    delayMillis = index * 50,
-                                ),
-                            )
-                        } else {
-                            ExitTransition.None
-                        },
-                    ),
+                    modifier = Modifier
+                        .hazeEffect {
+                            blurRadius = animatedBlurRadius
+                            blurEnabled = animatedBlurRadius > 0.dp
+                            noiseFactor = 0f
+                            inputScale = HazeInputScale.Auto
+                        }
+                        .animateEnterExit(
+                            enter = if (shouldAnimate) {
+                                slideInVertically(tween(animDuration, animDelay)) { -it / 2 } +
+                                        fadeIn(tween(animDuration, animDelay))
+                            } else {
+                                fadeIn(snap())
+                            },
+                            exit = if (shouldAnimate) {
+                                slideOutVertically(tween(animDuration, animDelay)) { it / 2 } +
+                                        fadeOut(tween(animDuration, animDelay))
+                            } else {
+                                fadeOut(snap())
+                            },
+                        ),
                     style = style,
                     color = color,
                     maxLines = 1,
