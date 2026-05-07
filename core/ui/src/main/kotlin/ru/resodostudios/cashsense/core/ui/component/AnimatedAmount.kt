@@ -66,7 +66,7 @@ fun AnimatedAmount(
                     index >= formattedAmount.length || char != formattedAmount[index]
                 }
 
-                val blurRadius by transition.animateDp(
+                val animatedBlurRadius by transition.animateDp(
                     transitionSpec = {
                         if (shouldAnimate) {
                             tween(
@@ -86,8 +86,8 @@ fun AnimatedAmount(
                     text = char.toString(),
                     modifier = Modifier
                         .hazeEffect {
-                            this.blurRadius = blurRadius
-                            blurEnabled = blurRadius > 0.dp
+                            blurRadius = animatedBlurRadius
+                            blurEnabled = animatedBlurRadius > 0.dp
                             noiseFactor = 0f
                             inputScale = HazeInputScale.Auto
                         }
