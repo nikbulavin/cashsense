@@ -65,17 +65,12 @@ fun AnimatedAmount(
                 } else {
                     index >= formattedAmount.length || char != formattedAmount[index]
                 }
+                val animDuration = 400
+                val animDelay = index * 50
 
                 val animatedBlurRadius by transition.animateDp(
                     transitionSpec = {
-                        if (shouldAnimate) {
-                            tween(
-                                durationMillis = 400,
-                                delayMillis = index * 50,
-                            )
-                        } else {
-                            snap()
-                        }
+                        if (shouldAnimate) tween(animDuration, animDelay) else snap()
                     },
                     label = "BlurChar_$index",
                 ) { state ->
@@ -93,32 +88,14 @@ fun AnimatedAmount(
                         }
                         .animateEnterExit(
                             enter = if (shouldAnimate) {
-                                slideInVertically(
-                                    animationSpec = tween(
-                                        durationMillis = 400,
-                                        delayMillis = index * 50,
-                                    ),
-                                ) { -it / 2 } + fadeIn(
-                                    animationSpec = tween(
-                                        durationMillis = 400,
-                                        delayMillis = index * 50,
-                                    ),
-                                )
+                                slideInVertically(tween(animDuration, animDelay)) { -it / 2 } +
+                                        fadeIn(tween(animDuration, animDelay))
                             } else {
                                 fadeIn(snap())
                             },
                             exit = if (shouldAnimate) {
-                                slideOutVertically(
-                                    animationSpec = tween(
-                                        durationMillis = 400,
-                                        delayMillis = index * 50,
-                                    ),
-                                ) { it / 2 } + fadeOut(
-                                    animationSpec = tween(
-                                        durationMillis = 400,
-                                        delayMillis = index * 50,
-                                    ),
-                                )
+                                slideOutVertically(tween(animDuration, animDelay)) { it / 2 } +
+                                        fadeOut(tween(animDuration, animDelay))
                             } else {
                                 fadeOut(snap())
                             },
