@@ -50,5 +50,5 @@ internal object NetworkModule {
     }
 }
 
-private const val CS_BASE_URL = "https://hexarate.paikama.co/api/rates/latest/"
+private const val CS_BASE_URL = "https://hexarate.paikama.co/api/"
 private const val NETWORK_TIME_OUT = 5_000L
