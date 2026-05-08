@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
+import ru.resodostudios.cashsense.core.database.model.CurrencyExchangeRateEntity
 import ru.resodostudios.cashsense.core.network.CsNetworkDataSource
 import java.math.BigDecimal
 import java.util.Currency
@@ -49,14 +50,13 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
     }
 
     override suspend fun deleteOutdatedCurrencyExchangeRates() {
-        val cutoff = Clock.System.now().minus(3.days)
-        dao.deleteOutdatedCurrencyExchangeRates(cutoff)
+        dao.deleteOutdatedCurrencyExchangeRates(Clock.System.now() - 3.days)
     }
 
     override suspend fun getCurrencyExchangeRates(
         baseCurrencies: Set<Currency>,
         targetCurrency: Currency,
-    ) = coroutineScope {
+    ): List<CurrencyExchangeRateEntity> = coroutineScope {
         baseCurrencies.map { baseCurrency ->
             async {
                 network.getCurrencyExchangeRate(
