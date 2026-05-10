@@ -593,7 +593,7 @@ private val availableLanguages: List<Language>
             icon = CsIcons.Filled.India,
         ),
         Language(
-            code = "zh-CN",
+            code = "zh",
             displayName = "简体中文",
             icon = CsIcons.Filled.China,
         ),

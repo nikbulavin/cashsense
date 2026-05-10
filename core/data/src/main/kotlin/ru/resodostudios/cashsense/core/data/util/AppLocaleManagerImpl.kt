@@ -7,7 +7,7 @@ import jakarta.inject.Inject
 internal class AppLocaleManagerImpl @Inject constructor() : AppLocaleManager {
 
     override fun getCurrentLanguage(): String {
-        return AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag() ?: ""
+        return AppCompatDelegate.getApplicationLocales()[0]?.language ?: ""
     }
 
     override fun setApplicationLocale(languageTag: String) {
