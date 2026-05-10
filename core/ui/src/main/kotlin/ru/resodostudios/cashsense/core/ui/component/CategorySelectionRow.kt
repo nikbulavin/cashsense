@@ -35,11 +35,10 @@ fun CategorySelectionRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         availableCategories.forEach { category ->
-            val selected = category in selectedCategories
             CategoryChip(
-                selected = selected,
+                selected = category in selectedCategories,
                 category = category,
-                onClick = { onCategoryFilterUpdate(category, !selected) },
+                onClick = onCategoryFilterUpdate,
             )
         }
     }
@@ -49,7 +48,7 @@ fun CategorySelectionRow(
 private fun CategoryChip(
     selected: Boolean,
     category: Category,
-    onClick: () -> Unit,
+    onClick: (Category, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
@@ -60,7 +59,7 @@ private fun CategoryChip(
             hapticFeedback.performHapticFeedback(
                 if (selected) HapticFeedbackType.ToggleOff else HapticFeedbackType.ToggleOn
             )
-            onClick()
+            onClick(category, !selected)
         },
         label = {
             Text(
@@ -70,9 +69,8 @@ private fun CategoryChip(
             )
         },
         leadingIcon = {
-            val icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId)
             AnimatedIcon(
-                icon = icon,
+                icon = if (selected) CsIcons.Outlined.Check else StoredIcon.asImageVector(category.iconId),
                 iconSize = FilterChipDefaults.IconSize,
             )
         },
