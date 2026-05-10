@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -198,7 +198,7 @@ private fun TransferDialog(
     TrackScreenViewEvent(screenName = "TransferDialog")
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WalletDropdownMenu(
     @StringRes title: Int,
@@ -240,22 +240,31 @@ private fun WalletDropdownMenu(
         ) {
             availableWallets.forEachIndexed { index, wallet ->
                 val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
-                val menuText = "${wallet.title} – $currentBalance"
                 DropdownMenuItem(
                     shapes = MenuDefaults.itemShape(index, availableWallets.size),
                     selected = selectedWallet == wallet,
                     selectedLeadingIcon = {
                         Icon(
                             imageVector = CsIcons.Outlined.Check,
+                            modifier = Modifier.size(MenuDefaults.LeadingIconSize),
                             contentDescription = null,
                         )
                     },
                     text = {
                         Text(
-                            text = menuText,
+                            text = wallet.title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
+                    },
+                    supportingText = currentBalance?.let {
+                        {
+                            Text(
+                                text = it,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     },
                     onClick = {
                         onWalletSelect(wallet)
