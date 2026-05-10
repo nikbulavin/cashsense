@@ -74,8 +74,8 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
-import ru.resodostudios.cashsense.core.ui.component.MessageWithAnimation
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -192,7 +192,7 @@ internal fun CsAppBarWithSearch(
             SearchResultUiState.Loading -> LoadingState(Modifier.fillMaxSize())
             is SearchResultUiState.Success -> {
                 if (searchResultState.transactions.isEmpty()) {
-                    MessageWithAnimation(
+                    IllustratedMessage(
                         messageRes = localesR.string.search_no_results,
                         animationRes = R.raw.anim_search_no_results,
                         modifier = Modifier
@@ -266,7 +266,7 @@ internal fun CsAppBarWithSearch(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SearchResultItem(
     transaction: Transaction,
@@ -363,5 +363,8 @@ private fun SearchResultItem(
                 contentDescription = null,
             )
         },
+        colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
     )
 }

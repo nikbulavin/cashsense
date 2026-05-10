@@ -48,7 +48,7 @@ fun LoadingState(
 }
 
 @Composable
-fun MessageWithAnimation(
+fun IllustratedMessage(
     @StringRes messageRes: Int,
     @RawRes animationRes: Int,
     modifier: Modifier = Modifier,

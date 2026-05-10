@@ -23,8 +23,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
-import ru.resodostudios.cashsense.core.ui.component.MessageWithAnimation
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -65,7 +65,7 @@ private fun SubscriptionsScreen(
     ) { innerPadding ->
         when (subscriptionsState) {
             SubscriptionsUiState.Empty -> {
-                MessageWithAnimation(
+                IllustratedMessage(
                     messageRes = localesR.string.subscriptions_empty,
                     animationRes = R.raw.anim_subscriptions_empty,
                     modifier = Modifier.padding(innerPadding),
