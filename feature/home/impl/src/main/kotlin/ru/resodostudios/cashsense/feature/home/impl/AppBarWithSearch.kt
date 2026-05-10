@@ -266,7 +266,7 @@ internal fun CsAppBarWithSearch(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SearchResultItem(
     transaction: Transaction,
@@ -363,5 +363,8 @@ private fun SearchResultItem(
                 contentDescription = null,
             )
         },
+        colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
     )
 }
