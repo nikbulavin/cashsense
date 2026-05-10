@@ -5,14 +5,35 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
+import java.util.Locale
 
-internal val notoSerifFontFamily = FontFamily(
+private val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs,
+)
+
+private val notoSerifFontName: GoogleFont
+    get() = GoogleFont(
+        when (Locale.getDefault().toLanguageTag()) {
+            "ja" -> "Noto Serif JP"
+            "ko" -> "Noto Serif KR"
+            "zh-CN" -> "Noto Serif SC"
+            else -> "Noto Serif"
+        }
+    )
+
+private val notoSerifFontFamily = FontFamily(
+    Font(googleFont = notoSerifFontName, fontProvider = provider),
     Font(resId = R.font.noto_serif_regular),
+    Font(googleFont = notoSerifFontName, fontProvider = provider, weight = FontWeight.Medium),
     Font(resId = R.font.noto_serif_medium, weight = FontWeight.Medium),
 )
-internal val googleSansFontFamily = FontFamily(
+private val googleSansFontFamily = FontFamily(
     Font(resId = R.font.google_sans_regular),
     Font(resId = R.font.google_sans_medium, weight = FontWeight.Medium),
 )
