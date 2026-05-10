@@ -15,9 +15,9 @@ internal val robotoSerifFontFamily = FontFamily(
     Font(resId = R.font.roboto_serif_regular),
     Font(resId = R.font.roboto_serif_medium, weight = FontWeight.Medium),
 )
-internal val poppinsFontFamily = FontFamily(
-    Font(resId = R.font.poppins_regular),
-    Font(resId = R.font.poppins_medium, weight = FontWeight.Medium),
+internal val googleSansFontFamily = FontFamily(
+    Font(resId = R.font.google_sans_regular),
+    Font(resId = R.font.google_sans_medium, weight = FontWeight.Medium),
 )
 
 internal val csTypography = Typography(
@@ -97,57 +97,41 @@ internal val csTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = poppinsFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.None,
-        ),
+        fontFamily = googleSansFontFamily,
     ),
     bodyMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
-        fontFamily = poppinsFontFamily,
+        fontFamily = googleSansFontFamily,
     ),
     bodySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp,
-        fontFamily = poppinsFontFamily,
+        fontFamily = googleSansFontFamily,
     ),
     labelLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
-        fontFamily = poppinsFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.LastLineBottom,
-        ),
+        fontFamily = googleSansFontFamily,
     ),
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = poppinsFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Top,
-            trim = Trim.FirstLineTop,
-        ),
+        fontFamily = googleSansFontFamily,
     ),
     labelSmall = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
-        fontFamily = poppinsFontFamily,
-        lineHeightStyle = LineHeightStyle(
-            alignment = Alignment.Center,
-            trim = Trim.LastLineBottom,
-        ),
+        fontFamily = googleSansFontFamily,
     )
 )
