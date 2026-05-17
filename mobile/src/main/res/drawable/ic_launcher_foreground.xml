@@ -11,7 +11,7 @@
         android:translateY="5.4">
         <path
             android:fillColor="#C1C9BE"
-            android:pathData="M32,44C32,40.69 34.69,38 38,38H76C79.31,38 82,40.69 82,44V58C82,67.94 73.94,76 64,76H38C34.69,76 32,73.31 32,70V44Z" />
+            android:pathData="M32,44C32,40.69 34.69,38 38,38H74C78.42,38 82,41.58 82,46V58C82,67.94 73.94,76 64,76H40C35.58,76 32,72.42 32,68V44Z" />
         <path android:pathData="M26,44C26,37.37 31.37,32 38,32H68C72.42,32 76,35.58 76,40V58C76,64.63 70.63,70 64,70H34C29.58,70 26,66.42 26,62V44Z">
             <aapt:attr name="android:fillColor">
                 <gradient
