@@ -45,6 +45,9 @@ internal class HomeViewModel @AssistedInject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
+    private val _searchFilterState = MutableStateFlow(SearchFilterState())
+    val searchFilterState = _searchFilterState.asStateFlow()
+
     val searchResultUiState = searchQuery.flatMapLatest { query ->
         if (query.isBlank()) {
             flowOf(SearchResultUiState.EmptyQuery)
@@ -56,8 +59,9 @@ internal class HomeViewModel @AssistedInject constructor(
                             .flatMap { it.transactions }
                             .filter { transaction ->
                                 transaction.description?.contains(query, true) == true ||
-                                        transaction.amount.toPlainString().contains(query)
+                                        query in transaction.amount.toPlainString()
                             },
+
                     )
                 }
                 .catch { SearchResultUiState.LoadFailed }
@@ -118,7 +122,7 @@ internal class HomeViewModel @AssistedInject constructor(
     }
 }
 
-sealed interface WalletsUiState {
+internal sealed interface WalletsUiState {
 
     data object Loading : WalletsUiState
 
@@ -130,7 +134,7 @@ sealed interface WalletsUiState {
     ) : WalletsUiState
 }
 
-sealed interface SearchResultUiState {
+internal sealed interface SearchResultUiState {
 
     data object Loading : SearchResultUiState
 
@@ -139,8 +143,12 @@ sealed interface SearchResultUiState {
     data object LoadFailed : SearchResultUiState
 
     data class Success(
-        val transactions: List<Transaction> = emptyList(),
+        val transactions: List<Transaction>,
     ) : SearchResultUiState
 }
+
+internal data class SearchFilterState(
+    val selectedWalletIds: List<String> = emptyList(),
+)
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

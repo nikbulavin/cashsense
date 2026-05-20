@@ -6,6 +6,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +25,8 @@ import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
@@ -61,17 +65,21 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.AccountBalance
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.ArrowDropDown
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Settings
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
@@ -151,7 +159,7 @@ internal fun CsAppBarWithSearch(
             trailingIcon = if (isSearchBarExpanded && textFieldState.text.isNotEmpty()) {
                 {
                     CsIconButton(
-                        onClick = { textFieldState.clearText() },
+                        onClick = textFieldState::clearText,
                         icon = CsIcons.Outlined.Close,
                         contentDescription = stringResource(localesR.string.delete),
                         tooltipPosition = TooltipAnchorPosition.Left,
@@ -187,6 +195,39 @@ internal fun CsAppBarWithSearch(
         inputField = inputField,
         colors = appBarWithSearchColors.searchBarColors,
     ) {
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FilterChip(
+                selected = false,
+                onClick = {},
+                label = {
+                    Text(
+                        text = "Date",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                leadingIcon = {
+                    AnimatedIcon(
+                        icon = CsIcons.Outlined.Calendar,
+                        iconSize = FilterChipDefaults.IconSize,
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = CsIcons.Filled.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.size(FilterChipDefaults.IconSize),
+                    )
+                },
+                shapes = FilterChipDefaults.shapes(),
+            )
+            WalletFilterChip()
+        }
         when (searchResultState) {
             SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
             SearchResultUiState.Loading -> LoadingState(Modifier.fillMaxSize())
@@ -366,5 +407,37 @@ private fun SearchResultItem(
         colors = ListItemDefaults.segmentedColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         ),
+    )
+}
+
+@Composable
+private fun WalletFilterChip(
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        selected = false,
+        onClick = {},
+        label = {
+            Text(
+                text = stringResource(localesR.string.wallet_widget_title),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        leadingIcon = {
+            AnimatedIcon(
+                icon = CsIcons.Outlined.Wallet,
+                iconSize = FilterChipDefaults.IconSize,
+            )
+        },
+        trailingIcon = {
+            Icon(
+                imageVector = CsIcons.Filled.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.size(FilterChipDefaults.IconSize),
+            )
+        },
+        shapes = FilterChipDefaults.shapes(),
+        modifier = modifier,
     )
 }
