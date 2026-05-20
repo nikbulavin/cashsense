@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -34,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
 import kotlinx.datetime.Month
@@ -76,7 +76,6 @@ import java.time.temporal.WeekFields
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FinancePanel(
     walletId: String,
@@ -206,7 +205,6 @@ fun FinancePanel(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FinanceCard(
     formattedAmount: String,
@@ -261,7 +259,6 @@ private fun FinanceCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DetailedFinanceSection(
     formattedAmount: String,
@@ -280,7 +277,12 @@ private fun DetailedFinanceSection(
     modifier: Modifier = Modifier,
 ) {
     with(LocalSharedTransitionScope.current) {
-        BackHandler { onBackClick() }
+        BackHandler(
+            enabled = LocalNavAnimatedContentScope.current.transition.let {
+                it.currentState == it.targetState
+            },
+            onBack = onBackClick,
+        )
         Column(
             modifier = modifier
                 .padding(horizontal = 16.dp),
@@ -366,7 +368,6 @@ private fun DetailedFinanceSection(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FilterDateTypeSelectorRow(
     transactionFilter: TransactionFilter,
