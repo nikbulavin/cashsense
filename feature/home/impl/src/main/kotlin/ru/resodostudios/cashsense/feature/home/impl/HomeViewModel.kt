@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
@@ -48,25 +49,33 @@ internal class HomeViewModel @AssistedInject constructor(
     private val _searchFilterState = MutableStateFlow(SearchFilterState())
     val searchFilterState = _searchFilterState.asStateFlow()
 
-    val searchResultUiState = searchQuery.flatMapLatest { query ->
-        if (query.isBlank()) {
-            flowOf(SearchResultUiState.EmptyQuery)
-        } else {
-            getExtendedUserWallets.invoke()
-                .map { extendedUserWallets ->
-                    SearchResultUiState.Success(
-                        transactions = extendedUserWallets
-                            .flatMap { it.transactions }
-                            .filter { transaction ->
-                                transaction.description?.contains(query, true) == true ||
-                                        query in transaction.amount.toPlainString()
-                            },
-
-                    )
-                }
-                .catch { SearchResultUiState.LoadFailed }
-        }
+    val searchResultUiState = combine(
+        searchQuery,
+        searchFilterState,
+    ) { query, filterState ->
+        query to filterState
     }
+        .flatMapLatest { (query, filterState) ->
+            if (query.isBlank()) {
+                flowOf(SearchResultUiState.EmptyQuery)
+            } else {
+                getExtendedUserWallets.invoke()
+                    .map { extendedUserWallets ->
+                        runCatching {
+                            SearchResultUiState.Success(
+                                transactions = extendedUserWallets
+                                    .filter { it.wallet.id in filterState.selectedWalletIds || filterState.selectedWalletIds.isEmpty() }
+                                    .flatMap { it.transactions }
+                                    .filter { transaction ->
+                                        transaction.description?.contains(query, true) == true ||
+                                                query in transaction.amount.toPlainString()
+                                    },
+                            )
+                        }.getOrDefault(SearchResultUiState.LoadFailed)
+                    }
+                    .catch { emit(SearchResultUiState.LoadFailed) }
+            }
+        }
         .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
@@ -114,6 +123,18 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun onSearch(query: String) {
         _searchQuery.value = query
+    }
+
+    fun toggleWalletSelection(walletId: String) {
+        _searchFilterState.update { state ->
+            state.copy(
+                selectedWalletIds = if (walletId in state.selectedWalletIds) {
+                    state.selectedWalletIds - walletId
+                } else {
+                    state.selectedWalletIds + walletId
+                },
+            )
+        }
     }
 
     @AssistedFactory
