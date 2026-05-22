@@ -88,6 +88,7 @@ import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import java.time.format.FormatStyle
 import java.util.Currency
 import kotlin.time.Duration.Companion.milliseconds
@@ -104,6 +105,8 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun CsAppBarWithSearch(
     scrollBehavior: SearchBarScrollBehavior,
     searchResultState: SearchResultUiState,
+    searchFilterState: SearchFilterState,
+    wallets: List<UiWallet>,
     onSearch: (String) -> Unit,
     onTransactionClick: (transactionId: String) -> Unit,
     onTotalBalanceClick: () -> Unit,
@@ -206,7 +209,7 @@ internal fun CsAppBarWithSearch(
                 onClick = {},
                 label = {
                     Text(
-                        text = "Date",
+                        text = stringResource(localesR.string.date),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -226,7 +229,10 @@ internal fun CsAppBarWithSearch(
                 },
                 shapes = FilterChipDefaults.shapes(),
             )
-            WalletFilterChip()
+            WalletFilterChip(
+                wallets = wallets,
+                selectedWalletIds = searchFilterState.selectedWalletIds,
+            )
         }
         when (searchResultState) {
             SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
@@ -412,10 +418,12 @@ private fun SearchResultItem(
 
 @Composable
 private fun WalletFilterChip(
+    wallets: List<UiWallet>,
+    selectedWalletIds: List<String>,
     modifier: Modifier = Modifier,
 ) {
     FilterChip(
-        selected = false,
+        selected = selectedWalletIds.isNotEmpty(),
         onClick = {},
         label = {
             Text(

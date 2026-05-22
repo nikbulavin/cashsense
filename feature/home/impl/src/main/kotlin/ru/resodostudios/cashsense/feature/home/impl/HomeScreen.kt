@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
@@ -42,10 +41,12 @@ internal fun HomeScreen(
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
     val searchResultState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
+    val searchFilterState by viewModel.searchFilterState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
         searchResultState = searchResultState,
+        searchFilterState = searchFilterState,
         onSearch = viewModel::onSearch,
         onWalletClick = {
             viewModel.onWalletClick(it)
@@ -60,14 +61,12 @@ internal fun HomeScreen(
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     walletsState: WalletsUiState,
     searchResultState: SearchResultUiState,
+    searchFilterState: SearchFilterState,
     onSearch: (String) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
@@ -84,6 +83,8 @@ private fun HomeScreen(
             CsAppBarWithSearch(
                 scrollBehavior = scrollBehavior,
                 searchResultState = searchResultState,
+                searchFilterState = searchFilterState,
+                wallets = if (walletsState is WalletsUiState.Success) walletsState.uiWallets else emptyList(),
                 onSearch = onSearch,
                 onTransactionClick = onTransactionClick,
                 onTotalBalanceClick = onTotalBalanceClick,
@@ -94,7 +95,11 @@ private fun HomeScreen(
     ) { innerPadding ->
         when (walletsState) {
             WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-            WalletsUiState.Empty -> IllustratedMessage(localesR.string.home_empty, R.raw.anim_wallets_empty)
+            WalletsUiState.Empty -> IllustratedMessage(
+                localesR.string.home_empty,
+                R.raw.anim_wallets_empty,
+            )
+
             is WalletsUiState.Success -> {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
@@ -167,6 +172,7 @@ private fun HomeScreenPopulatedPreview(
                     },
                 ),
                 searchResultState = SearchResultUiState.EmptyQuery,
+                searchFilterState = SearchFilterState(),
                 onSearch = {},
                 onWalletClick = {},
                 onTransfer = {},
