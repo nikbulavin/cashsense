@@ -218,31 +218,7 @@ internal fun CsAppBarWithSearch(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            FilterChip(
-                selected = false,
-                onClick = {},
-                label = {
-                    Text(
-                        text = stringResource(localesR.string.date),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                leadingIcon = {
-                    AnimatedIcon(
-                        icon = CsIcons.Outlined.Calendar,
-                        iconSize = FilterChipDefaults.IconSize,
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = CsIcons.Filled.ArrowDropDown,
-                        contentDescription = null,
-                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                    )
-                },
-                shapes = FilterChipDefaults.shapes(),
-            )
+            DateFilterChip()
             WalletFilterChip(
                 wallets = wallets,
                 selectedWalletIds = searchFilterState.selectedWalletIds,
@@ -428,26 +404,60 @@ private fun SearchResultItem(
 }
 
 @Composable
+private fun DateFilterChip(
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        modifier = modifier,
+        selected = false,
+        onClick = {},
+        label = {
+            Text(
+                text = stringResource(localesR.string.date),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        leadingIcon = {
+            AnimatedIcon(
+                icon = CsIcons.Outlined.Calendar,
+                iconSize = FilterChipDefaults.IconSize,
+            )
+        },
+        trailingIcon = {
+            Icon(
+                imageVector = CsIcons.Filled.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.size(FilterChipDefaults.IconSize),
+            )
+        },
+        shapes = FilterChipDefaults.shapes(),
+    )
+}
+
+@Composable
 private fun WalletFilterChip(
     wallets: List<Wallet>,
     selectedWalletIds: List<String>,
     onSearchFilterWalletToggle: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    val selected = selectedWalletIds.isNotEmpty()
     val hapticFeedback = LocalHapticFeedback.current
+
+    var expanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier,
     ) {
         FilterChip(
-            selected = selectedWalletIds.isNotEmpty(),
+            selected = selected,
             onClick = { expanded = true },
             label = {
                 Text(
                     text = buildString {
                         append(stringResource(localesR.string.wallet_widget_title))
-                        if (selectedWalletIds.isNotEmpty()) append(" (${selectedWalletIds.size})")
+                        if (selected) append(" (${selectedWalletIds.size})")
                     },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -455,7 +465,7 @@ private fun WalletFilterChip(
             },
             leadingIcon = {
                 AnimatedIcon(
-                    icon = CsIcons.Outlined.Wallet,
+                    icon = if (selected) CsIcons.Outlined.Check else CsIcons.Outlined.Wallet,
                     iconSize = FilterChipDefaults.IconSize,
                 )
             },
