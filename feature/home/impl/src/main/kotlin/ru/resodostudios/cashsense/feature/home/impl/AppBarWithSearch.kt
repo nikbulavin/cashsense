@@ -296,6 +296,7 @@ internal fun CsAppBarWithSearch(
                             ) { index, transaction ->
                                 val motionScheme = MaterialTheme.motionScheme
                                 SearchResultItem(
+                                    wallets = wallets,
                                     transaction = transaction,
                                     currency = transaction.currency,
                                     modifier = Modifier
@@ -331,18 +332,17 @@ internal fun CsAppBarWithSearch(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SearchResultItem(
+    wallets: List<Wallet>,
     transaction: Transaction,
     currency: Currency,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
-    val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
-        CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
+    val categoryIcon = if (transaction.transferId != null) {
+        CsIcons.Outlined.SendMoney
     } else {
-        val iconId = transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId
-        val title = transaction.category?.title ?: stringResource(localesR.string.uncategorized)
-        StoredIcon.asImageVector(iconId) to title
+        StoredIcon.asImageVector(transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId)
     }
 
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
@@ -363,12 +363,8 @@ private fun SearchResultItem(
         },
         supportingContent = {
             Text(
-                text = buildString {
-                    append(categoryTitle)
-                    transaction.description?.let {
-                        append(" • $it")
-                    }
-                },
+                text = wallets.firstOrNull { it.id == transaction.walletOwnerId }?.title
+                    ?: stringResource(localesR.string.none),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
