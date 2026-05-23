@@ -121,6 +121,7 @@ internal fun CsAppBarWithSearch(
     searchFilterState: SearchFilterState,
     wallets: List<Wallet>,
     onSearch: (String) -> Unit,
+    onSearchFilterWalletToggle: (String) -> Unit,
     onTransactionClick: (transactionId: String) -> Unit,
     onTotalBalanceClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -245,6 +246,7 @@ internal fun CsAppBarWithSearch(
             WalletFilterChip(
                 wallets = wallets,
                 selectedWalletIds = searchFilterState.selectedWalletIds,
+                onSearchFilterWalletToggle = onSearchFilterWalletToggle,
             )
         }
         when (searchResultState) {
@@ -433,6 +435,7 @@ private fun SearchResultItem(
 private fun WalletFilterChip(
     wallets: List<Wallet>,
     selectedWalletIds: List<String>,
+    onSearchFilterWalletToggle: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -446,7 +449,10 @@ private fun WalletFilterChip(
             onClick = { expanded = true },
             label = {
                 Text(
-                    text = stringResource(localesR.string.wallet_widget_title),
+                    text = buildString {
+                        append(stringResource(localesR.string.wallet_widget_title))
+                        if (selectedWalletIds.isNotEmpty()) append(" (${selectedWalletIds.size})")
+                    },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -480,7 +486,7 @@ private fun WalletFilterChip(
                             hapticFeedback.performHapticFeedback(
                                 if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff,
                             )
-                            //onToggleFilterFavorites(checked)
+                            onSearchFilterWalletToggle(wallet.id)
                         },
                         text = { Text(wallet.title) },
                         shapes = MenuDefaults.itemShape(index, wallets.size),
