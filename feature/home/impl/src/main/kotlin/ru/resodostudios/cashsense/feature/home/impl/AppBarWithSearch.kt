@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarWithSearch
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -32,6 +36,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarValue
@@ -42,12 +47,18 @@ import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
@@ -72,23 +83,25 @@ import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButto
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.ArrowDropDown
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.ArrowDropUp
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Settings
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
-import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import java.time.format.FormatStyle
 import java.util.Currency
 import kotlin.time.Duration.Companion.milliseconds
@@ -106,7 +119,7 @@ internal fun CsAppBarWithSearch(
     scrollBehavior: SearchBarScrollBehavior,
     searchResultState: SearchResultUiState,
     searchFilterState: SearchFilterState,
-    wallets: List<UiWallet>,
+    wallets: List<Wallet>,
     onSearch: (String) -> Unit,
     onTransactionClick: (transactionId: String) -> Unit,
     onTotalBalanceClick: () -> Unit,
@@ -418,34 +431,70 @@ private fun SearchResultItem(
 
 @Composable
 private fun WalletFilterChip(
-    wallets: List<UiWallet>,
+    wallets: List<Wallet>,
     selectedWalletIds: List<String>,
     modifier: Modifier = Modifier,
 ) {
-    FilterChip(
-        selected = selectedWalletIds.isNotEmpty(),
-        onClick = {},
-        label = {
-            Text(
-                text = stringResource(localesR.string.wallet_widget_title),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        leadingIcon = {
-            AnimatedIcon(
-                icon = CsIcons.Outlined.Wallet,
-                iconSize = FilterChipDefaults.IconSize,
-            )
-        },
-        trailingIcon = {
-            Icon(
-                imageVector = CsIcons.Filled.ArrowDropDown,
-                contentDescription = null,
-                modifier = Modifier.size(FilterChipDefaults.IconSize),
-            )
-        },
-        shapes = FilterChipDefaults.shapes(),
+    var expanded by remember { mutableStateOf(false) }
+    val hapticFeedback = LocalHapticFeedback.current
+
+    Box(
         modifier = modifier,
-    )
+    ) {
+        FilterChip(
+            selected = selectedWalletIds.isNotEmpty(),
+            onClick = { expanded = true },
+            label = {
+                Text(
+                    text = stringResource(localesR.string.wallet_widget_title),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            leadingIcon = {
+                AnimatedIcon(
+                    icon = CsIcons.Outlined.Wallet,
+                    iconSize = FilterChipDefaults.IconSize,
+                )
+            },
+            trailingIcon = {
+                AnimatedIcon(
+                    icon = if (expanded) CsIcons.Filled.ArrowDropUp else CsIcons.Filled.ArrowDropDown,
+                    iconSize = FilterChipDefaults.IconSize,
+                )
+            },
+            shapes = FilterChipDefaults.shapes(),
+        )
+        DropdownMenuPopup(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            DropdownMenuGroup(
+                shapes = MenuDefaults.groupShape(0, 1),
+                containerColor = MenuDefaults.groupVibrantContainerColor,
+            ) {
+                wallets.forEachIndexed { index, wallet ->
+                    DropdownMenuItem(
+                        checked = wallet.id in selectedWalletIds,
+                        onCheckedChange = { checked ->
+                            hapticFeedback.performHapticFeedback(
+                                if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff,
+                            )
+                            //onToggleFilterFavorites(checked)
+                        },
+                        text = { Text(wallet.title) },
+                        shapes = MenuDefaults.itemShape(index, wallets.size),
+                        checkedLeadingIcon = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Check,
+                                modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                                contentDescription = null,
+                            )
+                        },
+                        colors = MenuDefaults.selectableItemVibrantColors(),
+                    )
+                }
+            }
+        }
+    }
 }

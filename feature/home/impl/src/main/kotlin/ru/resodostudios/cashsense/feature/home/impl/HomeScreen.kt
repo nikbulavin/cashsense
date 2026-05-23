@@ -84,7 +84,11 @@ private fun HomeScreen(
                 scrollBehavior = scrollBehavior,
                 searchResultState = searchResultState,
                 searchFilterState = searchFilterState,
-                wallets = if (walletsState is WalletsUiState.Success) walletsState.uiWallets else emptyList(),
+                wallets = if (walletsState is WalletsUiState.Success) {
+                    walletsState.uiWallets.map { it.extendedUserWallet.wallet }
+                } else {
+                    emptyList()
+                },
                 onSearch = onSearch,
                 onTransactionClick = onTransactionClick,
                 onTotalBalanceClick = onTotalBalanceClick,
