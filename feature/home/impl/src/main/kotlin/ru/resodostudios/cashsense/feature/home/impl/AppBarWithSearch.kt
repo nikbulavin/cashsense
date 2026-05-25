@@ -114,6 +114,7 @@ import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.core.ui.util.formatDateRange
 import java.time.format.FormatStyle
 import java.util.Currency
 import kotlin.time.Duration.Companion.milliseconds
@@ -429,13 +430,24 @@ private fun DateFilterChip(
     val selected = selectedDateRange != null
     var showDatePicker by remember { mutableStateOf(false) }
 
+    val label = if (selectedDateRange != null) {
+        val (start, end) = selectedDateRange
+        if (start != null && end != null) {
+            formatDateRange(start, end)
+        } else {
+            stringResource(localesR.string.date)
+        }
+    } else {
+        stringResource(localesR.string.date)
+    }
+
     FilterChip(
         modifier = modifier,
         selected = selected,
         onClick = { showDatePicker = true },
         label = {
             Text(
-                text = stringResource(localesR.string.date),
+                text = label,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
