@@ -49,6 +49,7 @@ internal fun HomeScreen(
         searchFilterState = searchFilterState,
         onSearch = viewModel::onSearch,
         onSearchFilterWalletToggle = viewModel::toggleWalletSelection,
+        onSearchFilterDateRangeChange = viewModel::onDateRangeUpdate,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -70,6 +71,7 @@ private fun HomeScreen(
     searchFilterState: SearchFilterState,
     onSearch: (String) -> Unit,
     onSearchFilterWalletToggle: (String) -> Unit,
+    onSearchFilterDateRangeChange: (Long?, Long?) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
@@ -93,6 +95,7 @@ private fun HomeScreen(
                 },
                 onSearch = onSearch,
                 onSearchFilterWalletToggle = onSearchFilterWalletToggle,
+                onSearchFilterDateRangeChange = onSearchFilterDateRangeChange,
                 onTransactionClick = onTransactionClick,
                 onTotalBalanceClick = onTotalBalanceClick,
                 onSettingsClick = onSettingsClick,
@@ -182,6 +185,7 @@ private fun HomeScreenPopulatedPreview(
                 searchFilterState = SearchFilterState(),
                 onSearch = {},
                 onSearchFilterWalletToggle = {},
+                onSearchFilterDateRangeChange = { _, _ -> },
                 onWalletClick = {},
                 onTransfer = {},
                 onTransactionCreate = {},

@@ -67,8 +67,14 @@ internal class HomeViewModel @AssistedInject constructor(
                                     .filter { it.wallet.id in filterState.selectedWalletIds || filterState.selectedWalletIds.isEmpty() }
                                     .flatMap { it.transactions }
                                     .filter { transaction ->
-                                        transaction.description?.contains(query, true) == true ||
-                                                query in transaction.amount.toPlainString()
+                                        val inDateRange = if (filterState.selectedDateRange != null) {
+                                            val (start, end) = filterState.selectedDateRange
+                                            transaction.timestamp.toEpochMilliseconds() in start!!..end!!
+                                        } else {
+                                            true
+                                        }
+                                        inDateRange && (transaction.description?.contains(query, true) == true ||
+                                                query in transaction.amount.toPlainString())
                                     },
                             )
                         }.getOrDefault(SearchResultUiState.LoadFailed)
@@ -137,6 +143,18 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
+    fun onDateRangeUpdate(startDate: Long?, endDate: Long?) {
+        _searchFilterState.update { state ->
+            state.copy(
+                selectedDateRange = if (startDate != null && endDate != null) {
+                    startDate to endDate
+                } else {
+                    null
+                },
+            )
+        }
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(key: HomeNavKey): HomeViewModel
@@ -170,6 +188,7 @@ internal sealed interface SearchResultUiState {
 
 internal data class SearchFilterState(
     val selectedWalletIds: List<String> = emptyList(),
+    val selectedDateRange: Pair<Long?, Long?>? = null,
 )
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

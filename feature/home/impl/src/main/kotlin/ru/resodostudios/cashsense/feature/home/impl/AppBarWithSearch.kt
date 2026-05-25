@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
@@ -23,6 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarWithSearch
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerDefaults
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
@@ -42,7 +47,9 @@ import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -122,6 +129,7 @@ internal fun CsAppBarWithSearch(
     wallets: List<Wallet>,
     onSearch: (String) -> Unit,
     onSearchFilterWalletToggle: (String) -> Unit,
+    onSearchFilterDateRangeChange: (Long?, Long?) -> Unit,
     onTransactionClick: (transactionId: String) -> Unit,
     onTotalBalanceClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -218,7 +226,10 @@ internal fun CsAppBarWithSearch(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            DateFilterChip()
+            DateFilterChip(
+                selectedDateRange = searchFilterState.selectedDateRange,
+                onDateRangeUpdate = onSearchFilterDateRangeChange,
+            )
             WalletFilterChip(
                 wallets = wallets,
                 selectedWalletIds = searchFilterState.selectedWalletIds,
@@ -403,14 +414,20 @@ private fun SearchResultItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateFilterChip(
+    selectedDateRange: Pair<Long?, Long?>?,
+    onDateRangeUpdate: (Long?, Long?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val selected = selectedDateRange != null
+    var showDatePicker by remember { mutableStateOf(false) }
+
     FilterChip(
         modifier = modifier,
-        selected = false,
-        onClick = {},
+        selected = selected,
+        onClick = { showDatePicker = true },
         label = {
             Text(
                 text = stringResource(localesR.string.date),
@@ -420,19 +437,78 @@ private fun DateFilterChip(
         },
         leadingIcon = {
             AnimatedIcon(
-                icon = CsIcons.Outlined.Calendar,
+                icon = if (selected) CsIcons.Outlined.Check else CsIcons.Outlined.Calendar,
                 iconSize = FilterChipDefaults.IconSize,
             )
         },
         trailingIcon = {
-            Icon(
-                imageVector = CsIcons.Filled.ArrowDropDown,
-                contentDescription = null,
-                modifier = Modifier.size(FilterChipDefaults.IconSize),
-            )
+            if (selected) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Close,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(FilterChipDefaults.IconSize)
+                        .clickable { onDateRangeUpdate(null, null) },
+                )
+            } else {
+                AnimatedIcon(
+                    icon = if (showDatePicker) CsIcons.Filled.ArrowDropUp else CsIcons.Filled.ArrowDropDown,
+                    modifier = Modifier.size(FilterChipDefaults.IconSize),
+                )
+            }
         },
         shapes = FilterChipDefaults.shapes(),
     )
+
+    if (showDatePicker) {
+        val dateRangePickerState = rememberDateRangePickerState(
+            initialSelectedStartDateMillis = selectedDateRange?.first,
+            initialSelectedEndDateMillis = selectedDateRange?.second,
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDateRangeUpdate(
+                            dateRangePickerState.selectedStartDateMillis,
+                            dateRangePickerState.selectedEndDateMillis,
+                        )
+                        showDatePicker = false
+                    },
+                    enabled = dateRangePickerState.selectedStartDateMillis != null && dateRangePickerState.selectedEndDateMillis != null,
+                ) {
+                    Text(stringResource(localesR.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDatePicker = false },
+                ) {
+                    Text(stringResource(localesR.string.cancel))
+                }
+            },
+        ) {
+            DateRangePicker(
+                state = dateRangePickerState,
+                title = {
+                    DateRangePickerDefaults.DateRangePickerTitle(
+                        displayMode = dateRangePickerState.displayMode,
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp),
+                    )
+                },
+                headline = {
+                    DateRangePickerDefaults.DateRangePickerHeadline(
+                        selectedStartDateMillis = dateRangePickerState.selectedStartDateMillis,
+                        selectedEndDateMillis = dateRangePickerState.selectedEndDateMillis,
+                        displayMode = dateRangePickerState.displayMode,
+                        dateFormatter = remember { DatePickerDefaults.dateFormatter() },
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, bottom = 12.dp),
+                    )
+                },
+            )
+        }
+    }
 }
 
 @Composable
