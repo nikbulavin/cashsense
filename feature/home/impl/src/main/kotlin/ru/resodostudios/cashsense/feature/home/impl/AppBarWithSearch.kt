@@ -422,7 +422,7 @@ private fun SearchResultItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateFilterChip(
-    selectedDateRange: Pair<LocalDate?, LocalDate?>?,
+    selectedDateRange: Pair<LocalDate, LocalDate>?,
     onDateRangeUpdate: (LocalDate?, LocalDate?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -431,11 +431,7 @@ private fun DateFilterChip(
 
     val label = if (selectedDateRange != null) {
         val (start, end) = selectedDateRange
-        if (start != null && end != null) {
-            formatDateRange(start, end)
-        } else {
-            stringResource(localesR.string.date)
-        }
+        formatDateRange(start, end)
     } else {
         stringResource(localesR.string.date)
     }

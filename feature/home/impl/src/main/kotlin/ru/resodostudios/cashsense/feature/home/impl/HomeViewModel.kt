@@ -70,15 +70,11 @@ internal class HomeViewModel @AssistedInject constructor(
                                     .filter { it.wallet.id in filterState.selectedWalletIds || filterState.selectedWalletIds.isEmpty() }
                                     .flatMap { it.transactions }
                                     .filter { transaction ->
-                                        val inDateRange =
-                                            if (filterState.selectedDateRange != null) {
-                                                val (start, end) = filterState.selectedDateRange
-                                                transaction.timestamp
-                                                    .toLocalDateTime(TimeZone.currentSystemDefault())
-                                                    .date in start!!..end!!
-                                            } else {
-                                                true
-                                            }
+                                        val inDateRange = filterState.selectedDateRange?.let { (start, end) ->
+                                            transaction.timestamp
+                                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                                .date in start..end
+                                        } ?: true
                                         inDateRange && (transaction.description?.contains(
                                             query,
                                             true,
@@ -198,7 +194,7 @@ internal sealed interface SearchResultUiState {
 
 internal data class SearchFilterState(
     val selectedWalletIds: List<String> = emptyList(),
-    val selectedDateRange: Pair<LocalDate?, LocalDate?>? = null,
+    val selectedDateRange: Pair<LocalDate, LocalDate>? = null,
 )
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"
