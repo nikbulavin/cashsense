@@ -9,7 +9,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -225,21 +226,24 @@ internal fun CsAppBarWithSearch(
         inputField = inputField,
         colors = appBarWithSearchColors.searchBarColors,
     ) {
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            DateFilterChip(
-                selectedDateRange = searchFilterState.selectedDateRange,
-                onDateRangeUpdate = onSearchFilterDateRangeChange,
-            )
-            WalletFilterChip(
-                walletIdsAndTitles = walletIdsAndTitles,
-                selectedWalletIds = searchFilterState.selectedWalletIds,
-                onSearchFilterWalletToggle = onSearchFilterWalletToggle,
-            )
+            item {
+                DateFilterChip(
+                    selectedDateRange = searchFilterState.selectedDateRange,
+                    onDateRangeUpdate = onSearchFilterDateRangeChange,
+                )
+            }
+            item {
+                WalletFilterChip(
+                    walletIdsAndTitles = walletIdsAndTitles,
+                    selectedWalletIds = searchFilterState.selectedWalletIds,
+                    onSearchFilterWalletToggle = onSearchFilterWalletToggle,
+                )
+            }
         }
         when (searchResultState) {
             SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
@@ -437,7 +441,7 @@ private fun DateFilterChip(
     }
 
     FilterChip(
-        modifier = modifier,
+        modifier = modifier.animateContentSize(),
         selected = selected,
         onClick = { showDatePicker = true },
         label = {
@@ -564,6 +568,7 @@ private fun WalletFilterChip(
                 )
             },
             shapes = FilterChipDefaults.shapes(),
+            modifier = Modifier.animateContentSize(),
         )
         DropdownMenuPopup(
             expanded = expanded,
