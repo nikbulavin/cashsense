@@ -122,6 +122,7 @@ internal class HomeViewModel @AssistedInject constructor(
         WalletsUiState.Success(
             selectedWalletId = selectedWalletId,
             uiWallets = uiWallets,
+            walletIdsAndTitles = extendedUserWallets.associate { it.wallet.id to it.wallet.title },
         )
     }
         .flowOn(defaultDispatcher)
@@ -178,6 +179,7 @@ internal sealed interface WalletsUiState {
     data class Success(
         val selectedWalletId: String?,
         val uiWallets: List<UiWallet>,
+        val walletIdsAndTitles: Map<String, String>,
     ) : WalletsUiState
 }
 

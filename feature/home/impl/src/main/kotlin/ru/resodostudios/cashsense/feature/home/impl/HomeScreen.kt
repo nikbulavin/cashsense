@@ -89,10 +89,10 @@ private fun HomeScreen(
                 scrollBehavior = scrollBehavior,
                 searchResultState = searchResultState,
                 searchFilterState = searchFilterState,
-                wallets = if (walletsState is WalletsUiState.Success) {
-                    walletsState.uiWallets.map { it.extendedUserWallet.wallet }
+                walletIdsAndTitles = if (walletsState is WalletsUiState.Success) {
+                    walletsState.walletIdsAndTitles
                 } else {
-                    emptyList()
+                    emptyMap()
                 },
                 onSearch = onSearch,
                 onSearchFilterWalletToggle = onSearchFilterWalletToggle,
@@ -181,6 +181,7 @@ private fun HomeScreenPopulatedPreview(
                             income = 500.toBigDecimal(),
                         )
                     },
+                    walletIdsAndTitles = emptyMap(),
                 ),
                 searchResultState = SearchResultUiState.EmptyQuery,
                 searchFilterState = SearchFilterState(),

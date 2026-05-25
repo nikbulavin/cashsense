@@ -107,7 +107,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
@@ -132,7 +131,7 @@ internal fun CsAppBarWithSearch(
     scrollBehavior: SearchBarScrollBehavior,
     searchResultState: SearchResultUiState,
     searchFilterState: SearchFilterState,
-    wallets: List<Wallet>,
+    walletIdsAndTitles: Map<String, String>,
     onSearch: (String) -> Unit,
     onSearchFilterWalletToggle: (String) -> Unit,
     onSearchFilterDateRangeChange: (LocalDate?, LocalDate?) -> Unit,
@@ -237,7 +236,7 @@ internal fun CsAppBarWithSearch(
                 onDateRangeUpdate = onSearchFilterDateRangeChange,
             )
             WalletFilterChip(
-                wallets = wallets,
+                walletIdsAndTitles = walletIdsAndTitles,
                 selectedWalletIds = searchFilterState.selectedWalletIds,
                 onSearchFilterWalletToggle = onSearchFilterWalletToggle,
             )
@@ -285,11 +284,11 @@ internal fun CsAppBarWithSearch(
                             itemsIndexed(
                                 items = transactionGroup.value,
                                 key = { _, transaction -> transaction.id },
-                                contentType = { _, _ -> "Transaction" }
+                                contentType = { _, _ -> "Transaction" },
                             ) { index, transaction ->
                                 val motionScheme = MaterialTheme.motionScheme
                                 SearchResultItem(
-                                    wallets = wallets,
+                                    walletIdsAndTitles = walletIdsAndTitles,
                                     transaction = transaction,
                                     currency = transaction.currency,
                                     modifier = Modifier
@@ -306,7 +305,7 @@ internal fun CsAppBarWithSearch(
                                     } else {
                                         ListItemDefaults.segmentedShapes(
                                             index,
-                                            transactionGroup.value.size
+                                            transactionGroup.value.size,
                                         )
                                     },
                                 )
@@ -325,7 +324,7 @@ internal fun CsAppBarWithSearch(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SearchResultItem(
-    wallets: List<Wallet>,
+    walletIdsAndTitles: Map<String, String>,
     transaction: Transaction,
     currency: Currency,
     onClick: () -> Unit,
@@ -356,7 +355,7 @@ private fun SearchResultItem(
         },
         supportingContent = {
             Text(
-                text = wallets.firstOrNull { it.id == transaction.walletOwnerId }?.title
+                text = walletIdsAndTitles[transaction.walletOwnerId]
                     ?: stringResource(localesR.string.none),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -530,7 +529,7 @@ private fun DateFilterChip(
 
 @Composable
 private fun WalletFilterChip(
-    wallets: List<Wallet>,
+    walletIdsAndTitles: Map<String, String>,
     selectedWalletIds: List<String>,
     onSearchFilterWalletToggle: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -578,17 +577,17 @@ private fun WalletFilterChip(
                 shapes = MenuDefaults.groupShape(0, 1),
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
-                wallets.forEachIndexed { index, wallet ->
+                walletIdsAndTitles.entries.forEachIndexed { index, (id, title) ->
                     DropdownMenuItem(
-                        checked = wallet.id in selectedWalletIds,
+                        checked = id in selectedWalletIds,
                         onCheckedChange = { checked ->
                             hapticFeedback.performHapticFeedback(
                                 if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff,
                             )
-                            onSearchFilterWalletToggle(wallet.id)
+                            onSearchFilterWalletToggle(id)
                         },
-                        text = { Text(wallet.title) },
-                        shapes = MenuDefaults.itemShape(index, wallets.size),
+                        text = { Text(title) },
+                        shapes = MenuDefaults.itemShape(index, walletIdsAndTitles.size),
                         checkedLeadingIcon = {
                             Icon(
                                 imageVector = CsIcons.Outlined.Check,
