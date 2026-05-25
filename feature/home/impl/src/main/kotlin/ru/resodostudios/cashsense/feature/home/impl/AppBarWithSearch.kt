@@ -49,6 +49,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.getSelectedEndDate
+import androidx.compose.material3.getSelectedStartDate
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.toShape
@@ -83,6 +85,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
 import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
@@ -129,7 +134,7 @@ internal fun CsAppBarWithSearch(
     wallets: List<Wallet>,
     onSearch: (String) -> Unit,
     onSearchFilterWalletToggle: (String) -> Unit,
-    onSearchFilterDateRangeChange: (Long?, Long?) -> Unit,
+    onSearchFilterDateRangeChange: (LocalDate?, LocalDate?) -> Unit,
     onTransactionClick: (transactionId: String) -> Unit,
     onTotalBalanceClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -417,8 +422,8 @@ private fun SearchResultItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateFilterChip(
-    selectedDateRange: Pair<Long?, Long?>?,
-    onDateRangeUpdate: (Long?, Long?) -> Unit,
+    selectedDateRange: Pair<LocalDate?, LocalDate?>?,
+    onDateRangeUpdate: (LocalDate?, LocalDate?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val selected = selectedDateRange != null
@@ -462,8 +467,8 @@ private fun DateFilterChip(
 
     if (showDatePicker) {
         val dateRangePickerState = rememberDateRangePickerState(
-            initialSelectedStartDateMillis = selectedDateRange?.first,
-            initialSelectedEndDateMillis = selectedDateRange?.second,
+            initialSelectedStartDate = selectedDateRange?.first?.toJavaLocalDate(),
+            initialSelectedEndDate = selectedDateRange?.second?.toJavaLocalDate(),
         )
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
@@ -471,8 +476,8 @@ private fun DateFilterChip(
                 TextButton(
                     onClick = {
                         onDateRangeUpdate(
-                            dateRangePickerState.selectedStartDateMillis,
-                            dateRangePickerState.selectedEndDateMillis,
+                            dateRangePickerState.getSelectedStartDate()?.toKotlinLocalDate(),
+                            dateRangePickerState.getSelectedEndDate()?.toKotlinLocalDate(),
                         )
                         showDatePicker = false
                     },

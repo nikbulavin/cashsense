@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.LocalDate
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
@@ -71,7 +72,7 @@ private fun HomeScreen(
     searchFilterState: SearchFilterState,
     onSearch: (String) -> Unit,
     onSearchFilterWalletToggle: (String) -> Unit,
-    onSearchFilterDateRangeChange: (Long?, Long?) -> Unit,
+    onSearchFilterDateRangeChange: (LocalDate?, LocalDate?) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,

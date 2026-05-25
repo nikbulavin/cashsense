@@ -21,6 +21,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
@@ -67,14 +70,19 @@ internal class HomeViewModel @AssistedInject constructor(
                                     .filter { it.wallet.id in filterState.selectedWalletIds || filterState.selectedWalletIds.isEmpty() }
                                     .flatMap { it.transactions }
                                     .filter { transaction ->
-                                        val inDateRange = if (filterState.selectedDateRange != null) {
-                                            val (start, end) = filterState.selectedDateRange
-                                            transaction.timestamp.toEpochMilliseconds() in start!!..end!!
-                                        } else {
-                                            true
-                                        }
-                                        inDateRange && (transaction.description?.contains(query, true) == true ||
-                                                query in transaction.amount.toPlainString())
+                                        val inDateRange =
+                                            if (filterState.selectedDateRange != null) {
+                                                val (start, end) = filterState.selectedDateRange
+                                                transaction.timestamp
+                                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                                    .date in start!!..end!!
+                                            } else {
+                                                true
+                                            }
+                                        inDateRange && (transaction.description?.contains(
+                                            query,
+                                            true,
+                                        ) == true || query in transaction.amount.toPlainString())
                                     },
                             )
                         }.getOrDefault(SearchResultUiState.LoadFailed)
@@ -143,7 +151,7 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
-    fun onDateRangeUpdate(startDate: Long?, endDate: Long?) {
+    fun onDateRangeUpdate(startDate: LocalDate?, endDate: LocalDate?) {
         _searchFilterState.update { state ->
             state.copy(
                 selectedDateRange = if (startDate != null && endDate != null) {
@@ -188,7 +196,7 @@ internal sealed interface SearchResultUiState {
 
 internal data class SearchFilterState(
     val selectedWalletIds: List<String> = emptyList(),
-    val selectedDateRange: Pair<Long?, Long?>? = null,
+    val selectedDateRange: Pair<LocalDate?, LocalDate?>? = null,
 )
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"
