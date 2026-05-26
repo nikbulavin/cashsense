@@ -335,10 +335,12 @@ private fun SearchResultItem(
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
-    val categoryIcon = if (transaction.transferId != null) {
-        CsIcons.Outlined.SendMoney
+    val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
+        CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
     } else {
-        StoredIcon.asImageVector(transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId)
+        val iconId = transaction.category?.iconId ?: StoredIcon.TRANSACTION.storedId
+        val title = transaction.category?.title ?: stringResource(localesR.string.uncategorized)
+        StoredIcon.asImageVector(iconId) to title
     }
 
     val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
@@ -414,7 +416,7 @@ private fun SearchResultItem(
         leadingContent = {
             Icon(
                 imageVector = categoryIcon,
-                contentDescription = null,
+                contentDescription = categoryTitle,
             )
         },
         colors = ListItemDefaults.segmentedColors(
