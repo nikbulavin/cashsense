@@ -20,6 +20,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
@@ -45,24 +49,43 @@ internal class HomeViewModel @AssistedInject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    val searchResultUiState = searchQuery.flatMapLatest { query ->
-        if (query.isBlank()) {
-            flowOf(SearchResultUiState.EmptyQuery)
-        } else {
-            getExtendedUserWallets.invoke()
-                .map { extendedUserWallets ->
-                    SearchResultUiState.Success(
-                        transactions = extendedUserWallets
-                            .flatMap { it.transactions }
-                            .filter { transaction ->
-                                transaction.description?.contains(query, true) == true ||
-                                        transaction.amount.toPlainString().contains(query)
-                            },
-                    )
-                }
-                .catch { SearchResultUiState.LoadFailed }
-        }
+    private val _searchFilterState = MutableStateFlow(SearchFilterState())
+    val searchFilterState = _searchFilterState.asStateFlow()
+
+    val searchResultUiState = combine(
+        searchQuery,
+        searchFilterState,
+    ) { query, filterState ->
+        query to filterState
     }
+        .flatMapLatest { (query, filterState) ->
+            if (query.isBlank()) {
+                flowOf(SearchResultUiState.EmptyQuery)
+            } else {
+                getExtendedUserWallets.invoke()
+                    .map { extendedUserWallets ->
+                        runCatching {
+                            SearchResultUiState.Success(
+                                transactions = extendedUserWallets
+                                    .filter { it.wallet.id in filterState.selectedWalletIds || filterState.selectedWalletIds.isEmpty() }
+                                    .flatMap { it.transactions }
+                                    .filter { transaction ->
+                                        val inDateRange = filterState.selectedDateRange?.let { (start, end) ->
+                                            transaction.timestamp
+                                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                                .date in start..end
+                                        } ?: true
+                                        inDateRange && (transaction.description?.contains(
+                                            query,
+                                            true,
+                                        ) == true || query in transaction.amount.toPlainString())
+                                    },
+                            )
+                        }.getOrDefault(SearchResultUiState.LoadFailed)
+                    }
+                    .catch { emit(SearchResultUiState.LoadFailed) }
+            }
+        }
         .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
@@ -95,6 +118,7 @@ internal class HomeViewModel @AssistedInject constructor(
         WalletsUiState.Success(
             selectedWalletId = selectedWalletId,
             uiWallets = uiWallets,
+            walletIdsAndTitles = extendedUserWallets.associate { it.wallet.id to it.wallet.title },
         )
     }
         .flowOn(defaultDispatcher)
@@ -112,13 +136,37 @@ internal class HomeViewModel @AssistedInject constructor(
         _searchQuery.value = query
     }
 
+    fun toggleWalletSelection(walletId: String) {
+        _searchFilterState.update { state ->
+            state.copy(
+                selectedWalletIds = if (walletId in state.selectedWalletIds) {
+                    state.selectedWalletIds - walletId
+                } else {
+                    state.selectedWalletIds + walletId
+                },
+            )
+        }
+    }
+
+    fun onDateRangeUpdate(startDate: LocalDate?, endDate: LocalDate?) {
+        _searchFilterState.update { state ->
+            state.copy(
+                selectedDateRange = if (startDate != null && endDate != null) {
+                    startDate to endDate
+                } else {
+                    null
+                },
+            )
+        }
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(key: HomeNavKey): HomeViewModel
     }
 }
 
-sealed interface WalletsUiState {
+internal sealed interface WalletsUiState {
 
     data object Loading : WalletsUiState
 
@@ -127,10 +175,11 @@ sealed interface WalletsUiState {
     data class Success(
         val selectedWalletId: String?,
         val uiWallets: List<UiWallet>,
+        val walletIdsAndTitles: Map<String, String>,
     ) : WalletsUiState
 }
 
-sealed interface SearchResultUiState {
+internal sealed interface SearchResultUiState {
 
     data object Loading : SearchResultUiState
 
@@ -139,8 +188,13 @@ sealed interface SearchResultUiState {
     data object LoadFailed : SearchResultUiState
 
     data class Success(
-        val transactions: List<Transaction> = emptyList(),
+        val transactions: List<Transaction>,
     ) : SearchResultUiState
 }
+
+internal data class SearchFilterState(
+    val selectedWalletIds: List<String> = emptyList(),
+    val selectedDateRange: Pair<LocalDate, LocalDate>? = null,
+)
 
 private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"

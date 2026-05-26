@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
@@ -21,6 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.datetime.LocalDate
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
@@ -42,11 +42,15 @@ internal fun HomeScreen(
 ) {
     val walletsState by viewModel.walletsUiState.collectAsStateWithLifecycle()
     val searchResultState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
+    val searchFilterState by viewModel.searchFilterState.collectAsStateWithLifecycle()
 
     HomeScreen(
         walletsState = walletsState,
         searchResultState = searchResultState,
+        searchFilterState = searchFilterState,
         onSearch = viewModel::onSearch,
+        onSearchFilterWalletToggle = viewModel::toggleWalletSelection,
+        onSearchFilterDateRangeChange = viewModel::onDateRangeUpdate,
         onWalletClick = {
             viewModel.onWalletClick(it)
             onWalletClick(it)
@@ -60,15 +64,15 @@ internal fun HomeScreen(
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class,
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     walletsState: WalletsUiState,
     searchResultState: SearchResultUiState,
+    searchFilterState: SearchFilterState,
     onSearch: (String) -> Unit,
+    onSearchFilterWalletToggle: (String) -> Unit,
+    onSearchFilterDateRangeChange: (LocalDate?, LocalDate?) -> Unit,
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
@@ -84,7 +88,15 @@ private fun HomeScreen(
             CsAppBarWithSearch(
                 scrollBehavior = scrollBehavior,
                 searchResultState = searchResultState,
+                searchFilterState = searchFilterState,
+                walletIdsAndTitles = if (walletsState is WalletsUiState.Success) {
+                    walletsState.walletIdsAndTitles
+                } else {
+                    emptyMap()
+                },
                 onSearch = onSearch,
+                onSearchFilterWalletToggle = onSearchFilterWalletToggle,
+                onSearchFilterDateRangeChange = onSearchFilterDateRangeChange,
                 onTransactionClick = onTransactionClick,
                 onTotalBalanceClick = onTotalBalanceClick,
                 onSettingsClick = onSettingsClick,
@@ -94,7 +106,11 @@ private fun HomeScreen(
     ) { innerPadding ->
         when (walletsState) {
             WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-            WalletsUiState.Empty -> IllustratedMessage(localesR.string.home_empty, R.raw.anim_wallets_empty)
+            WalletsUiState.Empty -> IllustratedMessage(
+                localesR.string.home_empty,
+                R.raw.anim_wallets_empty,
+            )
+
             is WalletsUiState.Success -> {
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Adaptive(300.dp),
@@ -165,9 +181,13 @@ private fun HomeScreenPopulatedPreview(
                             income = 500.toBigDecimal(),
                         )
                     },
+                    walletIdsAndTitles = emptyMap(),
                 ),
                 searchResultState = SearchResultUiState.EmptyQuery,
+                searchFilterState = SearchFilterState(),
                 onSearch = {},
+                onSearchFilterWalletToggle = {},
+                onSearchFilterDateRangeChange = { _, _ -> },
                 onWalletClick = {},
                 onTransfer = {},
                 onTransactionCreate = {},
