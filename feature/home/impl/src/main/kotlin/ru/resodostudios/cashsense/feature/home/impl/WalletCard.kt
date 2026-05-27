@@ -43,8 +43,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
@@ -63,7 +63,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.ui.CsThemePreview
+import ru.resodostudios.cashsense.core.ui.TransitionThemeWrapper
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
@@ -362,68 +362,60 @@ private fun CsAnimatedTag(
 }
 
 @PreviewLightDark
-@Preview("Large font", fontScale = 2f)
+@PreviewWrapper(wrapper = TransitionThemeWrapper::class)
 @Composable
 private fun WalletCardPreview() {
-    CsThemePreview {
-        Surface {
-            WalletCard(
-                uiWallet = UiWallet(
-                    expenses = 200.toBigDecimal(),
-                    income = 800.toBigDecimal(),
-                    extendedUserWallet = ExtendedUserWallet(
-                        wallet = Wallet(
-                            id = "",
-                            title = "Debit",
-                            initialBalance = BigDecimal(1499.99),
-                            currency = getUsdCurrency(),
-                        ),
-                        currentBalance = BigDecimal(1499.99),
-                        isPrimary = true,
-                        transactions = emptyList(),
-                    )
+    WalletCard(
+        uiWallet = UiWallet(
+            expenses = 200.toBigDecimal(),
+            income = 800.toBigDecimal(),
+            extendedUserWallet = ExtendedUserWallet(
+                wallet = Wallet(
+                    id = "",
+                    title = "Debit",
+                    initialBalance = BigDecimal(1499.99),
+                    currency = getUsdCurrency(),
                 ),
-                onWalletClick = {},
-                onNewTransactionClick = {},
-                onTransferClick = { _ -> },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .width(500.dp),
+                currentBalance = BigDecimal(1499.99),
+                isPrimary = true,
+                transactions = emptyList(),
             )
-        }
-    }
+        ),
+        onWalletClick = {},
+        onNewTransactionClick = {},
+        onTransferClick = { _ -> },
+        modifier = Modifier
+            .padding(16.dp)
+            .width(500.dp),
+    )
 }
 
 @PreviewLightDark
-@Preview("Large font", fontScale = 2f)
+@PreviewWrapper(wrapper = TransitionThemeWrapper::class)
 @Composable
 private fun WalletCardSelectedPreview() {
-    CsThemePreview {
-        Surface {
-            WalletCard(
-                uiWallet = UiWallet(
-                    expenses = 200.toBigDecimal(),
-                    income = 800.toBigDecimal(),
-                    extendedUserWallet = ExtendedUserWallet(
-                        wallet = Wallet(
-                            id = "",
-                            title = "Debit",
-                            initialBalance = BigDecimal(1499.99),
-                            currency = getUsdCurrency(),
-                        ),
-                        currentBalance = BigDecimal(1499.99),
-                        isPrimary = true,
-                        transactions = emptyList(),
-                    )
+    WalletCard(
+        uiWallet = UiWallet(
+            expenses = 200.toBigDecimal(),
+            income = 800.toBigDecimal(),
+            extendedUserWallet = ExtendedUserWallet(
+                wallet = Wallet(
+                    id = "",
+                    title = "Debit",
+                    initialBalance = BigDecimal(1499.99),
+                    currency = getUsdCurrency(),
                 ),
-                onWalletClick = {},
-                onNewTransactionClick = {},
-                onTransferClick = { _ -> },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .width(500.dp),
-                selected = true,
+                currentBalance = BigDecimal(1499.99),
+                isPrimary = true,
+                transactions = emptyList(),
             )
-        }
-    }
+        ),
+        onWalletClick = {},
+        onNewTransactionClick = {},
+        onTransferClick = { _ -> },
+        modifier = Modifier
+            .padding(16.dp)
+            .width(500.dp),
+        selected = true,
+    )
 }
