@@ -440,7 +440,7 @@ private fun DateRangeSelectionRow(
             text = selectedDate,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.weight(1f),
         )
         ButtonGroup(
