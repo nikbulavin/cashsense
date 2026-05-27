@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -75,8 +76,8 @@ import ru.resodostudios.cashsense.core.model.data.FinanceType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.ui.CsThemePreview
 import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
+import ru.resodostudios.cashsense.core.ui.TransitionThemeWrapper
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.groupByDate
@@ -468,90 +469,88 @@ private fun PrimaryToggleButton(
 }
 
 @PreviewLightDark
+@PreviewWrapper(wrapper = TransitionThemeWrapper::class)
 @Composable
 private fun WalletScreenPopulatedPreview(
     @PreviewParameter(TransactionPreviewParameterProvider::class)
     transactions: List<Transaction>,
 ) {
-    CsThemePreview {
-        WalletScreen(
-            walletState = WalletUiState.Success(
-                transactionFilter = TransactionFilter(
-                    selectedCategories = emptySet(),
-                    financeType = FinanceType.NOT_SET,
-                    dateType = DateType.ALL,
-                    selectedDate = getCurrentZonedDateTime().date,
-                ),
-                wallet = Wallet(
-                    id = "1",
-                    title = "Credit",
-                    initialBalance = BigDecimal(1000),
-                    currency = getUsdCurrency(),
-                ),
-                selectedTransaction = null,
-                groupedTransactions = transactions.groupByDate(),
-                availableCategories = emptyList(),
-                formattedExpenses = "$495.9",
-                formattedIncome = "1,000",
-                graphData = emptyMap(),
-                isPrimary = true,
-                formattedCurrentBalance = "$57,500",
+    WalletScreen(
+        walletState = WalletUiState.Success(
+            transactionFilter = TransactionFilter(
+                selectedCategories = emptySet(),
+                financeType = FinanceType.NOT_SET,
+                dateType = DateType.ALL,
+                selectedDate = getCurrentZonedDateTime().date,
             ),
-            shouldShowNavigationIcon = true,
-            shouldHighlightSelectedTransaction = false,
-            onPrimaryClick = { _, _ -> },
-            onTransfer = {},
-            onWalletEdit = {},
-            onWalletDelete = {},
-            onBackClick = {},
-            onDateTypeUpdate = {},
-            onFinanceTypeUpdate = {},
-            onSelectedDateUpdate = {},
-            onCategoryFilterUpdate = { _, _ -> },
-            navigateToTransactionDialog = { _, _, _ -> },
-        )
-    }
+            wallet = Wallet(
+                id = "1",
+                title = "Credit",
+                initialBalance = BigDecimal(1000),
+                currency = getUsdCurrency(),
+            ),
+            selectedTransaction = null,
+            groupedTransactions = transactions.groupByDate(),
+            availableCategories = emptyList(),
+            formattedExpenses = "$495.9",
+            formattedIncome = "1,000",
+            graphData = emptyMap(),
+            isPrimary = true,
+            formattedCurrentBalance = "$57,500",
+        ),
+        shouldShowNavigationIcon = true,
+        shouldHighlightSelectedTransaction = false,
+        onPrimaryClick = { _, _ -> },
+        onTransfer = {},
+        onWalletEdit = {},
+        onWalletDelete = {},
+        onBackClick = {},
+        onDateTypeUpdate = {},
+        onFinanceTypeUpdate = {},
+        onSelectedDateUpdate = {},
+        onCategoryFilterUpdate = { _, _ -> },
+        navigateToTransactionDialog = { _, _, _ -> },
+    )
 }
 
 @PreviewLightDark
+@PreviewWrapper(wrapper = TransitionThemeWrapper::class)
 @Composable
 private fun WalletScreenEmptyPreview() {
-    CsThemePreview {
-        WalletScreen(
-            walletState = WalletUiState.Success(
-                transactionFilter = TransactionFilter(
-                    selectedCategories = emptySet(),
-                    financeType = FinanceType.NOT_SET,
-                    dateType = DateType.ALL,
-                    selectedDate = getCurrentZonedDateTime().date,
-                ),
-                wallet = Wallet(
-                    id = "1",
-                    title = "Credit",
-                    initialBalance = BigDecimal(1000),
-                    currency = getUsdCurrency(),
-                ),
-                selectedTransaction = null,
-                groupedTransactions = emptyMap(),
-                availableCategories = emptyList(),
-                formattedExpenses = "$495.9",
-                formattedIncome = "1,000",
-                graphData = emptyMap(),
-                isPrimary = true,
-                formattedCurrentBalance = "$57,500",
+    WalletScreen(
+        walletState = WalletUiState.Success(
+            transactionFilter = TransactionFilter(
+                selectedCategories = emptySet(),
+                financeType = FinanceType.NOT_SET,
+                dateType = DateType.ALL,
+                selectedDate = getCurrentZonedDateTime().date,
             ),
-            shouldShowNavigationIcon = true,
-            shouldHighlightSelectedTransaction = false,
-            onPrimaryClick = { _, _ -> },
-            onTransfer = {},
-            onWalletEdit = {},
-            onWalletDelete = {},
-            onBackClick = {},
-            onDateTypeUpdate = {},
-            onFinanceTypeUpdate = {},
-            onSelectedDateUpdate = {},
-            onCategoryFilterUpdate = { _, _ -> },
-            navigateToTransactionDialog = { _, _, _ -> },
-        )
-    }
+            wallet = Wallet(
+                id = "1",
+                title = "Credit",
+                initialBalance = BigDecimal(1000),
+                currency = getUsdCurrency(),
+            ),
+            selectedTransaction = null,
+            groupedTransactions = emptyMap(),
+            availableCategories = emptyList(),
+            formattedExpenses = "$495.9",
+            formattedIncome = "1,000",
+            graphData = emptyMap(),
+            isPrimary = true,
+            formattedCurrentBalance = "$57,500",
+        ),
+        shouldShowNavigationIcon = true,
+        shouldHighlightSelectedTransaction = false,
+        onPrimaryClick = { _, _ -> },
+        onTransfer = {},
+        onWalletEdit = {},
+        onWalletDelete = {},
+        onBackClick = {},
+        onDateTypeUpdate = {},
+        onFinanceTypeUpdate = {},
+        onSelectedDateUpdate = {},
+        onCategoryFilterUpdate = { _, _ -> },
+        navigateToTransactionDialog = { _, _, _ -> },
+    )
 }
