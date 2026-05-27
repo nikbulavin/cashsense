@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.core.ui.component
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -9,7 +8,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -101,7 +99,6 @@ fun FinancePanel(
         modifier = modifier.animateContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val animSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
         val expensesSharedState = SharedElementKey(
             id = walletId,
             origin = walletId,
@@ -125,9 +122,7 @@ fun FinancePanel(
         AnimatedContent(
             targetState = transactionFilter.financeType,
             label = "FinancePanel",
-            transitionSpec = {
-                fadeIn() + scaleIn(animSpec, 0.92f) togetherWith fadeOut(snap())
-            },
+            transitionSpec = { fadeIn(snap()) togetherWith fadeOut(snap()) },
         ) { financeType ->
             when (financeType) {
                 NOT_SET -> {
@@ -138,7 +133,7 @@ fun FinancePanel(
                     ) {
                         FinanceCard(
                             formattedAmount = formattedExpenses,
-                            titleRes = localesR.string.expenses,
+                            title = stringResource(localesR.string.expenses),
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 onFinanceTypeUpdate(EXPENSES)
@@ -150,7 +145,7 @@ fun FinancePanel(
                         )
                         FinanceCard(
                             formattedAmount = formattedIncome,
-                            titleRes = localesR.string.income_plural,
+                            title = stringResource(localesR.string.income_plural),
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 onFinanceTypeUpdate(INCOME)
@@ -169,7 +164,7 @@ fun FinancePanel(
                         graphData = graphData,
                         transactionFilter = transactionFilter,
                         currency = currency,
-                        titleRes = localesR.string.expenses,
+                        title = stringResource(localesR.string.expenses),
                         onBackClick = {
                             onFinanceTypeUpdate(NOT_SET)
                             onDateTypeUpdate(ALL)
@@ -191,7 +186,7 @@ fun FinancePanel(
                         graphData = graphData,
                         transactionFilter = transactionFilter,
                         currency = currency,
-                        titleRes = localesR.string.income_plural,
+                        title = stringResource(localesR.string.income_plural),
                         onBackClick = {
                             onFinanceTypeUpdate(NOT_SET)
                             onDateTypeUpdate(ALL)
@@ -214,7 +209,7 @@ fun FinancePanel(
 @Composable
 private fun FinanceCard(
     formattedAmount: String,
-    @StringRes titleRes: Int,
+    title: String,
     animatedVisibilityScope: AnimatedVisibilityScope,
     amountSharedContentState: Any,
     titleSharedContentState: Any,
@@ -223,8 +218,23 @@ private fun FinanceCard(
     enabled: Boolean = true,
 ) {
     with(LocalSharedTransitionScope.current) {
+        val motionScheme = MaterialTheme.motionScheme
         OutlinedCard(
-            modifier = modifier,
+            modifier = modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = title,
+                            origin = title,
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                    exit = fadeOut(motionScheme.defaultEffectsSpec()),
+                    enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                ),
             shape = RoundedCornerShape(20.dp),
             onClick = onClick,
             enabled = enabled,
@@ -239,7 +249,7 @@ private fun FinanceCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .sharedBounds(
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            boundsTransform = motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(amountSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
@@ -247,13 +257,13 @@ private fun FinanceCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = stringResource(titleRes),
+                    text = title,
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .sharedBounds(
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            boundsTransform = motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(titleSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
@@ -272,7 +282,7 @@ private fun DetailedFinanceSection(
     graphData: Map<Int, BigDecimal>,
     transactionFilter: TransactionFilter,
     currency: Currency,
-    @StringRes titleRes: Int,
+    title: String,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
@@ -283,6 +293,7 @@ private fun DetailedFinanceSection(
     modifier: Modifier = Modifier,
 ) {
     with(LocalSharedTransitionScope.current) {
+        val motionScheme = MaterialTheme.motionScheme
         BackHandler(
             enabled = LocalNavAnimatedContentScope.current.transition.let {
                 it.currentState == it.targetState
@@ -291,7 +302,21 @@ private fun DetailedFinanceSection(
         )
         Column(
             modifier = modifier
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = title,
+                            origin = title,
+                            type = SharedElementType.Bounds,
+                        ),
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = motionScheme.sharedElementTransitionSpec,
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                    exit = fadeOut(motionScheme.defaultEffectsSpec()),
+                    enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                ),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -333,7 +358,7 @@ private fun DetailedFinanceSection(
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
-                text = stringResource(titleRes),
+                text = title,
                 modifier = Modifier
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
