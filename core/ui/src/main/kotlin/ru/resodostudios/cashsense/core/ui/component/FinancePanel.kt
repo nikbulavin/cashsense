@@ -11,13 +11,19 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.mediumContainerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -41,7 +47,7 @@ import kotlinx.datetime.number
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaMonth
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
@@ -308,7 +314,7 @@ private fun DetailedFinanceSection(
                     modifier = Modifier.padding(start = 12.dp),
                 )
             }
-            FilterBySelectedDateTypeRow(
+            DateRangeSelectionRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,
                 modifier = Modifier.padding(bottom = 6.dp),
@@ -386,8 +392,9 @@ private fun FilterDateTypeSelectorRow(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun FilterBySelectedDateTypeRow(
+private fun DateRangeSelectionRow(
     onSelectedDateUpdate: (Int) -> Unit,
     transactionFilter: TransactionFilter,
     modifier: Modifier = Modifier,
@@ -395,15 +402,9 @@ private fun FilterBySelectedDateTypeRow(
     val locale = LocalLocale.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxWidth(),
     ) {
-        CsIconButton(
-            onClick = { onSelectedDateUpdate(-1) },
-            icon = CsIcons.Outlined.ChevronLeft,
-            contentDescription = stringResource(localesR.string.previous_date),
-        )
-
         val selectedDate = when (transactionFilter.dateType) {
             YEAR -> transactionFilter.selectedDate.year.toString()
             MONTH -> {
@@ -435,18 +436,53 @@ private fun FilterBySelectedDateTypeRow(
 
             ALL -> ""
         }
-
         Text(
             text = selectedDate,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.weight(1f),
         )
-
-        CsIconButton(
-            onClick = { onSelectedDateUpdate(1) },
-            icon = CsIcons.Outlined.ChevronRight,
-            contentDescription = stringResource(localesR.string.next_date),
-        )
+        ButtonGroup(
+            overflowIndicator = {},
+        ) {
+            customItem(
+                buttonGroupContent = {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier.animateWidth(interactionSource),
+                    ) {
+                        CsFilledTonalIconButton(
+                            onClick = { onSelectedDateUpdate(-1) },
+                            icon = CsIcons.Outlined.ChevronLeft,
+                            contentDescription = stringResource(localesR.string.previous_date),
+                            containerSize = mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                            iconSize = IconButtonDefaults.mediumIconSize,
+                            interactionSource = interactionSource,
+                        )
+                    }
+                },
+                menuContent = {},
+            )
+            customItem(
+                buttonGroupContent = {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier.animateWidth(interactionSource),
+                    ) {
+                        CsFilledTonalIconButton(
+                            onClick = { onSelectedDateUpdate(1) },
+                            icon = CsIcons.Outlined.ChevronRight,
+                            contentDescription = stringResource(localesR.string.next_date),
+                            containerSize = mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow),
+                            iconSize = IconButtonDefaults.mediumIconSize,
+                            interactionSource = interactionSource,
+                        )
+                    }
+                },
+                menuContent = {},
+            )
+        }
     }
 }
 
