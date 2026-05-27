@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Notifications
@@ -217,7 +217,7 @@ private fun SubscriptionDialog(
                         enter = fadeIn(effectsSpec) + expandVertically(spatialSpec),
                         exit = fadeOut(effectsSpec) + shrinkVertically(spatialSpec),
                     ) {
-                        CsConnectedButtonGroup(
+                        ConnectedTonalToggleButtonGroup(
                             selectedIndex = if (subscriptionDialogState.fixedInterval) 1 else 0,
                             options = listOf(
                                 stringResource(localesR.string.by_date),

@@ -43,7 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
@@ -210,7 +210,7 @@ private fun TransactionTypeChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    CsConnectedButtonGroup(
+    ConnectedTonalToggleButtonGroup(
         selectedIndex = transactionState.transactionType.ordinal,
         options = listOf(
             stringResource(localesR.string.expense),
@@ -228,7 +228,7 @@ private fun TransactionStatusChoiceRow(
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
     transactionState: TransactionDialogUiState,
 ) {
-    CsConnectedButtonGroup(
+    ConnectedTonalToggleButtonGroup(
         selectedIndex = if (transactionState.completed) 1 else 0,
         options = listOf(
             stringResource(localesR.string.pending),

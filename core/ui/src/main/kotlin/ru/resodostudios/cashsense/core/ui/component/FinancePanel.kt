@@ -46,7 +46,7 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaMonth
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsConnectedButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedToggleButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -380,7 +380,7 @@ private fun FilterDateTypeSelectorRow(
     onDateTypeUpdate: (DateType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CsConnectedButtonGroup(
+    ConnectedToggleButtonGroup(
         selectedIndex = transactionFilter.dateType.ordinal,
         options = listOf(
             stringResource(localesR.string.week),

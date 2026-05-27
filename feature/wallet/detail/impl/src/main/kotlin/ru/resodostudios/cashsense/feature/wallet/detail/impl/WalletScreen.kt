@@ -446,7 +446,6 @@ private fun WalletTopBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PrimaryToggleButton(
     isPrimary: Boolean,
