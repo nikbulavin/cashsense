@@ -254,7 +254,6 @@ private fun FinanceCard(
                     formattedAmount = formattedAmount,
                     label = "FinanceCardTitle",
                     modifier = Modifier
-                        .fillMaxWidth()
                         .sharedBounds(
                             boundsTransform = motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(amountSharedContentState),
@@ -360,7 +359,6 @@ private fun DetailedFinanceSection(
                 formattedAmount = formattedAmount,
                 label = "DetailedFinanceCard",
                 modifier = Modifier
-                    .fillMaxWidth()
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
