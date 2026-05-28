@@ -178,7 +178,10 @@ fun CsApp(
                         homeEntry(navigator)
                         categoriesEntry(navigator)
                         subscriptionsEntry(navigator)
-                        walletEntry(navigator)
+                        walletEntry(
+                            navigator = navigator,
+                            animSpec = fadeSpec,
+                        )
                         settingsEntry(
                             navigator = navigator,
                             animSpec = slideSpec,
