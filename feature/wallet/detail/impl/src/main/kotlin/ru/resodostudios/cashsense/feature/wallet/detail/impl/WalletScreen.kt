@@ -178,8 +178,6 @@ private fun WalletScreen(
                                 clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(roundedCornerAnim)),
                                 exit = fadeOut(motionScheme.defaultEffectsSpec()),
                                 enter = fadeIn(motionScheme.defaultEffectsSpec()),
-                                renderInOverlayDuringTransition = false,
-                                zIndexInOverlay = 0f,
                             ),
                     ) {
                         var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
