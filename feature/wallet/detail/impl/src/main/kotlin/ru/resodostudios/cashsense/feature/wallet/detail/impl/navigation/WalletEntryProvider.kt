@@ -1,7 +1,8 @@
 package ru.resodostudios.cashsense.feature.wallet.detail.impl.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
@@ -20,17 +21,20 @@ import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDial
 import ru.resodostudios.core.navigation.Navigator
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
-fun EntryProviderScope<NavKey>.walletEntry(navigator: Navigator) {
+fun EntryProviderScope<NavKey>.walletEntry(
+    navigator: Navigator,
+    animSpec: FiniteAnimationSpec<Float>,
+) {
     entry<WalletNavKey>(
         metadata = ListDetailSceneStrategy.detailPane() + metadata {
             put(NavDisplay.TransitionKey) {
-                EnterTransition.None togetherWith ExitTransition.None
+                fadeIn(animSpec) togetherWith fadeOut(animSpec)
             }
             put(NavDisplay.PopTransitionKey) {
-                EnterTransition.None togetherWith ExitTransition.None
+                fadeIn(animSpec) togetherWith fadeOut(animSpec)
             }
             put(NavDisplay.PredictivePopTransitionKey) {
-                EnterTransition.None togetherWith ExitTransition.None
+                fadeIn(animSpec) togetherWith fadeOut(animSpec)
             }
         },
     ) { key ->
