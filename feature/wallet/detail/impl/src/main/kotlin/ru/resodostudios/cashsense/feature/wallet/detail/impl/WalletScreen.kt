@@ -403,7 +403,6 @@ private fun WalletTopBar(
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            zIndexInOverlay = 1f,
                         ),
                 )
             },
@@ -424,7 +423,6 @@ private fun WalletTopBar(
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
-                            zIndexInOverlay = 1f,
                         ),
                 )
             },
