@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -96,7 +95,7 @@ fun FinancePanel(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val expensesSharedState = SharedElementKey(
@@ -106,7 +105,7 @@ fun FinancePanel(
         )
         val expensesTitleSharedState = SharedElementKey(
             id = walletId,
-            origin = localesR.string.expenses.toString(),
+            origin = walletId,
             type = SharedElementType.ExpensesTitle,
         )
         val incomeSharedState = SharedElementKey(
@@ -116,7 +115,7 @@ fun FinancePanel(
         )
         val incomeTitleSharedState = SharedElementKey(
             id = walletId,
-            origin = localesR.string.income_plural.toString(),
+            origin = walletId,
             type = SharedElementType.IncomeTitle,
         )
         AnimatedContent(
