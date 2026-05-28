@@ -178,6 +178,8 @@ private fun WalletScreen(
                                 clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(roundedCornerAnim)),
                                 exit = fadeOut(motionScheme.defaultEffectsSpec()),
                                 enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                                renderInOverlayDuringTransition = false,
+                                zIndexInOverlay = 0f,
                             ),
                     ) {
                         var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
@@ -403,6 +405,7 @@ private fun WalletTopBar(
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            zIndexInOverlay = 1f,
                         ),
                 )
             },
@@ -423,6 +426,7 @@ private fun WalletTopBar(
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
+                            zIndexInOverlay = 1f,
                         ),
                 )
             },

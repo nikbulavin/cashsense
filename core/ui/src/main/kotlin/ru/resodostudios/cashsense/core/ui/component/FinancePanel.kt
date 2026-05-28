@@ -3,8 +3,8 @@ package ru.resodostudios.cashsense.core.ui.component
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -51,7 +51,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronLeft
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ChevronRight
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
@@ -94,111 +93,117 @@ fun FinancePanel(
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        val expensesSharedState = SharedElementKey(
-            id = walletId,
-            origin = walletId,
-            type = SharedElementType.ExpensesAmount,
-        )
-        val expensesTitleSharedState = SharedElementKey(
-            id = walletId,
-            origin = walletId,
-            type = SharedElementType.ExpensesTitle,
-        )
-        val incomeSharedState = SharedElementKey(
-            id = walletId,
-            origin = walletId,
-            type = SharedElementType.IncomeAmount,
-        )
-        val incomeTitleSharedState = SharedElementKey(
-            id = walletId,
-            origin = walletId,
-            type = SharedElementType.IncomeTitle,
-        )
-        AnimatedContent(
-            targetState = transactionFilter.financeType,
-            label = "FinancePanel",
-            transitionSpec = { fadeIn(snap()) togetherWith fadeOut(snap()) },
-        ) { financeType ->
-            when (financeType) {
-                NOT_SET -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                    ) {
-                        FinanceCard(
+    SharedTransitionLayout {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val expensesSharedState = SharedElementKey(
+                id = walletId,
+                origin = walletId,
+                type = SharedElementType.ExpensesAmount,
+            )
+            val expensesTitleSharedState = SharedElementKey(
+                id = walletId,
+                origin = walletId,
+                type = SharedElementType.ExpensesTitle,
+            )
+            val incomeSharedState = SharedElementKey(
+                id = walletId,
+                origin = walletId,
+                type = SharedElementType.IncomeAmount,
+            )
+            val incomeTitleSharedState = SharedElementKey(
+                id = walletId,
+                origin = walletId,
+                type = SharedElementType.IncomeTitle,
+            )
+            AnimatedContent(
+                targetState = transactionFilter.financeType,
+                label = "FinancePanel",
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+            ) { financeType ->
+                when (financeType) {
+                    NOT_SET -> {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                        ) {
+                            FinanceCard(
+                                formattedAmount = formattedExpenses,
+                                title = stringResource(localesR.string.expenses),
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    onFinanceTypeUpdate(EXPENSES)
+                                    onDateTypeUpdate(MONTH)
+                                },
+                                animatedVisibilityScope = this@AnimatedContent,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                amountSharedContentState = expensesSharedState,
+                                titleSharedContentState = expensesTitleSharedState,
+                            )
+                            FinanceCard(
+                                formattedAmount = formattedIncome,
+                                title = stringResource(localesR.string.income_plural),
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    onFinanceTypeUpdate(INCOME)
+                                    onDateTypeUpdate(MONTH)
+                                },
+                                animatedVisibilityScope = this@AnimatedContent,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                amountSharedContentState = incomeSharedState,
+                                titleSharedContentState = incomeTitleSharedState,
+                            )
+                        }
+                    }
+
+                    EXPENSES -> {
+                        DetailedFinanceSection(
                             formattedAmount = formattedExpenses,
+                            graphData = graphData,
+                            transactionFilter = transactionFilter,
+                            currency = currency,
                             title = stringResource(localesR.string.expenses),
-                            modifier = Modifier.weight(1f),
-                            onClick = {
-                                onFinanceTypeUpdate(EXPENSES)
-                                onDateTypeUpdate(MONTH)
+                            onBackClick = {
+                                onFinanceTypeUpdate(NOT_SET)
+                                onDateTypeUpdate(ALL)
                             },
+                            onDateTypeUpdate = onDateTypeUpdate,
+                            onSelectedDateUpdate = onSelectedDateUpdate,
+                            onCategoryFilterUpdate = onCategoryFilterUpdate,
+                            modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            availableCategories = availableCategories,
                             amountSharedContentState = expensesSharedState,
                             titleSharedContentState = expensesTitleSharedState,
                         )
-                        FinanceCard(
+                    }
+
+                    INCOME -> {
+                        DetailedFinanceSection(
                             formattedAmount = formattedIncome,
+                            graphData = graphData,
+                            transactionFilter = transactionFilter,
+                            currency = currency,
                             title = stringResource(localesR.string.income_plural),
-                            modifier = Modifier.weight(1f),
-                            onClick = {
-                                onFinanceTypeUpdate(INCOME)
-                                onDateTypeUpdate(MONTH)
+                            onBackClick = {
+                                onFinanceTypeUpdate(NOT_SET)
+                                onDateTypeUpdate(ALL)
                             },
+                            onDateTypeUpdate = onDateTypeUpdate,
+                            onSelectedDateUpdate = onSelectedDateUpdate,
+                            onCategoryFilterUpdate = onCategoryFilterUpdate,
+                            modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            availableCategories = availableCategories,
                             amountSharedContentState = incomeSharedState,
                             titleSharedContentState = incomeTitleSharedState,
                         )
                     }
-                }
-
-                EXPENSES -> {
-                    DetailedFinanceSection(
-                        formattedAmount = formattedExpenses,
-                        graphData = graphData,
-                        transactionFilter = transactionFilter,
-                        currency = currency,
-                        title = stringResource(localesR.string.expenses),
-                        onBackClick = {
-                            onFinanceTypeUpdate(NOT_SET)
-                            onDateTypeUpdate(ALL)
-                        },
-                        onDateTypeUpdate = onDateTypeUpdate,
-                        onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategoryFilterUpdate = onCategoryFilterUpdate,
-                        modifier = Modifier.fillMaxWidth(),
-                        animatedVisibilityScope = this@AnimatedContent,
-                        availableCategories = availableCategories,
-                        amountSharedContentState = expensesSharedState,
-                        titleSharedContentState = expensesTitleSharedState,
-                    )
-                }
-
-                INCOME -> {
-                    DetailedFinanceSection(
-                        formattedAmount = formattedIncome,
-                        graphData = graphData,
-                        transactionFilter = transactionFilter,
-                        currency = currency,
-                        title = stringResource(localesR.string.income_plural),
-                        onBackClick = {
-                            onFinanceTypeUpdate(NOT_SET)
-                            onDateTypeUpdate(ALL)
-                        },
-                        onDateTypeUpdate = onDateTypeUpdate,
-                        onSelectedDateUpdate = onSelectedDateUpdate,
-                        onCategoryFilterUpdate = onCategoryFilterUpdate,
-                        modifier = Modifier.fillMaxWidth(),
-                        animatedVisibilityScope = this@AnimatedContent,
-                        availableCategories = availableCategories,
-                        amountSharedContentState = incomeSharedState,
-                        titleSharedContentState = incomeTitleSharedState,
-                    )
                 }
             }
         }
@@ -210,13 +215,14 @@ private fun FinanceCard(
     formattedAmount: String,
     title: String,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     amountSharedContentState: Any,
     titleSharedContentState: Any,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
 ) {
-    with(LocalSharedTransitionScope.current) {
+    with(sharedTransitionScope) {
         val motionScheme = MaterialTheme.motionScheme
         OutlinedCard(
             modifier = modifier
@@ -233,6 +239,8 @@ private fun FinanceCard(
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                     exit = fadeOut(motionScheme.defaultEffectsSpec()),
                     enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                    renderInOverlayDuringTransition = true,
+                    zIndexInOverlay = 1f,
                 ),
             shape = RoundedCornerShape(20.dp),
             onClick = onClick,
@@ -252,6 +260,7 @@ private fun FinanceCard(
                             sharedContentState = rememberSharedContentState(amountSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            zIndexInOverlay = 2f,
                         ),
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -266,6 +275,7 @@ private fun FinanceCard(
                             sharedContentState = rememberSharedContentState(titleSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            zIndexInOverlay = 2f,
                         ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -287,11 +297,12 @@ private fun DetailedFinanceSection(
     onSelectedDateUpdate: (Int) -> Unit,
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     amountSharedContentState: Any,
     titleSharedContentState: Any,
     modifier: Modifier = Modifier,
 ) {
-    with(LocalSharedTransitionScope.current) {
+    with(sharedTransitionScope) {
         val motionScheme = MaterialTheme.motionScheme
         BackHandler(
             enabled = LocalNavAnimatedContentScope.current.transition.let {
@@ -315,6 +326,8 @@ private fun DetailedFinanceSection(
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                     exit = fadeOut(motionScheme.defaultEffectsSpec()),
                     enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                    renderInOverlayDuringTransition = true,
+                    zIndexInOverlay = 1f,
                 ),
         ) {
             Row(
@@ -353,6 +366,7 @@ private fun DetailedFinanceSection(
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        zIndexInOverlay = 2f,
                     ),
                 style = MaterialTheme.typography.headlineLarge,
             )
@@ -364,6 +378,7 @@ private fun DetailedFinanceSection(
                         sharedContentState = rememberSharedContentState(titleSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        zIndexInOverlay = 2f,
                     ),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -111,6 +111,8 @@ internal fun WalletCard(
                         clipInOverlayDuringTransition = OverlayClip(shape),
                         exit = fadeOut(motionScheme.defaultEffectsSpec()),
                         enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                        renderInOverlayDuringTransition = false,
+                        zIndexInOverlay = 0f,
                     )
                     .then(if (selected) Modifier.dropShadow(shape) else Modifier),
             ) {
@@ -138,6 +140,7 @@ internal fun WalletCard(
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                                 boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                zIndexInOverlay = 1f,
                             ),
                     )
                     val balance = uiWallet.extendedUserWallet.currentBalance
@@ -159,6 +162,7 @@ internal fun WalletCard(
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                                 boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                zIndexInOverlay = 1f,
                             ),
                     )
                     TagsSection(
