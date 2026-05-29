@@ -21,17 +21,6 @@ import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.Repeat
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.Save
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateAmount
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateCategory
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateCompletionStatus
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateCurrency
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateDate
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateDescription
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateTransactionId
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateTransactionIgnoring
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogEvent.UpdateTransactionType
 import java.util.Currency
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -45,11 +34,11 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
     @Assisted val key: TransactionEditorNavKey,
 ) : ViewModel() {
 
-    private val _transactionDialogUiState = MutableStateFlow(TransactionDialogUiState())
-    val transactionDialogUiState = _transactionDialogUiState.asStateFlow()
+    private val _transactionEditorState = MutableStateFlow(TransactionDialogUiState())
+    val transactionEditorState = _transactionEditorState.asStateFlow()
 
     init {
-        _transactionDialogUiState.update { it.copy(isLoading = true) }
+        _transactionEditorState.update { it.copy(isLoading = true) }
         val transactionId = key.transactionId
         if (transactionId == null) {
             loadCategories()
@@ -58,89 +47,54 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
         }
     }
 
-    fun onTransactionEvent(event: TransactionDialogEvent) {
-        when (event) {
-            Repeat -> repeatTransaction()
-            is Save -> saveTransaction(event.state)
-            is UpdateTransactionId -> updateTransactionId(event.id)
-            is UpdateCurrency -> updateCurrency(event.currency)
-            is UpdateDate -> updateDate(event.date)
-            is UpdateAmount -> updateAmount(event.amount)
-            is UpdateTransactionType -> updateTransactionType(event.type)
-            is UpdateCompletionStatus -> updateCompletionState(event.completed)
-            is UpdateCategory -> updateCategory(event.category)
-            is UpdateDescription -> updateDescription(event.description)
-            is UpdateTransactionIgnoring -> updateTransactionIgnoring(event.ignored)
-        }
-    }
-
-    private fun saveTransaction(state: TransactionDialogUiState) {
+    fun saveTransaction() {
         appScope.launch {
-            val transaction = state.asTransaction(key.walletId, state.category)
-            transactionsRepository.upsertTransaction(transaction)
+            val state = _transactionEditorState.value
+            transactionsRepository.upsertTransaction(
+                state.asTransaction(key.walletId, state.category)
+            )
         }
     }
 
-    private fun updateTransactionId(id: String) {
-        _transactionDialogUiState.update {
-            it.copy(transactionId = id)
-        }
-    }
-
-    private fun updateCurrency(currency: Currency) {
-        _transactionDialogUiState.update {
-            it.copy(currency = currency)
-        }
-    }
-
-    private fun updateDate(date: Instant) {
-        _transactionDialogUiState.update {
-            it.copy(date = date)
-        }
-    }
-
-    private fun updateAmount(amount: String) {
-        _transactionDialogUiState.update {
-            it.copy(amount = amount.cleanAmount())
-        }
-    }
-
-    private fun updateTransactionType(type: TransactionType) {
-        _transactionDialogUiState.update {
+    fun updateTransactionType(type: TransactionType) {
+        _transactionEditorState.update {
             it.copy(transactionType = type)
         }
     }
 
-    private fun updateCompletionState(completed: Boolean) {
-        _transactionDialogUiState.update {
-            it.copy(completed = completed)
+    fun updateAmount(amount: String) {
+        _transactionEditorState.update {
+            it.copy(amount = amount.cleanAmount())
         }
     }
 
-    private fun updateCategory(category: Category?) {
-        _transactionDialogUiState.update {
+    fun updateCategory(category: Category?) {
+        _transactionEditorState.update {
             it.copy(category = category)
         }
     }
 
-    private fun updateDescription(description: String) {
-        _transactionDialogUiState.update {
+    fun updateCompletionStatus(completed: Boolean) {
+        _transactionEditorState.update {
+            it.copy(completed = completed)
+        }
+    }
+
+    fun updateDate(date: Instant) {
+        _transactionEditorState.update {
+            it.copy(date = date)
+        }
+    }
+
+    fun updateDescription(description: String) {
+        _transactionEditorState.update {
             it.copy(description = description)
         }
     }
 
-    private fun updateTransactionIgnoring(ignored: Boolean) {
-        _transactionDialogUiState.update {
+    fun updateIgnoredState(ignored: Boolean) {
+        _transactionEditorState.update {
             it.copy(ignored = ignored)
-        }
-    }
-
-    private fun repeatTransaction() {
-        _transactionDialogUiState.update {
-            it.copy(
-                transactionId = "",
-                date = Clock.System.now(),
-            )
         }
     }
 
@@ -152,7 +106,7 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
             } else {
                 transaction.timestamp
             }
-            _transactionDialogUiState.update {
+            _transactionEditorState.update {
                 it.copy(
                     transactionId = if (key.repeated) "" else transaction.id,
                     description = transaction.description ?: "",
@@ -175,7 +129,7 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            _transactionDialogUiState.update {
+            _transactionEditorState.update {
                 it.copy(
                     categories = buildList {
                         add(null)
