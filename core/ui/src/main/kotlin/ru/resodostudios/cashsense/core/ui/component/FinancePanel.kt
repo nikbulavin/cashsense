@@ -351,12 +351,12 @@ private fun DetailedFinanceSection(
             DateRangeSelectionRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,
-                modifier = Modifier.padding(bottom = 6.dp),
             )
             AnimatedAmount(
                 formattedAmount = formattedAmount,
                 label = "DetailedFinanceCard",
                 modifier = Modifier
+                    .padding(bottom = 6.dp)
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
@@ -374,7 +374,7 @@ private fun DetailedFinanceSection(
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLargeEmphasized,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

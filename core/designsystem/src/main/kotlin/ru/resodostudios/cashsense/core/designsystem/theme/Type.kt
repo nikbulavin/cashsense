@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
@@ -23,8 +24,22 @@ private val provider = GoogleFont.Provider(
 )
 
 private val googleSansFontFamily = FontFamily(
-    Font(resId = R.font.googlesans_regular),
-    Font(resId = R.font.googlesans_medium, weight = FontWeight.Medium),
+    Font(resId = R.font.googlesans_variable),
+    Font(
+        resId = R.font.googlesans_variable,
+        weight = FontWeight.Medium,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Medium.weight),
+        ),
+    ),
+    Font(
+        resId = R.font.googlesans_variable,
+        weight = FontWeight.Bold,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Bold.weight),
+            FontVariation.opticalSizing(14.sp),
+        ),
+    ),
 )
 
 internal val csTypography: Typography
@@ -136,6 +151,7 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
+                    letterSpacing = 0.1.sp,
                     fontFamily = googleSansFontFamily,
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
@@ -156,6 +172,17 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Medium,
                     fontSize = 11.sp,
                     lineHeight = 16.sp,
+                    fontFamily = googleSansFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
+                ),
+                labelLargeEmphasized = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    letterSpacing = 0.1.sp,
                     fontFamily = googleSansFontFamily,
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
