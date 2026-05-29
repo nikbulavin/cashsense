@@ -2,12 +2,15 @@ package ru.resodostudios.cashsense.feature.transaction.editor.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -17,7 +20,10 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,7 +38,9 @@ import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.
 import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,16 +50,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
-import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.data.Category
@@ -73,63 +81,86 @@ import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDia
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
-internal fun TransactionDialog(
-    onDismiss: () -> Unit,
+internal fun TransactionEditorScreen(
+    onBackClick: () -> Unit,
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
     val transactionDialogState by viewModel.transactionDialogUiState.collectAsStateWithLifecycle()
 
-    TransactionDialog(
+    TransactionEditorScreen(
         transactionDialogState = transactionDialogState,
-        onDismiss = onDismiss,
+        onBackClick = onBackClick,
         onTransactionEvent = viewModel::onTransactionEvent,
     )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun TransactionDialog(
+private fun TransactionEditorScreen(
     transactionDialogState: TransactionDialogUiState,
-    onDismiss: () -> Unit,
+    onBackClick: () -> Unit,
     onTransactionEvent: (TransactionDialogEvent) -> Unit,
 ) {
-    val (titleRes, confirmButtonTextRes) = if (transactionDialogState.transactionId.isNotEmpty()) {
-        localesR.string.edit_transaction to localesR.string.save
+    TrackScreenViewEvent(screenName = "TransactionEditor")
+    if (transactionDialogState.isLoading) {
+        LoadingState(Modifier.fillMaxSize())
     } else {
-        localesR.string.new_transaction to localesR.string.add
-    }
-    val analyticsHelper = LocalAnalyticsHelper.current
-
-    CsAlertDialog(
-        titleRes = titleRes,
-        confirmButtonTextRes = confirmButtonTextRes,
-        dismissButtonTextRes = localesR.string.cancel,
-        icon = CsIcons.Outlined.ReceiptLong,
-        onConfirm = {
-            onTransactionEvent(Save(transactionDialogState))
-            if (transactionDialogState.transactionId.isBlank()) {
-                analyticsHelper.logNewItemAdded(
-                    itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
-                )
-            }
-            onDismiss()
-        },
-        isConfirmEnabled = transactionDialogState.amount.isAmountValid(),
-        onDismiss = onDismiss,
-    ) {
-        if (transactionDialogState.isLoading) {
-            LoadingState(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp),
-            )
+        val (titleRes, confirmButtonTextRes) = if (transactionDialogState.transactionId.isNotEmpty()) {
+            localesR.string.edit_transaction to localesR.string.save
         } else {
+            localesR.string.new_transaction to localesR.string.add
+        }
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = stringResource(titleRes),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    navigationIcon = {
+                        CsIconButton(
+                            onClick = onBackClick,
+                            icon = CsIcons.Outlined.ArrowBack,
+                            contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                            tooltipPosition = TooltipAnchorPosition.Right,
+                        )
+                    },
+                    actions = {
+                        val analyticsHelper = LocalAnalyticsHelper.current
+                        val hapticFeedback = LocalHapticFeedback.current
+                        Button(
+                            shapes = ButtonDefaults.shapes(),
+                            onClick = {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                                if (transactionDialogState.transactionId.isBlank()) {
+                                    analyticsHelper.logNewItemAdded(
+                                        itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
+                                    )
+                                }
+                                onTransactionEvent(Save(transactionDialogState))
+                                onBackClick()
+                            },
+                            enabled = transactionDialogState.amount.isAmountValid(),
+                        ) {
+                            Text(stringResource(confirmButtonTextRes))
+                        }
+                    },
+                )
+            },
+        ) { innerPadding ->
+
             val focusManager = LocalFocusManager.current
             val (descTextField, amountTextField) = remember { FocusRequester.createRefs() }
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(innerPadding)
+                    .padding(16.dp),
             ) {
                 TransactionTypeChoiceRow(
                     onTransactionEvent = onTransactionEvent,
@@ -202,7 +233,6 @@ private fun TransactionDialog(
             }
         }
     }
-    TrackScreenViewEvent(screenName = "TransactionDialog")
 }
 
 @Composable
