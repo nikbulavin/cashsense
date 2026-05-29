@@ -73,6 +73,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubs
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation.transactionEntry
+import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
@@ -224,7 +225,9 @@ fun CsApp(
                     )
                     FabMenu(
                         visible = SettingsNavKey !in appState.navigationState.currentSubStack &&
-                                appState.navigationState.currentSubStack.all { it !is WalletNavKey },
+                                appState.navigationState.currentSubStack.all {
+                                    it !is WalletNavKey && it !is TransactionEditorNavKey
+                                },
                         onMenuItemClick = { fabItem ->
                             when (fabItem) {
                                 WALLET -> navigator.navigateToWalletDialog()
