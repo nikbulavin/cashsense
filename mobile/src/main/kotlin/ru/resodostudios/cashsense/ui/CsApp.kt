@@ -195,7 +195,10 @@ fun CsApp(
                         categoryDialogEntry(navigator)
                         subscriptionDialogEntry(navigator)
                         transactionEntry(navigator)
-                        transactionEditorEntry(navigator)
+                        transactionEditorEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         transferDialogEntry(navigator)
                     }
 
