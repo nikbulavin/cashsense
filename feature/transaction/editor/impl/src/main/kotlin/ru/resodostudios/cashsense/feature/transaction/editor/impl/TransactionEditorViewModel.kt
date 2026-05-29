@@ -21,7 +21,6 @@ import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
-import java.util.Currency
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
@@ -34,7 +33,7 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
     @Assisted val key: TransactionEditorNavKey,
 ) : ViewModel() {
 
-    private val _transactionEditorState = MutableStateFlow(TransactionDialogUiState())
+    private val _transactionEditorState = MutableStateFlow(TransactionEditorState())
     val transactionEditorState = _transactionEditorState.asStateFlow()
 
     init {
@@ -147,17 +146,16 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
     }
 }
 
-enum class TransactionType {
+internal enum class TransactionType {
     EXPENSE,
     INCOME,
 }
 
 @Immutable
-data class TransactionDialogUiState(
+internal data class TransactionEditorState(
     val transactionId: String = "",
     val description: String = "",
     val amount: String = "",
-    val currency: Currency = getUsdCurrency(),
     val date: Instant = Clock.System.now(),
     val category: Category? = null,
     val transactionType: TransactionType = TransactionType.EXPENSE,
@@ -168,7 +166,7 @@ data class TransactionDialogUiState(
     val categories: List<Category?> = emptyList(),
 )
 
-fun TransactionDialogUiState.asTransaction(walletId: String, category: Category?): Transaction {
+private fun TransactionEditorState.asTransaction(walletId: String, category: Category?): Transaction {
     return Transaction(
         id = transactionId.ifBlank { Uuid.random().toHexString() },
         walletOwnerId = walletId,

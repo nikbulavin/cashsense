@@ -79,10 +79,10 @@ internal fun TransactionEditorScreen(
     onBackClick: () -> Unit,
     viewModel: TransactionDialogViewModel = hiltViewModel(),
 ) {
-    val transactionDialogState by viewModel.transactionEditorState.collectAsStateWithLifecycle()
+    val transactionEditorState by viewModel.transactionEditorState.collectAsStateWithLifecycle()
 
     TransactionEditorScreen(
-        transactionDialogState = transactionDialogState,
+        transactionEditorState = transactionEditorState,
         onBackClick = onBackClick,
         onTransactionSave = viewModel::saveTransaction,
         onTransactionTypeUpdate = viewModel::updateTransactionType,
@@ -98,7 +98,7 @@ internal fun TransactionEditorScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TransactionEditorScreen(
-    transactionDialogState: TransactionDialogUiState,
+    transactionEditorState: TransactionEditorState,
     onBackClick: () -> Unit,
     onTransactionSave: () -> Unit,
     onTransactionTypeUpdate: (TransactionType) -> Unit,
@@ -110,10 +110,10 @@ private fun TransactionEditorScreen(
     onIgnoredStateUpdate: (Boolean) -> Unit,
 ) {
     TrackScreenViewEvent(screenName = "TransactionEditor")
-    if (transactionDialogState.isLoading) {
+    if (transactionEditorState.isLoading) {
         LoadingState(Modifier.fillMaxSize())
     } else {
-        val (titleRes, confirmButtonTextRes) = if (transactionDialogState.transactionId.isNotEmpty()) {
+        val (titleRes, confirmButtonTextRes) = if (transactionEditorState.transactionId.isNotEmpty()) {
             localesR.string.edit_transaction to localesR.string.save
         } else {
             localesR.string.new_transaction to localesR.string.add
@@ -143,7 +143,7 @@ private fun TransactionEditorScreen(
                             shapes = ButtonDefaults.shapes(),
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                                if (transactionDialogState.transactionId.isBlank()) {
+                                if (transactionEditorState.transactionId.isBlank()) {
                                     analyticsHelper.logNewItemAdded(
                                         itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
                                     )
@@ -151,7 +151,7 @@ private fun TransactionEditorScreen(
                                 onTransactionSave()
                                 onBackClick()
                             },
-                            enabled = transactionDialogState.amount.isAmountValid(),
+                            enabled = transactionEditorState.amount.isAmountValid(),
                         ) {
                             Text(stringResource(confirmButtonTextRes))
                         }
@@ -172,10 +172,10 @@ private fun TransactionEditorScreen(
             ) {
                 TransactionTypeChoiceRow(
                     onTransactionTypeUpdate = onTransactionTypeUpdate,
-                    transactionState = transactionDialogState,
+                    transactionEditorState = transactionEditorState,
                 )
                 OutlinedTextField(
-                    value = transactionDialogState.amount,
+                    value = transactionEditorState.amount,
                     onValueChange = onAmountUpdate,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
@@ -191,20 +191,20 @@ private fun TransactionEditorScreen(
                         .focusProperties { next = descTextField },
                 )
                 CategoryDropdownMenu(
-                    currentCategory = transactionDialogState.category,
-                    categories = transactionDialogState.categories,
+                    currentCategory = transactionEditorState.category,
+                    categories = transactionEditorState.categories,
                     onCategoryClick = onCategoryUpdate,
                 )
                 TransactionStatusChoiceRow(
                     onCompletionStatusUpdate = onCompletionStatusUpdate,
-                    transactionState = transactionDialogState,
+                    transactionEditorState = transactionEditorState,
                 )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     DatePickerTextField(
-                        timestamp = transactionDialogState.date,
+                        timestamp = transactionEditorState.date,
                         labelRes = localesR.string.date,
                         icon = CsIcons.Outlined.Calendar,
                         modifier = Modifier.weight(1f),
@@ -213,11 +213,11 @@ private fun TransactionEditorScreen(
                     TimePickerTextField(
                         onTimeSelect = onDateUpdate,
                         modifier = Modifier.weight(1f),
-                        timestamp = transactionDialogState.date,
+                        timestamp = transactionEditorState.date,
                     )
                 }
                 OutlinedTextField(
-                    value = transactionDialogState.description,
+                    value = transactionEditorState.description,
                     onValueChange = onDescriptionUpdate,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -232,15 +232,15 @@ private fun TransactionEditorScreen(
                         .focusRequester(descTextField),
                 )
                 CsTonalToggleButton(
-                    checked = transactionDialogState.ignored,
-                    icon = if (transactionDialogState.ignored) CsIcons.Outlined.Check else CsIcons.Outlined.Block,
+                    checked = transactionEditorState.ignored,
+                    icon = if (transactionEditorState.ignored) CsIcons.Outlined.Check else CsIcons.Outlined.Block,
                     title = stringResource(localesR.string.transaction_ignore),
                     onCheckedChange = onIgnoredStateUpdate,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            LaunchedEffect(transactionDialogState.amount) {
-                if (transactionDialogState.amount.isEmpty()) {
+            LaunchedEffect(transactionEditorState.amount) {
+                if (transactionEditorState.amount.isEmpty()) {
                     amountTextField.requestFocus()
                 }
             }
@@ -251,10 +251,10 @@ private fun TransactionEditorScreen(
 @Composable
 private fun TransactionTypeChoiceRow(
     onTransactionTypeUpdate: (TransactionType) -> Unit,
-    transactionState: TransactionDialogUiState,
+    transactionEditorState: TransactionEditorState,
 ) {
     ConnectedTonalToggleButtonGroup(
-        selectedIndex = transactionState.transactionType.ordinal,
+        selectedIndex = transactionEditorState.transactionType.ordinal,
         options = listOf(
             stringResource(localesR.string.expense),
             stringResource(localesR.string.income_singular),
@@ -269,10 +269,10 @@ private fun TransactionTypeChoiceRow(
 @Composable
 private fun TransactionStatusChoiceRow(
     onCompletionStatusUpdate: (Boolean) -> Unit,
-    transactionState: TransactionDialogUiState,
+    transactionEditorState: TransactionEditorState,
 ) {
     ConnectedTonalToggleButtonGroup(
-        selectedIndex = if (transactionState.completed) 1 else 0,
+        selectedIndex = if (transactionEditorState.completed) 1 else 0,
         options = listOf(
             stringResource(localesR.string.pending),
             stringResource(localesR.string.completed),
