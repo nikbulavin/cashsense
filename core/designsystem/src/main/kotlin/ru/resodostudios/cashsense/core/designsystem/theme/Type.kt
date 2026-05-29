@@ -10,6 +10,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.LineHeightStyle.Alignment
+import androidx.compose.ui.text.style.LineHeightStyle.Trim
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
 
@@ -90,6 +93,10 @@ internal val csTypography: Typography
                     fontSize = 22.sp,
                     lineHeight = 28.sp,
                     fontFamily = notoSerifFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Bottom,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 titleMedium = TextStyle(
                     fontWeight = FontWeight.Medium,
@@ -108,6 +115,10 @@ internal val csTypography: Typography
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
                     fontFamily = googleSansFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 bodyMedium = TextStyle(
                     fontWeight = FontWeight.Normal,
@@ -126,18 +137,30 @@ internal val csTypography: Typography
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontFamily = googleSansFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 labelMedium = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
                     fontFamily = googleSansFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 labelSmall = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = 11.sp,
                     lineHeight = 16.sp,
                     fontFamily = googleSansFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
             )
         }
