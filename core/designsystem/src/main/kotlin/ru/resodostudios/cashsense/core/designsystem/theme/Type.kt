@@ -23,8 +23,8 @@ private val provider = GoogleFont.Provider(
 )
 
 private val googleSansFontFamily = FontFamily(
-    Font(resId = R.font.google_sans_regular),
-    Font(resId = R.font.google_sans_medium, weight = FontWeight.Medium),
+    Font(resId = R.font.googlesans_regular),
+    Font(resId = R.font.googlesans_medium, weight = FontWeight.Medium),
 )
 
 internal val csTypography: Typography
