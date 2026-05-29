@@ -11,7 +11,7 @@ import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionEdi
 import ru.resodostudios.core.navigation.Navigator
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
-fun EntryProviderScope<NavKey>.transactionDialogEntry(navigator: Navigator) {
+fun EntryProviderScope<NavKey>.transactionEditorEntry(navigator: Navigator) {
     entry<TransactionEditorNavKey>(
         metadata = ListDetailSceneStrategy.extraPane(),
     ) { key ->

@@ -73,7 +73,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubs
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation.transactionEntry
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionDialogEntry
+import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -195,7 +195,7 @@ fun CsApp(
                         categoryDialogEntry(navigator)
                         subscriptionDialogEntry(navigator)
                         transactionEntry(navigator)
-                        transactionDialogEntry(navigator)
+                        transactionEditorEntry(navigator)
                         transferDialogEntry(navigator)
                     }
 

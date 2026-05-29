@@ -2,6 +2,7 @@ package ru.resodostudios.cashsense.feature.transaction.editor.impl
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -160,7 +161,7 @@ private fun TransactionEditorScreen(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .padding(innerPadding)
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
             ) {
                 TransactionTypeChoiceRow(
                     onTransactionEvent = onTransactionEvent,
@@ -191,18 +192,23 @@ private fun TransactionEditorScreen(
                     onTransactionEvent = onTransactionEvent,
                     transactionState = transactionDialogState,
                 )
-                DatePickerTextField(
-                    timestamp = transactionDialogState.date,
-                    labelRes = localesR.string.date,
-                    icon = CsIcons.Outlined.Calendar,
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxWidth(),
-                    onDateSelect = { onTransactionEvent(UpdateDate(it)) },
-                )
-                TimePickerTextField(
-                    onTimeSelect = { onTransactionEvent(UpdateDate(it)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    timestamp = transactionDialogState.date,
-                )
+                ) {
+                    DatePickerTextField(
+                        timestamp = transactionDialogState.date,
+                        labelRes = localesR.string.date,
+                        icon = CsIcons.Outlined.Calendar,
+                        modifier = Modifier.weight(1f),
+                        onDateSelect = { onTransactionEvent(UpdateDate(it)) },
+                    )
+                    TimePickerTextField(
+                        onTimeSelect = { onTransactionEvent(UpdateDate(it)) },
+                        modifier = Modifier.weight(1f),
+                        timestamp = transactionDialogState.date,
+                    )
+                }
                 OutlinedTextField(
                     value = transactionDialogState.description,
                     onValueChange = { onTransactionEvent(UpdateDescription(it)) },
