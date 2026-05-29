@@ -37,6 +37,7 @@ fun CsIconButton(
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.iconButtonVibrantColors(),
     interactionSource: MutableInteractionSource? = null,
+    enabled: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -51,6 +52,7 @@ fun CsIconButton(
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
             interactionSource = interactionSource,
+            enabled = enabled,
         ) {
             Icon(
                 imageVector = icon,
