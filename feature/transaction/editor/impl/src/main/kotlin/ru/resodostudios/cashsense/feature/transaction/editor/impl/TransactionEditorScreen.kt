@@ -271,14 +271,14 @@ private fun TransactionStatusChoiceRow(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
     categories: List<Category?>,
     onCategoryClick: (Category?) -> Unit,
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
     ExposedDropdownMenuBox(
@@ -308,7 +308,7 @@ private fun CategoryDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = MenuDefaults.standaloneGroupShape,
-            containerColor = MenuDefaults.groupStandardContainerColor,
+            containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             categories.forEachIndexed { index, category ->
                 DropdownMenuItem(
@@ -339,6 +339,7 @@ private fun CategoryDropdownMenu(
                             contentDescription = null,
                         )
                     },
+                    colors = MenuDefaults.selectableItemVibrantColors(),
                 )
             }
         }
