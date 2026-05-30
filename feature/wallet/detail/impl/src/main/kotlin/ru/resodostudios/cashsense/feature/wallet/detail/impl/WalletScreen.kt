@@ -63,6 +63,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
@@ -94,6 +95,7 @@ internal fun WalletScreen(
     onTransactionClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
+    onImportClick: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
     shouldHighlightSelectedTransaction: Boolean,
     navigateToTransactionEditor: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -108,6 +110,7 @@ internal fun WalletScreen(
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onWalletEdit = onEditWallet,
+        onImportClick = onImportClick,
         onWalletDelete = {
             viewModel.deleteWallet(it)
             onBackClick()
@@ -138,6 +141,7 @@ private fun WalletScreen(
     onTransfer: (String) -> Unit,
     onWalletEdit: (String) -> Unit,
     onWalletDelete: (String) -> Unit,
+    onImportClick: (String) -> Unit,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
@@ -188,6 +192,7 @@ private fun WalletScreen(
                             onTransfer = onTransfer,
                             onWalletEdit = onWalletEdit,
                             onWalletDelete = onWalletDelete,
+                            onImportClick = onImportClick,
                             navigateToTransactionEditor = navigateToTransactionEditor,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
@@ -262,6 +267,7 @@ private fun WalletToolbar(
     onTransfer: (String) -> Unit,
     onWalletEdit: (String) -> Unit,
     onWalletDelete: (String) -> Unit,
+    onImportClick: (String) -> Unit,
     navigateToTransactionEditor: (String, String?, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -283,6 +289,7 @@ private fun WalletToolbar(
         trailingContent = {
             val editButtonLabel = stringResource(localesR.string.edit)
             val deleteButtonLabel = stringResource(localesR.string.delete)
+            val importButtonLabel = stringResource(localesR.string.import_csv)
             AppBarRow(
                 maxItemCount = 1,
                 overflowIndicator = { menuState ->
@@ -307,6 +314,16 @@ private fun WalletToolbar(
                         )
                     },
                     label = editButtonLabel,
+                )
+                clickableItem(
+                    onClick = { onImportClick(wallet.id) },
+                    icon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.ReceiptLong,
+                            contentDescription = importButtonLabel,
+                        )
+                    },
+                    label = importButtonLabel,
                 )
                 clickableItem(
                     onClick = { shouldShowDeletionDialog = true },
@@ -503,6 +520,7 @@ private fun WalletScreenPopulatedPreview(
         onTransfer = {},
         onWalletEdit = {},
         onWalletDelete = {},
+        onImportClick = {},
         onBackClick = {},
         onDateTypeUpdate = {},
         onFinanceTypeUpdate = {},
@@ -545,6 +563,7 @@ private fun WalletScreenEmptyPreview() {
         onTransfer = {},
         onWalletEdit = {},
         onWalletDelete = {},
+        onImportClick = {},
         onBackClick = {},
         onDateTypeUpdate = {},
         onFinanceTypeUpdate = {},

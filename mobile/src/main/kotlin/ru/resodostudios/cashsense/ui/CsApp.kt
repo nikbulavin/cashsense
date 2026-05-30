@@ -73,6 +73,8 @@ import ru.resodostudios.cashsense.feature.settings.impl.navigation.settingsEntry
 import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
+import ru.resodostudios.cashsense.feature.transaction.csvimport.api.ImportNavKey
+import ru.resodostudios.cashsense.feature.transaction.csvimport.impl.navigation.importDialogEntry
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation.transactionEntry
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
@@ -115,7 +117,7 @@ fun CsApp(
     val isFabVisible by remember {
         derivedStateOf {
             appState.navigationState.currentSubStack.none {
-                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey
+                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey || it is ImportNavKey
             }
         }
     }
@@ -213,6 +215,7 @@ fun CsApp(
                             navigator = navigator,
                             animSpec = slideSpec,
                         )
+                        importDialogEntry(navigator)
                         transferDialogEntry(navigator)
                     }
 

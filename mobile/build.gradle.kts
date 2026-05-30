@@ -83,6 +83,8 @@ dependencies {
     implementation(projects.feature.subscription.dialog.impl)
     implementation(projects.feature.subscription.list.api)
     implementation(projects.feature.subscription.list.impl)
+    implementation(projects.feature.transaction.csvimport.api)
+    implementation(projects.feature.transaction.csvimport.impl)
     implementation(projects.feature.transaction.detail.api)
     implementation(projects.feature.transaction.detail.impl)
     implementation(projects.feature.transaction.editor.api)
