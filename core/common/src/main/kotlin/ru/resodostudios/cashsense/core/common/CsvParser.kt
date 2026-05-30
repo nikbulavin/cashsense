@@ -5,6 +5,8 @@ import javax.inject.Inject
 class CsvParser @Inject constructor() {
 
     fun parse(line: String, separator: String): List<String> {
+        if (separator.isEmpty()) return listOf(line)
+
         val result = mutableListOf<String>()
         var current = StringBuilder()
         var inQuotes = false

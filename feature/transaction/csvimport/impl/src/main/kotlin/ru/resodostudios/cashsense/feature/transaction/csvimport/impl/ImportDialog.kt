@@ -84,7 +84,7 @@ fun ImportDialog(
                     viewModel.importTransactions()
                 }
             },
-            isConfirmEnabled = true,
+            isConfirmEnabled = uiState.lines.isEmpty() || uiState.config.columnSeparator.isNotEmpty(),
             onDismiss = onDismiss,
         ) {
             if (uiState.isLoading) {
@@ -116,6 +116,12 @@ fun ImportDialog(
                             selectedIndex = uiState.config.descriptionColumnIndex,
                             columns = uiState.columns,
                             onColumnSelected = { viewModel.updateConfig(uiState.config.copy(descriptionColumnIndex = it)) }
+                        )
+                        MappingField(
+                            label = stringResource(localesR.string.category_title),
+                            selectedIndex = uiState.config.categoryColumnIndex,
+                            columns = uiState.columns,
+                            onColumnSelected = { viewModel.updateConfig(uiState.config.copy(categoryColumnIndex = it)) }
                         )
 
                         HorizontalDivider(Modifier.padding(vertical = 8.dp))
