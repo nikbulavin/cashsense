@@ -32,6 +32,18 @@ private val googleSansFontFamily = FontFamily(
             FontVariation.weight(FontWeight.Medium.weight),
         ),
     ),
+)
+
+private val googleSansEmphasizedFontFamily = FontFamily(
+    Font(
+        resId = R.font.googlesans_variable,
+        weight = FontWeight.Medium,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Medium.weight),
+            FontVariation.opticalSizing(16.sp),
+            FontVariation.grade(25),
+        ),
+    ),
     Font(
         resId = R.font.googlesans_variable,
         weight = FontWeight.Bold,
@@ -178,12 +190,22 @@ internal val csTypography: Typography
                         trim = Trim.LastLineBottom,
                     ),
                 ),
+                bodyLargeEmphasized = TextStyle(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = googleSansEmphasizedFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
+                ),
                 labelLargeEmphasized = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     letterSpacing = 0.1.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = googleSansEmphasizedFontFamily,
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,

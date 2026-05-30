@@ -53,6 +53,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -193,7 +194,7 @@ private fun TransactionScreen(
                         }
                         Text(
                             text = categoryTitle,
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodyLargeEmphasized,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -318,15 +319,15 @@ private fun ActionButtons(
                 Box(
                     modifier = Modifier.animateWidth(interactionSource),
                 ) {
-                    CsFilledIconButton(
+                    CsFilledTonalIconButton(
                         onClick = { shouldShowDeletionDialog = true },
                         icon = CsIcons.Outlined.Delete,
                         contentDescription = stringResource(localesR.string.delete),
                         containerSize = mediumContainerSize(),
                         iconSize = IconButtonDefaults.mediumIconSize,
                         interactionSource = interactionSource,
-                        colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
                         )
                     )
                 }
