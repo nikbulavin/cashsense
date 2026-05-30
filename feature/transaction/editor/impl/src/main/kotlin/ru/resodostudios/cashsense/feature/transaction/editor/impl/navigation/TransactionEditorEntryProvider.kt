@@ -13,8 +13,8 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
-import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionDialogViewModel
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionEditorScreen
+import ru.resodostudios.cashsense.feature.transaction.editor.impl.TransactionEditorViewModel
 import ru.resodostudios.core.navigation.Navigator
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -37,7 +37,7 @@ fun EntryProviderScope<NavKey>.transactionEditorEntry(
     ) { key ->
         TransactionEditorScreen(
             onBackClick = navigator::goBack,
-            viewModel = hiltViewModel<TransactionDialogViewModel, TransactionDialogViewModel.Factory> {
+            viewModel = hiltViewModel<TransactionEditorViewModel, TransactionEditorViewModel.Factory> {
                 it.create(key)
             },
         )

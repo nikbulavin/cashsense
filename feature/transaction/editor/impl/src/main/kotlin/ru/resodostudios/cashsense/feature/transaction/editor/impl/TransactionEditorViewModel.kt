@@ -25,8 +25,8 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-@HiltViewModel(assistedFactory = TransactionDialogViewModel.Factory::class)
-internal class TransactionDialogViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = TransactionEditorViewModel.Factory::class)
+internal class TransactionEditorViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
@@ -142,7 +142,7 @@ internal class TransactionDialogViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: TransactionEditorNavKey): TransactionDialogViewModel
+        fun create(key: TransactionEditorNavKey): TransactionEditorViewModel
     }
 }
 

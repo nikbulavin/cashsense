@@ -77,7 +77,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun TransactionEditorScreen(
     onBackClick: () -> Unit,
-    viewModel: TransactionDialogViewModel = hiltViewModel(),
+    viewModel: TransactionEditorViewModel = hiltViewModel(),
 ) {
     val transactionEditorState by viewModel.transactionEditorState.collectAsStateWithLifecycle()
 
