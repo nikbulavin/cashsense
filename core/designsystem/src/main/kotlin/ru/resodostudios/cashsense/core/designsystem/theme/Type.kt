@@ -14,6 +14,7 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.LineHeightStyle.Alignment
 import androidx.compose.ui.text.style.LineHeightStyle.Trim
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
 
@@ -23,25 +24,21 @@ private val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs,
 )
 
-private val googleSansFontFamily = FontFamily(
-    Font(resId = R.font.googlesans_variable),
+private fun getGoogleSansFontFamily(textSize: TextUnit) = FontFamily(
     Font(
         resId = R.font.googlesans_variable,
-        weight = FontWeight.Medium,
+        weight = FontWeight.Normal,
         variationSettings = FontVariation.Settings(
-            FontVariation.weight(FontWeight.Medium.weight),
+            FontVariation.weight(FontWeight.Normal.weight),
+            FontVariation.opticalSizing(textSize),
         ),
     ),
-)
-
-private val googleSansEmphasizedFontFamily = FontFamily(
     Font(
         resId = R.font.googlesans_variable,
         weight = FontWeight.Medium,
         variationSettings = FontVariation.Settings(
             FontVariation.weight(FontWeight.Medium.weight),
-            FontVariation.opticalSizing(16.sp),
-            FontVariation.grade(25),
+            FontVariation.opticalSizing(textSize),
         ),
     ),
     Font(
@@ -49,7 +46,7 @@ private val googleSansEmphasizedFontFamily = FontFamily(
         weight = FontWeight.Bold,
         variationSettings = FontVariation.Settings(
             FontVariation.weight(FontWeight.Bold.weight),
-            FontVariation.opticalSizing(14.sp),
+            FontVariation.opticalSizing(textSize),
         ),
     ),
 )
@@ -141,7 +138,7 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(16.sp),
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,
@@ -151,20 +148,20 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(14.sp),
                 ),
                 bodySmall = TextStyle(
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(12.sp),
                 ),
                 labelLarge = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     letterSpacing = 0.1.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(14.sp),
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,
@@ -174,7 +171,7 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Medium,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(12.sp),
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,
@@ -184,7 +181,7 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Medium,
                     fontSize = 11.sp,
                     lineHeight = 16.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(11.sp),
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,
@@ -194,7 +191,7 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Medium,
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
-                    fontFamily = googleSansEmphasizedFontFamily,
+                    fontFamily = getGoogleSansFontFamily(16.sp),
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,
@@ -205,7 +202,7 @@ internal val csTypography: Typography
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     letterSpacing = 0.1.sp,
-                    fontFamily = googleSansEmphasizedFontFamily,
+                    fontFamily = getGoogleSansFontFamily(14.sp),
                     lineHeightStyle = LineHeightStyle(
                         alignment = Alignment.Center,
                         trim = Trim.LastLineBottom,
