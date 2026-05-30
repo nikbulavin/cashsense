@@ -291,7 +291,7 @@ private fun CategoryDropdownMenu(
     categories: List<Category?>,
     onCategoryClick: (Category?) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     var iconId by rememberSaveable { mutableIntStateOf(currentCategory?.iconId ?: 0) }
 
     ExposedDropdownMenuBox(
