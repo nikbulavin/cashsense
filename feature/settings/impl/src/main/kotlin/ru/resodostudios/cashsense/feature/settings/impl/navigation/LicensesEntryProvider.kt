@@ -7,6 +7,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.feature.settings.api.LicensesNavKey
 import ru.resodostudios.cashsense.feature.settings.impl.LicensesScreen
@@ -17,12 +18,16 @@ fun EntryProviderScope<NavKey>.licensesEntry(
     animSpec: FiniteAnimationSpec<IntOffset>,
 ) {
     entry<LicensesNavKey>(
-        metadata = NavDisplay.transitionSpec {
-            slideInHorizontally(animSpec) { it } togetherWith slideOutHorizontally(animSpec) { -it }
-        } + NavDisplay.popTransitionSpec {
-            slideInHorizontally(animSpec) { -it } togetherWith slideOutHorizontally(animSpec) { it }
-        } + NavDisplay.predictivePopTransitionSpec {
-            slideInHorizontally(animSpec) { -it } togetherWith slideOutHorizontally(animSpec) { it }
+        metadata = metadata {
+            put(NavDisplay.TransitionKey) {
+                slideInHorizontally(animSpec) { it } togetherWith slideOutHorizontally(animSpec) { -it }
+            }
+            put(NavDisplay.PopTransitionKey) {
+                slideInHorizontally(animSpec) { -it } togetherWith slideOutHorizontally(animSpec) { it }
+            }
+            put(NavDisplay.PredictivePopTransitionKey) {
+                slideInHorizontally(animSpec) { -it } togetherWith slideOutHorizontally(animSpec) { it }
+            }
         },
     ) {
         LicensesScreen(

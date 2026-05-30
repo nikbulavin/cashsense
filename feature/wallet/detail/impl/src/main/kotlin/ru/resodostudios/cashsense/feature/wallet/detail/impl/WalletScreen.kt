@@ -96,7 +96,7 @@ internal fun WalletScreen(
     onEditWallet: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
     shouldHighlightSelectedTransaction: Boolean,
-    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToTransactionEditor: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: WalletViewModel = hiltViewModel(),
 ) {
     val walletState by viewModel.walletUiState.collectAsStateWithLifecycle()
@@ -113,7 +113,7 @@ internal fun WalletScreen(
             onBackClick()
         },
         onBackClick = onBackClick,
-        navigateToTransactionDialog = navigateToTransactionDialog,
+        navigateToTransactionEditor = navigateToTransactionEditor,
         onTransactionSelect = {
             viewModel.updateSelectedTransaction(it)
             it?.id?.let { transaction -> onTransactionClick(transaction) }
@@ -143,7 +143,7 @@ private fun WalletScreen(
     onFinanceTypeUpdate: (FinanceType) -> Unit,
     onSelectedDateUpdate: (Int) -> Unit,
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
-    navigateToTransactionDialog: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToTransactionEditor: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
     onTransactionSelect: (Transaction?) -> Unit = {},
 ) {
     with(LocalSharedTransitionScope.current) {
@@ -188,7 +188,7 @@ private fun WalletScreen(
                             onTransfer = onTransfer,
                             onWalletEdit = onWalletEdit,
                             onWalletDelete = onWalletDelete,
-                            navigateToTransactionDialog = navigateToTransactionDialog,
+                            navigateToTransactionEditor = navigateToTransactionEditor,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .navigationBarsPadding()
@@ -262,7 +262,7 @@ private fun WalletToolbar(
     onTransfer: (String) -> Unit,
     onWalletEdit: (String) -> Unit,
     onWalletDelete: (String) -> Unit,
-    navigateToTransactionDialog: (String, String?, Boolean) -> Unit,
+    navigateToTransactionEditor: (String, String?, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
@@ -323,7 +323,7 @@ private fun WalletToolbar(
         content = {
             FilledIconButton(
                 modifier = Modifier.width(64.dp),
-                onClick = { navigateToTransactionDialog(wallet.id, null, false) },
+                onClick = { navigateToTransactionEditor(wallet.id, null, false) },
             ) {
                 Icon(
                     imageVector = CsIcons.Outlined.Add,
@@ -508,7 +508,7 @@ private fun WalletScreenPopulatedPreview(
         onFinanceTypeUpdate = {},
         onSelectedDateUpdate = {},
         onCategoryFilterUpdate = { _, _ -> },
-        navigateToTransactionDialog = { _, _, _ -> },
+        navigateToTransactionEditor = { _, _, _ -> },
     )
 }
 
@@ -550,6 +550,6 @@ private fun WalletScreenEmptyPreview() {
         onFinanceTypeUpdate = {},
         onSelectedDateUpdate = {},
         onCategoryFilterUpdate = { _, _ -> },
-        navigateToTransactionDialog = { _, _, _ -> },
+        navigateToTransactionEditor = { _, _, _ -> },
     )
 }

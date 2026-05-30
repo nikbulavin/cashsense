@@ -38,6 +38,7 @@ import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +74,8 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubs
 import ru.resodostudios.cashsense.feature.subscription.dialog.impl.navigation.subscriptionDialogEntry
 import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subscriptionsEntry
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation.transactionEntry
-import ru.resodostudios.cashsense.feature.transaction.dialog.impl.navigation.transactionDialogEntry
+import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
+import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -110,9 +112,21 @@ fun CsApp(
     val navRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
             navSuiteType == NavigationSuiteType.WideNavigationRailExpanded
 
-    val shouldShowNavigation = navRailVisible ||
-            navSuiteType == NavigationSuiteType.ShortNavigationBarMedium ||
-            appState.navigationState.currentSubStack.all { it !is WalletNavKey }
+    val isFabVisible by remember {
+        derivedStateOf {
+            appState.navigationState.currentSubStack.none {
+                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey
+            }
+        }
+    }
+
+    val shouldShowNavigation by remember(navRailVisible, navSuiteType) {
+        derivedStateOf {
+            navRailVisible ||
+                    navSuiteType == NavigationSuiteType.ShortNavigationBarMedium ||
+                    appState.navigationState.currentSubStack.none { it is WalletNavKey }
+        }
+    }
 
     LaunchedEffect(shouldShowNavigation) {
         if (shouldShowNavigation) navSuiteState.show() else navSuiteState.hide()
@@ -151,7 +165,7 @@ fun CsApp(
                     modifier = Modifier
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
-                            if (SettingsNavKey !in appState.navigationState.currentSubStack) {
+                            if (isFabVisible) {
                                 Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
                             } else {
                                 Modifier
@@ -195,7 +209,10 @@ fun CsApp(
                         categoryDialogEntry(navigator)
                         subscriptionDialogEntry(navigator)
                         transactionEntry(navigator)
-                        transactionDialogEntry(navigator)
+                        transactionEditorEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         transferDialogEntry(navigator)
                     }
 
@@ -220,8 +237,7 @@ fun CsApp(
                         sharedTransitionScope = LocalSharedTransitionScope.current,
                     )
                     FabMenu(
-                        visible = SettingsNavKey !in appState.navigationState.currentSubStack &&
-                                appState.navigationState.currentSubStack.all { it !is WalletNavKey },
+                        visible = isFabVisible,
                         onMenuItemClick = { fabItem ->
                             when (fabItem) {
                                 WALLET -> navigator.navigateToWalletDialog()

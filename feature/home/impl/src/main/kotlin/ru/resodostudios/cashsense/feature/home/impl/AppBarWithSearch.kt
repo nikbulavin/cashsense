@@ -210,6 +210,7 @@ internal fun CsAppBarWithSearch(
                 icon = CsIcons.Filled.AccountBalance,
                 contentDescription = stringResource(localesR.string.total_balance),
                 tooltipPosition = TooltipAnchorPosition.Right,
+                enabled = walletIdsAndTitles.isNotEmpty(),
             )
         },
         actions = {

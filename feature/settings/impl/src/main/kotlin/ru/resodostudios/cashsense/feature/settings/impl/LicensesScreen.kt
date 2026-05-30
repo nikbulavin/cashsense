@@ -1,10 +1,9 @@
 package ru.resodostudios.cashsense.feature.settings.impl
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.variant.LibrariesVariant
 import com.mikepenz.aboutlibraries.ui.compose.variant.LibraryActionMode
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -26,14 +27,12 @@ internal fun LicensesScreen(
             TopAppBar(
                 title = { Text(stringResource(localesR.string.licenses)) },
                 navigationIcon = {
-                    IconButton(
+                    CsIconButton(
                         onClick = onBackClick,
-                    ) {
-                        Icon(
-                            imageVector = CsIcons.Outlined.ArrowBack,
-                            contentDescription = stringResource(localesR.string.navigation_back_icon_description),
-                        )
-                    }
+                        icon = CsIcons.Outlined.ArrowBack,
+                        contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                        tooltipPosition = TooltipAnchorPosition.Right,
+                    )
                 }
             )
         },
@@ -45,6 +44,7 @@ internal fun LicensesScreen(
             contentPadding = paddingValues,
             modifier = Modifier.fillMaxSize(),
             actionMode = LibraryActionMode.Icons,
+            variant = LibrariesVariant.Refined,
         )
     }
 }

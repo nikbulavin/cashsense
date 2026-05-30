@@ -7,9 +7,14 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.LineHeightStyle.Alignment
+import androidx.compose.ui.text.style.LineHeightStyle.Trim
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import ru.resodostudios.cashsense.core.designsystem.R
 
@@ -19,9 +24,31 @@ private val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs,
 )
 
-private val googleSansFontFamily = FontFamily(
-    Font(resId = R.font.google_sans_regular),
-    Font(resId = R.font.google_sans_medium, weight = FontWeight.Medium),
+private fun getGoogleSansFontFamily(textSize: TextUnit) = FontFamily(
+    Font(
+        resId = R.font.googlesans_variable,
+        weight = FontWeight.Normal,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Normal.weight),
+            FontVariation.opticalSizing(textSize),
+        ),
+    ),
+    Font(
+        resId = R.font.googlesans_variable,
+        weight = FontWeight.Medium,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Medium.weight),
+            FontVariation.opticalSizing(textSize),
+        ),
+    ),
+    Font(
+        resId = R.font.googlesans_variable,
+        weight = FontWeight.Bold,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(FontWeight.Bold.weight),
+            FontVariation.opticalSizing(textSize),
+        ),
+    ),
 )
 
 internal val csTypography: Typography
@@ -90,6 +117,10 @@ internal val csTypography: Typography
                     fontSize = 22.sp,
                     lineHeight = 28.sp,
                     fontFamily = notoSerifFontFamily,
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Bottom,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 titleMedium = TextStyle(
                     fontWeight = FontWeight.Medium,
@@ -107,37 +138,75 @@ internal val csTypography: Typography
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
                     lineHeight = 24.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(16.sp),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 bodyMedium = TextStyle(
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(14.sp),
                 ),
                 bodySmall = TextStyle(
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(12.sp),
                 ),
                 labelLarge = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
-                    fontFamily = googleSansFontFamily,
+                    letterSpacing = 0.1.sp,
+                    fontFamily = getGoogleSansFontFamily(14.sp),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 labelMedium = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(12.sp),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
                 labelSmall = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = 11.sp,
                     lineHeight = 16.sp,
-                    fontFamily = googleSansFontFamily,
+                    fontFamily = getGoogleSansFontFamily(11.sp),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
+                ),
+                bodyLargeEmphasized = TextStyle(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp,
+                    fontFamily = getGoogleSansFontFamily(16.sp),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
+                ),
+                labelLargeEmphasized = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    letterSpacing = 0.1.sp,
+                    fontFamily = getGoogleSansFontFamily(14.sp),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = Alignment.Center,
+                        trim = Trim.LastLineBottom,
+                    ),
                 ),
             )
         }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
@@ -37,6 +38,7 @@ fun CsIconButton(
     tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
     colors: IconButtonColors = IconButtonDefaults.iconButtonVibrantColors(),
     interactionSource: MutableInteractionSource? = null,
+    enabled: Boolean = true,
 ) {
     TooltipBox(
         modifier = modifier,
@@ -51,6 +53,7 @@ fun CsIconButton(
             shapes = IconButtonDefaults.shapes(),
             colors = colors,
             interactionSource = interactionSource,
+            enabled = enabled,
         ) {
             Icon(
                 imageVector = icon,
@@ -114,6 +117,46 @@ fun CsFilledTonalIconButton(
         state = rememberTooltipState(),
     ) {
         FilledTonalIconButton(
+            onClick = onClick,
+            shapes = IconButtonDefaults.shapes(),
+            colors = colors,
+            modifier = Modifier
+                .sizeIn(minHeight = containerSize.height, minWidth = containerSize.width)
+                .fillMaxWidth(),
+            enabled = enabled,
+            interactionSource = interactionSource,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(iconSize),
+            )
+        }
+    }
+}
+
+@Composable
+fun CsFilledIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tooltipPosition: TooltipAnchorPosition = TooltipAnchorPosition.Above,
+    colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors(),
+    containerSize: DpSize = smallContainerSize(),
+    iconSize: Dp = IconButtonDefaults.smallIconSize,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+) {
+    TooltipBox(
+        modifier = modifier,
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            positioning = tooltipPosition,
+        ),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        FilledIconButton(
             onClick = onClick,
             shapes = IconButtonDefaults.shapes(),
             colors = colors,

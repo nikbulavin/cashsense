@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.transaction.detail.impl
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
@@ -9,21 +8,22 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.mediumContainerSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,6 +36,7 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +52,8 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -94,7 +97,7 @@ internal fun TransactionScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TransactionScreen(
     onBackClick: () -> Unit,
@@ -191,7 +194,7 @@ private fun TransactionScreen(
                         }
                         Text(
                             text = categoryTitle,
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodyLargeEmphasized,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -255,8 +258,8 @@ private fun TransactionScreen(
     }
 }
 
-@Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
 private fun ActionButtons(
     transaction: Transaction,
     onRepeatClick: (String, String) -> Unit,
@@ -265,97 +268,118 @@ private fun ActionButtons(
     categoryTitle: String,
     categoryIcon: ImageVector,
 ) {
-    Row(
+    var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
+    ButtonGroup(
         modifier = Modifier.padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        overflowIndicator = {},
     ) {
         if (transaction.transferId == null) {
-            FilledIconButton(
-                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
-                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-            ) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Redo,
-                    contentDescription = stringResource(localesR.string.repeat),
-                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                )
-            }
-            FilledIconButton(
-                shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-                onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
-                modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-            ) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Edit,
-                    contentDescription = stringResource(localesR.string.edit),
-                    modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-                )
-            }
-        }
-        var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
-        FilledIconButton(
-            shapes = IconButtonDefaults.shapes(shape = IconButtonDefaults.mediumSquareShape),
-            onClick = { shouldShowDeletionDialog = true },
-            modifier = Modifier.size(IconButtonDefaults.mediumContainerSize()),
-        ) {
-            Icon(
-                imageVector = CsIcons.Outlined.Delete,
-                contentDescription = stringResource(localesR.string.delete),
-                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
-            )
-        }
-        if (shouldShowDeletionDialog) {
-            CsAlertDialog(
-                titleRes = localesR.string.delete_transaction,
-                icon = CsIcons.Outlined.Delete,
-                confirmButtonTextRes = localesR.string.delete,
-                dismissButtonTextRes = localesR.string.cancel,
-                onConfirm = {
-                    onDeleteClick(transaction)
-                    shouldShowDeletionDialog = false
-                },
-                onDismiss = { shouldShowDeletionDialog = false },
-                content = {
-                    Column {
-                        Text(stringResource(localesR.string.permanently_delete_transaction))
-                        CsListItem(
-                            headlineContent = {
-                                Text(
-                                    text = transaction.amount.formatAmount(
-                                        transaction.currency,
-                                        true,
-                                    ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            supportingContent = {
-                                Text(
-                                    text = categoryTitle,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            leadingContent = {
-                                Icon(
-                                    imageVector = categoryIcon,
-                                    contentDescription = null,
-                                )
-                            },
+            customItem(
+                buttonGroupContent = {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier.animateWidth(interactionSource),
+                    ) {
+                        CsFilledIconButton(
+                            onClick = { onRepeatClick(transaction.walletOwnerId, transaction.id) },
+                            icon = CsIcons.Outlined.Redo,
+                            contentDescription = stringResource(localesR.string.repeat),
+                            interactionSource = interactionSource,
+                            containerSize = mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+                            iconSize = IconButtonDefaults.mediumIconSize,
                         )
                     }
                 },
+                menuContent = {},
             )
         }
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier.animateWidth(interactionSource),
+                ) {
+                    CsFilledIconButton(
+                        onClick = { onEditClick(transaction.walletOwnerId, transaction.id) },
+                        icon = CsIcons.Outlined.Edit,
+                        contentDescription = stringResource(localesR.string.edit),
+                        interactionSource = interactionSource,
+                        containerSize = mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide),
+                        iconSize = IconButtonDefaults.mediumIconSize,
+                    )
+                }
+            },
+            menuContent = {},
+        )
+        customItem(
+            buttonGroupContent = {
+                val interactionSource = remember { MutableInteractionSource() }
+                Box(
+                    modifier = Modifier.animateWidth(interactionSource),
+                ) {
+                    CsFilledTonalIconButton(
+                        onClick = { shouldShowDeletionDialog = true },
+                        icon = CsIcons.Outlined.Delete,
+                        contentDescription = stringResource(localesR.string.delete),
+                        containerSize = mediumContainerSize(),
+                        iconSize = IconButtonDefaults.mediumIconSize,
+                        interactionSource = interactionSource,
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                        )
+                    )
+                }
+            },
+            menuContent = {},
+        )
+    }
+    if (shouldShowDeletionDialog) {
+        CsAlertDialog(
+            titleRes = localesR.string.delete_transaction,
+            icon = CsIcons.Outlined.Delete,
+            confirmButtonTextRes = localesR.string.delete,
+            dismissButtonTextRes = localesR.string.cancel,
+            onConfirm = {
+                onDeleteClick(transaction)
+                shouldShowDeletionDialog = false
+            },
+            onDismiss = { shouldShowDeletionDialog = false },
+            content = {
+                Column {
+                    Text(stringResource(localesR.string.permanently_delete_transaction))
+                    CsListItem(
+                        headlineContent = {
+                            Text(
+                                text = transaction.amount.formatAmount(
+                                    transaction.currency,
+                                    true,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = categoryTitle,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = categoryIcon,
+                                contentDescription = null,
+                            )
+                        },
+                    )
+                }
+            },
+        )
     }
 }
 
-@OptIn(
-    ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class,
-)
 @Composable
 private fun TagsSection(
     isTransactionIgnored: Boolean,
@@ -400,7 +424,6 @@ private fun TagsSection(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TransactionDescription(
     description: String,

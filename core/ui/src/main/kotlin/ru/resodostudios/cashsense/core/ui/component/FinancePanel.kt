@@ -118,10 +118,14 @@ fun FinancePanel(
                 origin = walletId,
                 type = SharedElementType.IncomeTitle,
             )
+            val motionScheme = MaterialTheme.motionScheme
             AnimatedContent(
                 targetState = transactionFilter.financeType,
                 label = "FinancePanel",
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                transitionSpec = {
+                    fadeIn(motionScheme.defaultEffectsSpec()) togetherWith
+                            fadeOut(motionScheme.defaultEffectsSpec())
+                },
             ) { financeType ->
                 when (financeType) {
                     NOT_SET -> {
@@ -239,8 +243,6 @@ private fun FinanceCard(
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                     exit = fadeOut(motionScheme.defaultEffectsSpec()),
                     enter = fadeIn(motionScheme.defaultEffectsSpec()),
-                    renderInOverlayDuringTransition = true,
-                    zIndexInOverlay = 1f,
                 ),
             shape = RoundedCornerShape(20.dp),
             onClick = onClick,
@@ -259,7 +261,6 @@ private fun FinanceCard(
                             sharedContentState = rememberSharedContentState(amountSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                            zIndexInOverlay = 2f,
                         ),
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -274,7 +275,6 @@ private fun FinanceCard(
                             sharedContentState = rememberSharedContentState(titleSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                            zIndexInOverlay = 2f,
                         ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -325,8 +325,6 @@ private fun DetailedFinanceSection(
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                     exit = fadeOut(motionScheme.defaultEffectsSpec()),
                     enter = fadeIn(motionScheme.defaultEffectsSpec()),
-                    renderInOverlayDuringTransition = true,
-                    zIndexInOverlay = 1f,
                 ),
         ) {
             Row(
@@ -353,18 +351,17 @@ private fun DetailedFinanceSection(
             DateRangeSelectionRow(
                 onSelectedDateUpdate = onSelectedDateUpdate,
                 transactionFilter = transactionFilter,
-                modifier = Modifier.padding(bottom = 6.dp),
             )
             AnimatedAmount(
                 formattedAmount = formattedAmount,
                 label = "DetailedFinanceCard",
                 modifier = Modifier
+                    .padding(bottom = 6.dp)
                     .sharedBounds(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        zIndexInOverlay = 2f,
                     ),
                 style = MaterialTheme.typography.headlineLarge,
             )
@@ -376,9 +373,8 @@ private fun DetailedFinanceSection(
                         sharedContentState = rememberSharedContentState(titleSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                        zIndexInOverlay = 2f,
                     ),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLargeEmphasized,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
