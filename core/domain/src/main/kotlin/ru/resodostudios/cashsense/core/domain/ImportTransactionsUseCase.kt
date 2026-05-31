@@ -1,7 +1,8 @@
 package ru.resodostudios.cashsense.core.domain
 
+import com.jsoizo.kotlincsv.CsvDialect
+import com.jsoizo.kotlincsv.csvReader
 import kotlinx.coroutines.flow.first
-import ru.resodostudios.cashsense.core.common.CsvParser
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
@@ -19,7 +20,6 @@ class ImportTransactionsUseCase @Inject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val walletsRepository: WalletsRepository,
     private val categoriesRepository: CategoriesRepository,
-    private val csvParser: CsvParser,
 ) {
 
     suspend operator fun invoke(
@@ -33,12 +33,15 @@ class ImportTransactionsUseCase @Inject constructor(
 
         val formatter = DateTimeFormatter.ofPattern(config.dateFormat)
 
-        val transactionsToImport = lines
-            .asSequence()
-            .drop(if (config.ignoreFirstLine) 1 else 0)
-            .filter { it.isNotBlank() }
-            .map { line ->
-                val columns = csvParser.parse(line, config.columnSeparator)
+        val reader = csvReader {
+            dialect = CsvDialect(delimiter = config.columnSeparator.firstOrNull() ?: ';')
+            skipEmptyLine = true
+        }
+        val allRows = reader.readAll(lines.joinToString("\n"))
+        val rowsToImport = if (config.ignoreFirstLine) allRows.drop(1) else allRows
+
+        val transactionsToImport = rowsToImport
+            .map { columns ->
                 val rawAmount = columns[config.amountColumnIndex]
                 val rawDate = columns[config.dateColumnIndex]
                 val description = columns.getOrNull(config.descriptionColumnIndex)

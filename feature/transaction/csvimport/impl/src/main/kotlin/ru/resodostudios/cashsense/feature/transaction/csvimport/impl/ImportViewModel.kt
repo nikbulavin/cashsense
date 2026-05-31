@@ -2,6 +2,8 @@ package ru.resodostudios.cashsense.feature.transaction.csvimport.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jsoizo.kotlincsv.CsvDialect
+import com.jsoizo.kotlincsv.csvReader
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -10,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.resodostudios.cashsense.core.common.CsvParser
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
 import ru.resodostudios.cashsense.core.model.data.CsvConfig
 import ru.resodostudios.cashsense.feature.transaction.csvimport.api.ImportNavKey
@@ -18,7 +19,6 @@ import ru.resodostudios.cashsense.feature.transaction.csvimport.api.ImportNavKey
 @HiltViewModel(assistedFactory = ImportViewModel.Factory::class)
 class ImportViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
-    private val csvParser: CsvParser,
     @Assisted private val key: ImportNavKey,
 ) : ViewModel() {
 
@@ -27,18 +27,32 @@ class ImportViewModel @AssistedInject constructor(
 
     fun handleFileSelected(lines: List<String>) {
         _uiState.update {
+            val columns = if (lines.isNotEmpty()) {
+                csvReader {
+                    dialect = CsvDialect(delimiter = it.config.columnSeparator.firstOrNull() ?: ';')
+                }.readAll(lines.first()).firstOrNull() ?: emptyList<String>()
+            } else {
+                emptyList()
+            }
             it.copy(
                 lines = lines,
-                columns = if (lines.isNotEmpty()) csvParser.parse(lines.first(), it.config.columnSeparator) else emptyList()
+                columns = columns
             )
         }
     }
 
     fun updateConfig(config: CsvConfig) {
         _uiState.update {
+            val columns = if (it.lines.isNotEmpty()) {
+                csvReader {
+                    dialect = CsvDialect(delimiter = config.columnSeparator.firstOrNull() ?: ';')
+                }.readAll(it.lines.first()).firstOrNull() ?: emptyList<String>()
+            } else {
+                emptyList()
+            }
             it.copy(
                 config = config,
-                columns = if (it.lines.isNotEmpty()) csvParser.parse(it.lines.first(), config.columnSeparator) else emptyList()
+                columns = columns
             )
         }
     }

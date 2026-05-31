@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.locales)
 
+    implementation(libs.kotlin.csv)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.viewModelCompose)
