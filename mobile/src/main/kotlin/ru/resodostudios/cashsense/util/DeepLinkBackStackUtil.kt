@@ -2,10 +2,10 @@ package ru.resodostudios.cashsense.util
 
 import android.net.Uri
 import androidx.navigation3.runtime.NavKey
-import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_HOME
-import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_SUBSCRIPTIONS
-import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_TRANSACTION
-import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_WALLET
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_HOME
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_SUBSCRIPTIONS
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_TRANSACTION
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.subscription.list.api.SubscriptionsNavKey
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey

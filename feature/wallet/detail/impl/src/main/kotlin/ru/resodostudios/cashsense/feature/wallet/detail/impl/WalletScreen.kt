@@ -52,6 +52,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
@@ -85,7 +86,6 @@ import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 

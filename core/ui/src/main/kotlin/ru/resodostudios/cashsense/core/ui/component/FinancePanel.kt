@@ -43,6 +43,7 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaMonth
+import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedToggleButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsOutlinedIconButton
@@ -69,7 +70,6 @@ import ru.resodostudios.cashsense.core.model.data.TransactionFilter
 import ru.resodostudios.cashsense.core.ui.TransactionPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.util.getCurrentYear
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle

@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.network
+package ru.resodostudios.cashsense.core.common
 
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.RUNTIME
