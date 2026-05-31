@@ -27,32 +27,36 @@ class ImportViewModel @AssistedInject constructor(
 
     fun handleFileSelected(lines: List<String>) {
         _uiState.update {
-            val columns = if (lines.isNotEmpty()) {
-                csvReader {
-                    dialect = CsvDialect(delimiter = it.config.columnSeparator.firstOrNull() ?: ';')
-                }.readAll(lines.first()).firstOrNull() ?: emptyList<String>()
+            val columns = if (lines.isNotEmpty() && it.config.columnSeparator.isNotEmpty()) {
+                runCatching {
+                    csvReader {
+                        dialect = CsvDialect(delimiter = it.config.columnSeparator.first())
+                    }.readAll(lines.first()).firstOrNull()
+                }.getOrNull() ?: emptyList()
             } else {
                 emptyList()
             }
             it.copy(
                 lines = lines,
-                columns = columns
+                columns = columns,
             )
         }
     }
 
     fun updateConfig(config: CsvConfig) {
         _uiState.update {
-            val columns = if (it.lines.isNotEmpty()) {
-                csvReader {
-                    dialect = CsvDialect(delimiter = config.columnSeparator.firstOrNull() ?: ';')
-                }.readAll(it.lines.first()).firstOrNull() ?: emptyList<String>()
+            val columns = if (it.lines.isNotEmpty() && config.columnSeparator.isNotEmpty()) {
+                runCatching {
+                    csvReader {
+                        dialect = CsvDialect(delimiter = config.columnSeparator.first())
+                    }.readAll(it.lines.first()).firstOrNull()
+                }.getOrNull() ?: emptyList()
             } else {
-                emptyList()
+                it.columns
             }
             it.copy(
                 config = config,
-                columns = columns
+                columns = columns,
             )
         }
     }
