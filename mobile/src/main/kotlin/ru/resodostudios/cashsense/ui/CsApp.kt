@@ -76,8 +76,8 @@ import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subs
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation.transactionEntry
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
-import ru.resodostudios.cashsense.feature.transaction.importer.api.ImportNavKey
-import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.importDialogEntry
+import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
+import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.transactionImporterEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -117,7 +117,7 @@ fun CsApp(
     val isFabVisible by remember {
         derivedStateOf {
             appState.navigationState.currentSubStack.none {
-                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey || it is ImportNavKey
+                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey || it is TransactionImporterNavKey
             }
         }
     }
@@ -215,7 +215,10 @@ fun CsApp(
                             navigator = navigator,
                             animSpec = slideSpec,
                         )
-                        importDialogEntry(navigator)
+                        transactionImporterEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         transferDialogEntry(navigator)
                     }
 

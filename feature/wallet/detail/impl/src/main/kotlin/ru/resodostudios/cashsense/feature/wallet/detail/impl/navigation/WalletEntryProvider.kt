@@ -13,7 +13,7 @@ import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
-import ru.resodostudios.cashsense.feature.transaction.importer.api.navigateToImport
+import ru.resodostudios.cashsense.feature.transaction.importer.api.navigateToTransactionImporter
 import ru.resodostudios.cashsense.feature.transfer.dialog.api.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
 import ru.resodostudios.cashsense.feature.wallet.detail.impl.WalletScreen
@@ -44,7 +44,7 @@ fun EntryProviderScope<NavKey>.walletEntry(
             onTransactionClick = navigator::navigateToTransaction,
             onTransfer = navigator::navigateToTransferDialog,
             onEditWallet = navigator::navigateToWalletDialog,
-            onImportClick = navigator::navigateToImport,
+            onImportClick = navigator::navigateToTransactionImporter,
             navigateToTransactionEditor = navigator::navigateToTransactionEditor,
             shouldShowNavigationIcon = true,
             shouldHighlightSelectedTransaction = false,

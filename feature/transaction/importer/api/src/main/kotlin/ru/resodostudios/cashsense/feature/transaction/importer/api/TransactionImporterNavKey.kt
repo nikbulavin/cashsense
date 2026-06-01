@@ -5,12 +5,12 @@ import kotlinx.serialization.Serializable
 import ru.resodostudios.core.navigation.Navigator
 
 @Serializable
-data class ImportNavKey(
+data class TransactionImporterNavKey(
     val walletId: String,
 ) : NavKey
 
-fun Navigator.navigateToImport(
+fun Navigator.navigateToTransactionImporter(
     walletId: String,
 ) {
-    navigate(ImportNavKey(walletId))
+    navigate(TransactionImporterNavKey(walletId))
 }

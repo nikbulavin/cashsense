@@ -14,15 +14,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
 import ru.resodostudios.cashsense.core.model.data.CsvConfig
-import ru.resodostudios.cashsense.feature.transaction.importer.api.ImportNavKey
+import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
 
-@HiltViewModel(assistedFactory = ImportViewModel.Factory::class)
-class ImportViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = TransactionImporterViewModel.Factory::class)
+internal class TransactionImporterViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
-    @Assisted private val key: ImportNavKey,
+    @Assisted private val key: TransactionImporterNavKey,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ImportUiState())
+    private val _uiState = MutableStateFlow(TransactionImporterUiState())
     val uiState = _uiState.asStateFlow()
 
     fun handleFileSelected(lines: List<String>) {
@@ -67,13 +67,13 @@ class ImportViewModel @AssistedInject constructor(
             val result = importTransactionsUseCase(
                 walletId = key.walletId,
                 lines = _uiState.value.lines,
-                config = _uiState.value.config
+                config = _uiState.value.config,
             )
             _uiState.update {
                 it.copy(
                     isLoading = false,
                     importFinished = true,
-                    importedCount = result.getOrDefault(0)
+                    importedCount = result.getOrDefault(0),
                 )
             }
         }
@@ -81,11 +81,11 @@ class ImportViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(key: ImportNavKey): ImportViewModel
+        fun create(key: TransactionImporterNavKey): TransactionImporterViewModel
     }
 }
 
-data class ImportUiState(
+internal data class TransactionImporterUiState(
     val lines: List<String> = emptyList(),
     val columns: List<String> = emptyList(),
     val config: CsvConfig = CsvConfig(),
