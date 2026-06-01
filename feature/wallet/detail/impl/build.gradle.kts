@@ -14,7 +14,7 @@ dependencies {
 
     implementation(projects.feature.transaction.detail.api)
     implementation(projects.feature.transaction.editor.api)
-    implementation(projects.feature.transaction.csvimport.api)
+    implementation(projects.feature.transaction.importer.api)
     implementation(projects.feature.transfer.api)
     implementation(projects.feature.wallet.detail.api)
     implementation(projects.feature.wallet.dialog.api)

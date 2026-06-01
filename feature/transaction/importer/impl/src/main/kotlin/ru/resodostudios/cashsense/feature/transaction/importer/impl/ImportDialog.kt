@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction.csvimport.impl
+package ru.resodostudios.cashsense.feature.transaction.importer.impl
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

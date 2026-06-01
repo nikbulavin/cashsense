@@ -1,13 +1,13 @@
-package ru.resodostudios.cashsense.feature.transaction.csvimport.impl.navigation
+package ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.scene.DialogSceneStrategy
-import ru.resodostudios.cashsense.feature.transaction.csvimport.api.ImportNavKey
-import ru.resodostudios.cashsense.feature.transaction.csvimport.impl.ImportDialog
-import ru.resodostudios.cashsense.feature.transaction.csvimport.impl.ImportViewModel
+import ru.resodostudios.cashsense.feature.transaction.importer.api.ImportNavKey
+import ru.resodostudios.cashsense.feature.transaction.importer.impl.ImportDialog
+import ru.resodostudios.cashsense.feature.transaction.importer.impl.ImportViewModel
 import ru.resodostudios.core.navigation.Navigator
 
 fun EntryProviderScope<NavKey>.importDialogEntry(navigator: Navigator) {

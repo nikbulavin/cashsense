@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction.csvimport.api
+package ru.resodostudios.cashsense.feature.transaction.importer.api
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

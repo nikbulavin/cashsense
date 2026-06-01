@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.transaction.csvimport.impl"
+    namespace = "ru.resodostudios.cashsense.feature.transaction.importer.impl"
 }
 
 dependencies {
-    implementation(projects.feature.transaction.csvimport.api)
+    implementation(projects.feature.transaction.importer.api)
 
     implementation(projects.core.domain)
 

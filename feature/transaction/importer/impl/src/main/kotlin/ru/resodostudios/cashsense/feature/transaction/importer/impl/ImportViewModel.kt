@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.transaction.csvimport.impl
+package ru.resodostudios.cashsense.feature.transaction.importer.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
 import ru.resodostudios.cashsense.core.model.data.CsvConfig
-import ru.resodostudios.cashsense.feature.transaction.csvimport.api.ImportNavKey
+import ru.resodostudios.cashsense.feature.transaction.importer.api.ImportNavKey
 
 @HiltViewModel(assistedFactory = ImportViewModel.Factory::class)
 class ImportViewModel @AssistedInject constructor(

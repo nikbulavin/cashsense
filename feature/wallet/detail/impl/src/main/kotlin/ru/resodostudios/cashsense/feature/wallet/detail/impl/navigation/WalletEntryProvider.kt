@@ -11,9 +11,9 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
-import ru.resodostudios.cashsense.feature.transaction.csvimport.api.navigateToImport
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
+import ru.resodostudios.cashsense.feature.transaction.importer.api.navigateToImport
 import ru.resodostudios.cashsense.feature.transfer.dialog.api.navigateToTransferDialog
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
 import ru.resodostudios.cashsense.feature.wallet.detail.impl.WalletScreen

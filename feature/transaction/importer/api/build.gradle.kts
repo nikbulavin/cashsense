@@ -3,5 +3,5 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.transaction.csvimport.api"
+    namespace = "ru.resodostudios.cashsense.feature.transaction.importer.api"
 }
