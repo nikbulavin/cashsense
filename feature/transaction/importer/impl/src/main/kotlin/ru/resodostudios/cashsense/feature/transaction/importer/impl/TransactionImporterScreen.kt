@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -21,9 +22,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
@@ -48,6 +49,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
@@ -95,7 +97,10 @@ private fun TransactionImporterScreen(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri: Uri? ->
         uri?.let {
-            val lines = context.contentResolver.openInputStream(it)?.bufferedReader()?.readLines() ?: emptyList()
+            val lines = context.contentResolver.openInputStream(it)
+                ?.bufferedReader()
+                ?.readLines()
+                ?: emptyList()
             onFileSelected(lines)
         }
     }
@@ -119,15 +124,15 @@ private fun TransactionImporterScreen(
                     )
                 },
                 actions = {
-                    FilledIconButton(
+                    CsFilledIconButton(
+                        tooltipPosition = TooltipAnchorPosition.Left,
                         onClick = onImportClick,
                         enabled = uiState.selectedTransactions.isNotEmpty(),
-                    ) {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Check,
-                            contentDescription = stringResource(localesR.string.import_title),
-                        )
-                    }
+                        contentDescription = stringResource(localesR.string.import_title),
+                        icon = CsIcons.Outlined.Check,
+                        modifier = Modifier
+                            .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
+                    )
                 },
             )
         },
@@ -149,7 +154,12 @@ private fun TransactionImporterScreen(
                     ) {
                         Button(
                             onClick = {
-                                filePickerLauncher.launch(arrayOf("text/comma-separated-values", "text/csv"))
+                                filePickerLauncher.launch(
+                                    arrayOf(
+                                        "text/comma-separated-values",
+                                        "text/csv"
+                                    )
+                                )
                             },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
@@ -232,7 +242,10 @@ private fun TransactionImporterScreen(
                     groupedTransactions.forEach { transactionGroup ->
                         item {
                             CsTag(
-                                text = transactionGroup.key.formatDate(DateFormatType.DATE, FormatStyle.MEDIUM),
+                                text = transactionGroup.key.formatDate(
+                                    DateFormatType.DATE,
+                                    FormatStyle.MEDIUM
+                                ),
                                 color = Color.Transparent,
                                 modifier = Modifier
                                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
@@ -252,7 +265,10 @@ private fun TransactionImporterScreen(
                                 shapes = if (transactionGroup.value.size == 1) {
                                     ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
                                 } else {
-                                    ListItemDefaults.segmentedShapes(index, transactionGroup.value.size)
+                                    ListItemDefaults.segmentedShapes(
+                                        index,
+                                        transactionGroup.value.size
+                                    )
                                 },
                             )
                             if (index != transactionGroup.value.lastIndex) {
