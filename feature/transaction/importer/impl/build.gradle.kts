@@ -10,6 +10,7 @@ android {
 dependencies {
     implementation(projects.feature.transaction.importer.api)
 
+    implementation(projects.core.data)
     implementation(projects.core.domain)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)

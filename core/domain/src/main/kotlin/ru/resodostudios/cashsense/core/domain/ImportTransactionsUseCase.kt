@@ -4,7 +4,6 @@ import com.jsoizo.kotlincsv.CsvDialect
 import com.jsoizo.kotlincsv.csvReader
 import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
-import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.model.data.CsvConfig
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -17,7 +16,6 @@ import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class ImportTransactionsUseCase @Inject constructor(
-    private val transactionsRepository: TransactionsRepository,
     private val walletsRepository: WalletsRepository,
     private val categoriesRepository: CategoriesRepository,
 ) {
@@ -26,11 +24,10 @@ class ImportTransactionsUseCase @Inject constructor(
         walletId: String,
         lines: List<String>,
         config: CsvConfig,
-    ): Result<Int> = runCatching {
+    ): Result<List<Transaction>> = runCatching {
         val extendedWallet = walletsRepository.getExtendedWallet(walletId).first()
         val existingTransactions = extendedWallet.transactions
         val categories = categoriesRepository.getCategories().first()
-
         val formatter = DateTimeFormatter.ofPattern(config.dateFormat)
 
         val reader = csvReader {
@@ -40,10 +37,11 @@ class ImportTransactionsUseCase @Inject constructor(
         val allRows = reader.readAll(lines.joinToString("\n"))
         val rowsToImport = if (config.ignoreFirstLine) allRows.drop(1) else allRows
 
-        val transactionsToImport = rowsToImport
-            .map { columns ->
-                val rawAmount = columns[config.amountColumnIndex]
-                val rawDate = columns[config.dateColumnIndex]
+        rowsToImport.asSequence().mapNotNull { columns ->
+            val rawAmount = columns.getOrNull(config.amountColumnIndex)
+            val rawDate = columns.getOrNull(config.dateColumnIndex)
+
+            if ((rawAmount != null) && (rawDate != null)) {
                 val description = columns.getOrNull(config.descriptionColumnIndex)
                 val rawCategory = columns.getOrNull(config.categoryColumnIndex)
 
@@ -67,20 +65,15 @@ class ImportTransactionsUseCase @Inject constructor(
                     currency = extendedWallet.wallet.currency,
                     category = category,
                 )
+            } else {
+                null
             }
-            .filter { newTransaction ->
-                existingTransactions.none { existing ->
-                    existing.timestamp == newTransaction.timestamp &&
-                            existing.amount.compareTo(newTransaction.amount) == 0 &&
-                            existing.description == newTransaction.description
-                }
+        }.filter { newTransaction ->
+            existingTransactions.none { existing ->
+                (existing.timestamp == newTransaction.timestamp) &&
+                        (existing.amount.compareTo(newTransaction.amount) == 0) &&
+                        (existing.description == newTransaction.description)
             }
-            .toList()
-
-        transactionsToImport.forEach {
-            transactionsRepository.upsertTransaction(it)
-        }
-
-        transactionsToImport.size
+        }.toList()
     }
 }

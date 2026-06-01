@@ -10,20 +10,34 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
 import ru.resodostudios.cashsense.core.model.data.CsvConfig
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
+import java.util.Currency
 
 @HiltViewModel(assistedFactory = TransactionImporterViewModel.Factory::class)
 internal class TransactionImporterViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
+    private val walletsRepository: WalletsRepository,
+    private val transactionsRepository: TransactionsRepository,
     @Assisted private val key: TransactionImporterNavKey,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TransactionImporterUiState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val wallet = walletsRepository.getExtendedWallet(key.walletId).first()
+            _uiState.update { it.copy(currency = wallet.wallet.currency) }
+        }
+    }
 
     fun handleFileSelected(lines: List<String>) {
         _uiState.update {
@@ -41,6 +55,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 columns = columns,
             )
         }
+        parseTransactions()
     }
 
     fun updateConfig(config: CsvConfig) {
@@ -59,22 +74,74 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 columns = columns,
             )
         }
+        parseTransactions()
+    }
+
+    fun toggleTransactionSelection(id: String) {
+        _uiState.update {
+            val selectedTransactions = it.selectedTransactions.toMutableSet()
+            if (selectedTransactions.contains(id)) {
+                selectedTransactions.remove(id)
+            } else {
+                selectedTransactions.add(id)
+            }
+            it.copy(selectedTransactions = selectedTransactions)
+        }
+    }
+
+    private fun parseTransactions() {
+        val currentState = _uiState.value
+        if (currentState.lines.isNotEmpty()) {
+            viewModelScope.launch {
+                importTransactionsUseCase(
+                    walletId = key.walletId,
+                    lines = currentState.lines,
+                    config = currentState.config,
+                ).fold(
+                    onSuccess = { parsedTransactions ->
+                        _uiState.update { state ->
+                            state.copy(
+                                parsedTransactions = parsedTransactions,
+                                selectedTransactions = parsedTransactions.asSequence().map { it.id }.toSet(),
+                            )
+                        }
+                    },
+                ) {
+                    _uiState.update { state ->
+                        state.copy(
+                            parsedTransactions = emptyList(),
+                            selectedTransactions = emptySet(),
+                        )
+                    }
+                }
+            }
+        } else {
+            _uiState.update { state ->
+                state.copy(
+                    parsedTransactions = emptyList(),
+                    selectedTransactions = emptySet(),
+                )
+            }
+        }
     }
 
     fun importTransactions() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val result = importTransactionsUseCase(
-                walletId = key.walletId,
-                lines = _uiState.value.lines,
-                config = _uiState.value.config,
-            )
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    importFinished = true,
-                    importedCount = result.getOrDefault(0),
-                )
+            val transactionsToImport = _uiState.value.parsedTransactions.filter {
+                _uiState.value.selectedTransactions.contains(it.id)
+            }
+            runCatching {
+                transactionsToImport.forEach { transactionsRepository.upsertTransaction(it) }
+                transactionsToImport.size
+            }.onSuccess { importedCount ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        importFinished = true,
+                        importedCount = importedCount,
+                    )
+                }
             }
         }
     }
@@ -89,6 +156,9 @@ internal data class TransactionImporterUiState(
     val lines: List<String> = emptyList(),
     val columns: List<String> = emptyList(),
     val config: CsvConfig = CsvConfig(),
+    val parsedTransactions: List<Transaction> = emptyList(),
+    val selectedTransactions: Set<String> = emptySet(),
+    val currency: Currency? = null,
     val isLoading: Boolean = false,
     val importFinished: Boolean = false,
     val importedCount: Int = 0,

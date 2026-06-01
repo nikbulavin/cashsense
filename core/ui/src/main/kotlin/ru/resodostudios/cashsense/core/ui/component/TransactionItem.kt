@@ -48,7 +48,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun TransactionItem(
+fun TransactionItem(
     selected: Boolean,
     transaction: Transaction,
     currency: Currency,
