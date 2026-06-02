@@ -335,15 +335,17 @@ private fun CsvPickerCard(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri: Uri? ->
         uri?.let {
-            val lines = context.contentResolver.openInputStream(it)
-                ?.bufferedReader()
-                ?.readLines()
-                ?: emptyList()
-            val name = context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
+            var name = ""
+            var lines = emptyList<String>()
+            context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
                 val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
-                cursor.moveToFirst()
-                cursor.getString(nameIndex)
-            } ?: ""
+                if (cursor.moveToFirst()) {
+                    name = cursor.getString(nameIndex)
+                }
+            }
+            context.contentResolver.openInputStream(it)?.use { inputStream ->
+                lines = inputStream.bufferedReader().readLines()
+            }
             onFileSelected(name, lines)
         }
     }
