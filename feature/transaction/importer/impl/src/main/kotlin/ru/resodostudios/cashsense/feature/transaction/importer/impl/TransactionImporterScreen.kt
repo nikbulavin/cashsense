@@ -57,6 +57,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DocumentSearch
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
+import ru.resodostudios.cashsense.core.model.data.CsvConfig
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
@@ -88,8 +89,8 @@ internal fun TransactionImporterScreen(
 private fun TransactionImporterScreen(
     uiState: TransactionImporterUiState,
     onBackClick: () -> Unit,
-    onFileSelected: (List<String>) -> Unit,
-    onConfigUpdate: (ru.resodostudios.cashsense.core.model.data.CsvConfig) -> Unit,
+    onFileSelected: (String, List<String>) -> Unit,
+    onConfigUpdate: (CsvConfig) -> Unit,
     onTransactionClick: (String) -> Unit,
     onImportClick: () -> Unit,
 ) {
@@ -141,6 +142,7 @@ private fun TransactionImporterScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         CsvPickerCard(
+                            fileName = uiState.fileName,
                             onFileSelected = onFileSelected,
                             modifier = Modifier.fillMaxWidth(),
                         )
@@ -324,7 +326,8 @@ private fun MappingField(
 
 @Composable
 private fun CsvPickerCard(
-    onFileSelected: (List<String>) -> Unit,
+    fileName: String,
+    onFileSelected: (String, List<String>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -336,7 +339,12 @@ private fun CsvPickerCard(
                 ?.bufferedReader()
                 ?.readLines()
                 ?: emptyList()
-            onFileSelected(lines)
+            val name = context.contentResolver.query(it, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                cursor.moveToFirst()
+                cursor.getString(nameIndex)
+            } ?: ""
+            onFileSelected(name, lines)
         }
     }
     OutlinedCard(
@@ -354,6 +362,15 @@ private fun CsvPickerCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,
             )
+            if (fileName.isNotEmpty()) {
+                Text(
+                    text = fileName,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Button(
                 onClick = {
                     filePickerLauncher.launch(

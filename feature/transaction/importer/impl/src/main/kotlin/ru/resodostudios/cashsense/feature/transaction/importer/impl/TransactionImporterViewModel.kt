@@ -39,7 +39,10 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
         }
     }
 
-    fun handleFileSelected(lines: List<String>) {
+    fun handleFileSelected(
+        fileName: String,
+        lines: List<String>,
+    ) {
         _uiState.update {
             val columns = if (lines.isNotEmpty() && it.config.columnSeparator.isNotEmpty()) {
                 runCatching {
@@ -51,6 +54,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 emptyList()
             }
             it.copy(
+                fileName = fileName,
                 lines = lines,
                 columns = columns,
             )
@@ -153,6 +157,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 }
 
 internal data class TransactionImporterUiState(
+    val fileName: String = "",
     val lines: List<String> = emptyList(),
     val columns: List<String> = emptyList(),
     val config: CsvConfig = CsvConfig(),
