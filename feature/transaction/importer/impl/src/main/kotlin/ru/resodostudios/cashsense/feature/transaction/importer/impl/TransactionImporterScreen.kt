@@ -11,11 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -23,11 +24,13 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,9 +41,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,6 +54,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.DocumentSearch
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
@@ -91,19 +94,6 @@ private fun TransactionImporterScreen(
     onImportClick: () -> Unit,
 ) {
     TrackScreenViewEvent(screenName = "TransactionImporter")
-
-    val context = LocalContext.current
-    val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument(),
-    ) { uri: Uri? ->
-        uri?.let {
-            val lines = context.contentResolver.openInputStream(it)
-                ?.bufferedReader()
-                ?.readLines()
-                ?: emptyList()
-            onFileSelected(lines)
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -147,30 +137,13 @@ private fun TransactionImporterScreen(
             ) {
                 item {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        Button(
-                            onClick = {
-                                filePickerLauncher.launch(
-                                    arrayOf(
-                                        "text/comma-separated-values",
-                                        "text/csv"
-                                    )
-                                )
-                            },
+                        CsvPickerCard(
+                            onFileSelected = onFileSelected,
                             modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = if (uiState.lines.isEmpty()) {
-                                    stringResource(localesR.string.select_file)
-                                } else {
-                                    stringResource(localesR.string.change_file)
-                                },
-                            )
-                        }
+                        )
 
                         if (uiState.lines.isNotEmpty()) {
                             Text(
@@ -231,8 +204,6 @@ private fun TransactionImporterScreen(
                                     style = MaterialTheme.typography.titleMedium,
                                 )
                             }
-                        } else {
-                            Text(stringResource(localesR.string.select_csv_file_description))
                         }
                     }
                 }
@@ -244,12 +215,10 @@ private fun TransactionImporterScreen(
                             CsTag(
                                 text = transactionGroup.key.formatDate(
                                     DateFormatType.DATE,
-                                    FormatStyle.MEDIUM
+                                    FormatStyle.MEDIUM,
                                 ),
-                                color = Color.Transparent,
-                                modifier = Modifier
-                                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
-                                    .clip(CircleShape),
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                                modifier = Modifier.padding(16.dp),
                             )
                         }
                         itemsIndexed(
@@ -275,7 +244,6 @@ private fun TransactionImporterScreen(
                                 Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
                             }
                         }
-                        item { Spacer(Modifier.height(16.dp)) }
                     }
                 }
             }
@@ -308,13 +276,14 @@ private fun MappingField(
     selectedIndex: Int,
     columns: List<String>,
     onColumnSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(value = false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
     ) {
         OutlinedTextField(
             value = columns.getOrNull(selectedIndex) ?: "",
@@ -322,7 +291,9 @@ private fun MappingField(
             readOnly = true,
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
@@ -345,6 +316,66 @@ private fun MappingField(
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CsvPickerCard(
+    onFileSelected: (List<String>) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument(),
+    ) { uri: Uri? ->
+        uri?.let {
+            val lines = context.contentResolver.openInputStream(it)
+                ?.bufferedReader()
+                ?.readLines()
+                ?: emptyList()
+            onFileSelected(lines)
+        }
+    }
+    OutlinedCard(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
+        ) {
+            Text(
+                text = stringResource(localesR.string.select_csv_file_description),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Button(
+                onClick = {
+                    filePickerLauncher.launch(
+                        arrayOf(
+                            "text/comma-separated-values",
+                            "text/csv",
+                        )
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Icon(
+                    imageVector = CsIcons.Filled.DocumentSearch,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                Text(
+                    text = stringResource(localesR.string.select_file),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
