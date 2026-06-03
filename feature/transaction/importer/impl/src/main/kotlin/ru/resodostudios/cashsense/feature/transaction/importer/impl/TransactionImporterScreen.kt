@@ -32,9 +32,10 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -186,17 +187,21 @@ private fun TransactionImporterScreen(
                                 },
                             )
 
-                            OutlinedTextField(
+                            TextField(
                                 value = uiState.config.dateFormat,
                                 onValueChange = { onConfigUpdate(uiState.config.copy(dateFormat = it)) },
                                 label = { Text(stringResource(localesR.string.date_format)) },
                                 modifier = Modifier.fillMaxWidth(),
+                                colors = TextFieldDefaults.tonalColors(),
+                                shape = TextFieldDefaults.roundedShape,
                             )
-                            OutlinedTextField(
+                            TextField(
                                 value = uiState.config.columnSeparator,
                                 onValueChange = { onConfigUpdate(uiState.config.copy(columnSeparator = it)) },
                                 label = { Text(stringResource(localesR.string.column_separator)) },
                                 modifier = Modifier.fillMaxWidth(),
+                                colors = TextFieldDefaults.tonalColors(),
+                                shape = TextFieldDefaults.roundedShape,
                             )
 
                             HorizontalDivider()
@@ -295,7 +300,7 @@ private fun MappingField(
         onExpandedChange = { expanded = it },
         modifier = modifier,
     ) {
-        OutlinedTextField(
+        TextField(
             value = columns.getOrNull(selectedIndex) ?: "",
             onValueChange = {},
             readOnly = true,
@@ -304,13 +309,14 @@ private fun MappingField(
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            colors = TextFieldDefaults.tonalColors(),
+            shape = TextFieldDefaults.roundedShape,
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = MenuDefaults.standaloneGroupShape,
-            containerColor = MenuDefaults.groupStandardContainerColor,
+            containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             columns.forEachIndexed { index, column ->
                 DropdownMenuItem(
@@ -334,6 +340,7 @@ private fun MappingField(
                             contentDescription = null,
                         )
                     },
+                    colors = MenuDefaults.selectableItemVibrantColors(),
                 )
             }
         }

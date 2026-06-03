@@ -95,7 +95,7 @@ internal fun TransactionEditorScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionEditorScreen(
     transactionEditorState: TransactionEditorState,
