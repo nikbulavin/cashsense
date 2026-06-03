@@ -59,13 +59,14 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Csv
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ReceiptLong
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
@@ -288,9 +289,9 @@ private fun WalletToolbar(
             }
         },
         trailingContent = {
+            val importButtonLabel = stringResource(localesR.string.import_csv)
             val editButtonLabel = stringResource(localesR.string.edit)
             val deleteButtonLabel = stringResource(localesR.string.delete)
-            val importButtonLabel = stringResource(localesR.string.import_csv)
             AppBarRow(
                 maxItemCount = 1,
                 overflowIndicator = { menuState ->
@@ -307,30 +308,30 @@ private fun WalletToolbar(
                 },
             ) {
                 clickableItem(
-                    onClick = { onWalletEdit(wallet.id) },
-                    icon = {
-                        Icon(
-                            imageVector = CsIcons.Outlined.Edit,
-                            contentDescription = stringResource(localesR.string.edit),
-                        )
-                    },
-                    label = editButtonLabel,
-                )
-                clickableItem(
                     onClick = { onImportClick(wallet.id) },
                     icon = {
                         Icon(
-                            imageVector = CsIcons.Outlined.ReceiptLong,
+                            imageVector = CsIcons.Filled.Csv,
                             contentDescription = importButtonLabel,
                         )
                     },
                     label = importButtonLabel,
                 )
                 clickableItem(
+                    onClick = { onWalletEdit(wallet.id) },
+                    icon = {
+                        Icon(
+                            imageVector = CsIcons.Filled.Edit,
+                            contentDescription = editButtonLabel,
+                        )
+                    },
+                    label = editButtonLabel,
+                )
+                clickableItem(
                     onClick = { shouldShowDeletionDialog = true },
                     icon = {
                         Icon(
-                            imageVector = CsIcons.Outlined.Delete,
+                            imageVector = CsIcons.Filled.Delete,
                             contentDescription = deleteButtonLabel,
                         )
                     },
