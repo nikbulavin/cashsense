@@ -10,8 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -52,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -139,8 +138,7 @@ private fun TransactionEditorScreen(
                     actions = {
                         val analyticsHelper = LocalAnalyticsHelper.current
                         val hapticFeedback = LocalHapticFeedback.current
-                        Button(
-                            shapes = ButtonDefaults.shapes(),
+                        CsButton(
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 if (transactionEditorState.transactionId.isBlank()) {
@@ -152,9 +150,8 @@ private fun TransactionEditorScreen(
                                 onBackClick()
                             },
                             enabled = transactionEditorState.amount.isAmountValid(),
-                        ) {
-                            Text(stringResource(confirmButtonTextRes))
-                        }
+                            title = stringResource(confirmButtonTextRes),
+                        )
                     },
                 )
             },
