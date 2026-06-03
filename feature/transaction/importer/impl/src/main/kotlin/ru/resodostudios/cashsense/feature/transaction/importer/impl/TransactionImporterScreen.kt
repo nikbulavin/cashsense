@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -227,18 +228,25 @@ private fun TransactionImporterScreen(
                             items = transactionGroup.value,
                             key = { _, transaction -> transaction.id },
                         ) { index, transaction ->
+                            val selected = transaction.id in uiState.selectedTransactions
                             TransactionItem(
                                 transaction = transaction,
                                 currency = uiState.currency,
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                selected = uiState.selectedTransactions.contains(transaction.id),
-                                onClick = { onTransactionClick(transaction.id) },
+                                selected = selected,
+                                onClick = {},
                                 shapes = if (transactionGroup.value.size == 1) {
                                     ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
                                 } else {
                                     ListItemDefaults.segmentedShapes(
-                                        index,
-                                        transactionGroup.value.size
+                                        index = index,
+                                        count = transactionGroup.value.size,
+                                    )
+                                },
+                                trailingContent = {
+                                    Checkbox(
+                                        checked = selected,
+                                        onCheckedChange = { onTransactionClick(transaction.id) },
                                     )
                                 },
                             )

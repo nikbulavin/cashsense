@@ -55,6 +55,7 @@ fun TransactionItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
+    trailingContent: @Composable (() -> Unit)? = null,
 ) {
     val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
@@ -128,52 +129,54 @@ fun TransactionItem(
                     ),
                 )
             },
-            trailingContent = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.animateContentSize(intSizeSpatialSpec),
-                ) {
-                    AnimatedVisibility(
-                        visible = transaction.ignored,
-                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
-                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
+            trailingContent = if (trailingContent == null) {
+                {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.animateContentSize(intSizeSpatialSpec),
                     ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialShapes.PixelCircle.toShape(),
+                        AnimatedVisibility(
+                            visible = transaction.ignored,
+                            enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                            exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                         ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Block,
-                                contentDescription = stringResource(localesR.string.transaction_ignore),
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .size(20.dp),
-                                tint = MaterialTheme.colorScheme.onErrorContainer,
-                            )
+                            Surface(
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                shape = MaterialShapes.PixelCircle.toShape(),
+                            ) {
+                                Icon(
+                                    imageVector = CsIcons.Outlined.Block,
+                                    contentDescription = stringResource(localesR.string.transaction_ignore),
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .size(20.dp),
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                )
+                            }
                         }
-                    }
-                    AnimatedVisibility(
-                        visible = !transaction.completed,
-                        enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
-                        exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.tertiaryContainer,
-                            shape = MaterialShapes.Clover4Leaf.toShape(),
-                            modifier = Modifier.padding(start = 8.dp),
+                        AnimatedVisibility(
+                            visible = !transaction.completed,
+                            enter = fadeIn(effectsSpec) + scaleIn(floatSpatialSpec),
+                            exit = fadeOut(effectsSpec) + scaleOut(floatSpatialSpec),
                         ) {
-                            Icon(
-                                imageVector = CsIcons.Outlined.Pending,
-                                contentDescription = stringResource(localesR.string.pending),
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .size(20.dp),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                            )
+                            Surface(
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                                shape = MaterialShapes.Clover4Leaf.toShape(),
+                                modifier = Modifier.padding(start = 8.dp),
+                            ) {
+                                Icon(
+                                    imageVector = CsIcons.Outlined.Pending,
+                                    contentDescription = stringResource(localesR.string.pending),
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .size(20.dp),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                )
+                            }
                         }
                     }
                 }
-            },
+            } else trailingContent,
             leadingContent = {
                 Icon(
                     imageVector = categoryIcon,
