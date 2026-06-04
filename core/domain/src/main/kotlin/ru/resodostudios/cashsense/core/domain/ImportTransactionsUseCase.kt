@@ -41,14 +41,16 @@ class ImportTransactionsUseCase @Inject constructor(
             val rawAmount = columns.getOrNull(config.amountColumnIndex)
             val rawDate = columns.getOrNull(config.dateColumnIndex)
 
-            if ((rawAmount != null) && (rawDate != null)) {
+            if (!rawAmount.isNullOrBlank() && !rawDate.isNullOrBlank()) {
                 val description = columns.getOrNull(config.descriptionColumnIndex)
                 val rawCategory = columns.getOrNull(config.categoryColumnIndex)
 
-                val amount = BigDecimal(rawAmount.replace(",", "."))
-                val javaInstant = LocalDateTime.parse(rawDate, formatter)
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()
+                val amount = runCatching { BigDecimal(rawAmount.replace(",", ".")) }.getOrNull() ?: return@mapNotNull null
+                val javaInstant = runCatching {
+                    LocalDateTime.parse(rawDate, formatter)
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                }.getOrNull() ?: return@mapNotNull null
                 val timestamp = Instant.fromEpochMilliseconds(javaInstant.toEpochMilli())
 
                 val category = categories.find { it.title.equals(rawCategory, ignoreCase = true) }

@@ -8,6 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -31,6 +32,8 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 
     private val _uiState = MutableStateFlow(TransactionImporterUiState())
     val uiState = _uiState.asStateFlow()
+
+    private var parseJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -57,6 +60,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 fileName = fileName,
                 lines = lines,
                 columns = columns,
+                importFinished = false,
             )
         }
         parseTransactions()
@@ -76,6 +80,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
             it.copy(
                 config = config,
                 columns = columns,
+                importFinished = false,
             )
         }
         parseTransactions()
@@ -104,9 +109,10 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     private fun parseTransactions() {
+        parseJob?.cancel()
         val currentState = _uiState.value
         if (currentState.lines.isNotEmpty()) {
-            viewModelScope.launch {
+            parseJob = viewModelScope.launch {
                 importTransactionsUseCase(
                     walletId = key.walletId,
                     lines = currentState.lines,
@@ -116,7 +122,10 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                         _uiState.update { state ->
                             state.copy(
                                 parsedTransactions = parsedTransactions,
-                                selectedTransactions = parsedTransactions.asSequence().map { it.id }.toSet(),
+                                selectedTransactions = parsedTransactions
+                                    .asSequence()
+                                    .map { it.id }
+                                    .toSet(),
                             )
                         }
                     },
@@ -140,6 +149,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     fun importTransactions() {
+        if (_uiState.value.isLoading) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val transactionsToImport = _uiState.value.parsedTransactions.filter {
@@ -156,6 +166,8 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                         importedCount = importedCount,
                     )
                 }
+            }.onFailure {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
