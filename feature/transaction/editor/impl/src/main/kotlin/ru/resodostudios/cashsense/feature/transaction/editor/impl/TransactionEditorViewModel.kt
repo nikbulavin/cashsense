@@ -103,6 +103,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
 
     private fun initTransaction(transaction: Transaction) {
         viewModelScope.launch {
+            val categories = categoriesRepository.getCategories().first()
             _transactionEditorState.update {
                 it.copy(
                     transactionId = transaction.id,
@@ -117,7 +118,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
                     isTransfer = transaction.transferId != null,
                     categories = buildList {
                         add(null)
-                        addAll(categoriesRepository.getCategories().first())
+                        addAll(categories)
                     },
                 )
             }
