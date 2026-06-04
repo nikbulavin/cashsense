@@ -64,7 +64,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
@@ -93,7 +92,6 @@ internal fun TransactionEditorScreen(
         onDateUpdate = viewModel::updateDate,
         onDescriptionUpdate = viewModel::updateDescription,
         onIgnoredStateUpdate = viewModel::updateIgnoredState,
-        key = viewModel.key,
     )
 }
 
@@ -110,7 +108,6 @@ private fun TransactionEditorScreen(
     onDateUpdate: (Instant) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onIgnoredStateUpdate: (Boolean) -> Unit,
-    key: TransactionEditorNavKey,
 ) {
     TrackScreenViewEvent(screenName = "TransactionEditor")
     if (transactionEditorState.isLoading) {
@@ -152,12 +149,9 @@ private fun TransactionEditorScreen(
                                         itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
                                     )
                                 }
-                                if (key.transaction != null) {
+                                if (transactionEditorState.isFromImporter) {
                                     resultEventBus.sendResult(
-                                        transactionEditorState.asTransaction(
-                                            walletId = key.walletId,
-                                            category = transactionEditorState.category,
-                                        )
+                                        transactionEditorState.asTransaction()
                                     )
                                 } else {
                                     onTransactionSave()

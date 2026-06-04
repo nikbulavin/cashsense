@@ -37,7 +37,13 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     val transactionEditorState = _transactionEditorState.asStateFlow()
 
     init {
-        _transactionEditorState.update { it.copy(isLoading = true) }
+        _transactionEditorState.update {
+            it.copy(
+                isLoading = true,
+                walletId = key.walletId,
+                isFromImporter = key.transaction != null,
+            )
+        }
         val transactionId = key.transactionId
         val transaction = key.transaction
         if (transaction != null) {
@@ -53,7 +59,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
         appScope.launch {
             val state = _transactionEditorState.value
             transactionsRepository.upsertTransaction(
-                state.asTransaction(key.walletId, state.category)
+                state.asTransaction()
             )
         }
     }
@@ -189,10 +195,12 @@ internal data class TransactionEditorState(
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
     val isTransfer: Boolean = false,
+    val isFromImporter: Boolean = false,
+    val walletId: String = "",
     val categories: List<Category?> = emptyList(),
 )
 
-internal fun TransactionEditorState.asTransaction(walletId: String, category: Category?): Transaction {
+internal fun TransactionEditorState.asTransaction(): Transaction {
     return Transaction(
         id = transactionId.ifBlank { Uuid.random().toHexString() },
         walletOwnerId = walletId,

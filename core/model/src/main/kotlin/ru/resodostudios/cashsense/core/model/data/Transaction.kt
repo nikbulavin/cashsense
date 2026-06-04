@@ -16,7 +16,6 @@ data class Transaction(
     val timestamp: Instant,
     val completed: Boolean,
     val ignored: Boolean,
-    @Serializable(with = UuidSerializer::class)
     val transferId: Uuid?,
     @Serializable(with = CurrencySerializer::class)
     val currency: Currency,
