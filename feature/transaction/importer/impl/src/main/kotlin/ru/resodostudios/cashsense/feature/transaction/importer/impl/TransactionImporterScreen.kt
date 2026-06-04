@@ -69,16 +69,13 @@ import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatDate
-import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
-import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
-import ru.resodostudios.core.navigation.Navigator
 import java.time.format.FormatStyle
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun TransactionImporterScreen(
     onBackClick: () -> Unit,
-    navigator: Navigator,
+    onTransactionEdit: (Transaction) -> Unit,
     viewModel: TransactionImporterViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -92,14 +89,9 @@ internal fun TransactionImporterScreen(
         onBackClick = onBackClick,
         onFileSelected = viewModel::handleFileSelected,
         onConfigUpdate = viewModel::updateConfig,
-        onTransactionClick = viewModel::toggleTransactionSelection,
+        onTransactionEdit = onTransactionEdit,
+        onTransactionSelect = viewModel::toggleTransactionSelection,
         onImportClick = viewModel::importTransactions,
-        onTransactionEdit = {
-            navigator.navigateToTransactionEditor(
-                walletId = viewModel.key.walletId,
-                transaction = it,
-            )
-        },
     )
 }
 
@@ -110,9 +102,9 @@ private fun TransactionImporterScreen(
     onBackClick: () -> Unit,
     onFileSelected: (String, List<String>) -> Unit,
     onConfigUpdate: (CsvConfig) -> Unit,
-    onTransactionClick: (String) -> Unit,
-    onImportClick: () -> Unit,
     onTransactionEdit: (Transaction) -> Unit,
+    onTransactionSelect: (String) -> Unit,
+    onImportClick: () -> Unit,
 ) {
     TrackScreenViewEvent(screenName = "TransactionImporter")
 
@@ -263,7 +255,7 @@ private fun TransactionImporterScreen(
                                 trailingContent = {
                                     Checkbox(
                                         checked = selected,
-                                        onCheckedChange = { onTransactionClick(transaction.id) },
+                                        onCheckedChange = { onTransactionSelect(transaction.id) },
                                     )
                                 },
                             )

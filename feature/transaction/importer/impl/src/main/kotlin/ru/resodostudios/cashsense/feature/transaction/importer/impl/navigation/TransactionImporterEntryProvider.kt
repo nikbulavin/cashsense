@@ -12,6 +12,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
 import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
 import ru.resodostudios.cashsense.feature.transaction.importer.impl.TransactionImporterScreen
 import ru.resodostudios.cashsense.feature.transaction.importer.impl.TransactionImporterViewModel
@@ -37,7 +38,12 @@ fun EntryProviderScope<NavKey>.transactionImporterEntry(
     ) { key ->
         TransactionImporterScreen(
             onBackClick = navigator::goBack,
-            navigator = navigator,
+            onTransactionEdit = {
+                navigator.navigateToTransactionEditor(
+                    walletId = key.walletId,
+                    transaction = it,
+                )
+            },
             viewModel = hiltViewModel<TransactionImporterViewModel, TransactionImporterViewModel.Factory> {
                 it.create(key)
             },
