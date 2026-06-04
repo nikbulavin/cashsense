@@ -3,20 +3,21 @@ package ru.resodostudios.cashsense.feature.transaction.importer.impl
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
@@ -53,6 +53,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -134,13 +135,10 @@ private fun TransactionImporterScreen(
             LoadingState(Modifier.fillMaxSize())
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                contentPadding = innerPadding + PaddingValues(16.dp),
             ) {
                 item {
                     Column(
-                        modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         CsvPickerCard(
@@ -203,21 +201,19 @@ private fun TransactionImporterScreen(
                                 colors = TextFieldDefaults.tonalColors(),
                                 shape = TextFieldDefaults.roundedShape,
                             )
-
-                            HorizontalDivider()
-
-                            if (uiState.parsedTransactions.isNotEmpty()) {
-                                Text(
-                                    text = stringResource(localesR.string.preview),
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                            }
                         }
                     }
                 }
 
                 if ((uiState.parsedTransactions.isNotEmpty()) && (uiState.currency != null)) {
                     val groupedTransactions = uiState.parsedTransactions.groupByDate()
+                    item {
+                        Text(
+                            text = stringResource(localesR.string.preview),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 24.dp),
+                        )
+                    }
                     groupedTransactions.forEach { transactionGroup ->
                         item {
                             CsTag(
@@ -226,7 +222,7 @@ private fun TransactionImporterScreen(
                                     FormatStyle.MEDIUM,
                                 ),
                                 color = MaterialTheme.colorScheme.tertiaryContainer,
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.padding(vertical = 16.dp),
                             )
                         }
                         itemsIndexed(
@@ -237,7 +233,6 @@ private fun TransactionImporterScreen(
                             TransactionItem(
                                 transaction = transaction,
                                 currency = uiState.currency,
-                                modifier = Modifier.padding(horizontal = 16.dp),
                                 selected = selected,
                                 onClick = {},
                                 shapes = if (transactionGroup.value.size == 1) {
@@ -373,7 +368,7 @@ private fun CsvPickerCard(
         }
     }
     OutlinedCard(
-        modifier = modifier,
+        modifier = modifier.animateContentSize(),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column(
@@ -387,16 +382,16 @@ private fun CsvPickerCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,
             )
-            if (fileName.isNotEmpty()) {
+            AnimatedVisibility(fileName.isNotEmpty()) {
                 Text(
                     text = fileName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLargeEmphasized,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Button(
+            CsButton(
                 onClick = {
                     filePickerLauncher.launch(
                         arrayOf(
@@ -406,20 +401,9 @@ private fun CsvPickerCard(
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Icon(
-                    imageVector = CsIcons.Filled.DocumentSearch,
-                    contentDescription = null,
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                )
-                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                Text(
-                    text = stringResource(localesR.string.select_file),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+                icon = CsIcons.Filled.DocumentSearch,
+                title = stringResource(localesR.string.select_file),
+            )
         }
     }
 }
