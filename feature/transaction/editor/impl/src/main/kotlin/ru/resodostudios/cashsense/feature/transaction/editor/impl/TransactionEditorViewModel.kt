@@ -30,7 +30,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
-    @Assisted val key: TransactionEditorNavKey,
+    @Assisted private val key: TransactionEditorNavKey,
 ) : ViewModel() {
 
     private val _transactionEditorState = MutableStateFlow(TransactionEditorState())
@@ -46,21 +46,16 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
         }
         val transactionId = key.transactionId
         val transaction = key.transaction
-        if (transaction != null) {
-            initTransaction(transaction)
-        } else if (transactionId == null) {
-            loadCategories()
-        } else {
-            loadTransaction(transactionId)
+        when {
+            transaction != null -> initTransaction(transaction)
+            transactionId == null -> loadCategories()
+            else -> loadTransaction(transactionId)
         }
     }
 
     fun saveTransaction() {
         appScope.launch {
-            val state = _transactionEditorState.value
-            transactionsRepository.upsertTransaction(
-                state.asTransaction()
-            )
+            transactionsRepository.upsertTransaction(_transactionEditorState.value.asTransaction())
         }
     }
 
