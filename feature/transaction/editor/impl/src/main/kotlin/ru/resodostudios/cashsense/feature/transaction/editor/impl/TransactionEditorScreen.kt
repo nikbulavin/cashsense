@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.LocalResultEventBus
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
@@ -63,6 +64,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
@@ -91,6 +93,7 @@ internal fun TransactionEditorScreen(
         onDateUpdate = viewModel::updateDate,
         onDescriptionUpdate = viewModel::updateDescription,
         onIgnoredStateUpdate = viewModel::updateIgnoredState,
+        key = viewModel.key,
     )
 }
 
@@ -107,6 +110,7 @@ private fun TransactionEditorScreen(
     onDateUpdate: (Instant) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onIgnoredStateUpdate: (Boolean) -> Unit,
+    key: TransactionEditorNavKey,
 ) {
     TrackScreenViewEvent(screenName = "TransactionEditor")
     if (transactionEditorState.isLoading) {
@@ -138,6 +142,8 @@ private fun TransactionEditorScreen(
                     actions = {
                         val analyticsHelper = LocalAnalyticsHelper.current
                         val hapticFeedback = LocalHapticFeedback.current
+                        val resultEventBus = LocalResultEventBus.current
+
                         CsButton(
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
@@ -146,7 +152,16 @@ private fun TransactionEditorScreen(
                                         itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
                                     )
                                 }
-                                onTransactionSave()
+                                if (key.transaction != null) {
+                                    resultEventBus.sendResult(
+                                        transactionEditorState.asTransaction(
+                                            walletId = key.walletId,
+                                            category = transactionEditorState.category,
+                                        )
+                                    )
+                                } else {
+                                    onTransactionSave()
+                                }
                                 onBackClick()
                             },
                             enabled = transactionEditorState.amount.isAmountValid(),

@@ -37,6 +37,7 @@ fun EntryProviderScope<NavKey>.transactionImporterEntry(
     ) { key ->
         TransactionImporterScreen(
             onBackClick = navigator::goBack,
+            navigator = navigator,
             viewModel = hiltViewModel<TransactionImporterViewModel, TransactionImporterViewModel.Factory> {
                 it.create(key)
             },

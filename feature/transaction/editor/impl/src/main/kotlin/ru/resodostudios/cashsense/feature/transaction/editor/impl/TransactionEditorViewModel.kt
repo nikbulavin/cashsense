@@ -39,7 +39,10 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     init {
         _transactionEditorState.update { it.copy(isLoading = true) }
         val transactionId = key.transactionId
-        if (transactionId == null) {
+        val transaction = key.transaction
+        if (transaction != null) {
+            initTransaction(transaction)
+        } else if (transactionId == null) {
             loadCategories()
         } else {
             loadTransaction(transactionId)
@@ -94,6 +97,29 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     fun updateIgnoredState(ignored: Boolean) {
         _transactionEditorState.update {
             it.copy(ignored = ignored)
+        }
+    }
+
+    private fun initTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            _transactionEditorState.update {
+                it.copy(
+                    transactionId = transaction.id,
+                    description = transaction.description ?: "",
+                    amount = transaction.amount.abs().toString(),
+                    transactionType = if (transaction.amount.signum() < 0) TransactionType.EXPENSE else TransactionType.INCOME,
+                    date = transaction.timestamp,
+                    category = transaction.category,
+                    completed = transaction.completed,
+                    ignored = transaction.ignored,
+                    isLoading = false,
+                    isTransfer = transaction.transferId != null,
+                    categories = buildList {
+                        add(null)
+                        addAll(categoriesRepository.getCategories().first())
+                    },
+                )
+            }
         }
     }
 
@@ -166,7 +192,7 @@ internal data class TransactionEditorState(
     val categories: List<Category?> = emptyList(),
 )
 
-private fun TransactionEditorState.asTransaction(walletId: String, category: Category?): Transaction {
+internal fun TransactionEditorState.asTransaction(walletId: String, category: Category?): Transaction {
     return Transaction(
         id = transactionId.ifBlank { Uuid.random().toHexString() },
         walletOwnerId = walletId,

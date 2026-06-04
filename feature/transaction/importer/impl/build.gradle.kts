@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.transaction.importer.api)
+    implementation(projects.feature.transaction.editor.api)
 
     implementation(projects.core.data)
     implementation(projects.core.domain)

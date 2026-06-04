@@ -26,7 +26,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
     private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
-    @Assisted private val key: TransactionImporterNavKey,
+    @Assisted val key: TransactionImporterNavKey,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TransactionImporterUiState())
@@ -90,6 +90,16 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 selectedTransactions.add(id)
             }
             it.copy(selectedTransactions = selectedTransactions)
+        }
+    }
+
+    fun updateParsedTransaction(transaction: Transaction) {
+        _uiState.update { state ->
+            state.copy(
+                parsedTransactions = state.parsedTransactions.map {
+                    if (it.id == transaction.id) transaction else it
+                }
+            )
         }
     }
 

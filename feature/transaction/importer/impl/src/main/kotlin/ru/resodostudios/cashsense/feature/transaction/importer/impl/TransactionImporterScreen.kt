@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.ResultEffect
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
@@ -62,20 +63,29 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.model.data.CsvConfig
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatDate
+import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
+import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
+import ru.resodostudios.core.navigation.Navigator
 import java.time.format.FormatStyle
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun TransactionImporterScreen(
     onBackClick: () -> Unit,
+    navigator: Navigator,
     viewModel: TransactionImporterViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    ResultEffect<Transaction> {
+        viewModel.updateParsedTransaction(it)
+    }
 
     TransactionImporterScreen(
         uiState = uiState,
@@ -84,6 +94,12 @@ internal fun TransactionImporterScreen(
         onConfigUpdate = viewModel::updateConfig,
         onTransactionClick = viewModel::toggleTransactionSelection,
         onImportClick = viewModel::importTransactions,
+        onTransactionEdit = {
+            navigator.navigateToTransactionEditor(
+                walletId = viewModel.key.walletId,
+                transaction = it,
+            )
+        },
     )
 }
 
@@ -96,6 +112,7 @@ private fun TransactionImporterScreen(
     onConfigUpdate: (CsvConfig) -> Unit,
     onTransactionClick: (String) -> Unit,
     onImportClick: () -> Unit,
+    onTransactionEdit: (Transaction) -> Unit,
 ) {
     TrackScreenViewEvent(screenName = "TransactionImporter")
 
@@ -234,7 +251,7 @@ private fun TransactionImporterScreen(
                                 transaction = transaction,
                                 currency = uiState.currency,
                                 selected = selected,
-                                onClick = {},
+                                onClick = { onTransactionEdit(transaction) },
                                 shapes = if (transactionGroup.value.size == 1) {
                                     ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
                                 } else {

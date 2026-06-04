@@ -8,6 +8,7 @@ android {
 
 dependencies {
     api(projects.core.navigation)
+    api(projects.core.model)
 
     implementation(projects.feature.wallet.detail.api)
 }
