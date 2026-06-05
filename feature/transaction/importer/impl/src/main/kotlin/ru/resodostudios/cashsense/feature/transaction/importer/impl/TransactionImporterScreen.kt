@@ -78,14 +78,14 @@ internal fun TransactionImporterScreen(
     onTransactionEdit: (Transaction) -> Unit,
     viewModel: TransactionImporterViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val transactionImporterUiState by viewModel.transactionImporterUiState.collectAsStateWithLifecycle()
 
     ResultEffect<Transaction> {
         viewModel.updateParsedTransaction(it)
     }
 
     TransactionImporterScreen(
-        uiState = uiState,
+        transactionImporterUiState = transactionImporterUiState,
         onBackClick = onBackClick,
         onFileSelected = viewModel::handleFileSelected,
         onConfigUpdate = viewModel::updateConfig,
@@ -98,7 +98,7 @@ internal fun TransactionImporterScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TransactionImporterScreen(
-    uiState: TransactionImporterUiState,
+    transactionImporterUiState: TransactionImporterUiState,
     onBackClick: () -> Unit,
     onFileSelected: (String, List<String>) -> Unit,
     onConfigUpdate: (CsvConfig) -> Unit,
@@ -130,7 +130,7 @@ private fun TransactionImporterScreen(
                     CsFilledIconButton(
                         tooltipPosition = TooltipAnchorPosition.Left,
                         onClick = onImportClick,
-                        enabled = uiState.selectedTransactions.isNotEmpty(),
+                        enabled = transactionImporterUiState.selectedTransactions.isNotEmpty(),
                         contentDescription = stringResource(localesR.string.import_title),
                         icon = CsIcons.Outlined.Check,
                         modifier = Modifier
@@ -140,7 +140,7 @@ private fun TransactionImporterScreen(
             )
         },
     ) { innerPadding ->
-        if (uiState.isLoading) {
+        if (transactionImporterUiState.isLoading) {
             LoadingState(Modifier.fillMaxSize())
         } else {
             LazyColumn(
@@ -151,57 +151,85 @@ private fun TransactionImporterScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         CsvPickerCard(
-                            fileName = uiState.fileName,
+                            fileName = transactionImporterUiState.fileName,
                             onFileSelected = onFileSelected,
                             modifier = Modifier.fillMaxWidth(),
                         )
 
-                        if (uiState.lines.isNotEmpty()) {
+                        if (transactionImporterUiState.lines.isNotEmpty()) {
                             Text(
                                 text = stringResource(localesR.string.column_mapping),
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             MappingField(
                                 label = stringResource(localesR.string.date),
-                                selectedIndex = uiState.config.dateColumnIndex,
-                                columns = uiState.columns,
+                                selectedIndex = transactionImporterUiState.config.dateColumnIndex,
+                                columns = transactionImporterUiState.columns,
                                 onColumnSelected = {
-                                    onConfigUpdate(uiState.config.copy(dateColumnIndex = it))
+                                    onConfigUpdate(
+                                        transactionImporterUiState.config.copy(
+                                            dateColumnIndex = it,
+                                        )
+                                    )
                                 },
                             )
                             MappingField(
                                 label = stringResource(localesR.string.amount),
-                                selectedIndex = uiState.config.amountColumnIndex,
-                                columns = uiState.columns,
+                                selectedIndex = transactionImporterUiState.config.amountColumnIndex,
+                                columns = transactionImporterUiState.columns,
                                 onColumnSelected = {
-                                    onConfigUpdate(uiState.config.copy(amountColumnIndex = it))
+                                    onConfigUpdate(
+                                        transactionImporterUiState.config.copy(
+                                            amountColumnIndex = it,
+                                        )
+                                    )
                                 },
                             )
                             MappingField(
                                 label = stringResource(localesR.string.description),
-                                selectedIndex = uiState.config.descriptionColumnIndex,
-                                columns = uiState.columns,
+                                selectedIndex = transactionImporterUiState.config.descriptionColumnIndex,
+                                columns = transactionImporterUiState.columns,
                                 onColumnSelected = {
-                                    onConfigUpdate(uiState.config.copy(descriptionColumnIndex = it))
+                                    onConfigUpdate(
+                                        transactionImporterUiState.config.copy(
+                                            descriptionColumnIndex = it,
+                                        )
+                                    )
                                 },
                             )
                             MappingField(
                                 label = stringResource(localesR.string.category_title),
-                                selectedIndex = uiState.config.categoryColumnIndex,
-                                columns = uiState.columns,
+                                selectedIndex = transactionImporterUiState.config.categoryColumnIndex,
+                                columns = transactionImporterUiState.columns,
                                 onColumnSelected = {
-                                    onConfigUpdate(uiState.config.copy(categoryColumnIndex = it))
+                                    onConfigUpdate(
+                                        transactionImporterUiState.config.copy(
+                                            categoryColumnIndex = it,
+                                        )
+                                    )
                                 },
                             )
 
                             DateFormatField(
-                                value = uiState.config.dateFormat,
-                                onValueChange = { onConfigUpdate(uiState.config.copy(dateFormat = it)) },
+                                value = transactionImporterUiState.config.dateFormat,
+                                onValueChange = {
+                                    onConfigUpdate(
+                                        transactionImporterUiState.config.copy(
+                                            dateFormat = it,
+                                        )
+                                    )
+                                },
                                 modifier = Modifier.fillMaxWidth(),
                             )
                             TextField(
-                                value = uiState.config.columnSeparator,
-                                onValueChange = { onConfigUpdate(uiState.config.copy(columnSeparator = it)) },
+                                value = transactionImporterUiState.config.columnSeparator,
+                                onValueChange = {
+                                    onConfigUpdate(
+                                        transactionImporterUiState.config.copy(
+                                            columnSeparator = it,
+                                        )
+                                    )
+                                },
                                 label = { Text(stringResource(localesR.string.column_separator)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = TextFieldDefaults.tonalColors(),
@@ -211,8 +239,9 @@ private fun TransactionImporterScreen(
                     }
                 }
 
-                if ((uiState.parsedTransactions.isNotEmpty()) && (uiState.currency != null)) {
-                    val groupedTransactions = uiState.parsedTransactions.groupByDate()
+                if (transactionImporterUiState.parsedTransactions.isNotEmpty() &&
+                    transactionImporterUiState.currency != null
+                ) {
                     item {
                         Text(
                             text = stringResource(localesR.string.preview),
@@ -220,54 +249,57 @@ private fun TransactionImporterScreen(
                             modifier = Modifier.padding(top = 24.dp),
                         )
                     }
-                    groupedTransactions.forEach { transactionGroup ->
-                        item {
-                            CsTag(
-                                text = transactionGroup.key.formatDate(
-                                    DateFormatType.DATE,
-                                    FormatStyle.MEDIUM,
-                                ),
-                                color = MaterialTheme.colorScheme.tertiaryContainer,
-                                textColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                modifier = Modifier.padding(vertical = 16.dp),
-                            )
-                        }
-                        itemsIndexed(
-                            items = transactionGroup.value,
-                            key = { _, transaction -> transaction.id },
-                        ) { index, transaction ->
-                            val selected = transaction.id in uiState.selectedTransactions
-                            TransactionItem(
-                                transaction = transaction,
-                                currency = uiState.currency,
-                                selected = selected,
-                                onClick = { onTransactionEdit(transaction) },
-                                shapes = if (transactionGroup.value.size == 1) {
-                                    ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
-                                } else {
-                                    ListItemDefaults.segmentedShapes(
-                                        index = index,
-                                        count = transactionGroup.value.size,
-                                    )
-                                },
-                                trailingContent = {
-                                    Checkbox(
-                                        checked = selected,
-                                        onCheckedChange = { onTransactionSelect(transaction.id) },
-                                    )
-                                },
-                            )
-                            if (index != transactionGroup.value.lastIndex) {
-                                Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
+                    transactionImporterUiState.parsedTransactions
+                        .groupByDate()
+                        .forEach { transactionGroup ->
+                            item {
+                                CsTag(
+                                    text = transactionGroup.key.formatDate(
+                                        DateFormatType.DATE,
+                                        FormatStyle.MEDIUM,
+                                    ),
+                                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                                    textColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    modifier = Modifier.padding(vertical = 16.dp),
+                                )
+                            }
+                            itemsIndexed(
+                                items = transactionGroup.value,
+                                key = { _, transaction -> transaction.id },
+                            ) { index, transaction ->
+                                val selected =
+                                    transaction.id in transactionImporterUiState.selectedTransactions
+                                TransactionItem(
+                                    transaction = transaction,
+                                    currency = transactionImporterUiState.currency,
+                                    selected = selected,
+                                    onClick = { onTransactionEdit(transaction) },
+                                    shapes = if (transactionGroup.value.size == 1) {
+                                        ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
+                                    } else {
+                                        ListItemDefaults.segmentedShapes(
+                                            index = index,
+                                            count = transactionGroup.value.size,
+                                        )
+                                    },
+                                    trailingContent = {
+                                        Checkbox(
+                                            checked = selected,
+                                            onCheckedChange = { onTransactionSelect(transaction.id) },
+                                        )
+                                    },
+                                )
+                                if (index != transactionGroup.value.lastIndex) {
+                                    Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
+                                }
                             }
                         }
-                    }
                 }
             }
         }
     }
 
-    if (uiState.importFinished) {
+    if (transactionImporterUiState.importFinished) {
         CsAlertDialog(
             titleRes = localesR.string.import_finished,
             confirmButtonTextRes = localesR.string.ok,
@@ -279,7 +311,7 @@ private fun TransactionImporterScreen(
             Text(
                 stringResource(
                     localesR.string.imported_transactions_count,
-                    uiState.importedCount,
+                    transactionImporterUiState.importedCount,
                 ),
             )
         }

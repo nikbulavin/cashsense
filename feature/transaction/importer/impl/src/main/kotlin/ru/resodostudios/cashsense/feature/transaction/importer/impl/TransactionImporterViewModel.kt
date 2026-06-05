@@ -27,18 +27,18 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
     private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
-    @Assisted val key: TransactionImporterNavKey,
+    @Assisted private val key: TransactionImporterNavKey,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TransactionImporterUiState())
-    val uiState = _uiState.asStateFlow()
+    private val _transactionImporterUiState = MutableStateFlow(TransactionImporterUiState())
+    val transactionImporterUiState = _transactionImporterUiState.asStateFlow()
 
     private var parseJob: Job? = null
 
     init {
         viewModelScope.launch {
             val wallet = walletsRepository.getExtendedWallet(key.walletId).first()
-            _uiState.update { it.copy(currency = wallet.wallet.currency) }
+            _transactionImporterUiState.update { it.copy(currency = wallet.wallet.currency) }
         }
     }
 
@@ -46,7 +46,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
         fileName: String,
         lines: List<String>,
     ) {
-        _uiState.update {
+        _transactionImporterUiState.update {
             val columns = if (lines.isNotEmpty() && it.config.columnSeparator.isNotEmpty()) {
                 runCatching {
                     csvReader {
@@ -67,7 +67,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     fun updateConfig(config: CsvConfig) {
-        _uiState.update {
+        _transactionImporterUiState.update {
             val columns = if (it.lines.isNotEmpty() && config.columnSeparator.isNotEmpty()) {
                 runCatching {
                     csvReader {
@@ -87,7 +87,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     fun toggleTransactionSelection(id: String) {
-        _uiState.update {
+        _transactionImporterUiState.update {
             val selectedTransactions = it.selectedTransactions.toMutableSet()
             if (selectedTransactions.contains(id)) {
                 selectedTransactions.remove(id)
@@ -99,7 +99,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     fun updateParsedTransaction(transaction: Transaction) {
-        _uiState.update { state ->
+        _transactionImporterUiState.update { state ->
             state.copy(
                 parsedTransactions = state.parsedTransactions.map {
                     if (it.id == transaction.id) transaction else it
@@ -110,7 +110,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 
     private fun parseTransactions() {
         parseJob?.cancel()
-        val currentState = _uiState.value
+        val currentState = _transactionImporterUiState.value
         if (currentState.lines.isNotEmpty()) {
             parseJob = viewModelScope.launch {
                 importTransactionsUseCase(
@@ -119,7 +119,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                     config = currentState.config,
                 ).fold(
                     onSuccess = { parsedTransactions ->
-                        _uiState.update { state ->
+                        _transactionImporterUiState.update { state ->
                             state.copy(
                                 parsedTransactions = parsedTransactions,
                                 selectedTransactions = parsedTransactions
@@ -130,7 +130,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                         }
                     },
                 ) {
-                    _uiState.update { state ->
+                    _transactionImporterUiState.update { state ->
                         state.copy(
                             parsedTransactions = emptyList(),
                             selectedTransactions = emptySet(),
@@ -139,7 +139,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 }
             }
         } else {
-            _uiState.update { state ->
+            _transactionImporterUiState.update { state ->
                 state.copy(
                     parsedTransactions = emptyList(),
                     selectedTransactions = emptySet(),
@@ -149,17 +149,17 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     fun importTransactions() {
-        if (_uiState.value.isLoading) return
+        if (_transactionImporterUiState.value.isLoading) return
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val transactionsToImport = _uiState.value.parsedTransactions.filter {
-                _uiState.value.selectedTransactions.contains(it.id)
+            _transactionImporterUiState.update { it.copy(isLoading = true) }
+            val transactionsToImport = _transactionImporterUiState.value.parsedTransactions.filter {
+                _transactionImporterUiState.value.selectedTransactions.contains(it.id)
             }
             runCatching {
                 transactionsToImport.forEach { transactionsRepository.upsertTransaction(it) }
                 transactionsToImport.size
             }.onSuccess { importedCount ->
-                _uiState.update {
+                _transactionImporterUiState.update {
                     it.copy(
                         isLoading = false,
                         importFinished = true,
@@ -167,7 +167,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                     )
                 }
             }.onFailure {
-                _uiState.update { it.copy(isLoading = false) }
+                _transactionImporterUiState.update { it.copy(isLoading = false) }
             }
         }
     }
