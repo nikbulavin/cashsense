@@ -194,13 +194,10 @@ private fun TransactionImporterScreen(
                                 },
                             )
 
-                            TextField(
+                            DateFormatField(
                                 value = uiState.config.dateFormat,
                                 onValueChange = { onConfigUpdate(uiState.config.copy(dateFormat = it)) },
-                                label = { Text(stringResource(localesR.string.date_format)) },
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.tonalColors(),
-                                shape = TextFieldDefaults.roundedShape,
                             )
                             TextField(
                                 value = uiState.config.columnSeparator,
@@ -285,6 +282,66 @@ private fun TransactionImporterScreen(
                     uiState.importedCount,
                 ),
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateFormatField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier,
+    ) {
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+            label = { Text(stringResource(localesR.string.date_format)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+            colors = TextFieldDefaults.tonalColors(),
+            shape = TextFieldDefaults.roundedShape,
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            shape = MenuDefaults.standaloneGroupShape,
+            containerColor = MenuDefaults.groupVibrantContainerColor,
+        ) {
+            COMMON_DATE_TIME_PATTERNS.forEachIndexed { index, pattern ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = pattern,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    onClick = {
+                        onValueChange(pattern)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    shapes = MenuDefaults.itemShape(index, COMMON_DATE_TIME_PATTERNS.size),
+                    selected = pattern == value,
+                    selectedLeadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Check,
+                            contentDescription = null,
+                        )
+                    },
+                    colors = MenuDefaults.selectableItemVibrantColors(),
+                )
+            }
         }
     }
 }
@@ -417,3 +474,11 @@ private fun CsvPickerCard(
         }
     }
 }
+
+private val COMMON_DATE_TIME_PATTERNS = listOf(
+    "dd.MM.yyyy HH:mm:ss",
+    "yyyy-MM-dd HH:mm:ss",
+    "dd/MM/yyyy HH:mm:ss",
+    "yyyy/MM/dd HH:mm:ss",
+    "dd-MM-yyyy HH:mm:ss",
+)
