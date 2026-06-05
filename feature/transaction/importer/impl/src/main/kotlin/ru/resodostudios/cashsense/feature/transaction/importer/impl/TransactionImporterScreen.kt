@@ -231,6 +231,7 @@ private fun TransactionImporterScreen(
                                     FormatStyle.MEDIUM,
                                 ),
                                 color = MaterialTheme.colorScheme.tertiaryContainer,
+                                textColor = MaterialTheme.colorScheme.onTertiaryContainer,
                                 modifier = Modifier.padding(vertical = 16.dp),
                             )
                         }
