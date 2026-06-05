@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.result.ResultEffect
-import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
@@ -129,7 +128,10 @@ private fun TransactionImporterScreen(
                 actions = {
                     CsFilledIconButton(
                         tooltipPosition = TooltipAnchorPosition.Left,
-                        onClick = onImportClick,
+                        onClick = {
+                            onImportClick()
+                            onBackClick()
+                        },
                         enabled = transactionImporterUiState.selectedTransactions.isNotEmpty(),
                         contentDescription = stringResource(localesR.string.import_title),
                         icon = CsIcons.Outlined.Check,
@@ -296,24 +298,6 @@ private fun TransactionImporterScreen(
                         }
                 }
             }
-        }
-    }
-
-    if (transactionImporterUiState.importFinished) {
-        CsAlertDialog(
-            titleRes = localesR.string.import_finished,
-            confirmButtonTextRes = localesR.string.ok,
-            dismissButtonTextRes = localesR.string.cancel,
-            icon = CsIcons.Outlined.Check,
-            onConfirm = onBackClick,
-            onDismiss = onBackClick,
-        ) {
-            Text(
-                stringResource(
-                    localesR.string.imported_transactions_count,
-                    transactionImporterUiState.importedCount,
-                ),
-            )
         }
     }
 }

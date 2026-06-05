@@ -169,6 +169,8 @@ fun CsApp(
                         .then(
                             if (isFabVisible) {
                                 Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
+                            } else if (appState.navigationState.currentKey is WalletNavKey) {
+                                Modifier.padding(bottom = 96.dp)
                             } else {
                                 Modifier
                             },

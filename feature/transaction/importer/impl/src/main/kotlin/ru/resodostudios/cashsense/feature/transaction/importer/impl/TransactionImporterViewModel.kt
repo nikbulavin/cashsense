@@ -8,12 +8,14 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
@@ -28,6 +30,7 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
     @Assisted private val key: TransactionImporterNavKey,
+    @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
     private val _transactionImporterUiState = MutableStateFlow(TransactionImporterUiState())
@@ -60,7 +63,6 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 fileName = fileName,
                 lines = lines,
                 columns = columns,
-                importFinished = false,
             )
         }
         parseTransactions()
@@ -80,7 +82,6 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
             it.copy(
                 config = config,
                 columns = columns,
-                importFinished = false,
             )
         }
         parseTransactions()
@@ -149,26 +150,10 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     }
 
     fun importTransactions() {
-        if (_transactionImporterUiState.value.isLoading) return
-        viewModelScope.launch {
-            _transactionImporterUiState.update { it.copy(isLoading = true) }
-            val transactionsToImport = _transactionImporterUiState.value.parsedTransactions.filter {
-                _transactionImporterUiState.value.selectedTransactions.contains(it.id)
-            }
-            runCatching {
-                transactionsToImport.forEach { transactionsRepository.upsertTransaction(it) }
-                transactionsToImport.size
-            }.onSuccess { importedCount ->
-                _transactionImporterUiState.update {
-                    it.copy(
-                        isLoading = false,
-                        importFinished = true,
-                        importedCount = importedCount,
-                    )
-                }
-            }.onFailure {
-                _transactionImporterUiState.update { it.copy(isLoading = false) }
-            }
+        appScope.launch {
+            _transactionImporterUiState.value.parsedTransactions
+                .filter { it.id in _transactionImporterUiState.value.selectedTransactions }
+                .forEach { transactionsRepository.upsertTransaction(it) }
         }
     }
 
@@ -187,6 +172,4 @@ internal data class TransactionImporterUiState(
     val selectedTransactions: Set<String> = emptySet(),
     val currency: Currency? = null,
     val isLoading: Boolean = false,
-    val importFinished: Boolean = false,
-    val importedCount: Int = 0,
 )
