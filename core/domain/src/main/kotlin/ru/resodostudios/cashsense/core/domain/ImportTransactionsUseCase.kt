@@ -18,6 +18,7 @@ import ru.resodostudios.cashsense.core.model.data.CsvConfig
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.math.BigDecimal
 import javax.inject.Inject
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class ImportTransactionsUseCase @Inject constructor(
@@ -33,7 +34,15 @@ class ImportTransactionsUseCase @Inject constructor(
     ): Result<List<Transaction>> = withContext(defaultDispatcher) {
         runCatching {
             val extendedWallet = walletsRepository.getExtendedWallet(walletId).first()
-            val existingTransactions = extendedWallet.transactions
+            val existingTransactionKeys = extendedWallet.transactions
+                .map {
+                    TransactionKey(
+                        timestamp = it.timestamp,
+                        amount = it.amount.stripTrailingZeros(),
+                        description = it.description,
+                    )
+                }
+                .toSet()
             val categories = categoriesRepository.getCategories().first()
             val formatter = LocalDateTime.Format { byUnicodePattern(config.dateFormat) }
 
@@ -44,45 +53,55 @@ class ImportTransactionsUseCase @Inject constructor(
             val allRows = reader.readAll(lines.joinToString("\n"))
             val rowsToImport = if (config.ignoreFirstLine) allRows.drop(1) else allRows
 
-            rowsToImport.asSequence().mapNotNull { columns ->
-                val rawAmount = columns.getOrNull(config.amountColumnIndex)
-                val rawDate = columns.getOrNull(config.dateColumnIndex)
+            rowsToImport
+                .asSequence()
+                .mapNotNull { columns ->
+                    val rawAmount = columns.getOrNull(config.amountColumnIndex)
+                    val rawDate = columns.getOrNull(config.dateColumnIndex)
 
-                if (!rawAmount.isNullOrBlank() && !rawDate.isNullOrBlank()) {
-                    val description = columns.getOrNull(config.descriptionColumnIndex)
-                    val rawCategory = columns.getOrNull(config.categoryColumnIndex)
+                    if (!rawAmount.isNullOrBlank() && !rawDate.isNullOrBlank()) {
+                        val description = columns.getOrNull(config.descriptionColumnIndex)
+                        val rawCategory = columns.getOrNull(config.categoryColumnIndex)
 
-                    val amount = runCatching { BigDecimal(rawAmount.replace(",", ".")) }.getOrNull()
-                        ?: return@mapNotNull null
-                    val timestamp = runCatching {
-                        LocalDateTime.parse(rawDate, formatter)
-                            .toInstant(TimeZone.currentSystemDefault())
-                    }.getOrNull() ?: return@mapNotNull null
+                        val amount = runCatching { BigDecimal(rawAmount.replace(",", ".")) }.getOrNull()
+                            ?: return@mapNotNull null
+                        val timestamp = runCatching {
+                            LocalDateTime.parse(rawDate, formatter)
+                                .toInstant(TimeZone.currentSystemDefault())
+                        }.getOrNull() ?: return@mapNotNull null
 
-                    Transaction(
-                        id = Uuid.random().toHexString(),
-                        walletOwnerId = walletId,
-                        description = description,
-                        amount = amount,
-                        timestamp = timestamp,
-                        completed = true,
-                        ignored = false,
-                        transferId = null,
-                        currency = extendedWallet.wallet.currency,
-                        category = categories.find {
-                            it.title.equals(rawCategory, ignoreCase = true)
-                        },
-                    )
-                } else {
-                    null
+                        Transaction(
+                            id = Uuid.random().toHexString(),
+                            walletOwnerId = walletId,
+                            description = description,
+                            amount = amount,
+                            timestamp = timestamp,
+                            completed = true,
+                            ignored = false,
+                            transferId = null,
+                            currency = extendedWallet.wallet.currency,
+                            category = categories.find {
+                                it.title.equals(rawCategory, ignoreCase = true)
+                            },
+                        )
+                    } else {
+                        null
+                    }
                 }
-            }.filter { newTransaction ->
-                existingTransactions.none { existing ->
-                    (existing.timestamp == newTransaction.timestamp) &&
-                            (existing.amount.compareTo(newTransaction.amount) == 0) &&
-                            (existing.description == newTransaction.description)
+                .filter {
+                    TransactionKey(
+                        timestamp = it.timestamp,
+                        amount = it.amount.stripTrailingZeros(),
+                        description = it.description,
+                    ) !in existingTransactionKeys
                 }
-            }.toList()
+                .toList()
         }
     }
 }
+
+private data class TransactionKey(
+    val timestamp: Instant,
+    val amount: BigDecimal,
+    val description: String?,
+)
