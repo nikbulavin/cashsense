@@ -119,4 +119,12 @@
   <string name="permanently_delete_subscription">이 구독은 기기에서 영구적으로 삭제됩니다</string>
   <string name="search">검색</string>
   <string name="search_no_results">검색 결과가 없습니다. 철자를 확인하거나 다른 검색어를 입력해 주세요.</string>
+  <string name="import_csv">Import from CSV</string>
+  <string name="column_mapping">Column mapping</string>
+  <string name="date_format">Date format</string>
+  <string name="column_separator">Column separator</string>
+  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
+  <string name="select_file">Select file</string>
+  <string name="import_title">Import</string>
+  <string name="preview">Preview</string>
 </resources>
