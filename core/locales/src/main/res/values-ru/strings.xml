@@ -119,4 +119,12 @@
   <string name="permanently_delete_subscription">Эта подписка будет навсегда удалена с вашего устройства</string>
   <string name="search">Поиск</string>
   <string name="search_no_results">Ничего не найдено. Пожалуйста, проверьте правильность написания или попробуйте другие ключевые слова.</string>
+  <string name="import_csv">Импорт из CSV</string>
+  <string name="column_mapping">Сопоставление колонок</string>
+  <string name="date_format">Формат даты</string>
+  <string name="column_separator">Разделитель колонок</string>
+  <string name="select_csv_file_description">Выберите CSV-файл для импорта транзакций</string>
+  <string name="select_file">Выбрать файл</string>
+  <string name="import_title">Импортировать</string>
+  <string name="preview">Предпросмотр</string>
 </resources>
