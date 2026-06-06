@@ -31,7 +31,7 @@ android {
             "pl",
             "ru",
             "ta",
-            "zh-rCN",
+            "zh",
         )
     }
 
