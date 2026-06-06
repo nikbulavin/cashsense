@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import androidx.tracing.trace
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -90,9 +91,6 @@ class MainActivity : AppCompatActivity() {
                 isSystemInDarkTheme(),
                 viewModel.uiState,
             ) { systemDark, uiState ->
-                if (uiState is Success) {
-                    updateApplicationNightMode(uiState.userData.darkThemeConfig)
-                }
                 ThemeSettings(
                     darkTheme = uiState.shouldUseDarkTheme(systemDark),
                     dynamicTheme = uiState.shouldUseDynamicTheming,
@@ -119,8 +117,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            runCatching {
-                showReviewDialog()
+            viewModel.uiState
+                .map { (it as? Success)?.userData?.darkThemeConfig }
+                .distinctUntilChanged()
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { config ->
+                    config?.let(::updateApplicationNightMode)
+                }
+        }
+
+        lifecycleScope.launch {
+            lifecycle.withStarted {
+                launch {
+                    runCatching {
+                        showReviewDialog()
+                    }
+                }
             }
         }
 
