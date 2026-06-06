@@ -119,4 +119,12 @@
   <string name="permanently_delete_subscription">இந்தச் சந்தா உங்கள் சாதனத்திலிருந்து நிரந்தரமாக நீக்கப்படும்</string>
   <string name="search">தேடுக</string>
   <string name="search_no_results">முடிவுகள் எதுவும் இல்லை. எழுத்துப்பிழையைச் சரிபார்க்கவும் அல்லது வேறு சொற்களைப் பயன்படுத்தவும்.</string>
+  <string name="import_csv">Import from CSV</string>
+  <string name="column_mapping">Column mapping</string>
+  <string name="date_format">Date format</string>
+  <string name="column_separator">Column separator</string>
+  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
+  <string name="select_file">Select file</string>
+  <string name="import_title">Import</string>
+  <string name="preview">Preview</string>
 </resources>
