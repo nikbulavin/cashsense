@@ -9,7 +9,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,11 +27,11 @@ internal class CategoryEditorViewModel @AssistedInject constructor(
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
     private val analyticsHelper: AnalyticsHelper,
-    @Assisted val key: CategoryEditorNavKey,
+    @Assisted private val key: CategoryEditorNavKey,
 ) : ViewModel() {
 
-    private val _categoryEditorState = MutableStateFlow(CategoryEditorState())
-    val categoryEditorState = _categoryEditorState.asStateFlow()
+    val categoryEditorState: StateFlow<CategoryEditorState>
+        field = MutableStateFlow(CategoryEditorState())
 
     init {
         key.categoryId?.let(::loadCategory)
@@ -39,9 +39,9 @@ internal class CategoryEditorViewModel @AssistedInject constructor(
 
     private fun loadCategory(id: String) {
         viewModelScope.launch {
-            _categoryEditorState.update { it.copy(isLoading = true) }
+            categoryEditorState.update { it.copy(isLoading = true) }
             val category = categoriesRepository.getCategory(id).first()
-            _categoryEditorState.update {
+            categoryEditorState.update {
                 it.copy(
                     id = id,
                     title = category.title,
@@ -54,23 +54,23 @@ internal class CategoryEditorViewModel @AssistedInject constructor(
 
     fun saveCategory() {
         appScope.launch {
-            if (_categoryEditorState.value.id.isBlank()) {
+            if (categoryEditorState.value.id.isBlank()) {
                 analyticsHelper.logNewItemAdded(
                     itemType = AnalyticsEvent.ItemTypes.CATEGORY,
                 )
             }
-            categoriesRepository.upsertCategory(_categoryEditorState.value.asCategory())
+            categoriesRepository.upsertCategory(categoryEditorState.value.asCategory())
         }
     }
 
     fun updateTitle(title: String) {
-        _categoryEditorState.update {
+        categoryEditorState.update {
             it.copy(title = title)
         }
     }
 
     fun updateIconId(iconId: Int) {
-        _categoryEditorState.update {
+        categoryEditorState.update {
             it.copy(iconId = iconId)
         }
     }
