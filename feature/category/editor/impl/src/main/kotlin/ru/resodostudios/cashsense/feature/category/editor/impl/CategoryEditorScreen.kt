@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsTextField
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -129,7 +129,7 @@ private fun CategoryEditorScreen(
                     .padding(innerPadding)
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
             ) {
-                CsTextField(
+                CsOutlinedTextField(
                     value = categoryEditorState.title,
                     onValueChange = onUpdateTitle,
                     keyboardOptions = KeyboardOptions(

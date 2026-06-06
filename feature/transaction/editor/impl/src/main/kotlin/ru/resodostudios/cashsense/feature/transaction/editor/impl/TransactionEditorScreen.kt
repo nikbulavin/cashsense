@@ -18,7 +18,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -50,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.result.LocalResultEventBus
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
@@ -180,16 +180,16 @@ private fun TransactionEditorScreen(
                     onTransactionTypeUpdate = onTransactionTypeUpdate,
                     transactionEditorState = transactionEditorState,
                 )
-                OutlinedTextField(
+                CsOutlinedTextField(
                     value = transactionEditorState.amount,
                     onValueChange = onAmountUpdate,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    label = { Text(stringResource(localesR.string.amount)) },
-                    placeholder = { Text(stringResource(localesR.string.amount) + "*") },
-                    supportingText = { Text(stringResource(localesR.string.required)) },
+                    labelText = stringResource(localesR.string.amount),
+                    placeholderText = stringResource(localesR.string.amount) + "*",
+                    supportingText = stringResource(localesR.string.required),
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -222,7 +222,7 @@ private fun TransactionEditorScreen(
                         timestamp = transactionEditorState.date,
                     )
                 }
-                OutlinedTextField(
+                CsOutlinedTextField(
                     value = transactionEditorState.description,
                     onValueChange = onDescriptionUpdate,
                     keyboardOptions = KeyboardOptions(
@@ -232,7 +232,7 @@ private fun TransactionEditorScreen(
                     keyboardActions = KeyboardActions(
                         onDone = { focusManager.clearFocus() },
                     ),
-                    label = { Text(stringResource(localesR.string.description)) },
+                    labelText = stringResource(localesR.string.description),
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(descTextField),
@@ -304,14 +304,14 @@ private fun CategoryDropdownMenu(
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
-        OutlinedTextField(
+        CsOutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             value = currentCategory?.title ?: stringResource(localesR.string.none),
             onValueChange = {},
-            label = { Text(stringResource(localesR.string.category_title)) },
+            labelText = stringResource(localesR.string.category_title),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             leadingIcon = {
                 Icon(
@@ -321,7 +321,6 @@ private fun CategoryDropdownMenu(
             },
             singleLine = true,
             enabled = categories.isNotEmpty(),
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,

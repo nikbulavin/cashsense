@@ -1,15 +1,17 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
-fun CsTextField(
+fun CsOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     labelText: String,
@@ -18,11 +20,18 @@ fun CsTextField(
     supportingText: String? = null,
     placeholderText: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    interactionSource: MutableInteractionSource? = null,
 ) {
-    TextField(
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         label = {
             Text(
                 text = labelText,
@@ -50,7 +59,11 @@ fun CsTextField(
         },
         singleLine = singleLine,
         modifier = modifier,
-        colors = TextFieldDefaults.tonalColors(),
-        shape = TextFieldDefaults.roundedShape,
+        shape = OutlinedTextFieldDefaults.roundedShape,
+        enabled = enabled,
+        readOnly = readOnly,
+        trailingIcon = trailingIcon,
+        leadingIcon = leadingIcon,
+        interactionSource = interactionSource,
     )
 }

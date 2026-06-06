@@ -44,6 +44,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
@@ -69,11 +70,11 @@ fun DatePickerTextField(
     var openDialog by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
-    OutlinedTextField(
+    CsOutlinedTextField(
         value = timestamp.formatDate(),
         onValueChange = {},
         readOnly = true,
-        label = { Text(stringResource(labelRes)) },
+        labelText = stringResource(labelRes),
         trailingIcon = {
             Icon(
                 imageVector = icon,
@@ -157,11 +158,11 @@ fun TimePickerTextField(
     val interactionSource = remember { MutableInteractionSource() }
     val windowInfo = LocalWindowInfo.current
 
-    OutlinedTextField(
+    CsOutlinedTextField(
         value = timestamp.formatDate(DateFormatType.TIME, FormatStyle.SHORT),
         onValueChange = {},
         readOnly = true,
-        label = { Text(stringResource(localesR.string.time)) },
+        labelText = stringResource(localesR.string.time),
         trailingIcon = {
             Icon(
                 imageVector = CsIcons.Outlined.Schedule,
