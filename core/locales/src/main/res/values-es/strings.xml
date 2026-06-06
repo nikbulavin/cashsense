@@ -119,4 +119,12 @@
   <string name="permanently_delete_subscription">Esta suscripción se eliminará permanentemente de tu dispositivo</string>
   <string name="search">Buscar</string>
   <string name="search_no_results">No se encontraron resultados. Verifica la ortografía o intenta con otras palabras clave.</string>
+  <string name="import_csv">Import from CSV</string>
+  <string name="column_mapping">Column mapping</string>
+  <string name="date_format">Date format</string>
+  <string name="column_separator">Column separator</string>
+  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
+  <string name="select_file">Select file</string>
+  <string name="import_title">Import</string>
+  <string name="preview">Preview</string>
 </resources>
