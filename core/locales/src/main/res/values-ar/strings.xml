@@ -119,4 +119,12 @@
   <string name="permanently_delete_subscription">سيتم حذف هذا الاشتراك نهائياً من جهازك</string>
   <string name="search">بحث</string>
   <string name="search_no_results">لا توجد نتائج. يرجى التحقق من الإملاء أو تجربة كلمات مفتاحية مختلفة.</string>
+  <string name="import_csv">Import from CSV</string>
+  <string name="column_mapping">Column mapping</string>
+  <string name="date_format">Date format</string>
+  <string name="column_separator">Column separator</string>
+  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
+  <string name="select_file">Select file</string>
+  <string name="import_title">Import</string>
+  <string name="preview">Preview</string>
 </resources>
