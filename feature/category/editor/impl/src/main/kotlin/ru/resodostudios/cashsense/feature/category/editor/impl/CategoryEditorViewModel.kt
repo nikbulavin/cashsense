@@ -53,13 +53,14 @@ internal class CategoryEditorViewModel @AssistedInject constructor(
     }
 
     fun saveCategory() {
+        val state = categoryEditorState.value
         appScope.launch {
-            if (categoryEditorState.value.id.isBlank()) {
+            if (state.id.isBlank()) {
                 analyticsHelper.logNewItemAdded(
                     itemType = AnalyticsEvent.ItemTypes.CATEGORY,
                 )
             }
-            categoriesRepository.upsertCategory(categoryEditorState.value.asCategory())
+            categoriesRepository.upsertCategory(state.asCategory())
         }
     }
 
