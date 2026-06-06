@@ -27,7 +27,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
@@ -127,6 +130,18 @@ fun FinancePanel(
                             fadeOut(motionScheme.defaultEffectsSpec())
                 },
             ) { financeType ->
+                var expensesAmountState by remember(financeType) { mutableStateOf(formattedExpenses) }
+                var incomeAmountState by remember(financeType) { mutableStateOf(formattedIncome) }
+                var graphDataState by remember(financeType) { mutableStateOf(graphData) }
+                var transactionFilterState by remember(financeType) { mutableStateOf(transactionFilter) }
+
+                if (financeType == transactionFilter.financeType) {
+                    expensesAmountState = formattedExpenses
+                    incomeAmountState = formattedIncome
+                    graphDataState = graphData
+                    transactionFilterState = transactionFilter
+                }
+
                 when (financeType) {
                     NOT_SET -> {
                         Row(
@@ -135,7 +150,7 @@ fun FinancePanel(
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                         ) {
                             FinanceCard(
-                                formattedAmount = formattedExpenses,
+                                formattedAmount = expensesAmountState,
                                 title = stringResource(localesR.string.expenses),
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -148,7 +163,7 @@ fun FinancePanel(
                                 titleSharedContentState = expensesTitleSharedState,
                             )
                             FinanceCard(
-                                formattedAmount = formattedIncome,
+                                formattedAmount = incomeAmountState,
                                 title = stringResource(localesR.string.income_plural),
                                 modifier = Modifier.weight(1f),
                                 onClick = {
@@ -165,9 +180,9 @@ fun FinancePanel(
 
                     EXPENSES -> {
                         DetailedFinanceSection(
-                            formattedAmount = formattedExpenses,
-                            graphData = graphData,
-                            transactionFilter = transactionFilter,
+                            formattedAmount = expensesAmountState,
+                            graphData = graphDataState,
+                            transactionFilter = transactionFilterState,
                             currency = currency,
                             title = stringResource(localesR.string.expenses),
                             onBackClick = {
@@ -188,9 +203,9 @@ fun FinancePanel(
 
                     INCOME -> {
                         DetailedFinanceSection(
-                            formattedAmount = formattedIncome,
-                            graphData = graphData,
-                            transactionFilter = transactionFilter,
+                            formattedAmount = incomeAmountState,
+                            graphData = graphDataState,
+                            transactionFilter = transactionFilterState,
                             currency = currency,
                             title = stringResource(localesR.string.income_plural),
                             onBackClick = {
