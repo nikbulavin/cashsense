@@ -34,8 +34,6 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -52,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.result.ResultEffect
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
@@ -223,7 +222,7 @@ private fun TransactionImporterScreen(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                             )
-                            TextField(
+                            CsOutlinedTextField(
                                 value = transactionImporterUiState.config.columnSeparator,
                                 onValueChange = {
                                     onConfigUpdate(
@@ -232,10 +231,8 @@ private fun TransactionImporterScreen(
                                         )
                                     )
                                 },
-                                label = { Text(stringResource(localesR.string.column_separator)) },
+                                labelText = stringResource(localesR.string.column_separator),
                                 modifier = Modifier.fillMaxWidth(),
-                                colors = TextFieldDefaults.tonalColors(),
-                                shape = TextFieldDefaults.roundedShape,
                             )
                         }
                     }
@@ -316,16 +313,14 @@ private fun DateFormatField(
         onExpandedChange = { expanded = it },
         modifier = modifier,
     ) {
-        TextField(
+        CsOutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = { Text(stringResource(localesR.string.date_format)) },
+            labelText = stringResource(localesR.string.date_format),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
-            colors = TextFieldDefaults.tonalColors(),
-            shape = TextFieldDefaults.roundedShape,
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -378,17 +373,15 @@ private fun MappingField(
         onExpandedChange = { expanded = it },
         modifier = modifier,
     ) {
-        TextField(
+        CsOutlinedTextField(
             value = columns.getOrNull(selectedIndex) ?: "",
             onValueChange = {},
             readOnly = true,
-            label = { Text(label) },
+            labelText = label,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-            colors = TextFieldDefaults.tonalColors(),
-            shape = TextFieldDefaults.roundedShape,
         )
         ExposedDropdownMenu(
             expanded = expanded,
