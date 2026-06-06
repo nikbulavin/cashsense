@@ -1,5 +1,5 @@
 [versions]
-aboutLibraries = "15.0.0-b02"
+aboutLibraries = "15.0.0-rc01"
 accompanist = "0.37.3"
 androidGradlePlugin = "9.2.1"
 androidxActivityCompose = "1.13.0"
@@ -29,9 +29,9 @@ firebasePerfPlugin = "2.0.2"
 gmsPlugin = "4.4.4"
 haze = "1.7.2"
 hilt = "2.59.2"
-hiltExt = "1.3.0"
+hiltExt = "1.4.0-rc01"
 junit = "4.13.2"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 kotlinCsv = "2.0.0"
 kotlinxCoroutines = "1.11.0"
 kotlinxDatetime = "0.8.0"
@@ -143,11 +143,11 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark"}
-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

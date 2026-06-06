@@ -25,6 +25,7 @@ import ru.resodostudios.cashsense.core.notifications.Notifier
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @AndroidEntryPoint
@@ -47,7 +48,7 @@ internal class ReminderBroadcastReceiver : BroadcastReceiver() {
         val reminderId = intent.getIntExtra(EXTRA_REMINDER_ID, 0)
 
         appScope.launch {
-            withTimeoutOrNull(4500L) {
+            withTimeoutOrNull(4.seconds) {
                 if (reminderId != 0) findSubscriptionAndPostNotification(reminderId)
                 if (intent.action == Intent.ACTION_BOOT_COMPLETED) rescheduleSubscriptionReminders()
             }

@@ -9,7 +9,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,8 +30,8 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
     @Assisted val key: CategoryDialogNavKey,
 ) : ViewModel() {
 
-    private val _categoryDialogUiState = MutableStateFlow(CategoryDialogUiState())
-    val categoryDialogUiState = _categoryDialogUiState.asStateFlow()
+    val categoryDialogUiState: StateFlow<CategoryDialogUiState>
+        field = MutableStateFlow(CategoryDialogUiState())
 
     init {
         key.categoryId?.let(::loadCategory)
@@ -39,9 +39,9 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
 
     private fun loadCategory(id: String) {
         viewModelScope.launch {
-            _categoryDialogUiState.update { CategoryDialogUiState(isLoading = true) }
+            categoryDialogUiState.update { CategoryDialogUiState(isLoading = true) }
             val category = categoriesRepository.getCategory(id).first()
-            _categoryDialogUiState.update {
+            categoryDialogUiState.update {
                 CategoryDialogUiState(
                     id = id,
                     title = category.title,
@@ -63,13 +63,13 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
     }
 
     fun updateTitle(title: String) {
-        _categoryDialogUiState.update {
+        categoryDialogUiState.update {
             it.copy(title = title)
         }
     }
 
     fun updateIconId(iconId: Int) {
-        _categoryDialogUiState.update {
+        categoryDialogUiState.update {
             it.copy(iconId = iconId)
         }
     }

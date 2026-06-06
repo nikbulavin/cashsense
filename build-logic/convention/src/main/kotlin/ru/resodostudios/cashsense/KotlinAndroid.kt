@@ -31,9 +31,9 @@ internal fun Project.configureKotlinAndroid(
 internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() = configure<T> {
     // Treat all Kotlin warnings as errors (disabled by default)
     // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
-    val warningsAsErrors = providers.gradleProperty("warningsAsErrors").map {
-        it.toBoolean()
-    }.orElse(false)
+    val warningsAsErrors = providers.gradleProperty("warningsAsErrors")
+        .map { it.toBoolean() }
+        .orElse(false)
     when (this) {
         is KotlinAndroidProjectExtension -> compilerOptions
         is KotlinJvmProjectExtension -> compilerOptions
@@ -41,10 +41,8 @@ internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() 
     }.apply {
         jvmToolchain(25)
         allWarningsAsErrors = warningsAsErrors
-        freeCompilerArgs.addAll(
-            "-opt-in=kotlin.uuid.ExperimentalUuidApi",
+        freeCompilerArgs.add(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xannotation-default-target=param-property",
         )
     }
 }
