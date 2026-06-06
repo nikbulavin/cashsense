@@ -21,17 +21,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.tracing.trace
+import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
 import ru.resodostudios.cashsense.MainActivityUiState.Success
 import ru.resodostudios.cashsense.core.analytics.AnalyticsHelper
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
-import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
+import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.PermissionManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
@@ -61,7 +64,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var inAppUpdateManager: InAppUpdateManager
 
     @Inject
-    lateinit var inAppReviewManager: InAppReviewManager
+    lateinit var transactionsRepository: TransactionsRepository
 
     @Inject
     lateinit var permissionManager: PermissionManager
@@ -117,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             runCatching {
-                inAppReviewManager.openReviewDialog(this@MainActivity)
+                showReviewDialog()
             }
         }
 
@@ -169,7 +172,18 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
+    private suspend fun showReviewDialog() {
+        val transactionsCount = transactionsRepository.getTransactionsCount().first()
+        if (transactionsCount >= MIN_TRANSACTIONS_FOR_REVIEW) {
+            val reviewManager = ReviewManagerFactory.create(this)
+            val reviewInfo = reviewManager.requestReviewFlow().await()
+            reviewManager.launchReviewFlow(this, reviewInfo)
+        }
+    }
 }
+
+private const val MIN_TRANSACTIONS_FOR_REVIEW = 20
 
 data class ThemeSettings(
     val darkTheme: Boolean,

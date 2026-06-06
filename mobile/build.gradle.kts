@@ -120,6 +120,8 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 
