@@ -63,6 +63,7 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffect
+import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
@@ -116,9 +117,14 @@ fun CsApp(
 
     val isFabVisible by remember {
         derivedStateOf {
-            appState.navigationState.currentSubStack.none {
-                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey || it is TransactionImporterNavKey
-            }
+            val hideFabKeys = setOf(
+                SettingsNavKey::class,
+                WalletNavKey::class,
+                TransactionEditorNavKey::class,
+                TransactionImporterNavKey::class,
+                CategoryEditorNavKey::class,
+            )
+            appState.navigationState.currentSubStack.none { it::class in hideFabKeys }
         }
     }
 
