@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.category.dialog.api"
+    namespace = "ru.resodostudios.cashsense.feature.category.editor.api"
 }
 
 dependencies {

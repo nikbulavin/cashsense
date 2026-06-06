@@ -63,8 +63,8 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffect
-import ru.resodostudios.cashsense.feature.category.dialog.api.navigateToCategoryDialog
-import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.categoryDialogEntry
+import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
+import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.api.SettingsNavKey
@@ -210,7 +210,10 @@ fun CsApp(
                         )
                         walletDialogEntry(navigator)
                         transactionOverviewEntry(navigator)
-                        categoryDialogEntry(navigator)
+                        categoryEditorEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         subscriptionDialogEntry(navigator)
                         transactionEntry(navigator)
                         transactionEditorEntry(
@@ -249,7 +252,7 @@ fun CsApp(
                         onMenuItemClick = { fabItem ->
                             when (fabItem) {
                                 WALLET -> navigator.navigateToWalletDialog()
-                                CATEGORY -> navigator.navigateToCategoryDialog()
+                                CATEGORY -> navigator.navigateToCategoryEditor()
                                 SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
                             }
                         },
