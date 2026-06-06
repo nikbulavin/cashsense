@@ -20,8 +20,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.mediumContainerSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -42,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.resodostudios.cashsense.core.designsystem.component.CsTextField
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -130,22 +129,20 @@ private fun CategoryEditorScreen(
                     .padding(innerPadding)
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
             ) {
-                TextField(
+                CsTextField(
                     value = categoryEditorState.title,
                     onValueChange = onUpdateTitle,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(stringResource(localesR.string.title)) },
-                    placeholder = { Text(stringResource(localesR.string.title) + "*") },
-                    supportingText = { Text(stringResource(localesR.string.required)) },
-                    maxLines = 1,
+                    labelText = stringResource(localesR.string.title),
+                    placeholderText = stringResource(localesR.string.title) + "*",
+                    supportingText = stringResource(localesR.string.required),
+                    singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
-                    colors = TextFieldDefaults.tonalColors(),
-                    shape = TextFieldDefaults.roundedShape,
                 )
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
