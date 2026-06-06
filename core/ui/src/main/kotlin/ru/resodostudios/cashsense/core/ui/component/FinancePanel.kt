@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.data.lineModel
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.datetime.toJavaLocalDate
@@ -384,7 +384,7 @@ private fun DetailedFinanceSection(
                 LaunchedEffect(graphData) {
                     modelProducer.runTransaction {
                         if (graphData.isEmpty() || graphData.keys.size < 2) return@runTransaction
-                        lineSeries { series(graphData.keys, graphData.values) }
+                        lineModel { series(graphData.keys, graphData.values) }
                     }
                 }
                 FinanceGraph(
