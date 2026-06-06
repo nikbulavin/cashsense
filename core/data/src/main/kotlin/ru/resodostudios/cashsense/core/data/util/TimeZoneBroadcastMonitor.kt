@@ -20,9 +20,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinTimeZone
-import ru.resodostudios.cashsense.core.network.CsDispatchers.IO
-import ru.resodostudios.cashsense.core.network.Dispatcher
-import ru.resodostudios.cashsense.core.network.di.ApplicationScope
+import ru.resodostudios.cashsense.core.common.CsDispatchers.IO
+import ru.resodostudios.cashsense.core.common.Dispatcher
+import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton

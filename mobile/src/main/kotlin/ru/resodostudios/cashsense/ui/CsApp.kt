@@ -76,6 +76,8 @@ import ru.resodostudios.cashsense.feature.subscription.list.impl.navigation.subs
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.navigation.transactionEntry
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
+import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
+import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.transactionImporterEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -115,7 +117,7 @@ fun CsApp(
     val isFabVisible by remember {
         derivedStateOf {
             appState.navigationState.currentSubStack.none {
-                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey
+                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey || it is TransactionImporterNavKey
             }
         }
     }
@@ -167,6 +169,8 @@ fun CsApp(
                         .then(
                             if (isFabVisible) {
                                 Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
+                            } else if (appState.navigationState.currentKey is WalletNavKey) {
+                                Modifier.padding(bottom = 96.dp)
                             } else {
                                 Modifier
                             },
@@ -210,6 +214,10 @@ fun CsApp(
                         subscriptionDialogEntry(navigator)
                         transactionEntry(navigator)
                         transactionEditorEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
+                        transactionImporterEntry(
                             navigator = navigator,
                             animSpec = slideSpec,
                         )

@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.common.di.ApplicationScope
+import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.network.di.ApplicationScope
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -30,28 +30,32 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
-    @Assisted val key: TransactionEditorNavKey,
+    @Assisted private val key: TransactionEditorNavKey,
 ) : ViewModel() {
 
     private val _transactionEditorState = MutableStateFlow(TransactionEditorState())
     val transactionEditorState = _transactionEditorState.asStateFlow()
 
     init {
-        _transactionEditorState.update { it.copy(isLoading = true) }
+        _transactionEditorState.update {
+            it.copy(
+                isLoading = true,
+                walletId = key.walletId,
+                isFromImporter = key.transaction != null,
+            )
+        }
         val transactionId = key.transactionId
-        if (transactionId == null) {
-            loadCategories()
-        } else {
-            loadTransaction(transactionId)
+        val transaction = key.transaction
+        when {
+            transaction != null -> initTransaction(transaction)
+            transactionId == null -> loadCategories()
+            else -> loadTransaction(transactionId)
         }
     }
 
     fun saveTransaction() {
         appScope.launch {
-            val state = _transactionEditorState.value
-            transactionsRepository.upsertTransaction(
-                state.asTransaction(key.walletId, state.category)
-            )
+            transactionsRepository.upsertTransaction(_transactionEditorState.value.asTransaction())
         }
     }
 
@@ -94,6 +98,30 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     fun updateIgnoredState(ignored: Boolean) {
         _transactionEditorState.update {
             it.copy(ignored = ignored)
+        }
+    }
+
+    private fun initTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            val categories = categoriesRepository.getCategories().first()
+            _transactionEditorState.update {
+                it.copy(
+                    transactionId = transaction.id,
+                    description = transaction.description ?: "",
+                    amount = transaction.amount.abs().toString(),
+                    transactionType = if (transaction.amount.signum() < 0) TransactionType.EXPENSE else TransactionType.INCOME,
+                    date = transaction.timestamp,
+                    category = transaction.category,
+                    completed = transaction.completed,
+                    ignored = transaction.ignored,
+                    isLoading = false,
+                    isTransfer = transaction.transferId != null,
+                    categories = buildList {
+                        add(null)
+                        addAll(categories)
+                    },
+                )
+            }
         }
     }
 
@@ -163,10 +191,12 @@ internal data class TransactionEditorState(
     val ignored: Boolean = false,
     val isLoading: Boolean = false,
     val isTransfer: Boolean = false,
+    val isFromImporter: Boolean = false,
+    val walletId: String = "",
     val categories: List<Category?> = emptyList(),
 )
 
-private fun TransactionEditorState.asTransaction(walletId: String, category: Category?): Transaction {
+internal fun TransactionEditorState.asTransaction(): Transaction {
     return Transaction(
         id = transactionId.ifBlank { Uuid.random().toHexString() },
         walletOwnerId = walletId,

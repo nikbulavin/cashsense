@@ -10,8 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -49,9 +47,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.LocalResultEventBus
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -95,7 +95,7 @@ internal fun TransactionEditorScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionEditorScreen(
     transactionEditorState: TransactionEditorState,
@@ -139,8 +139,9 @@ private fun TransactionEditorScreen(
                     actions = {
                         val analyticsHelper = LocalAnalyticsHelper.current
                         val hapticFeedback = LocalHapticFeedback.current
-                        Button(
-                            shapes = ButtonDefaults.shapes(),
+                        val resultEventBus = LocalResultEventBus.current
+
+                        CsButton(
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 if (transactionEditorState.transactionId.isBlank()) {
@@ -148,13 +149,18 @@ private fun TransactionEditorScreen(
                                         itemType = AnalyticsEvent.ItemTypes.TRANSACTION,
                                     )
                                 }
-                                onTransactionSave()
+                                if (transactionEditorState.isFromImporter) {
+                                    resultEventBus.sendResult(
+                                        transactionEditorState.asTransaction()
+                                    )
+                                } else {
+                                    onTransactionSave()
+                                }
                                 onBackClick()
                             },
                             enabled = transactionEditorState.amount.isAmountValid(),
-                        ) {
-                            Text(stringResource(confirmButtonTextRes))
-                        }
+                            title = stringResource(confirmButtonTextRes),
+                        )
                     },
                 )
             },

@@ -23,9 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.common.getValidCurrencies
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
-import ru.resodostudios.cashsense.core.util.getValidCurrencies
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 

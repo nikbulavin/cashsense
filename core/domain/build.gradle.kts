@@ -11,4 +11,5 @@ dependencies {
     api(projects.core.model)
 
     implementation(libs.javax.inject)
+    implementation(libs.kotlin.csv)
 }

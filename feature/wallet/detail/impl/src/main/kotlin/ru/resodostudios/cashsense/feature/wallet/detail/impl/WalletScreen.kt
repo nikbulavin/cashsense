@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingToolbarDefaults
@@ -52,16 +53,19 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
+import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Csv
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Delete
+import ru.resodostudios.cashsense.core.designsystem.icon.filled.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Star
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Add
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
@@ -84,7 +88,6 @@ import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -94,6 +97,7 @@ internal fun WalletScreen(
     onTransactionClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
     onEditWallet: (String) -> Unit,
+    onImportClick: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
     shouldHighlightSelectedTransaction: Boolean,
     navigateToTransactionEditor: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
@@ -108,6 +112,7 @@ internal fun WalletScreen(
         onPrimaryClick = viewModel::setPrimaryWalletId,
         onTransfer = onTransfer,
         onWalletEdit = onEditWallet,
+        onImportClick = onImportClick,
         onWalletDelete = {
             viewModel.deleteWallet(it)
             onBackClick()
@@ -138,6 +143,7 @@ private fun WalletScreen(
     onTransfer: (String) -> Unit,
     onWalletEdit: (String) -> Unit,
     onWalletDelete: (String) -> Unit,
+    onImportClick: (String) -> Unit,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
@@ -188,6 +194,7 @@ private fun WalletScreen(
                             onTransfer = onTransfer,
                             onWalletEdit = onWalletEdit,
                             onWalletDelete = onWalletDelete,
+                            onImportClick = onImportClick,
                             navigateToTransactionEditor = navigateToTransactionEditor,
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
@@ -262,6 +269,7 @@ private fun WalletToolbar(
     onTransfer: (String) -> Unit,
     onWalletEdit: (String) -> Unit,
     onWalletDelete: (String) -> Unit,
+    onImportClick: (String) -> Unit,
     navigateToTransactionEditor: (String, String?, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -281,6 +289,7 @@ private fun WalletToolbar(
             }
         },
         trailingContent = {
+            val importButtonLabel = stringResource(localesR.string.import_csv)
             val editButtonLabel = stringResource(localesR.string.edit)
             val deleteButtonLabel = stringResource(localesR.string.delete)
             AppBarRow(
@@ -299,11 +308,21 @@ private fun WalletToolbar(
                 },
             ) {
                 clickableItem(
+                    onClick = { onImportClick(wallet.id) },
+                    icon = {
+                        Icon(
+                            imageVector = CsIcons.Filled.Csv,
+                            contentDescription = importButtonLabel,
+                        )
+                    },
+                    label = importButtonLabel,
+                )
+                clickableItem(
                     onClick = { onWalletEdit(wallet.id) },
                     icon = {
                         Icon(
-                            imageVector = CsIcons.Outlined.Edit,
-                            contentDescription = stringResource(localesR.string.edit),
+                            imageVector = CsIcons.Filled.Edit,
+                            contentDescription = editButtonLabel,
                         )
                     },
                     label = editButtonLabel,
@@ -312,7 +331,7 @@ private fun WalletToolbar(
                     onClick = { shouldShowDeletionDialog = true },
                     icon = {
                         Icon(
-                            imageVector = CsIcons.Outlined.Delete,
+                            imageVector = CsIcons.Filled.Delete,
                             contentDescription = deleteButtonLabel,
                         )
                     },
@@ -374,7 +393,7 @@ private fun WalletToolbar(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun WalletTopBar(
     wallet: Wallet,
@@ -503,6 +522,7 @@ private fun WalletScreenPopulatedPreview(
         onTransfer = {},
         onWalletEdit = {},
         onWalletDelete = {},
+        onImportClick = {},
         onBackClick = {},
         onDateTypeUpdate = {},
         onFinanceTypeUpdate = {},
@@ -545,6 +565,7 @@ private fun WalletScreenEmptyPreview() {
         onTransfer = {},
         onWalletEdit = {},
         onWalletDelete = {},
+        onImportClick = {},
         onBackClick = {},
         onDateTypeUpdate = {},
         onFinanceTypeUpdate = {},

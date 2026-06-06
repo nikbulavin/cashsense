@@ -48,6 +48,14 @@
     <string name="income_plural">Income</string>
     <string name="income_singular">Income</string>
     <string name="initial_balance">Initial balance</string>
+    <string name="import_csv">Import from CSV</string>
+    <string name="column_mapping">Column mapping</string>
+    <string name="date_format">Date format</string>
+    <string name="column_separator">Column separator</string>
+    <string name="select_csv_file_description">Select a CSV file to import transactions</string>
+    <string name="select_file">Select file</string>
+    <string name="import_title">Import</string>
+    <string name="preview">Preview</string>
     <string name="install">Install</string>
     <string name="language">Language</string>
     <string name="licenses">Licenses</string>

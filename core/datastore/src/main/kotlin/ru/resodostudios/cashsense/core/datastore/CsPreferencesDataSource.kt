@@ -5,12 +5,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import ru.resodostudios.cashsense.core.common.getDefaultCurrency
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.DARK
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
 import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.LIGHT
 import ru.resodostudios.cashsense.core.model.data.UserData
-import ru.resodostudios.cashsense.core.util.getDefaultCurrency
 import java.util.Currency
 import javax.inject.Inject
 
