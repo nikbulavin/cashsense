@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.network.di
+package ru.resodostudios.cashsense.core.common.di
 
 import dagger.Module
 import dagger.Provides
@@ -7,8 +7,8 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import ru.resodostudios.cashsense.core.network.CsDispatchers.Default
-import ru.resodostudios.cashsense.core.network.Dispatcher
+import ru.resodostudios.cashsense.core.common.CsDispatchers.Default
+import ru.resodostudios.cashsense.core.common.Dispatcher
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.annotation.AnnotationRetention.RUNTIME

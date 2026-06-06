@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.util
+package ru.resodostudios.cashsense.core.common
 
 object Constants {
     const val DEEPLINK_PATH_BASE = "cashsense://resodostudios.ru"

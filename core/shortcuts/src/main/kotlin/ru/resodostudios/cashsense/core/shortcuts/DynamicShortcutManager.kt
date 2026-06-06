@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_PATH_BASE
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_TRANSACTION
+import ru.resodostudios.cashsense.core.common.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.network.di.ApplicationScope
-import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_PATH_BASE
-import ru.resodostudios.cashsense.core.util.Constants.DEEPLINK_TAG_TRANSACTION
-import ru.resodostudios.cashsense.core.util.Constants.TARGET_ACTIVITY_NAME
 import javax.inject.Inject
 import ru.resodostudios.cashsense.core.locales.R as localesR
 

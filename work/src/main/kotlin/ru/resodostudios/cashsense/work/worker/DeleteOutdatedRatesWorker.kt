@@ -12,12 +12,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import ru.resodostudios.cashsense.core.common.CsDispatchers
+import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
-import ru.resodostudios.cashsense.core.network.CsDispatchers
-import ru.resodostudios.cashsense.core.network.Dispatcher
 import ru.resodostudios.cashsense.work.initializer.SyncConstraints
 import java.util.Currency
 import java.util.concurrent.TimeUnit

@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.feature.home.impl
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
-import ru.resodostudios.cashsense.core.util.getUsdCurrency
 import java.math.BigDecimal
 
 /**

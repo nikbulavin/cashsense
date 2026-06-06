@@ -1,6 +1,6 @@
-package ru.resodostudios.cashsense.core.util
+package ru.resodostudios.cashsense.core.common
 
-import ru.resodostudios.cashsense.core.util.Constants.USD_CURRENCY_CODE
+import ru.resodostudios.cashsense.core.common.Constants.USD_CURRENCY_CODE
 import java.util.Currency
 import java.util.Locale
 

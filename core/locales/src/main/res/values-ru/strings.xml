@@ -94,6 +94,14 @@
   <string name="app_update_downloaded">Обновление загружено</string>
   <string name="update">Обновить</string>
   <string name="install">Установить</string>
+  <string name="import_csv">Импорт из CSV</string>
+  <string name="column_mapping">Сопоставление колонок</string>
+  <string name="date_format">Формат даты</string>
+  <string name="column_separator">Разделитель колонок</string>
+  <string name="select_csv_file_description">Выберите CSV-файл для импорта транзакций</string>
+  <string name="select_file">Выбрать файл</string>
+  <string name="import_title">Импортировать</string>
+  <string name="preview">Предпросмотр</string>
   <string name="time">Время</string>
   <string name="language">Язык</string>
   <string name="backup_and_restore">Резервное копирование и восстановление</string>
