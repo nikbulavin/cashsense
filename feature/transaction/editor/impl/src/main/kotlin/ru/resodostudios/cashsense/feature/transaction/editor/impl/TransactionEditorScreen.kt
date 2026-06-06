@@ -187,8 +187,7 @@ private fun TransactionEditorScreen(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Next,
                     ),
-                    labelText = stringResource(localesR.string.amount),
-                    placeholderText = stringResource(localesR.string.amount) + "*",
+                    labelText = stringResource(localesR.string.amount) + "*",
                     supportingText = stringResource(localesR.string.required),
                     singleLine = true,
                     modifier = Modifier

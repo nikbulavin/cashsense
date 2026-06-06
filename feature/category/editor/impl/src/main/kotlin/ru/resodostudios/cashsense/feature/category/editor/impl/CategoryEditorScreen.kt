@@ -136,8 +136,7 @@ private fun CategoryEditorScreen(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    labelText = stringResource(localesR.string.title),
-                    placeholderText = stringResource(localesR.string.title) + "*",
+                    labelText = stringResource(localesR.string.title) + "*",
                     supportingText = stringResource(localesR.string.required),
                     singleLine = true,
                     modifier = Modifier
