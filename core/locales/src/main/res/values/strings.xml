@@ -44,7 +44,6 @@
     <string name="from_wallet">From wallet</string>
     <string name="home_empty">Nothing in Wallets</string>
     <string name="home_title">Home</string>
-    <string name="icon_and_title">Icon &amp; Title</string>
     <string name="income_plural">Income</string>
     <string name="income_singular">Income</string>
     <string name="initial_balance">Initial balance</string>
