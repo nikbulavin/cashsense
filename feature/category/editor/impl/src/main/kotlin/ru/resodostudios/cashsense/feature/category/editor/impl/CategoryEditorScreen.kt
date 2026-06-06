@@ -187,8 +187,8 @@ private fun CategoryEditorScreen(
                     }
                 }
             }
-            LaunchedEffect(categoryEditorState.title) {
-                if (categoryEditorState.title.isBlank()) {
+            LaunchedEffect(categoryEditorState.id) {
+                if (categoryEditorState.id.isBlank()) {
                     focusRequester.requestFocus()
                 }
             }
