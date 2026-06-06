@@ -4,14 +4,14 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.category.dialog.impl"
+    namespace = "ru.resodostudios.cashsense.feature.category.editor.impl"
 }
 
 dependencies {
     implementation(projects.core.data)
     implementation(projects.core.locales)
 
-    implementation(projects.feature.category.dialog.api)
+    implementation(projects.feature.category.editor.api)
 
-    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

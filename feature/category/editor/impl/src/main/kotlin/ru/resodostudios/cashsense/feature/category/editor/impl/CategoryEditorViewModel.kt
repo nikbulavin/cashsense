@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.feature.category.dialog.impl
+package ru.resodostudios.cashsense.feature.category.editor.impl
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
@@ -19,19 +19,19 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
-import ru.resodostudios.cashsense.feature.category.dialog.api.CategoryDialogNavKey
+import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
 import kotlin.uuid.Uuid
 
-@HiltViewModel(assistedFactory = CategoryDialogViewModel.Factory::class)
-internal class CategoryDialogViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = CategoryEditorViewModel.Factory::class)
+internal class CategoryEditorViewModel @AssistedInject constructor(
     private val categoriesRepository: CategoriesRepository,
     @ApplicationScope private val appScope: CoroutineScope,
     private val analyticsHelper: AnalyticsHelper,
-    @Assisted val key: CategoryDialogNavKey,
+    @Assisted private val key: CategoryEditorNavKey,
 ) : ViewModel() {
 
-    val categoryDialogUiState: StateFlow<CategoryDialogUiState>
-        field = MutableStateFlow(CategoryDialogUiState())
+    val categoryEditorState: StateFlow<CategoryEditorState>
+        field = MutableStateFlow(CategoryEditorState())
 
     init {
         key.categoryId?.let(::loadCategory)
@@ -39,19 +39,21 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
 
     private fun loadCategory(id: String) {
         viewModelScope.launch {
-            categoryDialogUiState.update { CategoryDialogUiState(isLoading = true) }
+            categoryEditorState.update { it.copy(isLoading = true) }
             val category = categoriesRepository.getCategory(id).first()
-            categoryDialogUiState.update {
-                CategoryDialogUiState(
+            categoryEditorState.update {
+                it.copy(
                     id = id,
                     title = category.title,
                     iconId = category.iconId,
+                    isLoading = false,
                 )
             }
         }
     }
 
-    fun saveCategory(state: CategoryDialogUiState) {
+    fun saveCategory() {
+        val state = categoryEditorState.value
         appScope.launch {
             if (state.id.isBlank()) {
                 analyticsHelper.logNewItemAdded(
@@ -63,32 +65,32 @@ internal class CategoryDialogViewModel @AssistedInject constructor(
     }
 
     fun updateTitle(title: String) {
-        categoryDialogUiState.update {
+        categoryEditorState.update {
             it.copy(title = title)
         }
     }
 
     fun updateIconId(iconId: Int) {
-        categoryDialogUiState.update {
+        categoryEditorState.update {
             it.copy(iconId = iconId)
         }
     }
 
     @AssistedFactory
     interface Factory {
-        fun create(key: CategoryDialogNavKey): CategoryDialogViewModel
+        fun create(key: CategoryEditorNavKey): CategoryEditorViewModel
     }
 }
 
 @Immutable
-data class CategoryDialogUiState(
+internal data class CategoryEditorState(
     val id: String = "",
     val title: String = "",
     val iconId: Int = 0,
     val isLoading: Boolean = false,
 )
 
-fun CategoryDialogUiState.asCategory(): Category {
+internal fun CategoryEditorState.asCategory(): Category {
     return Category(
         id = id.ifBlank { Uuid.random().toHexString() },
         title = title.trim(),

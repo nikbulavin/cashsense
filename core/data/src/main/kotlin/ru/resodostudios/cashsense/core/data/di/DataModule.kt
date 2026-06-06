@@ -18,8 +18,6 @@ import ru.resodostudios.cashsense.core.data.repository.impl.OfflineUserDataRepos
 import ru.resodostudios.cashsense.core.data.repository.impl.OfflineWalletsRepository
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManagerImpl
-import ru.resodostudios.cashsense.core.data.util.InAppReviewManager
-import ru.resodostudios.cashsense.core.data.util.InAppReviewManagerImpl
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateManagerImpl
 import ru.resodostudios.cashsense.core.data.util.PermissionManager
@@ -59,9 +57,6 @@ internal interface DataModule {
 
     @Binds
     fun bindsInAppUpdateManager(impl: InAppUpdateManagerImpl): InAppUpdateManager
-
-    @Binds
-    fun bindsInAppReviewManager(impl: InAppReviewManagerImpl): InAppReviewManager
 
     @Binds
     fun bindsAppLocaleManager(impl: AppLocaleManagerImpl): AppLocaleManager

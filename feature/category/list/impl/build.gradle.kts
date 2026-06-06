@@ -11,6 +11,8 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.locales)
 
-    implementation(projects.feature.category.dialog.api)
+    implementation(projects.feature.category.editor.api)
     implementation(projects.feature.category.list.api)
+
+    implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

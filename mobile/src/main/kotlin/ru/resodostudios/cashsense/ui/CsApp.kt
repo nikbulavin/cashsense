@@ -63,8 +63,9 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffect
-import ru.resodostudios.cashsense.feature.category.dialog.api.navigateToCategoryDialog
-import ru.resodostudios.cashsense.feature.category.dialog.impl.navigation.categoryDialogEntry
+import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
+import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
+import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.api.SettingsNavKey
@@ -116,9 +117,14 @@ fun CsApp(
 
     val isFabVisible by remember {
         derivedStateOf {
-            appState.navigationState.currentSubStack.none {
-                it is SettingsNavKey || it is WalletNavKey || it is TransactionEditorNavKey || it is TransactionImporterNavKey
-            }
+            val hideFabKeys = setOf(
+                SettingsNavKey::class,
+                WalletNavKey::class,
+                TransactionEditorNavKey::class,
+                TransactionImporterNavKey::class,
+                CategoryEditorNavKey::class,
+            )
+            appState.navigationState.currentSubStack.none { it::class in hideFabKeys }
         }
     }
 
@@ -210,7 +216,10 @@ fun CsApp(
                         )
                         walletDialogEntry(navigator)
                         transactionOverviewEntry(navigator)
-                        categoryDialogEntry(navigator)
+                        categoryEditorEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         subscriptionDialogEntry(navigator)
                         transactionEntry(navigator)
                         transactionEditorEntry(
@@ -249,7 +258,7 @@ fun CsApp(
                         onMenuItemClick = { fabItem ->
                             when (fabItem) {
                                 WALLET -> navigator.navigateToWalletDialog()
-                                CATEGORY -> navigator.navigateToCategoryDialog()
+                                CATEGORY -> navigator.navigateToCategoryEditor()
                                 SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
                             }
                         },

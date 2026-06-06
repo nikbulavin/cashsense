@@ -31,7 +31,7 @@ android {
             "pl",
             "ru",
             "ta",
-            "zh-rCN",
+            "zh",
         )
     }
 
@@ -71,8 +71,8 @@ baselineProfile {
 }
 
 dependencies {
-    implementation(projects.feature.category.dialog.api)
-    implementation(projects.feature.category.dialog.impl)
+    implementation(projects.feature.category.editor.api)
+    implementation(projects.feature.category.editor.impl)
     implementation(projects.feature.category.list.api)
     implementation(projects.feature.category.list.impl)
     implementation(projects.feature.home.api)
@@ -120,6 +120,8 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
 
     debugImplementation(libs.androidx.compose.ui.testManifest)
 
