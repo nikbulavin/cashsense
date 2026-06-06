@@ -9,9 +9,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -120,14 +121,14 @@ private fun CategoryEditorScreen(
                     .padding(innerPadding)
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
             ) {
-                OutlinedTextField(
+                TextField(
                     value = categoryEditorState.title,
                     onValueChange = onUpdateTitle,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done,
                     ),
-                    label = { Text(stringResource(localesR.string.icon_and_title)) },
+                    label = { Text(stringResource(localesR.string.title)) },
                     placeholder = { Text(stringResource(localesR.string.title) + "*") },
                     supportingText = { Text(stringResource(localesR.string.required)) },
                     maxLines = 1,
@@ -141,6 +142,8 @@ private fun CategoryEditorScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
+                    colors = TextFieldDefaults.tonalColors(),
+                    shape = TextFieldDefaults.roundedShape,
                 )
             }
             LaunchedEffect(categoryEditorState.title) {
