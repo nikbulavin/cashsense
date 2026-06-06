@@ -1,14 +1,23 @@
 package ru.resodostudios.cashsense.feature.category.editor.impl
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconToggleButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.mediumContainerSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -23,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -36,7 +46,6 @@ import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
-import ru.resodostudios.cashsense.core.ui.component.IconPickerDropdownMenu
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -58,7 +67,7 @@ internal fun CategoryEditorScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CategoryEditorScreen(
     categoryEditorState: CategoryEditorState,
@@ -132,19 +141,55 @@ private fun CategoryEditorScreen(
                     placeholder = { Text(stringResource(localesR.string.title) + "*") },
                     supportingText = { Text(stringResource(localesR.string.required)) },
                     maxLines = 1,
-                    leadingIcon = {
-                        IconPickerDropdownMenu(
-                            currentIcon = StoredIcon.asImageVector(categoryEditorState.iconId),
-                            onSelectedIconClick = onUpdateIconId,
-                            onClick = { focusManager.clearFocus() },
-                        )
-                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
                     colors = TextFieldDefaults.tonalColors(),
                     shape = TextFieldDefaults.roundedShape,
                 )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    val icons = StoredIcon.entries.chunked(5)
+                    icons.forEach { rowIcons ->
+                        ButtonGroup(
+                            overflowIndicator = {},
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            rowIcons.forEach { icon ->
+                                customItem(
+                                    buttonGroupContent = {
+                                        val interactionSource = remember { MutableInteractionSource() }
+                                        val hapticFeedback = LocalHapticFeedback.current
+                                        val checked = categoryEditorState.iconId == icon.storedId
+                                        val size = mediumContainerSize()
+                                        FilledTonalIconToggleButton(
+                                            shapes = IconButtonDefaults.toggleableShapes(),
+                                            checked = checked,
+                                            onCheckedChange = {
+                                                if (!checked) hapticFeedback.performHapticFeedback(ToggleOn)
+                                                onUpdateIconId(icon.storedId)
+                                                focusManager.clearFocus()
+                                            },
+                                            modifier = Modifier
+                                                .sizeIn(size.width, size.height)
+                                                .weight(1f)
+                                                .animateWidth(interactionSource),
+                                            interactionSource = interactionSource,
+                                        ) {
+                                            Icon(
+                                                imageVector = icon.imageVector,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(IconButtonDefaults.mediumIconSize),
+                                            )
+                                        }
+                                    },
+                                    menuContent = {},
+                                )
+                            }
+                        }
+                    }
+                }
             }
             LaunchedEffect(categoryEditorState.title) {
                 if (categoryEditorState.title.isBlank()) {
