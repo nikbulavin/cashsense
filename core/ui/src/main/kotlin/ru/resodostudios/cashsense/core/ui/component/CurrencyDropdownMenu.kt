@@ -8,7 +8,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.common.getValidCurrencies
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import java.util.Currency
@@ -62,7 +62,7 @@ fun CurrencyDropdownMenu(
         onExpandedChange = { expanded = it },
         modifier = modifier,
     ) {
-        OutlinedTextField(
+        CsOutlinedTextField(
             modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
             value = currencySearchText,
             singleLine = true,
@@ -70,7 +70,7 @@ fun CurrencyDropdownMenu(
                 currencySearchText = newText
                 expanded = true
             },
-            label = { Text(stringResource(localesR.string.currency)) },
+            labelText = stringResource(localesR.string.currency),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded,
@@ -78,7 +78,6 @@ fun CurrencyDropdownMenu(
                 )
             },
             enabled = enabled,
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,
