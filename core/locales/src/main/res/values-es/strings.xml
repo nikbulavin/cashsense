@@ -3,7 +3,6 @@
   <string name="currency">Moneda</string>
   <string name="ok">Ok</string>
   <string name="cancel">Cancelar</string>
-  <string name="icon_and_title">Icono &amp; Título</string>
   <string name="date">Fecha</string>
   <string name="undo">Deshacer</string>
   <string name="navigation_back_icon_description">Atrás</string>
@@ -119,12 +118,12 @@
   <string name="permanently_delete_subscription">Esta suscripción se eliminará permanentemente de tu dispositivo</string>
   <string name="search">Buscar</string>
   <string name="search_no_results">No se encontraron resultados. Verifica la ortografía o intenta con otras palabras clave.</string>
-  <string name="import_csv">Import from CSV</string>
-  <string name="column_mapping">Column mapping</string>
-  <string name="date_format">Date format</string>
-  <string name="column_separator">Column separator</string>
-  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
-  <string name="select_file">Select file</string>
-  <string name="import_title">Import</string>
-  <string name="preview">Preview</string>
+  <string name="import_csv">Importar desde CSV</string>
+  <string name="column_mapping">Mapeo de columnas</string>
+  <string name="date_format">Formato de fecha</string>
+  <string name="column_separator">Separador de columnas</string>
+  <string name="select_csv_file_description">Seleccione un archivo CSV para importar transacciones</string>
+  <string name="select_file">Seleccionar archivo</string>
+  <string name="import_title">Importar</string>
+  <string name="preview">Vista previa</string>
 </resources>
