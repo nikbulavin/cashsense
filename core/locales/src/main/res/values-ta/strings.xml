@@ -3,7 +3,6 @@
   <string name="currency">நாணயம்</string>
   <string name="ok">சரி</string>
   <string name="cancel">இரத்துசெய்</string>
-  <string name="icon_and_title">உருச்சின்னம் &amp; தலைப்பு</string>
   <string name="date">தேதி</string>
   <string name="undo">செயல்தவிர்</string>
   <string name="navigation_back_icon_description">பின் செல்</string>
@@ -119,4 +118,12 @@
   <string name="permanently_delete_subscription">இந்தச் சந்தா உங்கள் சாதனத்திலிருந்து நிரந்தரமாக நீக்கப்படும்</string>
   <string name="search">தேடுக</string>
   <string name="search_no_results">முடிவுகள் எதுவும் இல்லை. எழுத்துப்பிழையைச் சரிபார்க்கவும் அல்லது வேறு சொற்களைப் பயன்படுத்தவும்.</string>
+  <string name="import_csv">CSV இலிருந்து இறக்குமதி செய்</string>
+  <string name="column_mapping">நெடுவரிசை பொருத்தம்</string>
+  <string name="date_format">தேதி வடிவம்</string>
+  <string name="column_separator">நெடுவரிசை பிரிப்பான்</string>
+  <string name="select_csv_file_description">பரிவர்த்தனைகளை இறக்குமதி செய்ய ஒரு CSV கோப்பைத் தேர்ந்தெடுக்கவும்</string>
+  <string name="select_file">கோப்பைத் தேர்ந்தெடு</string>
+  <string name="import_title">இறக்குமதி</string>
+  <string name="preview">மாதிரிக்காட்சி</string>
 </resources>

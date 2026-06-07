@@ -3,7 +3,6 @@
   <string name="currency">货币</string>
   <string name="ok">确定</string>
   <string name="cancel">取消</string>
-  <string name="icon_and_title">图标和标题</string>
   <string name="date">日期</string>
   <string name="undo">撤销</string>
   <string name="navigation_back_icon_description">返回</string>
@@ -119,4 +118,12 @@
   <string name="permanently_delete_subscription">此订阅将从您的设备中永久删除</string>
   <string name="search">搜索</string>
   <string name="search_no_results">未找到结果。请检查拼写或尝试其他关键词。</string>
+  <string name="import_csv">从 CSV 导入</string>
+  <string name="column_mapping">列映射</string>
+  <string name="date_format">日期格式</string>
+  <string name="column_separator">列分隔符</string>
+  <string name="select_csv_file_description">选择要导入交易的 CSV 文件</string>
+  <string name="select_file">选择文件</string>
+  <string name="import_title">导入</string>
+  <string name="preview">预览</string>
 </resources>

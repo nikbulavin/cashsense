@@ -3,7 +3,6 @@
   <string name="currency">Waluta</string>
   <string name="ok">OK</string>
   <string name="cancel">Anuluj</string>
-  <string name="icon_and_title">Ikona i Tytuł</string>
   <string name="date">Data</string>
   <string name="undo">Cofnij</string>
   <string name="navigation_back_icon_description">Wstecz</string>
@@ -119,4 +118,12 @@
   <string name="permanently_delete_subscription">Ta subskrypcja zostanie trwale usunięta z Twojego urządzenia</string>
   <string name="search">Szukaj</string>
   <string name="search_no_results">Nie znaleziono wyników. Sprawdź pisownię lub spróbuj innych słów kluczowych.</string>
+  <string name="import_csv">Importuj z pliku CSV</string>
+  <string name="column_mapping">Mapowanie kolumn</string>
+  <string name="date_format">Format daty</string>
+  <string name="column_separator">Separator kolumn</string>
+  <string name="select_csv_file_description">Wybierz plik CSV, aby zaimportować transakcje</string>
+  <string name="select_file">Wybierz plik</string>
+  <string name="import_title">Importuj</string>
+  <string name="preview">Podgląd</string>
 </resources>
