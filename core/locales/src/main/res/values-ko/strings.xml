@@ -3,7 +3,6 @@
   <string name="currency">통화</string>
   <string name="ok">확인</string>
   <string name="cancel">취소</string>
-  <string name="icon_and_title">아이콘 및 제목</string>
   <string name="date">날짜</string>
   <string name="undo">실행 취소</string>
   <string name="navigation_back_icon_description">뒤로</string>
@@ -114,17 +113,17 @@
   <string name="permanently_delete_transaction">이 거래 내역은 기기에서 영구적으로 삭제됩니다</string>
   <string name="permanently_delete_wallet">이 지갑은 기기에서 영구적으로 삭제됩니다</string>
   <string name="transaction_ignored">제외됨</string>
-  <string name="by_date">날짜순</string>
+  <string name="by_date">지정일</string>
   <string name="delete_subscription">구독을 삭제하시겠습니까?</string>
   <string name="permanently_delete_subscription">이 구독은 기기에서 영구적으로 삭제됩니다</string>
   <string name="search">검색</string>
   <string name="search_no_results">검색 결과가 없습니다. 철자를 확인하거나 다른 검색어를 입력해 주세요.</string>
-  <string name="import_csv">Import from CSV</string>
-  <string name="column_mapping">Column mapping</string>
-  <string name="date_format">Date format</string>
-  <string name="column_separator">Column separator</string>
-  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
-  <string name="select_file">Select file</string>
-  <string name="import_title">Import</string>
-  <string name="preview">Preview</string>
+  <string name="import_csv">CSV에서 가져오기</string>
+  <string name="column_mapping">열 매핑</string>
+  <string name="date_format">날짜 형식</string>
+  <string name="column_separator">열 구분 기호</string>
+  <string name="select_csv_file_description">트랜잭션을 가져올 CSV 파일을 선택하세요</string>
+  <string name="select_file">파일 선택</string>
+  <string name="import_title">가져오기</string>
+  <string name="preview">미리보기</string>
 </resources>
