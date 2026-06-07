@@ -28,8 +28,8 @@ internal class TransactionViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val transactionUiState: StateFlow<TransactionUiState> = transactionsRepository.getTransaction(key.transactionId)
-        .map { TransactionUiState.Success(it) }
-        .catch { TransactionUiState.Loading }
+        .map(TransactionUiState::Success)
+        .catch { TransactionUiState.Error(it.message.toString()) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -55,6 +55,10 @@ internal class TransactionViewModel @AssistedInject constructor(
 internal sealed interface TransactionUiState {
 
     data object Loading : TransactionUiState
+
+    data class Error(
+        val message: String,
+    ) : TransactionUiState
 
     data class Success(
         val transaction: Transaction,

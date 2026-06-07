@@ -163,7 +163,7 @@ private fun WalletScreen(
                     }
                 }
             when (walletState) {
-                WalletUiState.Loading -> Unit
+                WalletUiState.Loading, is WalletUiState.Error -> Unit
                 is WalletUiState.Success -> {
                     val motionScheme = MaterialTheme.motionScheme
                     val hazeState = rememberHazeState()

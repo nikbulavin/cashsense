@@ -149,11 +149,11 @@ internal class TransactionOverviewViewModel @Inject constructor(
                         ) ?: return@combine FinancePanelUiState.NotShown,
                     )
                 }
-                    .catch { FinancePanelUiState.NotShown }
+                    .catch { emit(FinancePanelUiState.NotShown) }
             }
         }
         .flowOn(defaultDispatcher)
-        .catch { FinancePanelUiState.NotShown }
+        .catch { emit(FinancePanelUiState.NotShown) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -178,7 +178,6 @@ internal class TransactionOverviewViewModel @Inject constructor(
         )
     }
         .flowOn(defaultDispatcher)
-        .catch { TransactionOverviewUiState.Loading }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
