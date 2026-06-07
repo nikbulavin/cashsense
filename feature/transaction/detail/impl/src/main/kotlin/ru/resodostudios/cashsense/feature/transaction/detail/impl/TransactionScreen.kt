@@ -109,7 +109,7 @@ private fun TransactionScreen(
 ) {
     with(LocalSharedTransitionScope.current) {
         when (transactionState) {
-            TransactionUiState.Loading -> Unit
+            TransactionUiState.Loading, is TransactionUiState.Error -> Unit
             is TransactionUiState.Success -> {
                 val transaction = transactionState.transaction
                 val category = transactionState.transaction.category

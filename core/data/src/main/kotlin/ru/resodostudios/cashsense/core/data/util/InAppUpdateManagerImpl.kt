@@ -22,7 +22,7 @@ internal class InAppUpdateManagerImpl @Inject constructor(
 
     override val inAppUpdateResult: Flow<InAppUpdateResult> = appUpdateManager.requestUpdateFlow()
         .map(AppUpdateResult::toInAppUpdateResult)
-        .catch { InAppUpdateResult.NotAvailable }
+        .catch { emit(InAppUpdateResult.NotAvailable) }
 }
 
 sealed class InAppUpdateResult {

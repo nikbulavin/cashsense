@@ -101,7 +101,7 @@ internal class WalletViewModel @AssistedInject constructor(
         )
     }
         .flowOn(defaultDispatcher)
-        .catch { WalletUiState.Loading }
+        .catch { WalletUiState.Error(it.message.toString()) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -189,6 +189,10 @@ internal class WalletViewModel @AssistedInject constructor(
 sealed interface WalletUiState {
 
     data object Loading : WalletUiState
+
+    data class Error(
+        val message: String,
+    ) : WalletUiState
 
     data class Success(
         val transactionFilter: TransactionFilter,

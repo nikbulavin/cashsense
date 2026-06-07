@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.LibraryExtension
-import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -7,7 +6,6 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import ru.resodostudios.cashsense.configureFlavors
 import ru.resodostudios.cashsense.configureKotlinAndroid
-import ru.resodostudios.cashsense.disableUnnecessaryAndroidTests
 import ru.resodostudios.cashsense.libs
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
@@ -28,9 +26,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     .joinToString(separator = "_")
                     .lowercase() + "_"
                 configureFlavors(this)
-            }
-            extensions.configure<LibraryAndroidComponentsExtension> {
-                disableUnnecessaryAndroidTests(target)
             }
             dependencies {
                 "androidTestImplementation"(libs.findLibrary("kotlin.test").get())
