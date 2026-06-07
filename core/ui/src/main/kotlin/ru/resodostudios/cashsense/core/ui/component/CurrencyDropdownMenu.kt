@@ -63,7 +63,7 @@ fun CurrencyDropdownMenu(
         modifier = modifier,
     ) {
         CsOutlinedTextField(
-            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
             value = currencySearchText,
             singleLine = true,
             onValueChange = { newText ->
