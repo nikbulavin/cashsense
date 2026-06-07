@@ -1,16 +1,15 @@
 package ru.resodostudios.cashsense.feature.wallet.dialog.impl
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
@@ -101,24 +101,25 @@ private fun WalletDialog(
         if (walletDialogState.isLoading) {
             LoadingState(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(320.dp),
+                    .sizeIn(
+                        minWidth = OutlinedTextFieldDefaults.MinWidth,
+                        minHeight = OutlinedTextFieldDefaults.MinHeight * 4,
+                    ),
             )
         } else {
             val focusManager = LocalFocusManager.current
             val focusRequester = remember { FocusRequester() }
 
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                OutlinedTextField(
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                CsOutlinedTextField(
                     value = walletDialogState.title,
                     onValueChange = onTitleUpdate,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .focusRequester(focusRequester),
-                    label = { Text(stringResource(localesR.string.title)) },
-                    placeholder = { Text(stringResource(localesR.string.title) + "*") },
-                    supportingText = { Text(stringResource(localesR.string.required)) },
+                    modifier = Modifier.focusRequester(focusRequester),
+                    labelText = stringResource(localesR.string.title) + "*",
+                    supportingText = stringResource(localesR.string.required),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
@@ -128,14 +129,11 @@ private fun WalletDialog(
                     ),
                     singleLine = true,
                 )
-                OutlinedTextField(
+                CsOutlinedTextField(
                     value = walletDialogState.initialBalance,
                     onValueChange = onInitialBalanceUpdate,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    label = { Text(stringResource(localesR.string.initial_balance)) },
-                    placeholder = { Text("0") },
+                    labelText = stringResource(localesR.string.initial_balance),
+                    placeholderText = "0",
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done,
@@ -148,9 +146,6 @@ private fun WalletDialog(
                 CurrencyDropdownMenu(
                     currency = walletDialogState.currency,
                     onCurrencyClick = onCurrencyUpdate,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
                     enabled = walletDialogState.isCurrencyEditable,
                 )
                 CsTonalToggleButton(
@@ -158,7 +153,7 @@ private fun WalletDialog(
                     icon = if (walletDialogState.isPrimary) CsIcons.Outlined.Check else CsIcons.Outlined.Star,
                     title = stringResource(localesR.string.primary),
                     onCheckedChange = onPrimaryUpdate,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.widthIn(OutlinedTextFieldDefaults.MinWidth),
                 )
             }
             LaunchedEffect(walletDialogState.id) {

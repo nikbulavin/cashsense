@@ -18,7 +18,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +39,7 @@ import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
@@ -126,7 +126,7 @@ private fun TransferDialog(
 
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 WalletDropdownMenu(
@@ -155,11 +155,11 @@ private fun TransferDialog(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 )
-                OutlinedTextField(
+                CsOutlinedTextField(
                     value = transferState.exchangeRate,
                     onValueChange = { onExchangingRateUpdate(it.cleanAmount()) },
-                    label = { Text(stringResource(localesR.string.exchange_rate)) },
-                    placeholder = { Text("0.01") },
+                    labelText = stringResource(localesR.string.exchange_rate),
+                    placeholderText = "0.01",
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
@@ -214,23 +214,20 @@ private fun WalletDropdownMenu(
         onExpandedChange = { expanded = it },
         modifier = modifier,
     ) {
-        OutlinedTextField(
+        CsOutlinedTextField(
             value = selectedWallet.title,
             onValueChange = {},
             modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             singleLine = true,
-            label = { Text(stringResource(title)) },
+            labelText = stringResource(title),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            placeholder = { Text(stringResource(localesR.string.choose_wallet)) },
+            placeholderText = stringResource(localesR.string.choose_wallet),
             supportingText = if (selectedWallet.currency != null) {
-                {
-                    Text(selectedWallet.currentBalance.formatAmount(selectedWallet.currency))
-                }
+                selectedWallet.currentBalance.formatAmount(selectedWallet.currency)
             } else {
                 null
             },
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,

@@ -9,10 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,7 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +42,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
+import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -69,7 +69,6 @@ import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffec
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
-import java.util.Locale
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -121,8 +120,10 @@ private fun SubscriptionDialog(
         val focusManager = LocalFocusManager.current
         val focusRequester = remember { FocusRequester() }
 
-        Column(Modifier.verticalScroll(rememberScrollState())) {
-            OutlinedTextField(
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+        ) {
+            CsOutlinedTextField(
                 value = subscriptionDialogState.title,
                 onValueChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateTitle(it)) },
                 keyboardOptions = KeyboardOptions(
@@ -133,15 +134,13 @@ private fun SubscriptionDialog(
                     onNext = { focusManager.moveFocus(FocusDirection.Down) },
                 ),
                 singleLine = true,
-                label = { Text(stringResource(localesR.string.title)) },
-                placeholder = { Text(stringResource(localesR.string.title) + "*") },
-                supportingText = { Text(stringResource(localesR.string.required)) },
+                labelText = stringResource(localesR.string.title) + "*",
+                supportingText = stringResource(localesR.string.required),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 6.dp)
+                    .padding(bottom = 8.dp)
                     .focusRequester(focusRequester),
             )
-            OutlinedTextField(
+            CsOutlinedTextField(
                 value = subscriptionDialogState.amount,
                 onValueChange = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateAmount(it)) },
                 keyboardOptions = KeyboardOptions(
@@ -152,48 +151,43 @@ private fun SubscriptionDialog(
                     onDone = { focusManager.clearFocus() },
                 ),
                 singleLine = true,
-                label = { Text(stringResource(localesR.string.amount)) },
-                placeholder = { Text(stringResource(localesR.string.amount) + "*") },
-                supportingText = { Text(stringResource(localesR.string.required)) },
+                labelText = stringResource(localesR.string.amount) + "*",
+                supportingText = stringResource(localesR.string.required),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 6.dp),
+                    .padding(bottom = 8.dp),
             )
             CurrencyDropdownMenu(
                 currency = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it)) },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 6.dp),
+                    .padding(bottom = 8.dp),
             )
-            BoxWithConstraints {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    DatePickerTextField(
-                        timestamp = subscriptionDialogState.paymentDate,
-                        labelRes = localesR.string.payment_date,
-                        icon = CsIcons.Outlined.Calendar,
-                        onDateSelect = {
-                            onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(it))
-                        },
-                        modifier = Modifier.width(this@BoxWithConstraints.maxWidth - 56.dp),
-                        onlyFutureDates = true,
-                    )
-                    CsFilledTonalIconToggleButton(
-                        checked = subscriptionDialogState.isReminderEnabled,
-                        icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Filled.Notifications else CsIcons.Outlined.Notifications,
-                        contentDescription = stringResource(localesR.string.reminder),
-                        onCheckedChange = {
-                            onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
-                        },
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .size(IconButtonDefaults.mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                    )
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.width(OutlinedTextFieldDefaults.MinWidth),
+            ) {
+                DatePickerTextField(
+                    timestamp = subscriptionDialogState.paymentDate,
+                    labelRes = localesR.string.payment_date,
+                    icon = CsIcons.Outlined.Calendar,
+                    onDateSelect = {
+                        onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(it))
+                    },
+                    onlyFutureDates = true,
+                    modifier = Modifier.weight(1f),
+                )
+                CsFilledTonalIconToggleButton(
+                    checked = subscriptionDialogState.isReminderEnabled,
+                    icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Filled.Notifications else CsIcons.Outlined.Notifications,
+                    contentDescription = stringResource(localesR.string.reminder),
+                    onCheckedChange = {
+                        onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
+                    },
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .size(IconButtonDefaults.mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                )
             }
             val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
             val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
@@ -210,7 +204,6 @@ private fun SubscriptionDialog(
                         onIntervalChange = {
                             onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it))
                         },
-                        modifier = Modifier.fillMaxWidth(),
                     )
                     AnimatedVisibility(
                         visible = subscriptionDialogState.repeatingInterval == RepeatingIntervalType.MONTHLY,
@@ -223,7 +216,7 @@ private fun SubscriptionDialog(
                                 stringResource(localesR.string.by_date),
                                 MeasureFormat
                                     .getInstance(
-                                        Locale.getDefault(),
+                                        LocalLocale.current.platformLocale,
                                         MeasureFormat.FormatWidth.WIDE,
                                     )
                                     .format(Measure(30, MeasureUnit.DAY)),
@@ -233,7 +226,7 @@ private fun SubscriptionDialog(
                                 onSubscriptionEvent(SubscriptionDialogEvent.UpdateFixedSwitch(it == 1))
                             },
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .width(OutlinedTextFieldDefaults.MinWidth)
                                 .padding(top = 10.dp),
                         )
                     }
@@ -266,15 +259,14 @@ private fun RepeatingIntervalDropdownMenu(
         onExpandedChange = { expanded = it },
         modifier = modifier,
     ) {
-        OutlinedTextField(
+        CsOutlinedTextField(
             value = intervalNames[interval.ordinal],
             onValueChange = {},
-            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             singleLine = true,
-            label = { Text(stringResource(localesR.string.repeating_interval)) },
+            labelText = stringResource(localesR.string.repeating_interval),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
         )
         ExposedDropdownMenu(
             expanded = expanded,

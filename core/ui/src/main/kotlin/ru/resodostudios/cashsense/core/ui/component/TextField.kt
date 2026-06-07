@@ -11,14 +11,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.TimePickerDialogDefaults
 import androidx.compose.material3.TimePickerDialogDefaults.MinHeightForTimePicker
@@ -147,6 +150,7 @@ fun DatePickerTextField(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimePickerTextField(
     timestamp: Instant,
@@ -234,7 +238,10 @@ fun TimePickerTextField(
             ) {
                 TimePicker(state = timePickerState)
             } else {
-                TimeInput(state = timePickerState)
+                TimeInput(
+                    state = timePickerState,
+                    shapes = TimePickerDefaults.shapes(),
+                )
             }
         }
     }
@@ -292,5 +299,6 @@ fun OutlinedAmountField(
             null
         },
         modifier = modifier,
+        shape = OutlinedTextFieldDefaults.roundedShape,
     )
 }
