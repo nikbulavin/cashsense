@@ -3,7 +3,6 @@
   <string name="currency">Währungen</string>
   <string name="ok">Okay</string>
   <string name="cancel">Abbrechen</string>
-  <string name="icon_and_title">Symbol &amp; Titel</string>
   <string name="date">Datum</string>
   <string name="undo">Rückgängig</string>
   <string name="navigation_back_icon_description">Zurück</string>
@@ -119,12 +118,12 @@
   <string name="permanently_delete_subscription">Dieses Abo wird dauerhaft von deinem Gerät entfernt</string>
   <string name="search">Suchen</string>
   <string name="search_no_results">Keine Ergebnisse gefunden. Bitte überprüfe deine Rechtschreibung oder versuche es mit anderen Suchbegriffen.</string>
-  <string name="import_csv">Import from CSV</string>
-  <string name="column_mapping">Column mapping</string>
-  <string name="date_format">Date format</string>
-  <string name="column_separator">Column separator</string>
-  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
-  <string name="select_file">Select file</string>
-  <string name="import_title">Import</string>
-  <string name="preview">Preview</string>
+  <string name="import_csv">Aus CSV importieren</string>
+  <string name="column_mapping">Spaltenzuordnung</string>
+  <string name="date_format">Datumsformat</string>
+  <string name="column_separator">Spaltentrennzeichen</string>
+  <string name="select_csv_file_description">Wählen Sie eine CSV-Datei aus, um Transaktionen zu importieren</string>
+  <string name="select_file">Datei auswählen</string>
+  <string name="import_title">Importieren</string>
+  <string name="preview">Vorschau</string>
 </resources>
