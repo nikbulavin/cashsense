@@ -9,10 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -138,7 +137,6 @@ private fun SubscriptionDialog(
                 labelText = stringResource(localesR.string.title) + "*",
                 supportingText = stringResource(localesR.string.required),
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(bottom = 8.dp)
                     .focusRequester(focusRequester),
             )
@@ -156,44 +154,40 @@ private fun SubscriptionDialog(
                 labelText = stringResource(localesR.string.amount) + "*",
                 supportingText = stringResource(localesR.string.required),
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(bottom = 8.dp),
             )
             CurrencyDropdownMenu(
                 currency = subscriptionDialogState.currency,
                 onCurrencyClick = { onSubscriptionEvent(SubscriptionDialogEvent.UpdateCurrency(it)) },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(bottom = 8.dp),
             )
-            BoxWithConstraints {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    DatePickerTextField(
-                        timestamp = subscriptionDialogState.paymentDate,
-                        labelRes = localesR.string.payment_date,
-                        icon = CsIcons.Outlined.Calendar,
-                        onDateSelect = {
-                            onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(it))
-                        },
-                        modifier = Modifier.width(this@BoxWithConstraints.maxWidth - 56.dp),
-                        onlyFutureDates = true,
-                    )
-                    CsFilledTonalIconToggleButton(
-                        checked = subscriptionDialogState.isReminderEnabled,
-                        icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Filled.Notifications else CsIcons.Outlined.Notifications,
-                        contentDescription = stringResource(localesR.string.reminder),
-                        onCheckedChange = {
-                            onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
-                        },
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .size(IconButtonDefaults.mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
-                    )
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.width(OutlinedTextFieldDefaults.MinWidth),
+            ) {
+                DatePickerTextField(
+                    timestamp = subscriptionDialogState.paymentDate,
+                    labelRes = localesR.string.payment_date,
+                    icon = CsIcons.Outlined.Calendar,
+                    onDateSelect = {
+                        onSubscriptionEvent(SubscriptionDialogEvent.UpdatePaymentDate(it))
+                    },
+                    onlyFutureDates = true,
+                    modifier = Modifier.weight(1f),
+                )
+                CsFilledTonalIconToggleButton(
+                    checked = subscriptionDialogState.isReminderEnabled,
+                    icon = if (subscriptionDialogState.isReminderEnabled) CsIcons.Filled.Notifications else CsIcons.Outlined.Notifications,
+                    contentDescription = stringResource(localesR.string.reminder),
+                    onCheckedChange = {
+                        onSubscriptionEvent(SubscriptionDialogEvent.UpdateReminderSwitch(it))
+                    },
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .size(IconButtonDefaults.mediumContainerSize(IconButtonDefaults.IconButtonWidthOption.Narrow)),
+                )
             }
             val spatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
             val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
@@ -210,7 +204,6 @@ private fun SubscriptionDialog(
                         onIntervalChange = {
                             onSubscriptionEvent(SubscriptionDialogEvent.UpdateRepeatingInterval(it))
                         },
-                        modifier = Modifier.fillMaxWidth(),
                     )
                     AnimatedVisibility(
                         visible = subscriptionDialogState.repeatingInterval == RepeatingIntervalType.MONTHLY,
@@ -233,7 +226,7 @@ private fun SubscriptionDialog(
                                 onSubscriptionEvent(SubscriptionDialogEvent.UpdateFixedSwitch(it == 1))
                             },
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .width(OutlinedTextFieldDefaults.MinWidth)
                                 .padding(top = 10.dp),
                         )
                     }
@@ -269,7 +262,7 @@ private fun RepeatingIntervalDropdownMenu(
         CsOutlinedTextField(
             value = intervalNames[interval.ordinal],
             onValueChange = {},
-            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             singleLine = true,
             labelText = stringResource(localesR.string.repeating_interval),
