@@ -3,7 +3,6 @@
   <string name="currency">通貨</string>
   <string name="ok">OK</string>
   <string name="cancel">キャンセル</string>
-  <string name="icon_and_title">アイコン &amp; タイトル</string>
   <string name="date">日付</string>
   <string name="undo">元に戻す</string>
   <string name="navigation_back_icon_description">戻る</string>
@@ -119,12 +118,12 @@
   <string name="permanently_delete_subscription">このサブスクリプションはお使いの端末から完全に削除されます</string>
   <string name="search">検索</string>
   <string name="search_no_results">結果が見つかりませんでした。入力内容を確認するか、別のキーワードで検索してください。</string>
-  <string name="import_csv">Import from CSV</string>
-  <string name="column_mapping">Column mapping</string>
-  <string name="date_format">Date format</string>
-  <string name="column_separator">Column separator</string>
-  <string name="select_csv_file_description">Select a CSV file to import transactions</string>
-  <string name="select_file">Select file</string>
-  <string name="import_title">Import</string>
-  <string name="preview">Preview</string>
+  <string name="import_csv">CSVからインポート</string>
+  <string name="column_mapping">列のマッピング</string>
+  <string name="date_format">日付形式</string>
+  <string name="column_separator">列の区切り文字</string>
+  <string name="select_csv_file_description">トランザクションをインポートするCSVファイルを選択してください</string>
+  <string name="select_file">ファイルを選択</string>
+  <string name="import_title">インポート</string>
+  <string name="preview">プレビュー</string>
 </resources>
