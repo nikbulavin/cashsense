@@ -127,3 +127,7 @@ dependencies {
 
     baselineProfile(projects.baselineprofile)
 }
+
+dependencyGuard {
+    configuration("prodReleaseRuntimeClasspath")
+}
