@@ -117,7 +117,7 @@
   <string name="delete_subscription">सब्सक्रिप्शन हटाएँ?</string>
   <string name="permanently_delete_subscription">यह सब्सक्रिप्शन आपके डिवाइस से हमेशा के लिए हटा दिया जाएगा</string>
   <string name="search">खोजें</string>
-  <string name="search_no_results">कोई परिणाम नहीं मिला. कृपया अपनी वर्तनी जाँचें या अलग कीवर्ड आज़माएँ.</string>
+  <string name="search_no_results">कोई परिणाम नहीं मिला। कृपया अपनी वर्तनी जाँचें या अलग कीवर्ड आज़माएँ।</string>
   <string name="import_csv">CSV से इम्पोर्ट करें</string>
   <string name="column_mapping">कॉलम मैपिंग</string>
   <string name="date_format">दिनांक का प्रारूप</string>
