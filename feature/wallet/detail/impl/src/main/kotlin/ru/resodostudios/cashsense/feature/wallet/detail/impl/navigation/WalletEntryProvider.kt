@@ -5,12 +5,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
 import ru.resodostudios.cashsense.feature.transaction.importer.api.navigateToTransactionImporter
@@ -39,6 +42,8 @@ fun EntryProviderScope<NavKey>.walletEntry(
             }
         },
     ) { key ->
+        val isSinglePane = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
+            .maxHorizontalPartitions <= 1
         WalletScreen(
             onBackClick = navigator::goBack,
             onTransactionClick = navigator::navigateToTransaction,
@@ -46,8 +51,8 @@ fun EntryProviderScope<NavKey>.walletEntry(
             onEditWallet = navigator::navigateToWalletDialog,
             onImportClick = navigator::navigateToTransactionImporter,
             navigateToTransactionEditor = navigator::navigateToTransactionEditor,
-            shouldShowNavigationIcon = true,
-            shouldHighlightSelectedTransaction = false,
+            shouldShowNavigationIcon = isSinglePane,
+            shouldHighlightSelectedTransaction = !isSinglePane && navigator.state.currentSubStack.any { it is TransactionNavKey },
             viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory> { it.create(key) },
         )
     }
