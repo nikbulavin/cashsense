@@ -1,63 +1,81 @@
 [<img alt="Get it on Google Play" src="docs/images/badges/google-play-badge.png" height="70"/>](https://play.google.com/store/apps/details?id=ru.resodostudios.cashsense)
 
-Cash Sense
-==========
+# Cash Sense
 
-It's a mobile app designed to help users manage their finances effectively.
-Whether you want to create wallets in different currencies, set up categories for transactions, or
-track subscription payment dates, Cash Sense has you covered.
+A professional financial management solution for Android, engineered for precision, privacy, and
+seamless user experience. It empowers users to maintain absolute control over their capital through
+multi-currency support, intelligent transaction categorization, and proactive subscription tracking.
 
-# Features
+Designed for those who demand clarity and efficiency in their financial life.
 
-- **Wallets** – easily create multiple wallets with support for various currencies. Keep your
-  finances organized by managing different currencies in separate wallets.
+---
 
-- **Categories** – categorize your transactions for a clearer overview of your spending patterns.
-  Customize categories based on your unique financial needs.
+## Features
 
-- **Subscriptions** – never miss a payment again. Set up and track subscription payments to stay on
-  top of your financial commitments.
+- **Multi-Currency Wallets** – Architected to manage diverse financial portfolios. Create and
+  monitor multiple wallets with native support for global currencies.
+- **Intelligent Categorization** – Gain deep insights into spending patterns. Organize transactions
+  with customizable categories tailored to your unique financial structure.
+- **Subscription Management** – Proactive monitoring of recurring commitments. Never overlook a
+  payment with dedicated tracking for all your active subscriptions.
+- **Precision Transfers** – Seamlessly execute and record internal capital movement between wallets,
+  ensuring real-time balance accuracy across all accounts.
 
 ## Screenshots
 
-![Screenshots](docs/images/screenshots.png "Screenshots")
+![Screenshots](docs/images/screenshots.png "Interface Overview")
 
 # UI
 
-The app was created following [Material 3][m3] guidelines. All screens and UI components are built entirely using [Jetpack Compose][compose].
+The application strictly adheres to the **Material 3 Expressive** design principles, offering a
+refined,
+modern, and accessible interface built entirely with **Jetpack Compose**.
 
-### Themes
+* **Adaptive Architecture** – Fully optimized layouts for a consistent experience across
+  smartphones, tablets, and foldable devices.
+* **Advanced Theming** – Comprehensive support for **Dynamic Color** (Android 12+), dark mode, and
+  three distinct levels of contrast for enhanced legibility.
+* **Motion Design** – Fluid interactions powered by **Lottie** animations and **Shared Element
+  Transitions** for a cohesive navigational flow.
 
-- **Dynamic color** – adapts to the [user's current color scheme][m3colorSystem] (Android 12+).
-- **Default theme** – uses predefined colors when dynamic color is not available.
+## Technical Architecture
 
-Both themes also include support for dark mode
-and [three levels of contrast][m3contrast].
+Built with a commitment to modern Android development standards, ensuring scalability, performance,
+and maintainability.
 
-### Animations
+* **Core Architecture**: Clean Architecture principles with Unidirectional Data Flow.
+* **UI Framework**: 100% Jetpack Compose with Material 3 Expressive components.
+* **Navigation**: Type-safe navigation powered by Navigation 3.
+* **Dependency Injection**: Robust dependency management using Hilt.
+* **Data Persistence**: Reliable local storage via Room & DataStore.
+* **Networking**: High-performance asynchronous communication with Ktor.
+* **Background Processing**: Efficient task scheduling through WorkManager.
+* **Concurrency**: Reactive programming with Kotlin Coroutines and Flow.
 
-- **[Lottie][lottie]**
-- **[Shared element transition][composeSharedElements]**
+## Localization
 
-# Localization
+The application is global-ready. We invite you to contribute to our localization efforts
+on [Crowdin](https://crowdin.com/project/cashsense) to help make financial clarity accessible to
+everyone in their native language.
 
-If you'd like to contribute to translating this app, you can [join][crowdinInvite] our localization efforts. 
-Your contributions will help ensure that everyone can enjoy the app in their native language.
+## Support
 
-# Donate
+If you find this tool valuable, consider supporting its continued development:
 
-| Cryptocurrency     | Address                                            |
-|--------------------|----------------------------------------------------|
-| **Bitcoin (BTC)**  | `bc1qn2dd85ek6dm8mm3wu3ws6cq507zgrtlgatl20z`       |
-| **Ethereum (ETH)** | `0x78cD353134CbffeD8B941fF05a3Ac8B0bBd308e6`       |
-| **USDT (TRC20)**   | `TNs7AvHQ2TjFDKMA7nJ1US31A57tRUMvqN`               |
-| **Toncoin (TON)**  | `UQA9a2q2RnLsSbJKdrKTAQcMrGnYVXV31CRgHCTZ8706mEfT` |
-| **Litecoin (LTC)** | `ltc1q8qrcnc6y3ajg7xslaxy6n90d8hk3252amzq8aw`      |
+| Asset              | Address                                        |
+|:-------------------|:-----------------------------------------------|
+| **Bitcoin (BTC)**  | `bc1qn2dd85ek6dm8mm3wu3ws6cq507zgrtlgatl20z`   |
+| **Ethereum (ETH)** | `0x78cD353134CbffeD8B941fF05a3Ac8B0bBd308e6`   |
+| **USDT (TRC20)**   | `TNs7AvHQ2TjFDKMA7nJ1US31A57tRUMvqN`           |
+| **Solana (SOL)**   | `G1zAFSJpbHcjwSvMjQuKZj99abZDmP4pSRdkKRaAWFFk` |
+| **Litecoin (LTC)** | `ltc1q8qrcnc6y3ajg7xslaxy6n90d8hk3252amzq8aw`  |
 
-# License
+## License
 
-**Cash Sense** is distributed under the terms of the Apache License (Version 2.0). See the
-[license](LICENSE) for more information.
+Open-source software licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for
+full details.
+
+---
 
 [m3]: https://m3.material.io/
 
@@ -71,4 +89,18 @@ Your contributions will help ensure that everyone can enjoy the app in their nat
 
 [lottie]: https://github.com/airbnb/lottie/blob/master/android-compose.md
 
-[crowdinInvite]: https://crowdin.com/project/cashsense/invite?h=d573fbd44b6bcf6bfc0dfbbfb3bf800f2198579
+[nav3]: https://developer.android.com/guide/navigation/navigation-3
+
+[hilt]: https://developer.android.com/training/dependency-injection/hilt-android
+
+[room]: https://developer.android.com/training/data-storage/room
+
+[datastore]: https://developer.android.com/topic/libraries/architecture/datastore
+
+[ktor]: https://ktor.io/
+
+[workmanager]: https://developer.android.com/topic/libraries/architecture/workmanager
+
+[coroutines]: https://kotlinlang.org/docs/coroutines-overview.html
+
+[flow]: https://kotlinlang.org/docs/flow.html
