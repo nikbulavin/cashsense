@@ -191,13 +191,18 @@ internal fun WalletCard(
                     customItem(
                         buttonGroupContent = {
                             val interactionSource = remember { MutableInteractionSource() }
+                            val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                             Button(
                                 onClick = { onNewTransactionClick(wallet.id) },
                                 shapes = ButtonDefaults.shapes(),
                                 interactionSource = interactionSource,
+                                contentPadding = contentPadding,
                                 modifier = Modifier
                                     .weight(1f)
-                                    .animateWidth(interactionSource),
+                                    .animateWidth(
+                                        interactionSource = interactionSource,
+                                        compressionLimit = contentPadding,
+                                    ),
                             ) {
                                 Icon(
                                     imageVector = CsIcons.Outlined.Add,
@@ -230,11 +235,17 @@ internal fun WalletCard(
                     customItem(
                         buttonGroupContent = {
                             val interactionSource = remember { MutableInteractionSource() }
+                            val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                             OutlinedButton(
                                 onClick = { onTransferClick(wallet.id) },
                                 shapes = ButtonDefaults.shapes(),
                                 interactionSource = interactionSource,
-                                modifier = Modifier.animateWidth(interactionSource),
+                                contentPadding = contentPadding,
+                                modifier = Modifier
+                                    .animateWidth(
+                                        interactionSource = interactionSource,
+                                        compressionLimit = contentPadding,
+                                    ),
                             ) {
                                 Icon(
                                     imageVector = CsIcons.Outlined.SendMoney,
