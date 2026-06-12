@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
+import androidx.navigation3.runtime.deeplink.DeepLinkRequest
 import androidx.tracing.trace
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -142,9 +143,8 @@ class MainActivity : AppCompatActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
-        val startKey = intent.data.toKey()
         val syntheticBackStack = buildBackStack(
-            startKey = startKey,
+            startKey = intent.data?.toString()?.let(DeepLinkRequest::fromUriString).toKey(),
         )
 
         setContent {

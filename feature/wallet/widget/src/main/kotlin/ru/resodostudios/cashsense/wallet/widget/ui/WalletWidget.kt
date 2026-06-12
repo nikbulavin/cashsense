@@ -35,7 +35,6 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_PATH_BASE
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_HOME
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_TRANSACTION
@@ -58,10 +57,8 @@ internal class WalletWidget : GlanceAppWidget() {
         )
         val getExtendedUserWalletsUseCase = walletsEntryPoint.getExtendedUserWalletsUseCase()
 
-        val initialWallets = getExtendedUserWalletsUseCase().first()
-
         provideContent {
-            val extendedWallets by getExtendedUserWalletsUseCase().collectAsState(initialWallets)
+            val extendedWallets by getExtendedUserWalletsUseCase().collectAsState(emptyList())
 
             CsGlanceTheme {
                 WalletWidgetContent(extendedWallets)
@@ -86,7 +83,7 @@ private fun WalletWidgetContent(
                             action = Intent.ACTION_VIEW
                             data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_HOME".toUri()
                             component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         }
                     )
                 ),
@@ -145,9 +142,9 @@ private fun WalletItem(
                 actionStartActivity(
                     Intent().apply {
                         action = Intent.ACTION_VIEW
-                        data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/${walletId}".toUri()
+                        data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/$walletId".toUri()
                         component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     }
                 )
             ),
@@ -177,7 +174,7 @@ private fun WalletItem(
                     action = Intent.ACTION_VIEW
                     data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION/$walletId".toUri()
                     component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
             ),
             contentDescription = context.getString(localesR.string.add),
