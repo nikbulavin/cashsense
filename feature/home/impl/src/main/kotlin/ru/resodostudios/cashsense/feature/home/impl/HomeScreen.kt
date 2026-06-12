@@ -33,7 +33,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun HomeScreen(
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
-    highlightSelectedWallet: Boolean = false,
+    shouldHighlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
     onTransactionClick: (String) -> Unit,
     onTotalBalanceClick: () -> Unit = {},
@@ -58,7 +58,7 @@ internal fun HomeScreen(
         onTransfer = onTransfer,
         onTransactionCreate = onTransactionCreate,
         onTransactionClick = onTransactionClick,
-        highlightSelectedWallet = highlightSelectedWallet,
+        shouldHighlightSelectedWallet = shouldHighlightSelectedWallet,
         onTotalBalanceClick = onTotalBalanceClick,
         onSettingsClick = onSettingsClick,
     )
@@ -77,7 +77,7 @@ private fun HomeScreen(
     onTransfer: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onTransactionClick: (String) -> Unit,
-    highlightSelectedWallet: Boolean,
+    shouldHighlightSelectedWallet: Boolean,
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
 ) {
@@ -130,7 +130,7 @@ private fun HomeScreen(
                         onWalletClick = onWalletClick,
                         onTransactionCreate = onTransactionCreate,
                         onTransferClick = onTransfer,
-                        highlightSelectedWallet = highlightSelectedWallet,
+                        shouldHighlightSelectedWallet = shouldHighlightSelectedWallet,
                     )
                 }
             }
@@ -145,7 +145,7 @@ private fun LazyStaggeredGridScope.wallets(
     onWalletClick: (String) -> Unit,
     onTransactionCreate: (String) -> Unit,
     onTransferClick: (String) -> Unit,
-    highlightSelectedWallet: Boolean = false,
+    shouldHighlightSelectedWallet: Boolean = false,
 ) {
     items(
         items = uiWallets,
@@ -158,7 +158,7 @@ private fun LazyStaggeredGridScope.wallets(
             onNewTransactionClick = onTransactionCreate,
             onTransferClick = onTransferClick,
             modifier = Modifier.animateItem(),
-            selected = highlightSelectedWallet && uiWallet.extendedUserWallet.wallet.id == selectedWalletId,
+            selected = shouldHighlightSelectedWallet && uiWallet.extendedUserWallet.wallet.id == selectedWalletId,
         )
     }
 }
@@ -192,7 +192,7 @@ private fun HomeScreenPopulatedPreview(
                 onTransfer = {},
                 onTransactionCreate = {},
                 onTransactionClick = { _ -> },
-                highlightSelectedWallet = false,
+                shouldHighlightSelectedWallet = false,
             )
         }
     }

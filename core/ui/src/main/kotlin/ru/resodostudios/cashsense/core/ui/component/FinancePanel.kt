@@ -57,6 +57,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsWithDefaults
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -147,7 +148,7 @@ fun FinancePanel(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                            modifier = Modifier.padding(horizontal = 16.dp),
                         ) {
                             FinanceCard(
                                 formattedAmount = expensesAmountState,
@@ -192,7 +193,6 @@ fun FinancePanel(
                             onDateTypeUpdate = onDateTypeUpdate,
                             onSelectedDateUpdate = onSelectedDateUpdate,
                             onCategoryFilterUpdate = onCategoryFilterUpdate,
-                            modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             availableCategories = availableCategories,
@@ -215,7 +215,6 @@ fun FinancePanel(
                             onDateTypeUpdate = onDateTypeUpdate,
                             onSelectedDateUpdate = onSelectedDateUpdate,
                             onCategoryFilterUpdate = onCategoryFilterUpdate,
-                            modifier = Modifier.fillMaxWidth(),
                             animatedVisibilityScope = this@AnimatedContent,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             availableCategories = availableCategories,
@@ -245,7 +244,7 @@ private fun FinanceCard(
         val motionScheme = MaterialTheme.motionScheme
         OutlinedCard(
             modifier = modifier
-                .sharedBounds(
+                .sharedBoundsWithDefaults(
                     sharedContentState = rememberSharedContentState(
                         key = SharedElementKey(
                             id = title,
@@ -253,11 +252,10 @@ private fun FinanceCard(
                             type = SharedElementType.Bounds,
                         ),
                     ),
+                    sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = motionScheme.sharedElementTransitionSpec,
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                    exit = fadeOut(motionScheme.defaultEffectsSpec()),
-                    enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                 ),
             shape = RoundedCornerShape(20.dp),
             onClick = onClick,
@@ -275,7 +273,6 @@ private fun FinanceCard(
                             boundsTransform = motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(amountSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
-                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         ),
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -289,7 +286,6 @@ private fun FinanceCard(
                             boundsTransform = motionScheme.sharedElementTransitionSpec,
                             sharedContentState = rememberSharedContentState(titleSharedContentState),
                             animatedVisibilityScope = animatedVisibilityScope,
-                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                         ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -317,7 +313,6 @@ private fun DetailedFinanceSection(
     modifier: Modifier = Modifier,
 ) {
     with(sharedTransitionScope) {
-        val motionScheme = MaterialTheme.motionScheme
         BackHandler(
             enabled = LocalNavAnimatedContentScope.current.transition.let {
                 it.currentState == it.targetState
@@ -327,7 +322,7 @@ private fun DetailedFinanceSection(
         Column(
             modifier = modifier
                 .padding(horizontal = 16.dp)
-                .sharedBounds(
+                .sharedBoundsWithDefaults(
                     sharedContentState = rememberSharedContentState(
                         key = SharedElementKey(
                             id = title,
@@ -335,11 +330,10 @@ private fun DetailedFinanceSection(
                             type = SharedElementType.Bounds,
                         ),
                     ),
+                    sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = motionScheme.sharedElementTransitionSpec,
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                    exit = fadeOut(motionScheme.defaultEffectsSpec()),
-                    enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                 ),
         ) {
             Row(
@@ -376,7 +370,6 @@ private fun DetailedFinanceSection(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(amountSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                 style = MaterialTheme.typography.headlineLarge,
             )
@@ -387,7 +380,6 @@ private fun DetailedFinanceSection(
                         boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         sharedContentState = rememberSharedContentState(titleSharedContentState),
                         animatedVisibilityScope = animatedVisibilityScope,
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                 style = MaterialTheme.typography.labelLargeEmphasized,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -5,6 +5,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.HomeDetailPlaceholder
 import ru.resodostudios.cashsense.feature.home.impl.HomeScreen
@@ -31,7 +32,7 @@ fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {
             onTransactionClick = navigator::navigateToTransaction,
             onSettingsClick = navigator::navigateToSettings,
             onTotalBalanceClick = navigator::navigateToTransactionOverview,
-            highlightSelectedWallet = false,
+            shouldHighlightSelectedWallet = !LocalIsSinglePane.current,
             viewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { it.create(key) },
         )
     }

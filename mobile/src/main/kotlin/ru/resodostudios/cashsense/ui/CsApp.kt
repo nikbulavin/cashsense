@@ -29,6 +29,7 @@ import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -57,6 +58,7 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
@@ -97,6 +99,8 @@ fun CsApp(
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val paneScaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo)
+    val isSinglePane = paneScaffoldDirective.maxHorizontalPartitions <= 1
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
     val shouldRequestNotifications by appState.shouldRequestNotifications.collectAsStateWithLifecycle()
@@ -197,50 +201,35 @@ fun CsApp(
                 val slideSpec = motionScheme.defaultSpatialSpec<IntOffset>()
                 val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
-                CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                    val entryProvider = entryProvider {
-                        homeEntry(navigator)
-                        categoriesEntry(navigator)
-                        subscriptionsEntry(navigator)
-                        walletEntry(
-                            navigator = navigator,
-                            animSpec = fadeSpec,
-                        )
-                        settingsEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        licensesEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        walletDialogEntry(navigator)
-                        transactionOverviewEntry(navigator)
-                        categoryEditorEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        subscriptionDialogEntry(navigator)
-                        transactionEntry(navigator)
-                        transactionEditorEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        transactionImporterEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        transferDialogEntry(navigator)
-                    }
+                val entryProvider = entryProvider {
+                    homeEntry(navigator)
+                    categoriesEntry(navigator)
+                    subscriptionsEntry(navigator)
+                    walletEntry(navigator, fadeSpec)
+                    settingsEntry(navigator, slideSpec)
+                    licensesEntry(navigator, slideSpec)
+                    walletDialogEntry(navigator)
+                    transactionOverviewEntry(navigator, slideSpec)
+                    categoryEditorEntry(navigator, slideSpec)
+                    subscriptionDialogEntry(navigator)
+                    transactionEntry(navigator, fadeSpec)
+                    transactionEditorEntry(navigator, slideSpec)
+                    transactionImporterEntry(navigator, slideSpec)
+                    transferDialogEntry(navigator)
+                }
 
-                    val enterTransition = scaleIn(scaleSpec, 0.96f) +
-                            slideInVertically(slideSpec) { it / 28 } +
-                            fadeIn(fadeSpec)
-                    val popEnterTransition = scaleIn(scaleSpec, 1.04f) +
-                            slideInVertically(slideSpec) { -it / 28 } +
-                            fadeIn(fadeSpec)
-                    val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
+                val enterTransition = scaleIn(scaleSpec, 0.96f) +
+                        slideInVertically(slideSpec) { it / 28 } +
+                        fadeIn(fadeSpec)
+                val popEnterTransition = scaleIn(scaleSpec, 1.04f) +
+                        slideInVertically(slideSpec) { -it / 28 } +
+                        fadeIn(fadeSpec)
+                val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
 
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalIsSinglePane provides isSinglePane,
+                ) {
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
                         sceneStrategies = listOf(
@@ -253,25 +242,25 @@ fun CsApp(
                         predictivePopTransitionSpec = { popEnterTransition togetherWith exitTransition },
                         sharedTransitionScope = LocalSharedTransitionScope.current,
                     )
-                    FabMenu(
-                        visible = isFabVisible,
-                        onMenuItemClick = { fabItem ->
-                            when (fabItem) {
-                                WALLET -> navigator.navigateToWalletDialog()
-                                CATEGORY -> navigator.navigateToCategoryEditor()
-                                SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
-                            }
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .windowInsetsPadding(WindowInsets.systemBars),
-                        toggleContainerSize = if (navRailVisible) {
-                            ToggleFloatingActionButtonDefaults.containerSizeMedium()
-                        } else {
-                            ToggleFloatingActionButtonDefaults.containerSize()
-                        },
-                    )
                 }
+                FabMenu(
+                    visible = isFabVisible,
+                    onMenuItemClick = { fabItem ->
+                        when (fabItem) {
+                            WALLET -> navigator.navigateToWalletDialog()
+                            CATEGORY -> navigator.navigateToCategoryEditor()
+                            SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .windowInsetsPadding(WindowInsets.systemBars),
+                    toggleContainerSize = if (navRailVisible) {
+                        ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                    } else {
+                        ToggleFloatingActionButtonDefaults.containerSize()
+                    },
+                )
             }
         }
     }

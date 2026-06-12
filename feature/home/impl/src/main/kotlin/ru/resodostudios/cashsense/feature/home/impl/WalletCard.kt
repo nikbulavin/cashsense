@@ -61,6 +61,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
@@ -97,7 +98,7 @@ internal fun WalletCard(
                 onClick = { onWalletClick(wallet.id) },
                 shape = shape,
                 modifier = modifier
-                    .sharedBounds(
+                    .sharedBoundsAdaptive(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = wallet.id,
@@ -105,12 +106,8 @@ internal fun WalletCard(
                                 type = SharedElementType.Bounds,
                             ),
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                         placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                        clipInOverlayDuringTransition = OverlayClip(shape),
-                        exit = fadeOut(motionScheme.defaultEffectsSpec()),
-                        enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                        clipShape = shape,
                     )
                     .then(if (selected) Modifier.dropShadow(shape) else Modifier),
             ) {
@@ -191,13 +188,18 @@ internal fun WalletCard(
                     customItem(
                         buttonGroupContent = {
                             val interactionSource = remember { MutableInteractionSource() }
+                            val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                             Button(
                                 onClick = { onNewTransactionClick(wallet.id) },
                                 shapes = ButtonDefaults.shapes(),
                                 interactionSource = interactionSource,
+                                contentPadding = contentPadding,
                                 modifier = Modifier
                                     .weight(1f)
-                                    .animateWidth(interactionSource),
+                                    .animateWidth(
+                                        interactionSource = interactionSource,
+                                        compressionLimit = contentPadding,
+                                    ),
                             ) {
                                 Icon(
                                     imageVector = CsIcons.Outlined.Add,
@@ -230,11 +232,17 @@ internal fun WalletCard(
                     customItem(
                         buttonGroupContent = {
                             val interactionSource = remember { MutableInteractionSource() }
+                            val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
                             OutlinedButton(
                                 onClick = { onTransferClick(wallet.id) },
                                 shapes = ButtonDefaults.shapes(),
                                 interactionSource = interactionSource,
-                                modifier = Modifier.animateWidth(interactionSource),
+                                contentPadding = contentPadding,
+                                modifier = Modifier
+                                    .animateWidth(
+                                        interactionSource = interactionSource,
+                                        compressionLimit = contentPadding,
+                                    ),
                             ) {
                                 Icon(
                                     imageVector = CsIcons.Outlined.SendMoney,

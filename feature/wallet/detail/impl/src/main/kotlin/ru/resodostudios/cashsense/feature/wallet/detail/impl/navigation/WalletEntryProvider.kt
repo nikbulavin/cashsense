@@ -11,6 +11,8 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
+import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
 import ru.resodostudios.cashsense.feature.transaction.importer.api.navigateToTransactionImporter
@@ -39,6 +41,7 @@ fun EntryProviderScope<NavKey>.walletEntry(
             }
         },
     ) { key ->
+        val isSinglePane = LocalIsSinglePane.current
         WalletScreen(
             onBackClick = navigator::goBack,
             onTransactionClick = navigator::navigateToTransaction,
@@ -46,8 +49,8 @@ fun EntryProviderScope<NavKey>.walletEntry(
             onEditWallet = navigator::navigateToWalletDialog,
             onImportClick = navigator::navigateToTransactionImporter,
             navigateToTransactionEditor = navigator::navigateToTransactionEditor,
-            shouldShowNavigationIcon = true,
-            shouldHighlightSelectedTransaction = false,
+            shouldShowNavigationIcon = isSinglePane,
+            shouldHighlightSelectedTransaction = !isSinglePane && navigator.state.currentSubStack.any { it is TransactionNavKey },
             viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory> { it.create(key) },
         )
     }

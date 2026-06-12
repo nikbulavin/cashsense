@@ -18,14 +18,15 @@ import androidx.core.content.getSystemService
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
 import androidx.tracing.trace
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -87,43 +88,44 @@ class MainActivity : AppCompatActivity() {
         )
 
         lifecycleScope.launch {
-            combine(
-                isSystemInDarkTheme(),
-                viewModel.uiState,
-            ) { systemDark, uiState ->
-                ThemeSettings(
-                    darkTheme = uiState.shouldUseDarkTheme(systemDark),
-                    dynamicTheme = uiState.shouldUseDynamicTheming,
-                )
-            }
-                .onEach { themeSettings = it }
-                .map { it.darkTheme }
-                .distinctUntilChanged()
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect { darkTheme ->
-                    trace("csEdgeToEdge") {
-                        enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.auto(
-                                lightScrim = Color.Transparent.toArgb(),
-                                darkScrim = Color.Transparent.toArgb(),
-                            ) { darkTheme },
-                            navigationBarStyle = SystemBarStyle.auto(
-                                lightScrim = Color.Transparent.toArgb(),
-                                darkScrim = Color.Transparent.toArgb(),
-                            ) { darkTheme },
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    combine(
+                        isSystemInDarkTheme(),
+                        viewModel.uiState,
+                    ) { systemDark, uiState ->
+                        ThemeSettings(
+                            darkTheme = uiState.shouldUseDarkTheme(systemDark),
+                            dynamicTheme = uiState.shouldUseDynamicTheming,
                         )
                     }
+                        .onEach { themeSettings = it }
+                        .map { it.darkTheme }
+                        .distinctUntilChanged()
+                        .collect { darkTheme ->
+                            trace("csEdgeToEdge") {
+                                enableEdgeToEdge(
+                                    statusBarStyle = SystemBarStyle.auto(
+                                        lightScrim = Color.Transparent.toArgb(),
+                                        darkScrim = Color.Transparent.toArgb(),
+                                    ) { darkTheme },
+                                    navigationBarStyle = SystemBarStyle.auto(
+                                        lightScrim = Color.Transparent.toArgb(),
+                                        darkScrim = Color.Transparent.toArgb(),
+                                    ) { darkTheme },
+                                )
+                            }
+                        }
                 }
-        }
 
-        lifecycleScope.launch {
-            viewModel.uiState
-                .map { (it as? Success)?.userData?.darkThemeConfig }
-                .distinctUntilChanged()
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect { config ->
-                    config?.let(::updateApplicationNightMode)
+                launch {
+                    viewModel.uiState
+                        .filterIsInstance<Success>()
+                        .map { it.userData.darkThemeConfig }
+                        .distinctUntilChanged()
+                        .collect(::updateApplicationNightMode)
                 }
+            }
         }
 
         lifecycleScope.launch {
