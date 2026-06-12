@@ -57,6 +57,20 @@ fun Modifier.sharedBoundsWithDefaults(
     }
 }
 
+/**
+ * Applies a shared bounds transition to the element, but only in single-pane layouts.
+ *
+ * In multi-pane configurations (e.g., expanded screens or tablets where multiple panes are
+ * visible simultaneously), this modifier returns the original [Modifier] without applying
+ * any shared bounds logic to avoid unnecessary or jarring transitions between panes.
+ *
+ * @param sharedContentState the state object used to track the shared element.
+ * @param sharedTransitionScope the scope in which the shared transition is occurring.
+ * @param animatedVisibilityScope the visibility scope used to coordinate the transition.
+ * @param boundsTransform the spec used to animate the bounds from start to end.
+ * @param resizeMode how the content should be resized to fit the changing bounds.
+ * @param clipShape the shape used to clip the content when rendered in the overlay.
+ */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun Modifier.sharedBoundsAdaptive(
