@@ -31,7 +31,7 @@ fun EntryProviderScope<NavKey>.homeEntry(navigator: Navigator) {
             onTransactionClick = navigator::navigateToTransaction,
             onSettingsClick = navigator::navigateToSettings,
             onTotalBalanceClick = navigator::navigateToTransactionOverview,
-            highlightSelectedWallet = false,
+            shouldHighlightSelectedWallet = !navigator.state.isSinglePane,
             viewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { it.create(key) },
         )
     }
