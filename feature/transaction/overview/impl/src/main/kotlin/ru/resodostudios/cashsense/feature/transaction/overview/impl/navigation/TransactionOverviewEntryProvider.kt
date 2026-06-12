@@ -11,6 +11,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.TransactionOverviewScreen
@@ -37,7 +38,7 @@ fun EntryProviderScope<NavKey>.transactionOverviewEntry(
         TransactionOverviewScreen(
             onBackClick = navigator::goBack,
             onTransactionClick = navigator::navigateToTransaction,
-            shouldShowNavigationIcon = navigator.state.isSinglePane,
+            shouldShowNavigationIcon = LocalIsSinglePane.current,
         )
     }
 }

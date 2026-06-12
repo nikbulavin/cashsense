@@ -1,10 +1,6 @@
 package ru.resodostudios.core.navigation
 
 import androidx.annotation.VisibleForTesting
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
-import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
-import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -20,7 +16,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun rememberNavigationState(
     initialBackStack: List<NavKey>,
@@ -40,14 +35,11 @@ fun rememberNavigationState(
         }
     }
 
-    val paneScaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
-
-    return remember(startKey, topLevelKeys, initialBackStack, paneScaffoldDirective) {
+    return remember(startKey, topLevelKeys, initialBackStack) {
         NavigationState(
             startKey = startKey,
             topLevelStack = topLevelStack,
             subStacks = subStacks,
-            paneScaffoldDirective = paneScaffoldDirective,
         )
     }
 }
@@ -63,7 +55,6 @@ class NavigationState(
     val startKey: NavKey,
     val topLevelStack: NavBackStack<NavKey>,
     val subStacks: Map<NavKey, NavBackStack<NavKey>>,
-    val paneScaffoldDirective: PaneScaffoldDirective,
 ) {
     val currentTopLevelKey: NavKey by derivedStateOf { topLevelStack.last() }
 
@@ -77,8 +68,6 @@ class NavigationState(
 
     @get:VisibleForTesting
     val currentKey: NavKey by derivedStateOf { currentSubStack.last() }
-
-    val isSinglePane: Boolean by derivedStateOf { paneScaffoldDirective.maxHorizontalPartitions <= 1 }
 }
 
 /**

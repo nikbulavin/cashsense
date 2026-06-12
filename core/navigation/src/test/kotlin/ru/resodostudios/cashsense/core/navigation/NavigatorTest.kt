@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.navigation
 
-import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import org.junit.Before
@@ -37,7 +36,6 @@ class NavigatorTest {
             startKey = startKey,
             topLevelStack = topLevelStack,
             subStacks = subStacks,
-            paneScaffoldDirective = PaneScaffoldDirective.Default,
         )
         navigator = Navigator(navigationState)
     }

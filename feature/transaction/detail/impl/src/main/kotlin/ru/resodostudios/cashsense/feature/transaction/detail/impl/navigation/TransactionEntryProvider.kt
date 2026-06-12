@@ -11,6 +11,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.TransactionScreen
 import ru.resodostudios.cashsense.feature.transaction.detail.impl.TransactionViewModel
@@ -41,7 +42,7 @@ fun EntryProviderScope<NavKey>.transactionEntry(
                 navigator.navigateToTransactionEditor(walletId, transactionId, true)
             },
             onEditClick = navigator::navigateToTransactionEditor,
-            shouldShowNavigationIcon = navigator.state.isSinglePane,
+            shouldShowNavigationIcon = LocalIsSinglePane.current,
             viewModel = hiltViewModel<TransactionViewModel, TransactionViewModel.Factory> {
                 it.create(key)
             },

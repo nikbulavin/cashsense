@@ -29,6 +29,7 @@ import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -57,6 +58,7 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
@@ -97,6 +99,8 @@ fun CsApp(
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfoV2(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val paneScaffoldDirective = calculatePaneScaffoldDirective(windowAdaptiveInfo)
+    val isSinglePane = paneScaffoldDirective.maxHorizontalPartitions <= 1
 
     val inAppUpdateResult = appState.inAppUpdateResult.collectAsStateWithLifecycle().value
     val shouldRequestNotifications by appState.shouldRequestNotifications.collectAsStateWithLifecycle()
@@ -222,7 +226,10 @@ fun CsApp(
                         fadeIn(fadeSpec)
                 val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
 
-                CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalIsSinglePane provides isSinglePane,
+                ) {
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
                         sceneStrategies = listOf(

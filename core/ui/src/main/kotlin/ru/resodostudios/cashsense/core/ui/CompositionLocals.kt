@@ -13,3 +13,5 @@ val LocalTimeZone = compositionLocalOf { TimeZone.currentSystemDefault() }
 val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
     error("SnackbarHostState should be initialized at runtime")
 }
+
+val LocalIsSinglePane = compositionLocalOf { false }
