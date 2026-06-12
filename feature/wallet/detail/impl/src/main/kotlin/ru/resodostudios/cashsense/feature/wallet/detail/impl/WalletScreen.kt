@@ -71,7 +71,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
-import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsWithDefaults
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -168,7 +168,7 @@ private fun WalletScreen(
                     val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
                     Box(
                         modifier = Modifier
-                            .sharedBoundsWithDefaults(
+                            .sharedBoundsAdaptive(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
                                         id = walletState.wallet.id,

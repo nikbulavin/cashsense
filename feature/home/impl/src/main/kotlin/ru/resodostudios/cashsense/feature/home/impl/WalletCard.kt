@@ -61,7 +61,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
-import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsWithDefaults
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
@@ -98,7 +98,7 @@ internal fun WalletCard(
                 onClick = { onWalletClick(wallet.id) },
                 shape = shape,
                 modifier = modifier
-                    .sharedBoundsWithDefaults(
+                    .sharedBoundsAdaptive(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = wallet.id,

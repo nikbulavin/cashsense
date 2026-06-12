@@ -32,9 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -257,10 +255,7 @@ private fun FinanceCard(
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(
-                        ContentScale.FillWidth,
-                        Center,
-                    ),
+                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                 ),
             shape = RoundedCornerShape(20.dp),
             onClick = onClick,
@@ -338,10 +333,7 @@ private fun DetailedFinanceSection(
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
                     placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(
-                        ContentScale.FillWidth,
-                        Center,
-                    ),
+                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                 ),
         ) {
             Row(

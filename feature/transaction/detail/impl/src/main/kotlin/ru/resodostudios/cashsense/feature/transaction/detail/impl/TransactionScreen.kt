@@ -67,6 +67,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SendMoney
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -152,7 +153,7 @@ private fun TransactionScreen(
                         )
                     },
                     modifier = Modifier
-                        .sharedBounds(
+                        .sharedBoundsAdaptive(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
                                     id = transaction.id,
@@ -160,11 +161,7 @@ private fun TransactionScreen(
                                     type = SharedElementType.Bounds,
                                 ),
                             ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                            boundsTransform = motionScheme.sharedElementTransitionSpec,
                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                            exit = fadeOut(motionScheme.defaultEffectsSpec()),
-                            enter = fadeIn(motionScheme.defaultEffectsSpec()),
                         ),
                 ) { innerPadding ->
                     Column(
@@ -213,7 +210,6 @@ private fun TransactionScreen(
                                     ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                                 boundsTransform = motionScheme.sharedElementTransitionSpec,
                             ),
                         )
@@ -239,7 +235,6 @@ private fun TransactionScreen(
                                     ),
                                 ),
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                                 boundsTransform = motionScheme.sharedElementTransitionSpec,
                             ),
                         )
