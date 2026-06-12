@@ -5,8 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
-import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
@@ -42,8 +40,6 @@ fun EntryProviderScope<NavKey>.walletEntry(
             }
         },
     ) { key ->
-        val isSinglePane = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
-            .maxHorizontalPartitions <= 1
         WalletScreen(
             onBackClick = navigator::goBack,
             onTransactionClick = navigator::navigateToTransaction,
@@ -51,8 +47,8 @@ fun EntryProviderScope<NavKey>.walletEntry(
             onEditWallet = navigator::navigateToWalletDialog,
             onImportClick = navigator::navigateToTransactionImporter,
             navigateToTransactionEditor = navigator::navigateToTransactionEditor,
-            shouldShowNavigationIcon = isSinglePane,
-            shouldHighlightSelectedTransaction = !isSinglePane && navigator.state.currentSubStack.any { it is TransactionNavKey },
+            shouldShowNavigationIcon = navigator.state.isSinglePane,
+            shouldHighlightSelectedTransaction = !navigator.state.isSinglePane && navigator.state.currentSubStack.any { it is TransactionNavKey },
             viewModel = hiltViewModel<WalletViewModel, WalletViewModel.Factory> { it.create(key) },
         )
     }
