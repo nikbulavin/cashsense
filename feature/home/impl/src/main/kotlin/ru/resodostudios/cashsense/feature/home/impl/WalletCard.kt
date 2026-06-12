@@ -61,6 +61,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsWithDefaults
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
@@ -97,7 +98,7 @@ internal fun WalletCard(
                 onClick = { onWalletClick(wallet.id) },
                 shape = shape,
                 modifier = modifier
-                    .sharedBounds(
+                    .sharedBoundsWithDefaults(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = wallet.id,
@@ -105,12 +106,8 @@ internal fun WalletCard(
                                 type = SharedElementType.Bounds,
                             ),
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = motionScheme.sharedElementTransitionSpec,
                         placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                        clipInOverlayDuringTransition = OverlayClip(shape),
-                        exit = fadeOut(motionScheme.defaultEffectsSpec()),
-                        enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                        clipShape = shape,
                     )
                     .then(if (selected) Modifier.dropShadow(shape) else Modifier),
             ) {

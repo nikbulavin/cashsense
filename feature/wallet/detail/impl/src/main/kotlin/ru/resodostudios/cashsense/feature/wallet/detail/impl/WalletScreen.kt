@@ -3,8 +3,6 @@ package ru.resodostudios.cashsense.feature.wallet.detail.impl
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,6 +71,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsWithDefaults
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
@@ -165,12 +164,11 @@ private fun WalletScreen(
             when (walletState) {
                 WalletUiState.Loading, is WalletUiState.Error -> Unit
                 is WalletUiState.Success -> {
-                    val motionScheme = MaterialTheme.motionScheme
                     val hazeState = rememberHazeState()
                     val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
                     Box(
                         modifier = Modifier
-                            .sharedBounds(
+                            .sharedBoundsWithDefaults(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
                                         id = walletState.wallet.id,
@@ -178,12 +176,8 @@ private fun WalletScreen(
                                         type = SharedElementType.Bounds,
                                     ),
                                 ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                boundsTransform = motionScheme.sharedElementTransitionSpec,
                                 placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                                clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(roundedCornerAnim)),
-                                exit = fadeOut(motionScheme.defaultEffectsSpec()),
-                                enter = fadeIn(motionScheme.defaultEffectsSpec()),
+                                clipShape = RoundedCornerShape(roundedCornerAnim),
                             ),
                     ) {
                         var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
