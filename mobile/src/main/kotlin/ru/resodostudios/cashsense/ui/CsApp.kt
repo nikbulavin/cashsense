@@ -215,7 +215,10 @@ fun CsApp(
                             animSpec = slideSpec,
                         )
                         walletDialogEntry(navigator)
-                        transactionOverviewEntry(navigator)
+                        transactionOverviewEntry(
+                            navigator = navigator,
+                            animSpec = slideSpec,
+                        )
                         categoryEditorEntry(
                             navigator = navigator,
                             animSpec = slideSpec,
