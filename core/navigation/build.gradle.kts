@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.cashsense.android.library)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
