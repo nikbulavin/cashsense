@@ -82,6 +82,7 @@ internal fun TransactionScreen(
     onBackClick: () -> Unit,
     onRepeatClick: (walletId: String, transactionId: String) -> Unit,
     onEditClick: (walletId: String, transactionId: String) -> Unit,
+    shouldShowNavigationIcon: Boolean,
     viewModel: TransactionViewModel = hiltViewModel(),
 ) {
     val transactionUiState by viewModel.transactionUiState.collectAsStateWithLifecycle()
@@ -94,6 +95,7 @@ internal fun TransactionScreen(
             viewModel.deleteTransaction(it)
             onBackClick()
         },
+        shouldShowNavigationIcon = shouldShowNavigationIcon,
         transactionState = transactionUiState,
     )
 }
@@ -105,6 +107,7 @@ private fun TransactionScreen(
     onRepeatClick: (walletId: String, transactionId: String) -> Unit,
     onEditClick: (walletId: String, transactionId: String) -> Unit,
     onDeleteClick: (Transaction) -> Unit,
+    shouldShowNavigationIcon: Boolean,
     transactionState: TransactionUiState,
 ) {
     with(LocalSharedTransitionScope.current) {
@@ -136,12 +139,14 @@ private fun TransactionScreen(
                             },
                             subtitle = {},
                             navigationIcon = {
-                                CsIconButton(
-                                    onClick = onBackClick,
-                                    icon = CsIcons.Outlined.ArrowBack,
-                                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
-                                    tooltipPosition = TooltipAnchorPosition.Right,
-                                )
+                                if (shouldShowNavigationIcon) {
+                                    CsIconButton(
+                                        onClick = onBackClick,
+                                        icon = CsIcons.Outlined.ArrowBack,
+                                        contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                                        tooltipPosition = TooltipAnchorPosition.Right,
+                                    )
+                                }
                             },
                             titleHorizontalAlignment = Alignment.CenterHorizontally,
                         )

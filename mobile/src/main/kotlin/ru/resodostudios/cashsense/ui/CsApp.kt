@@ -221,7 +221,10 @@ fun CsApp(
                             animSpec = slideSpec,
                         )
                         subscriptionDialogEntry(navigator)
-                        transactionEntry(navigator)
+                        transactionEntry(
+                            navigator = navigator,
+                            animSpec = fadeSpec,
+                        )
                         transactionEditorEntry(
                             navigator = navigator,
                             animSpec = slideSpec,
