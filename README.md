@@ -6,10 +6,6 @@ A professional financial management solution for Android, engineered for precisi
 seamless user experience. It empowers users to maintain absolute control over their capital through
 multi-currency support, intelligent transaction categorization, and proactive subscription tracking.
 
-Designed for those who demand clarity and efficiency in their financial life.
-
----
-
 ## Features
 
 - **Multi-Currency Wallets** – Architected to manage diverse financial portfolios. Create and
@@ -74,8 +70,6 @@ If you find this tool valuable, consider supporting its continued development:
 
 Open-source software licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for
 full details.
-
----
 
 [m3]: https://m3.material.io/
 
