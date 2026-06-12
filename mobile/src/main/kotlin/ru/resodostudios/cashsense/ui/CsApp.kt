@@ -197,56 +197,32 @@ fun CsApp(
                 val slideSpec = motionScheme.defaultSpatialSpec<IntOffset>()
                 val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
+                val entryProvider = entryProvider {
+                    homeEntry(navigator)
+                    categoriesEntry(navigator)
+                    subscriptionsEntry(navigator)
+                    walletEntry(navigator, fadeSpec)
+                    settingsEntry(navigator, slideSpec)
+                    licensesEntry(navigator, slideSpec)
+                    walletDialogEntry(navigator)
+                    transactionOverviewEntry(navigator, slideSpec)
+                    categoryEditorEntry(navigator, slideSpec)
+                    subscriptionDialogEntry(navigator)
+                    transactionEntry(navigator, fadeSpec)
+                    transactionEditorEntry(navigator, slideSpec)
+                    transactionImporterEntry(navigator, slideSpec)
+                    transferDialogEntry(navigator)
+                }
+
+                val enterTransition = scaleIn(scaleSpec, 0.96f) +
+                        slideInVertically(slideSpec) { it / 28 } +
+                        fadeIn(fadeSpec)
+                val popEnterTransition = scaleIn(scaleSpec, 1.04f) +
+                        slideInVertically(slideSpec) { -it / 28 } +
+                        fadeIn(fadeSpec)
+                val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
+
                 CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                    val entryProvider = entryProvider {
-                        homeEntry(navigator)
-                        categoriesEntry(navigator)
-                        subscriptionsEntry(navigator)
-                        walletEntry(
-                            navigator = navigator,
-                            animSpec = fadeSpec,
-                        )
-                        settingsEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        licensesEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        walletDialogEntry(navigator)
-                        transactionOverviewEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        categoryEditorEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        subscriptionDialogEntry(navigator)
-                        transactionEntry(
-                            navigator = navigator,
-                            animSpec = fadeSpec,
-                        )
-                        transactionEditorEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        transactionImporterEntry(
-                            navigator = navigator,
-                            animSpec = slideSpec,
-                        )
-                        transferDialogEntry(navigator)
-                    }
-
-                    val enterTransition = scaleIn(scaleSpec, 0.96f) +
-                            slideInVertically(slideSpec) { it / 28 } +
-                            fadeIn(fadeSpec)
-                    val popEnterTransition = scaleIn(scaleSpec, 1.04f) +
-                            slideInVertically(slideSpec) { -it / 28 } +
-                            fadeIn(fadeSpec)
-                    val exitTransition = scaleOut(scaleSpec, 0.9f) + fadeOut(fadeSpec)
-
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
                         sceneStrategies = listOf(
@@ -259,25 +235,25 @@ fun CsApp(
                         predictivePopTransitionSpec = { popEnterTransition togetherWith exitTransition },
                         sharedTransitionScope = LocalSharedTransitionScope.current,
                     )
-                    FabMenu(
-                        visible = isFabVisible,
-                        onMenuItemClick = { fabItem ->
-                            when (fabItem) {
-                                WALLET -> navigator.navigateToWalletDialog()
-                                CATEGORY -> navigator.navigateToCategoryEditor()
-                                SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
-                            }
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .windowInsetsPadding(WindowInsets.systemBars),
-                        toggleContainerSize = if (navRailVisible) {
-                            ToggleFloatingActionButtonDefaults.containerSizeMedium()
-                        } else {
-                            ToggleFloatingActionButtonDefaults.containerSize()
-                        },
-                    )
                 }
+                FabMenu(
+                    visible = isFabVisible,
+                    onMenuItemClick = { fabItem ->
+                        when (fabItem) {
+                            WALLET -> navigator.navigateToWalletDialog()
+                            CATEGORY -> navigator.navigateToCategoryEditor()
+                            SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
+                        }
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .windowInsetsPadding(WindowInsets.systemBars),
+                    toggleContainerSize = if (navRailVisible) {
+                        ToggleFloatingActionButtonDefaults.containerSizeMedium()
+                    } else {
+                        ToggleFloatingActionButtonDefaults.containerSize()
+                    },
+                )
             }
         }
     }
