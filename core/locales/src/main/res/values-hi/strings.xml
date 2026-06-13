@@ -71,7 +71,6 @@
   <string name="edit_wallet">वॉलेट संपादित करें</string>
   <string name="initial_balance">प्रारंभिक शेष राशि</string>
   <string name="primary">प्राथमिक</string>
-  <string name="wallet_widget_description">आपके वॉलेट</string>
   <string name="wallet_widget_title">वॉलेट</string>
   <string name="wallet_widget_empty">आपके पास कोई वॉलेट नहीं है</string>
   <string name="not_enough_data">पर्याप्त डेटा नहीं है</string>
@@ -126,4 +125,5 @@
   <string name="select_file">फ़ाइल चुनें</string>
   <string name="import_title">इम्पोर्ट करें</string>
   <string name="preview">पूर्वावलोकन</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
 </resources>
