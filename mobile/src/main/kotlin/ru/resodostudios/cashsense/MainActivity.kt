@@ -89,7 +89,9 @@ class MainActivity : AppCompatActivity() {
             ),
         )
 
-        updateWalletWidgetPreview(this)
+        lifecycleScope.launch {
+            updateWalletWidgetPreview(applicationContext)
+        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -147,7 +149,7 @@ class MainActivity : AppCompatActivity() {
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
         val syntheticBackStack = buildBackStack(
-            startKey = intent.data?.toString()?.let(DeepLinkRequest::fromUriString).toKey(),
+            startKey = intent.data?.let(DeepLinkRequest::fromUri).toKey(),
         )
 
         setContent {
