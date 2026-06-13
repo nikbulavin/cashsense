@@ -71,7 +71,6 @@
   <string name="edit_wallet">பணப்பையை திருத்துக</string>
   <string name="initial_balance">ஆரம்ப இருப்பு</string>
   <string name="primary">முதன்மை</string>
-  <string name="wallet_widget_description">உங்கள் பணப்பைகள்</string>
   <string name="wallet_widget_title">பணப்பைகள்</string>
   <string name="wallet_widget_empty">உங்களிடம் எந்த பணப்பையும் இல்லை</string>
   <string name="not_enough_data">மிக குறைந்த தரவு</string>
@@ -126,4 +125,5 @@
   <string name="select_file">கோப்பைத் தேர்ந்தெடு</string>
   <string name="import_title">இறக்குமதி</string>
   <string name="preview">மாதிரிக்காட்சி</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
 </resources>
