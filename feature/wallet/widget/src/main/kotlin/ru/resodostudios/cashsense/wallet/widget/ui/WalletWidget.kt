@@ -52,6 +52,7 @@ import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
 import java.math.BigDecimal
+import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 internal class WalletWidget : GlanceAppWidget() {
@@ -89,22 +90,22 @@ internal class WalletWidget : GlanceAppWidget() {
                             wallet = Wallet(
                                 id = "1",
                                 title = "Credit",
-                                initialBalance = BigDecimal(1000),
+                                initialBalance = BigDecimal.ZERO,
                                 currency = getUsdCurrency(),
                             ),
                             transactions = emptyList(),
-                            currentBalance = BigDecimal(1500),
+                            currentBalance = BigDecimal(15000),
                             isPrimary = true,
                         ),
                         ExtendedUserWallet(
                             wallet = Wallet(
                                 id = "2",
                                 title = "Debit",
-                                initialBalance = BigDecimal(500),
-                                currency = getUsdCurrency(),
+                                initialBalance = BigDecimal.ZERO,
+                                currency = Currency.getInstance("EUR"),
                             ),
                             transactions = emptyList(),
-                            currentBalance = BigDecimal(300),
+                            currentBalance = BigDecimal(547.2),
                             isPrimary = false,
                         ),
                     ),
@@ -122,7 +123,7 @@ private fun WalletWidgetContent(
     Scaffold(
         titleBar = {
             TitleBar(
-                startIcon = ImageProvider(R.drawable.ic_outlined_wallet),
+                startIcon = ImageProvider(R.drawable.feature_wallet_widget_ic_wallet),
                 title = context.getString(localesR.string.wallet_widget_title),
                 modifier = GlanceModifier.clickable(
                     actionStartActivity(
@@ -217,7 +218,7 @@ private fun WalletItem(
             )
         }
         CircleIconButton(
-            imageProvider = ImageProvider(R.drawable.ic_outlined_add),
+            imageProvider = ImageProvider(R.drawable.feature_wallet_widget_ic_add),
             onClick = actionStartActivity(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
