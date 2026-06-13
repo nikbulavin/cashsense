@@ -71,7 +71,6 @@
   <string name="edit_wallet">Edytuj portfel</string>
   <string name="initial_balance">Saldo początkowe</string>
   <string name="primary">Główny</string>
-  <string name="wallet_widget_description">Twoje portfele</string>
   <string name="wallet_widget_title">Portfele</string>
   <string name="wallet_widget_empty">Nie masz żadnych portfeli</string>
   <string name="not_enough_data">Niewystarczające dane</string>
@@ -126,4 +125,5 @@
   <string name="select_file">Wybierz plik</string>
   <string name="import_title">Importuj</string>
   <string name="preview">Podgląd</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
 </resources>
