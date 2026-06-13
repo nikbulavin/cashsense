@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.glance.GlanceId
@@ -15,6 +16,8 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.PreviewSizeMode
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.appwidget.components.Scaffold
@@ -53,6 +56,12 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 internal class WalletWidget : GlanceAppWidget() {
 
+    override val sizeMode: SizeMode
+        get() = SizeMode.Exact
+
+    override val previewSizeMode: PreviewSizeMode
+        get() = SizeMode.Responsive(setOf(DpSize(180.dp, 110.dp)))
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val walletsEntryPoint = EntryPointAccessors.fromApplication(
             context.applicationContext,
@@ -64,7 +73,9 @@ internal class WalletWidget : GlanceAppWidget() {
             val extendedWallets by getExtendedUserWalletsUseCase().collectAsState(emptyList())
 
             CsGlanceTheme {
-                WalletWidgetContent(extendedWallets)
+                WalletWidgetContent(
+                    extendedWallets = extendedWallets,
+                )
             }
         }
     }
@@ -120,8 +131,8 @@ private fun WalletWidgetContent(
                             data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_HOME".toUri()
                             component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        }
-                    )
+                        },
+                    ),
                 ),
             )
         },
@@ -139,7 +150,7 @@ private fun WalletWidgetContent(
                             walletId = extendedWallet.wallet.id,
                             title = extendedWallet.wallet.title,
                             currentBalance = extendedWallet.currentBalance.formatAmount(
-                                extendedWallet.wallet.currency
+                                extendedWallet.wallet.currency,
                             ),
                         )
                         Spacer(GlanceModifier.height(4.dp))
@@ -183,8 +194,8 @@ private fun WalletItem(
                         data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/$walletId".toUri()
                         component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    }
-                )
+                    },
+                ),
             ),
     ) {
         Column(
@@ -213,7 +224,7 @@ private fun WalletItem(
                     data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION/$walletId".toUri()
                     component = ComponentName(context.packageName, TARGET_ACTIVITY_NAME)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                }
+                },
             ),
             contentDescription = context.getString(localesR.string.add),
             backgroundColor = null,

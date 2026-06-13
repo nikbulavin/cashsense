@@ -13,11 +13,12 @@ import ru.resodostudios.cashsense.wallet.widget.WalletWidgetReceiver
 fun updateWalletWidgetPreview(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         CoroutineScope(Dispatchers.IO).launch {
-            val glanceAppWidgetManager = GlanceAppWidgetManager(context)
-            glanceAppWidgetManager.setWidgetPreviews(
-                WalletWidgetReceiver::class,
-                intSetOf(AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN),
-            )
+            runCatching {
+                GlanceAppWidgetManager(context).setWidgetPreviews(
+                    WalletWidgetReceiver::class,
+                    intSetOf(AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN),
+                )
+            }
         }
     }
 }

@@ -5,14 +5,14 @@
         <receiver
             android:name="ru.resodostudios.cashsense.wallet.widget.WalletWidgetReceiver"
             android:exported="false"
-            android:label="@string/wallet_widget_description">
+            android:label="@string/wallet_widget_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/wallet_widget_info" />
+                android:resource="@xml/feature_wallet_widget_info" />
         </receiver>
     </application>
 
