@@ -71,7 +71,6 @@
   <string name="edit_wallet">지갑 편집</string>
   <string name="initial_balance">초기 잔액</string>
   <string name="primary">기본</string>
-  <string name="wallet_widget_description">당신의 지갑</string>
   <string name="wallet_widget_title">지갑</string>
   <string name="wallet_widget_empty">지갑이 없습니다</string>
   <string name="not_enough_data">데이터가 충분하지 않습니다</string>
@@ -126,4 +125,5 @@
   <string name="select_file">파일 선택</string>
   <string name="import_title">가져오기</string>
   <string name="preview">미리보기</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
 </resources>
