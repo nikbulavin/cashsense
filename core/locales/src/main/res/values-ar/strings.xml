@@ -71,7 +71,6 @@
   <string name="edit_wallet">تحرير المحفظة</string>
   <string name="initial_balance">الرصيد الافتتاحي</string>
   <string name="primary">أساسي</string>
-  <string name="wallet_widget_description">محافظك</string>
   <string name="wallet_widget_title">المحافظ</string>
   <string name="wallet_widget_empty">لا تملك أي محافظ</string>
   <string name="not_enough_data">البيانات غير كافية</string>
@@ -126,4 +125,5 @@
   <string name="select_file">حدد ملفًا</string>
   <string name="import_title">استيراد</string>
   <string name="preview">معاينة</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
 </resources>
