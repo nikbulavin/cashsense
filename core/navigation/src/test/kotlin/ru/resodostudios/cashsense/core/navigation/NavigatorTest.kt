@@ -41,13 +41,13 @@ class NavigatorTest {
     }
 
     @Test
-    fun testStartKey() {
+    fun `initial state should have correct start keys`() {
         assertEquals(navigationState.startKey, TestFirstTopLevelKey)
         assertEquals(navigationState.currentTopLevelKey, TestFirstTopLevelKey)
     }
 
     @Test
-    fun testNavigate() {
+    fun `navigate should update sub-stack for current top level key`() {
         navigator.navigate(TestKeyFirst)
 
         assertEquals(navigationState.currentTopLevelKey, TestFirstTopLevelKey)
@@ -55,13 +55,13 @@ class NavigatorTest {
     }
 
     @Test
-    fun testNavigateTopLevel() {
+    fun `navigate to top level key should update current top level key`() {
         navigator.navigate(TestSecondTopLevelKey)
         assertEquals(navigationState.currentTopLevelKey, TestSecondTopLevelKey)
     }
 
     @Test
-    fun testNavigateSingleTop() {
+    fun `navigate with single top should not add duplicate key to sub-stack`() {
         navigator.navigate(TestKeyFirst)
 
         assertContentEquals(
@@ -78,7 +78,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun testNavigateTopLevelSingleTop() {
+    fun `navigate to top level key with single top should update current sub-stack`() {
         navigator.navigate(TestSecondTopLevelKey)
         navigator.navigate(TestKeyFirst)
 
@@ -93,7 +93,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun testSubStack() {
+    fun `sub-stack should maintain navigation history`() {
         navigator.navigate(TestKeyFirst)
 
         assertEquals(navigationState.currentKey, TestKeyFirst)
@@ -106,7 +106,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun testMultiStack() {
+    fun `multi-stack navigation should preserve state across top level keys`() {
         // add to start stack
         navigator.navigate(TestKeyFirst)
 
@@ -133,7 +133,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun testPopOneNonTopLevel() {
+    fun `goBack should pop non-top level key from current sub-stack`() {
         navigator.navigate(TestKeyFirst)
         navigator.navigate(TestKeySecond)
 
@@ -154,7 +154,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun testPopOneTopLevel() {
+    fun `goBack should pop top level key and return to previous stack`() {
         navigator.navigate(TestKeyFirst)
         navigator.navigate(TestSecondTopLevelKey)
 
@@ -176,7 +176,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun popMultipleNonTopLevel() {
+    fun `goBack multiple times should clear non-top level keys`() {
         navigator.navigate(TestKeyFirst)
         navigator.navigate(TestKeySecond)
 
@@ -195,7 +195,7 @@ class NavigatorTest {
     }
 
     @Test
-    fun popMultipleTopLevel() {
+    fun `goBack multiple times should clear top level keys and return to start stack`() {
         // second sub-stack
         navigator.navigate(TestSecondTopLevelKey)
         navigator.navigate(TestKeyFirst)
