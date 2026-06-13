@@ -21,7 +21,7 @@ multi-currency support, intelligent transaction categorization, and proactive su
 
 ![Screenshots](docs/images/screenshots.png "Interface Overview")
 
-# UI
+## UI
 
 The application strictly adheres to the **Material 3 Expressive** design principles, offering a
 refined,
@@ -50,7 +50,7 @@ and maintainability.
 
 ## Localization
 
-The application is global-ready. We invite you to contribute to our localization efforts
+We invite you to contribute to our localization efforts
 on [Crowdin](https://crowdin.com/project/cashsense) to help make financial clarity accessible to
 everyone in their native language.
 

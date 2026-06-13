@@ -1,7 +1,11 @@
 package ru.resodostudios.cashsense.util
 
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.deeplink.DeepLinkRequest
+import androidx.navigation3.runtime.deeplink.UriDeepLinkMatcher
+import kotlinx.serialization.serializer
+import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_PATH_BASE
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_HOME
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_SUBSCRIPTIONS
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_TRANSACTION
@@ -12,44 +16,46 @@ import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEdit
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
 import ru.resodostudios.core.navigation.NavDeepLinkKey
 
-fun buildBackStack(
-    startKey: NavKey,
-): List<NavKey> {
-    /**
-     * iterate up the parents of the startKey until it reaches the root key (a key without a parent)
-     */
-    return buildList {
-        var node: NavKey? = startKey
-        while (node != null) {
-            add(0, node)
-            val parent = if (node is NavDeepLinkKey) {
-                node.parent
-            } else null
-            node = parent
-        }
+/**
+ * Builds a navigation back stack for the given [startKey] by traversing its parent hierarchy.
+ *
+ * This function uses the `parent` property of [NavDeepLinkKey] to trace the path from the
+ * specified destination back to the root. The resulting list is ordered from the
+ * top-level parent to the [startKey].
+ *
+ * @param startKey The destination key to build the back stack from.
+ * @return A list of [NavKey] representing the complete navigation path.
+ */
+fun buildBackStack(startKey: NavKey): List<NavKey> {
+    return generateSequence(startKey) { node ->
+        (node as? NavDeepLinkKey)?.parent
     }
+        .toList()
+        .asReversed()
 }
 
-fun Uri?.toKey(): NavKey {
+private val DeepLinkMatchers = listOf(
+    UriDeepLinkMatcher(
+        uriPattern = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_HOME?walletId={walletId}".toUri(),
+        serializer = serializer<HomeNavKey>(),
+    ),
+    UriDeepLinkMatcher(
+        uriPattern = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_SUBSCRIPTIONS".toUri(),
+        serializer = serializer<SubscriptionsNavKey>(),
+    ),
+    UriDeepLinkMatcher(
+        uriPattern = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION/{walletId}".toUri(),
+        serializer = serializer<TransactionEditorNavKey>(),
+    ),
+    UriDeepLinkMatcher(
+        uriPattern = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/{walletId}".toUri(),
+        serializer = serializer<WalletNavKey>(),
+    ),
+)
+
+fun DeepLinkRequest?.toKey(): NavKey {
     if (this == null) return HomeNavKey()
-
-    val paths = pathSegments
-
-    if (pathSegments.isEmpty()) return HomeNavKey()
-
-    return when (paths.first()) {
-        DEEPLINK_TAG_HOME -> HomeNavKey()
-        DEEPLINK_TAG_SUBSCRIPTIONS -> SubscriptionsNavKey
-        DEEPLINK_TAG_TRANSACTION -> {
-            val walletId = pathSegments[1]
-            if (walletId != null) TransactionEditorNavKey(walletId) else HomeNavKey()
-        }
-
-        DEEPLINK_TAG_WALLET -> {
-            val walletId = pathSegments[1]
-            if (walletId != null) WalletNavKey(walletId) else HomeNavKey()
-        }
-
-        else -> HomeNavKey()
-    }
+    return DeepLinkMatchers.firstNotNullOfOrNull { matcher ->
+        runCatching { matcher.match(this)?.key }.getOrNull()
+    } ?: HomeNavKey()
 }

@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
+import androidx.navigation3.runtime.deeplink.DeepLinkRequest
 import androidx.tracing.trace
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +51,7 @@ import ru.resodostudios.cashsense.ui.rememberCsAppState
 import ru.resodostudios.cashsense.util.buildBackStack
 import ru.resodostudios.cashsense.util.isSystemInDarkTheme
 import ru.resodostudios.cashsense.util.toKey
+import ru.resodostudios.cashsense.wallet.widget.ui.updateWalletWidgetPreview
 import ru.resodostudios.core.navigation.rememberNavigationState
 import javax.inject.Inject
 
@@ -86,6 +88,10 @@ class MainActivity : AppCompatActivity() {
                 dynamicTheme = Loading.shouldUseDynamicTheming,
             ),
         )
+
+        lifecycleScope.launch {
+            updateWalletWidgetPreview(applicationContext)
+        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -142,9 +148,8 @@ class MainActivity : AppCompatActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
-        val startKey = intent.data.toKey()
         val syntheticBackStack = buildBackStack(
-            startKey = startKey,
+            startKey = intent.data?.let(DeepLinkRequest::fromUri).toKey(),
         )
 
         setContent {

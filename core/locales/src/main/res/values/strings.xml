@@ -121,7 +121,7 @@
     <string name="update">Update</string>
     <string name="version">Version</string>
     <string name="wallet_menu_icon_description">Wallet menu</string>
-    <string name="wallet_widget_description">Your wallets</string>
+    <string name="wallet_widget_description">Track balances and quick transactions</string>
     <string name="wallet_widget_empty">You don\'t have any wallets</string>
     <string name="wallet_widget_title">Wallets</string>
     <string name="week">Week</string>
