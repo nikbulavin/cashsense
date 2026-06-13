@@ -51,6 +51,7 @@ import ru.resodostudios.cashsense.ui.rememberCsAppState
 import ru.resodostudios.cashsense.util.buildBackStack
 import ru.resodostudios.cashsense.util.isSystemInDarkTheme
 import ru.resodostudios.cashsense.util.toKey
+import ru.resodostudios.cashsense.wallet.widget.ui.updateWalletWidgetPreview
 import ru.resodostudios.core.navigation.rememberNavigationState
 import javax.inject.Inject
 
@@ -87,6 +88,8 @@ class MainActivity : AppCompatActivity() {
                 dynamicTheme = Loading.shouldUseDynamicTheming,
             ),
         )
+
+        updateWalletWidgetPreview(this)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

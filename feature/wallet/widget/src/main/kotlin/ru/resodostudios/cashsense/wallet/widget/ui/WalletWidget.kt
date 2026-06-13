@@ -40,12 +40,15 @@ import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_HOME
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_TRANSACTION
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.common.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTheme
 import ru.resodostudios.cashsense.wallet.widget.ui.theme.CsGlanceTypography
+import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 internal class WalletWidget : GlanceAppWidget() {
@@ -62,6 +65,39 @@ internal class WalletWidget : GlanceAppWidget() {
 
             CsGlanceTheme {
                 WalletWidgetContent(extendedWallets)
+            }
+        }
+    }
+
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        provideContent {
+            CsGlanceTheme {
+                WalletWidgetContent(
+                    extendedWallets = listOf(
+                        ExtendedUserWallet(
+                            wallet = Wallet(
+                                id = "1",
+                                title = "Credit",
+                                initialBalance = BigDecimal(1000),
+                                currency = getUsdCurrency(),
+                            ),
+                            transactions = emptyList(),
+                            currentBalance = BigDecimal(1500),
+                            isPrimary = true,
+                        ),
+                        ExtendedUserWallet(
+                            wallet = Wallet(
+                                id = "2",
+                                title = "Debit",
+                                initialBalance = BigDecimal(500),
+                                currency = getUsdCurrency(),
+                            ),
+                            transactions = emptyList(),
+                            currentBalance = BigDecimal(300),
+                            isPrimary = false,
+                        ),
+                    ),
+                )
             }
         }
     }
@@ -102,7 +138,9 @@ private fun WalletWidgetContent(
                             context = context,
                             walletId = extendedWallet.wallet.id,
                             title = extendedWallet.wallet.title,
-                            currentBalance = extendedWallet.currentBalance.formatAmount(extendedWallet.wallet.currency),
+                            currentBalance = extendedWallet.currentBalance.formatAmount(
+                                extendedWallet.wallet.currency
+                            ),
                         )
                         Spacer(GlanceModifier.height(4.dp))
                     }

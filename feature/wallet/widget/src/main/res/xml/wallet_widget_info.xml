@@ -6,6 +6,7 @@
     android:minWidth="200dp"
     android:minHeight="110dp"
     android:previewImage="@drawable/wallet_widget_preview"
+    android:previewLayout="@layout/glance_default_loading_layout"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="3"
     android:targetCellHeight="2"
