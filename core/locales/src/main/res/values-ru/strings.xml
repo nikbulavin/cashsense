@@ -71,7 +71,6 @@
   <string name="edit_wallet">Изменение кошелька</string>
   <string name="initial_balance">Первоначальный баланс</string>
   <string name="primary">Основной</string>
-  <string name="wallet_widget_description">Ваши кошельки</string>
   <string name="wallet_widget_title">Кошельки</string>
   <string name="wallet_widget_empty">У вас нет кошельков</string>
   <string name="not_enough_data">Недостаточно данных</string>
@@ -126,4 +125,5 @@
   <string name="select_file">Выбрать файл</string>
   <string name="import_title">Импортировать</string>
   <string name="preview">Предпросмотр</string>
+  <string name="wallet_widget_description">Отслеживание остатков и быстрые транзакции</string>
 </resources>
