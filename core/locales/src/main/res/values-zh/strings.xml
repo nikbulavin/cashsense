@@ -71,7 +71,6 @@
   <string name="edit_wallet">编辑钱包</string>
   <string name="initial_balance">初始余额</string>
   <string name="primary">主要</string>
-  <string name="wallet_widget_description">您的钱包</string>
   <string name="wallet_widget_title">钱包</string>
   <string name="wallet_widget_empty">您还没有钱包</string>
   <string name="not_enough_data">数据不足</string>
@@ -126,4 +125,5 @@
   <string name="select_file">选择文件</string>
   <string name="import_title">导入</string>
   <string name="preview">预览</string>
+  <string name="wallet_widget_description">跟踪余额和快速交易</string>
 </resources>
