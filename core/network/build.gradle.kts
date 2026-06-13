@@ -22,4 +22,7 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.resources)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.ktor.client.mock)
 }

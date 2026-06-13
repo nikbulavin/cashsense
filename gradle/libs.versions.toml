@@ -107,11 +107,13 @@ kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.re
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-playServices = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp" }
 ktor-client-resources = { group = "io.ktor", name = "ktor-client-resources" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
