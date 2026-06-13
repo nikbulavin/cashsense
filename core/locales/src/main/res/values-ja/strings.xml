@@ -71,7 +71,6 @@
   <string name="edit_wallet">ウォレットを編集</string>
   <string name="initial_balance">初期残高</string>
   <string name="primary">プライマリ</string>
-  <string name="wallet_widget_description">あなたのウォレット</string>
   <string name="wallet_widget_title">ウォレット</string>
   <string name="wallet_widget_empty">ウォレットがありません</string>
   <string name="not_enough_data">データが不足しています</string>
@@ -126,4 +125,5 @@
   <string name="select_file">ファイルを選択</string>
   <string name="import_title">インポート</string>
   <string name="preview">プレビュー</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
 </resources>
