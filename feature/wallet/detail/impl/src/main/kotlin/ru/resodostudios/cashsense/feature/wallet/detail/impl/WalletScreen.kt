@@ -72,7 +72,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
-import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateType
 import ru.resodostudios.cashsense.core.model.data.FinanceType
@@ -405,7 +404,7 @@ private fun WalletTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .sharedBounds(
+                        .sharedBoundsAdaptive(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
                                     id = wallet.id,
@@ -413,9 +412,7 @@ private fun WalletTopBar(
                                     type = SharedElementType.WalletTitle,
                                 ),
                             ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
                 )
             },
@@ -425,7 +422,7 @@ private fun WalletTopBar(
                     label = "WalletBalance",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .sharedBounds(
+                        .sharedBoundsAdaptive(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
                                     id = wallet.id,
@@ -433,9 +430,7 @@ private fun WalletTopBar(
                                     type = SharedElementType.BalanceAmount,
                                 ),
                             ),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                            boundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
                         ),
                 )
             },
