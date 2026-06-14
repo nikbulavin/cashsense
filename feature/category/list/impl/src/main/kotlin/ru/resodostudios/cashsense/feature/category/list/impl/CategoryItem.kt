@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.feature.category.list.impl
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
@@ -9,6 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
+import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
+import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
+import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.ui.component.StoredIcon
 
@@ -21,23 +26,54 @@ internal fun CategoryItem(
     selected: Boolean = false,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
-    CsSelectableListItem(
-        shapes = shapes,
-        modifier = modifier,
-        selected = selected,
-        onClick = { onClick(category) },
-        content = {
-            Text(
-                text = category.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        leadingContent = {
-            Icon(
-                imageVector = StoredIcon.asImageVector(category.iconId),
-                contentDescription = null,
-            )
-        },
-    )
+    with(LocalSharedTransitionScope.current) {
+        CsSelectableListItem(
+            shapes = shapes,
+            modifier = modifier.sharedBoundsAdaptive(
+                sharedContentState = rememberSharedContentState(
+                    key = SharedElementKey(
+                        id = category.id,
+                        origin = category.id,
+                        type = SharedElementType.Bounds,
+                    ),
+                ),
+                placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+            ),
+            selected = selected,
+            onClick = { onClick(category) },
+            content = {
+                Text(
+                    text = category.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.sharedBoundsAdaptive(
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey(
+                                id = category.id,
+                                origin = category.title,
+                                type = SharedElementType.CategoryTitle,
+                            ),
+                        ),
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                    )
+                )
+            },
+            leadingContent = {
+                Icon(
+                    imageVector = StoredIcon.asImageVector(category.iconId),
+                    contentDescription = null,
+                    modifier = Modifier.sharedBoundsAdaptive(
+                        sharedContentState = rememberSharedContentState(
+                            key = SharedElementKey(
+                                id = category.id,
+                                origin = StoredIcon.asImageVector(category.iconId).toString(),
+                                type = SharedElementType.CategoryIcon,
+                            ),
+                        ),
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                    ),
+                )
+            },
+        )
+    }
 }

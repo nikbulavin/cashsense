@@ -204,7 +204,7 @@ fun CsApp(
 
                 val entryProvider = entryProvider {
                     homeEntry(navigator)
-                    categoryEntry(navigator)
+                    categoryEntry(navigator, fadeSpec)
                     categoriesEntry(navigator)
                     subscriptionsEntry(navigator)
                     walletEntry(navigator, fadeSpec)
