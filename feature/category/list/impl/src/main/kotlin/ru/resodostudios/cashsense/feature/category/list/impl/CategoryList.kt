@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.feature.category.list.impl
 
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.model.data.Category
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-internal fun LazyGridScope.categories(
+internal fun LazyListScope.categories(
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
     selectedCategory: Category? = null,
