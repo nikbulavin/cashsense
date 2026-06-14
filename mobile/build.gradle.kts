@@ -74,6 +74,8 @@ baselineProfile {
 }
 
 dependencies {
+    implementation(projects.feature.category.detail.api)
+    implementation(projects.feature.category.detail.impl)
     implementation(projects.feature.category.editor.api)
     implementation(projects.feature.category.editor.impl)
     implementation(projects.feature.category.list.api)

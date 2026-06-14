@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.resodostudios.cashsense.feature.category.list.impl"
+    namespace = "ru.resodostudios.cashsense.feature.category.detail.impl"
 }
 
 dependencies {
@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.core.locales)
 
     implementation(projects.feature.category.detail.api)
-    implementation(projects.feature.category.list.api)
+    implementation(projects.feature.category.editor.api)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

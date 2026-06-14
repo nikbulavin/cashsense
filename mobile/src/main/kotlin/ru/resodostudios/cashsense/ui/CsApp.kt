@@ -65,6 +65,7 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.SUBSCRIPTION
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.core.ui.permission.NotificationPermissionEffect
+import ru.resodostudios.cashsense.feature.category.detail.impl.navigation.categoryEntry
 import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
@@ -203,6 +204,7 @@ fun CsApp(
 
                 val entryProvider = entryProvider {
                     homeEntry(navigator)
+                    categoryEntry(navigator)
                     categoriesEntry(navigator)
                     subscriptionsEntry(navigator)
                     walletEntry(navigator, fadeSpec)

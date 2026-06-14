@@ -13,18 +13,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
@@ -41,21 +37,17 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun CategoriesScreen(
-    onEditCategory: (String) -> Unit,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
+    navigateToCategory: (String) -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel(),
 ) {
     val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     CategoriesScreen(
         categoriesState = categoriesState,
-        onCategoryEdit = onEditCategory,
-        onShowSnackbar = onShowSnackbar,
-        onCategorySelect = viewModel::updateSelectedCategory,
-        onCategoryDelete = viewModel::deleteCategory,
-        shouldDisplayUndoCategory = viewModel.shouldDisplayUndoCategory,
-        undoCategoryRemoval = viewModel::undoCategoryRemoval,
-        clearUndoState = viewModel::clearUndoState,
+        onCategorySelect = { category ->
+            viewModel.updateSelectedCategory(category)
+            navigateToCategory(category.id)
+        },
     )
 }
 
@@ -63,13 +55,7 @@ internal fun CategoriesScreen(
 @Composable
 private fun CategoriesScreen(
     categoriesState: CategoriesUiState,
-    onShowSnackbar: suspend (String, String?) -> Boolean,
-    onCategorySelect: (Category?) -> Unit,
-    onCategoryEdit: (String) -> Unit,
-    onCategoryDelete: (String) -> Unit,
-    shouldDisplayUndoCategory: Boolean = false,
-    undoCategoryRemoval: () -> Unit = {},
-    clearUndoState: () -> Unit = {},
+    onCategorySelect: (Category) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -86,22 +72,6 @@ private fun CategoriesScreen(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        val categoryDeletedMessage = stringResource(localesR.string.category_deleted)
-        val undoText = stringResource(localesR.string.undo)
-
-        LaunchedEffect(shouldDisplayUndoCategory) {
-            if (shouldDisplayUndoCategory) {
-                val snackBarResult = onShowSnackbar(categoryDeletedMessage, undoText)
-                if (snackBarResult) {
-                    undoCategoryRemoval()
-                } else {
-                    clearUndoState()
-                }
-            }
-        }
-        LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
-            clearUndoState()
-        }
 
         when (categoriesState) {
             Loading -> {
@@ -137,8 +107,6 @@ private fun CategoriesScreen(
                         categories = categoriesState.categories,
                         onCategoryClick = onCategorySelect,
                         selectedCategory = categoriesState.selectedCategory,
-                        onCategoryEdit = onCategoryEdit,
-                        onCategoryDelete = onCategoryDelete,
                     )
                 }
             }
@@ -156,14 +124,11 @@ private fun CategoriesScreenPreview(
     CsTheme {
         Surface {
             CategoriesScreen(
-                onShowSnackbar = { _, _ -> false },
                 categoriesState = Success(
                     categories = categories,
                     selectedCategory = null,
                 ),
                 onCategorySelect = {},
-                onCategoryEdit = {},
-                onCategoryDelete = {},
             )
         }
     }

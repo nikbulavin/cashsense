@@ -52,6 +52,8 @@ include(":core:notifications")
 include(":core:shortcuts")
 include(":core:ui")
 
+include(":feature:category:detail:api")
+include(":feature:category:detail:impl")
 include(":feature:category:editor:api")
 include(":feature:category:editor:impl")
 include(":feature:category:list:api")
