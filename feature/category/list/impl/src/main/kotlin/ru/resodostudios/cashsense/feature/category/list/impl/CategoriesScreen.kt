@@ -24,10 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Empty
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -73,7 +69,7 @@ private fun CategoriesScreen(
     ) { innerPadding ->
 
         when (categoriesState) {
-            Loading -> {
+            CategoriesUiState.Loading -> {
                 LoadingState(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -81,7 +77,7 @@ private fun CategoriesScreen(
                 )
             }
 
-            Empty -> {
+            CategoriesUiState.Empty -> {
                 IllustratedMessage(
                     messageRes = localesR.string.categories_empty,
                     animationRes = R.raw.anim_categories_empty,
@@ -89,7 +85,7 @@ private fun CategoriesScreen(
                 )
             }
 
-            is Success -> {
+            is CategoriesUiState.Success -> {
                 LazyColumn(
                     contentPadding = PaddingValues(
                         top = innerPadding.calculateTopPadding(),
@@ -120,7 +116,7 @@ private fun CategoriesScreenPreview(
     CsTheme {
         Surface {
             CategoriesScreen(
-                categoriesState = Success(
+                categoriesState = CategoriesUiState.Success(
                     categories = categories,
                     selectedCategory = null,
                 ),

@@ -6,12 +6,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.feature.category.detail.api.CategoryNavKey
 import ru.resodostudios.cashsense.feature.category.detail.impl.CategoryScreen
+import ru.resodostudios.cashsense.feature.category.detail.impl.CategoryViewModel
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.core.navigation.Navigator
 
@@ -32,9 +35,14 @@ fun EntryProviderScope<NavKey>.categoryEntry(
                 fadeIn(animSpec) togetherWith fadeOut(animSpec)
             }
         },
-    ) {
+    ) { key ->
         CategoryScreen(
+            onBackClick = navigator::goBack,
             onEditCategory = navigator::navigateToCategoryEditor,
+            shouldShowNavigationIcon = LocalIsSinglePane.current,
+            viewModel = hiltViewModel<CategoryViewModel, CategoryViewModel.Factory> {
+                it.create(key)
+            },
         )
     }
 }

@@ -5,32 +5,37 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.resodostudios.cashsense.core.designsystem.component.CsTopAppBar
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Empty
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Loading
-import ru.resodostudios.cashsense.core.ui.CategoriesUiState.Success
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
+import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
 internal fun CategoryScreen(
+    onBackClick: () -> Unit,
     onEditCategory: (String) -> Unit,
-    viewModel: CategoriesViewModel = hiltViewModel(),
+    shouldShowNavigationIcon: Boolean,
+    viewModel: CategoryViewModel = hiltViewModel(),
 ) {
-    val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
+    val categoryUiState by viewModel.categoryUiState.collectAsStateWithLifecycle()
 
     CategoryScreen(
-        categoriesState = categoriesState,
+        categoryUiState = categoryUiState,
+        shouldShowNavigationIcon = shouldShowNavigationIcon,
+        onBackClick = onBackClick,
         onCategoryEdit = onEditCategory,
         onCategoryDelete = viewModel::deleteCategory,
     )
@@ -39,7 +44,9 @@ internal fun CategoryScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CategoryScreen(
-    categoriesState: CategoriesUiState,
+    categoryUiState: CategoryUiState,
+    shouldShowNavigationIcon: Boolean,
+    onBackClick: () -> Unit,
     onCategoryEdit: (String) -> Unit,
     onCategoryDelete: (String) -> Unit,
 ) {
@@ -47,19 +54,29 @@ private fun CategoryScreen(
 
     Scaffold(
         topBar = {
-            CsTopAppBar(
-                titleRes = localesR.string.categories_title,
-                scrollBehavior = scrollBehavior,
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    if (shouldShowNavigationIcon) {
+                        CsIconButton(
+                            onClick = onBackClick,
+                            icon = CsIcons.Outlined.ArrowBack,
+                            contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                            tooltipPosition = TooltipAnchorPosition.Right,
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors().copy(
                     scrolledContainerColor = Color.Transparent,
                     containerColor = Color.Transparent,
                 ),
+                scrollBehavior = scrollBehavior,
             )
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        when (categoriesState) {
-            Loading -> {
+        when (categoryUiState) {
+            CategoryUiState.Loading -> {
                 LoadingState(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -67,11 +84,7 @@ private fun CategoryScreen(
                 )
             }
 
-            Empty -> {
-
-            }
-
-            is Success -> {
+            is CategoryUiState.Success -> {
 
             }
         }
