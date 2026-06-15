@@ -6,6 +6,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.feature.category.detail.api.CategoryNavKey
@@ -21,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel(assistedFactory = CategoryViewModel.Factory::class)
 internal class CategoryViewModel @AssistedInject constructor(
     @Assisted private val key: CategoryNavKey,
+    @ApplicationScope private val appScope: CoroutineScope,
     private val categoriesRepository: CategoriesRepository,
 ) : ViewModel() {
 
@@ -35,7 +38,7 @@ internal class CategoryViewModel @AssistedInject constructor(
             )
 
     fun deleteCategory(id: String) {
-        viewModelScope.launch {
+        appScope.launch {
             categoriesRepository.deleteCategory(id)
         }
     }
