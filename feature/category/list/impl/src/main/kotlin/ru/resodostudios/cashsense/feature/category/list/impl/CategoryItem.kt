@@ -59,14 +59,15 @@ internal fun CategoryItem(
                 )
             },
             leadingContent = {
+                val icon = StoredIcon.asImageVector(category.iconId)
                 Icon(
-                    imageVector = StoredIcon.asImageVector(category.iconId),
+                    imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.sharedBoundsAdaptive(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = category.id,
-                                origin = StoredIcon.asImageVector(category.iconId).toString(),
+                                origin = icon.toString(),
                                 type = SharedElementType.CategoryIcon,
                             ),
                         ),
