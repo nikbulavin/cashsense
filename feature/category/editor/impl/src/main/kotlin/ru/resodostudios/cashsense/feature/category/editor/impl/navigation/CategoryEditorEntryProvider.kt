@@ -23,7 +23,7 @@ fun EntryProviderScope<NavKey>.categoryEditorEntry(
     animSpec: FiniteAnimationSpec<IntOffset>,
 ) {
     entry<CategoryEditorNavKey>(
-        metadata = ListDetailSceneStrategy.extraPane() + metadata {
+        metadata = ListDetailSceneStrategy.detailPane() + metadata {
             put(NavDisplay.TransitionKey) {
                 slideInHorizontally(animSpec) { it } togetherWith slideOutHorizontally(animSpec) { -it }
             }
