@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.ui.component
 import android.os.Build
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -95,6 +97,29 @@ fun IllustratedMessage(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Composable
+fun DetailPanePlaceholder(
+    @StringRes titleRes: Int,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .clip(MaterialTheme.shapes.extraExtraLarge)
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
+    ) {
+        Text(
+            text = stringResource(titleRes),
+            maxLines = 1,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
