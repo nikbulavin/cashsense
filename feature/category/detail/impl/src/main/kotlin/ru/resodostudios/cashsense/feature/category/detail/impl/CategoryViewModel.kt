@@ -48,6 +48,7 @@ internal class CategoryViewModel @AssistedInject constructor(
             .groupByDate()
         CategoryUiState.Success(
             category = category,
+            walletTitles = wallets.associate { it.wallet.id to it.wallet.title },
             groupedTransactions = transactions,
         )
     }
@@ -77,6 +78,7 @@ internal sealed interface CategoryUiState {
 
     data class Success(
         val category: Category,
+        val walletTitles: Map<String, String>,
         val groupedTransactions: Map<Instant, List<Transaction>>,
     ) : CategoryUiState
 }

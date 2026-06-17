@@ -242,6 +242,13 @@ private fun CategoryScreen(
                                             overflow = TextOverflow.Ellipsis,
                                         )
                                     },
+                                    supportingContent = {
+                                        Text(
+                                            text = categoryUiState.walletTitles[transaction.walletOwnerId].toString(),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
                                     trailingContent = {
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
@@ -297,12 +304,6 @@ private fun CategoryScreen(
                                                 }
                                             }
                                         }
-                                    },
-                                    leadingContent = {
-                                        Icon(
-                                            imageVector = StoredIcon.asImageVector(category.iconId),
-                                            contentDescription = category.title,
-                                        )
                                     },
                                 )
                                 if (index != transactionGroup.value.lastIndex) {
