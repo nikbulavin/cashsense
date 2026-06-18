@@ -126,5 +126,5 @@
     <string name="year">Year</string>
     <string name="delete_category">Delete category?</string>
     <string name="permanently_delete_category">This category will be permanently removed from your device</string>
-    <string name="select_category">Select a category</string>">
+    <string name="select_category">Select a category</string>
 </resources>
