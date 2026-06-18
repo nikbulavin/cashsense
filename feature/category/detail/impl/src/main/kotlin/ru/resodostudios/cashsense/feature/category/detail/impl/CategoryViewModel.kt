@@ -48,8 +48,8 @@ internal class CategoryViewModel @AssistedInject constructor(
     ) { category, wallets, selectedTransaction ->
         val transactions = wallets
             .flatMap { it.transactions }
-            .sortedByDescending { it.timestamp }
             .filter { it.category?.id == category.id }
+            .sortedByDescending { it.timestamp }
             .groupByDate()
         CategoryUiState.Success(
             category = category,
@@ -70,9 +70,9 @@ internal class CategoryViewModel @AssistedInject constructor(
         selectedTransactionState.update { transaction }
     }
 
-    fun deleteCategory(id: String) {
+    fun deleteCategory() {
         appScope.launch {
-            categoriesRepository.deleteCategory(id)
+            categoriesRepository.deleteCategory(key.categoryId)
         }
     }
 

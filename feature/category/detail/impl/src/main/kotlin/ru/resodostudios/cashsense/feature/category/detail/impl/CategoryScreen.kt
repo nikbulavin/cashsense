@@ -106,7 +106,7 @@ internal fun CategoryScreen(
         onBackClick = onBackClick,
         onCategoryEdit = onEditCategory,
         onCategoryDelete = {
-            viewModel.deleteCategory(it)
+            viewModel.deleteCategory()
             onBackClick()
         },
         onTransactionSelect = { transaction ->
@@ -128,7 +128,7 @@ private fun CategoryScreen(
     shouldHighlightSelectedTransaction: Boolean,
     onBackClick: () -> Unit,
     onCategoryEdit: (String) -> Unit,
-    onCategoryDelete: (String) -> Unit,
+    onCategoryDelete: () -> Unit,
     onTransactionSelect: (Transaction?) -> Unit,
 ) {
     with(LocalSharedTransitionScope.current) {
@@ -330,7 +330,7 @@ private fun CategoryScreen(
 private fun Header(
     category: Category,
     onCategoryEdit: (String) -> Unit,
-    onCategoryDelete: (String) -> Unit,
+    onCategoryDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     with(LocalSharedTransitionScope.current) {
@@ -381,7 +381,7 @@ private fun Header(
             )
             ActionButtons(
                 onEditClick = { onCategoryEdit(category.id) },
-                onDeleteClick = { onCategoryDelete(category.id) },
+                onDeleteClick = onCategoryDelete,
             )
         }
     }
