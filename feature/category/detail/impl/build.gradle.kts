@@ -14,6 +14,7 @@ dependencies {
 
     implementation(projects.feature.category.detail.api)
     implementation(projects.feature.category.editor.api)
+    implementation(projects.feature.transaction.detail.api)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

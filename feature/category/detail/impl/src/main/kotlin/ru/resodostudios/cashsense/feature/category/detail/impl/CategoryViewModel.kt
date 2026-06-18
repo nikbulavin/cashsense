@@ -8,6 +8,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.common.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.common.Dispatcher
@@ -37,10 +39,13 @@ internal class CategoryViewModel @AssistedInject constructor(
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
 ) : ViewModel() {
 
+    private val selectedTransactionState = MutableStateFlow<Transaction?>(null)
+
     val categoryUiState: StateFlow<CategoryUiState> = combine(
         categoriesRepository.getCategory(key.categoryId),
         getExtendedUserWallets.invoke(),
-    ) { category, wallets ->
+        selectedTransactionState,
+    ) { category, wallets, selectedTransaction ->
         val transactions = wallets
             .flatMap { it.transactions }
             .sortedByDescending { it.timestamp }
@@ -50,6 +55,7 @@ internal class CategoryViewModel @AssistedInject constructor(
             category = category,
             walletTitles = wallets.associate { it.wallet.id to it.wallet.title },
             groupedTransactions = transactions,
+            selectedTransaction = selectedTransaction,
         )
     }
         .flowOn(defaultDispatcher)
@@ -59,6 +65,10 @@ internal class CategoryViewModel @AssistedInject constructor(
             started = SharingStarted.WhileSubscribed(5.seconds),
             initialValue = CategoryUiState.Loading,
         )
+
+    fun updateSelectedTransaction(transaction: Transaction?) {
+        selectedTransactionState.update { transaction }
+    }
 
     fun deleteCategory(id: String) {
         appScope.launch {
@@ -80,5 +90,6 @@ internal sealed interface CategoryUiState {
         val category: Category,
         val walletTitles: Map<String, String>,
         val groupedTransactions: Map<Instant, List<Transaction>>,
+        val selectedTransaction: Transaction?,
     ) : CategoryUiState
 }

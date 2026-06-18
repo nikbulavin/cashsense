@@ -16,6 +16,8 @@ import ru.resodostudios.cashsense.feature.category.detail.api.CategoryNavKey
 import ru.resodostudios.cashsense.feature.category.detail.impl.CategoryScreen
 import ru.resodostudios.cashsense.feature.category.detail.impl.CategoryViewModel
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
+import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
+import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.core.navigation.Navigator
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -36,10 +38,13 @@ fun EntryProviderScope<NavKey>.categoryEntry(
             }
         },
     ) { key ->
+        val isSinglePane = LocalIsSinglePane.current
         CategoryScreen(
             onBackClick = navigator::goBack,
             onEditCategory = navigator::navigateToCategoryEditor,
-            shouldShowNavigationIcon = LocalIsSinglePane.current,
+            onTransactionClick = navigator::navigateToTransaction,
+            shouldShowNavigationIcon = isSinglePane,
+            shouldHighlightSelectedTransaction = !isSinglePane && navigator.state.currentSubStack.any { it is TransactionNavKey },
             viewModel = hiltViewModel<CategoryViewModel, CategoryViewModel.Factory> {
                 it.create(key)
             },

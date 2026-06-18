@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -80,6 +79,7 @@ import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -92,7 +92,9 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun CategoryScreen(
     onBackClick: () -> Unit,
     onEditCategory: (String) -> Unit,
+    onTransactionClick: (String) -> Unit,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     viewModel: CategoryViewModel = hiltViewModel(),
 ) {
     val categoryUiState by viewModel.categoryUiState.collectAsStateWithLifecycle()
@@ -100,17 +102,21 @@ internal fun CategoryScreen(
     CategoryScreen(
         categoryUiState = categoryUiState,
         shouldShowNavigationIcon = shouldShowNavigationIcon,
+        shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
         onBackClick = onBackClick,
         onCategoryEdit = onEditCategory,
         onCategoryDelete = {
             viewModel.deleteCategory(it)
             onBackClick()
         },
+        onTransactionSelect = { transaction ->
+            viewModel.updateSelectedTransaction(transaction)
+            transaction?.id?.let { onTransactionClick(it) }
+        },
     )
 }
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
     ExperimentalMaterial3ExpressiveApi::class,
     ExperimentalHazeMaterialsApi::class,
     ExperimentalHazeApi::class,
@@ -119,9 +125,11 @@ internal fun CategoryScreen(
 private fun CategoryScreen(
     categoryUiState: CategoryUiState,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     onBackClick: () -> Unit,
     onCategoryEdit: (String) -> Unit,
     onCategoryDelete: (String) -> Unit,
+    onTransactionSelect: (Transaction?) -> Unit,
 ) {
     with(LocalSharedTransitionScope.current) {
         val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -222,8 +230,8 @@ private fun CategoryScreen(
                                             transactionGroup.value.size,
                                         )
                                     },
-                                    onClick = {},
-                                    selected = false,
+                                    onClick = { onTransactionSelect(transaction) },
+                                    selected = shouldHighlightSelectedTransaction && (transaction.id == categoryUiState.selectedTransaction?.id),
                                     modifier = Modifier
                                         .hazeSource(hazeState)
                                         .padding(horizontal = 16.dp)
@@ -253,7 +261,7 @@ private fun CategoryScreen(
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier.animateContentSize(
-                                                intSizeSpatialSpec
+                                                intSizeSpatialSpec,
                                             ),
                                         ) {
                                             AnimatedVisibility(
