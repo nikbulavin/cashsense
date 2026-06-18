@@ -3,12 +3,10 @@ package ru.resodostudios.cashsense.core.designsystem.component.button
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ConnectedTonalToggleButtonGroup(
     selectedIndex: Int,
@@ -42,7 +40,6 @@ fun ConnectedTonalToggleButtonGroup(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ConnectedToggleButtonGroup(
     selectedIndex: Int,

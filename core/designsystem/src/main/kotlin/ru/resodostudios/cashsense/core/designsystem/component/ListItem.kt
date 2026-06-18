@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
@@ -129,37 +128,5 @@ fun CsSelectableListItem(
         trailingContent = trailingContent,
         colors = colors,
         modifier = modifier,
-    )
-}
-
-/**
- * Defines the shapes for list items based on their position in a list.
- * This is used to create a visually cohesive list where the corners of items
- * are rounded differently depending on whether the item is at the beginning,
- * middle, or end of the list, or if it's a single item.
- *
- * - `Single`: Used for a standalone list item. Has large rounded corners on all sides.
- * - `Middle`: Used for items in the middle of a list. Has small rounded corners on all sides.
- * - `First`: Used for the first item in a list. Has large rounded corners on the top and small rounded corners on the bottom.
- * - `Last`: Used for the last item in a list. Has small rounded corners on the top and large rounded corners on the bottom.
- */
-object ListItemPositionShapes {
-
-    private val largeCornerRadius = 18.dp
-    private val smallCornerRadius = 6.dp
-
-    val Single = RoundedCornerShape(largeCornerRadius)
-    val Middle = RoundedCornerShape(smallCornerRadius)
-    val First = RoundedCornerShape(
-        topStart = largeCornerRadius,
-        topEnd = largeCornerRadius,
-        bottomEnd = smallCornerRadius,
-        bottomStart = smallCornerRadius,
-    )
-    val Last = RoundedCornerShape(
-        topStart = smallCornerRadius,
-        topEnd = smallCornerRadius,
-        bottomEnd = largeCornerRadius,
-        bottomStart = largeCornerRadius,
     )
 }
