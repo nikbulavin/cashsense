@@ -138,6 +138,13 @@ private fun CategoryScreen(
             CategoryUiState.Loading -> LoadingState(Modifier.fillMaxSize())
             is CategoryUiState.Success -> {
                 val category = categoryUiState.category
+                val hazeState = rememberHazeState()
+                val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.tertiaryContainer)
+                val motionScheme = MaterialTheme.motionScheme
+                val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+                val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
+                val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -172,9 +179,6 @@ private fun CategoryScreen(
                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                         ),
                 ) { innerPadding ->
-                    val hazeState = rememberHazeState()
-                    val hazeStyle =
-                        HazeMaterials.ultraThin(MaterialTheme.colorScheme.tertiaryContainer)
                     LazyColumn(
                         contentPadding = innerPadding,
                     ) {
@@ -213,14 +217,6 @@ private fun CategoryScreen(
                                 key = { _, transaction -> transaction.id },
                                 contentType = { _, _ -> "Transaction" },
                             ) { index, transaction ->
-                                val motionScheme = MaterialTheme.motionScheme
-                                val effectsSpec =
-                                    MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-                                val floatSpatialSpec =
-                                    MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
-                                val intSizeSpatialSpec =
-                                    MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
-
                                 CsSelectableListItem(
                                     shapes = if (transactionGroup.value.size == 1) {
                                         ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
@@ -250,12 +246,14 @@ private fun CategoryScreen(
                                             overflow = TextOverflow.Ellipsis,
                                         )
                                     },
-                                    supportingContent = {
-                                        Text(
-                                            text = categoryUiState.walletTitles[transaction.walletOwnerId].toString(),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
+                                    supportingContent = categoryUiState.walletTitles[transaction.walletOwnerId]?.let { walletTitle ->
+                                        {
+                                            Text(
+                                                text = walletTitle,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        }
                                     },
                                     trailingContent = {
                                         Row(
