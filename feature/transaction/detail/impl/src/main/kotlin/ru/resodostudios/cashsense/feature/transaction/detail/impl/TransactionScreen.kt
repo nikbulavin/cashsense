@@ -49,7 +49,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
@@ -68,11 +67,10 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
-import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.DateFormatType
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import ru.resodostudios.cashsense.core.ui.component.SectionTitle
-import ru.resodostudios.cashsense.core.ui.component.StoredIcon
+import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
@@ -124,7 +122,6 @@ private fun TransactionScreen(
                     val title = category?.title ?: stringResource(localesR.string.uncategorized)
                     StoredIcon.asImageVector(iconId) to title
                 }
-                val motionScheme = MaterialTheme.motionScheme
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -182,7 +179,7 @@ private fun TransactionScreen(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .padding(32.dp)
-                                    .sharedBounds(
+                                    .sharedBoundsAdaptive(
                                         sharedContentState = rememberSharedContentState(
                                             key = SharedElementKey(
                                                 id = transaction.id,
@@ -190,8 +187,7 @@ private fun TransactionScreen(
                                                 type = SharedElementType.CategoryIcon,
                                             ),
                                         ),
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                                     ),
                             )
                         }
@@ -201,7 +197,7 @@ private fun TransactionScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.sharedBounds(
+                            modifier = Modifier.sharedBoundsAdaptive(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
                                         id = transaction.id,
@@ -209,8 +205,7 @@ private fun TransactionScreen(
                                         type = SharedElementType.CategoryTitle,
                                     ),
                                 ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             ),
                         )
                         TagsSection(
@@ -226,7 +221,7 @@ private fun TransactionScreen(
                             style = MaterialTheme.typography.headlineLarge,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.sharedBounds(
+                            modifier = Modifier.sharedBoundsAdaptive(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
                                         id = transaction.id,
@@ -234,8 +229,7 @@ private fun TransactionScreen(
                                         type = SharedElementType.TransactionAmount,
                                     ),
                                 ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                boundsTransform = motionScheme.sharedElementTransitionSpec,
+                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             ),
                         )
                         ActionButtons(

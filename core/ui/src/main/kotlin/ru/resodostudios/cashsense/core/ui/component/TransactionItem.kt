@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -39,9 +38,9 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
-import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.Category
 import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.util.Currency
 import kotlin.time.Instant
@@ -93,7 +92,7 @@ fun TransactionItem(
                     text = formattedAmount,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBounds(
+                    modifier = Modifier.sharedBoundsAdaptive(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = transaction.id,
@@ -101,8 +100,7 @@ fun TransactionItem(
                                 type = SharedElementType.TransactionAmount,
                             ),
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = motionScheme.sharedElementTransitionSpec,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                 )
             },
@@ -111,7 +109,7 @@ fun TransactionItem(
                     text = categoryTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBounds(
+                    modifier = Modifier.sharedBoundsAdaptive(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = transaction.id,
@@ -119,8 +117,7 @@ fun TransactionItem(
                                 type = SharedElementType.CategoryTitle,
                             ),
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = motionScheme.sharedElementTransitionSpec,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                 )
             },
@@ -176,7 +173,7 @@ fun TransactionItem(
                 Icon(
                     imageVector = categoryIcon,
                     contentDescription = null,
-                    modifier = Modifier.sharedBounds(
+                    modifier = Modifier.sharedBoundsAdaptive(
                         sharedContentState = rememberSharedContentState(
                             key = SharedElementKey(
                                 id = transaction.id,
@@ -184,8 +181,7 @@ fun TransactionItem(
                                 type = SharedElementType.CategoryIcon,
                             ),
                         ),
-                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        boundsTransform = motionScheme.sharedElementTransitionSpec,
+                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                     ),
                 )
             },

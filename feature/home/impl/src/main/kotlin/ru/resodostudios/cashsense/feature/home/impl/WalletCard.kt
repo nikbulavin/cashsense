@@ -62,7 +62,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
-import ru.resodostudios.cashsense.core.designsystem.theme.sharedElementTransitionSpec
 import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.data.Wallet
 import ru.resodostudios.cashsense.core.ui.TransitionThemeWrapper
@@ -124,7 +123,7 @@ internal fun WalletCard(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .sharedBounds(
+                            .sharedBoundsAdaptive(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
                                         id = wallet.id,
@@ -132,9 +131,7 @@ internal fun WalletCard(
                                         type = SharedElementType.WalletTitle,
                                     ),
                                 ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                boundsTransform = motionScheme.sharedElementTransitionSpec,
                             ),
                     )
                     val balance = uiWallet.extendedUserWallet.currentBalance
@@ -145,7 +142,7 @@ internal fun WalletCard(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                            .sharedBounds(
+                            .sharedBoundsAdaptive(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
                                         id = wallet.id,
@@ -153,9 +150,7 @@ internal fun WalletCard(
                                         type = SharedElementType.BalanceAmount,
                                     ),
                                 ),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                boundsTransform = motionScheme.sharedElementTransitionSpec,
                             ),
                     )
                     TagsSection(

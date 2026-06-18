@@ -1,22 +1,19 @@
 package ru.resodostudios.cashsense.feature.category.list.impl
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import ru.resodostudios.cashsense.core.designsystem.component.ListItemPositionShapes
 import ru.resodostudios.cashsense.core.model.data.Category
 
-internal fun LazyGridScope.categories(
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+internal fun LazyListScope.categories(
     categories: List<Category>,
-    onCategoryClick: (Category?) -> Unit,
-    onCategoryEdit: (String) -> Unit,
-    onCategoryDelete: (String) -> Unit,
+    onCategoryClick: (Category) -> Unit,
+    shouldHighlightSelectedCategory: Boolean = false,
     selectedCategory: Category? = null,
 ) {
     itemsIndexed(
@@ -24,24 +21,16 @@ internal fun LazyGridScope.categories(
         key = { _, category -> category.id },
         contentType = { _, _ -> "Category" },
     ) { index, category ->
-        val shape = when (index) {
-            0 if categories.size == 1 -> ListItemPositionShapes.Single
-            0 -> ListItemPositionShapes.First
-            categories.lastIndex -> ListItemPositionShapes.Last
-            else -> ListItemPositionShapes.Middle
-        }
-        val selected = category == selectedCategory
-
         CategoryItem(
             category = category,
-            modifier = Modifier
-                .clip(shape)
-                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp))
-                .clickable { onCategoryClick(if (selected) null else category) }
-                .animateItem(),
-            selected = selected,
-            onEditClick = onCategoryEdit,
-            onDeleteClick = onCategoryDelete,
+            modifier = Modifier.animateItem(),
+            selected = shouldHighlightSelectedCategory && category == selectedCategory,
+            onClick = { onCategoryClick(category) },
+            shapes = if (categories.size == 1) {
+                ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
+            } else {
+                ListItemDefaults.segmentedShapes(index, categories.size)
+            },
         )
     }
 }

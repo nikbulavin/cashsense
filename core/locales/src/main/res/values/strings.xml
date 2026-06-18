@@ -14,7 +14,6 @@
     <string name="cancel">Cancel</string>
     <string name="categories_empty">Nothing in Categories</string>
     <string name="categories_title">Categories</string>
-    <string name="category_deleted">Category deleted</string>
     <string name="category_title">Category</string>
     <string name="choose_wallet">Choose a wallet</string>
     <string name="close">Close</string>
@@ -94,7 +93,7 @@
     <string name="save">Save</string>
     <string name="search">Search</string>
     <string name="search_no_results">No results found. Please check your spelling or try different keywords.</string>
-    <string name="select_wallet">Select a Wallet</string>
+    <string name="select_wallet">Select a wallet</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_general">General</string>
     <string name="settings_title">Settings</string>
@@ -117,7 +116,6 @@
     <string name="transfer">Transfer</string>
     <string name="transfers">Transfers</string>
     <string name="uncategorized">Uncategorized</string>
-    <string name="undo">Undo</string>
     <string name="update">Update</string>
     <string name="version">Version</string>
     <string name="wallet_menu_icon_description">Wallet menu</string>
@@ -126,4 +124,7 @@
     <string name="wallet_widget_title">Wallets</string>
     <string name="week">Week</string>
     <string name="year">Year</string>
+    <string name="delete_category">Delete category?</string>
+    <string name="permanently_delete_category">This category will be permanently removed from your device</string>
+    <string name="select_category">Select a category</string>
 </resources>
