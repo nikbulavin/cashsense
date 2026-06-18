@@ -177,11 +177,7 @@ private fun CategoryScreen(
                             )
                         }
                         categoryUiState.groupedTransactions.forEach { transactionGroup ->
-                            itemsIndexed(
-                                items = transactionGroup.value,
-                                key = { _, transaction -> transaction.id },
-                                contentType = { _, _ -> "Transaction" },
-                            ) { index, transaction ->
+                            item {
                                 CsTag(
                                     text = transactionGroup.key.formatDate(
                                         DateFormatType.DATE,
@@ -191,6 +187,12 @@ private fun CategoryScreen(
                                     textColor = MaterialTheme.colorScheme.onTertiaryContainer,
                                     modifier = Modifier.padding(16.dp),
                                 )
+                            }
+                            itemsIndexed(
+                                items = transactionGroup.value,
+                                key = { _, transaction -> transaction.id },
+                                contentType = { _, _ -> "Transaction" },
+                            ) { index, transaction ->
                                 CsSelectableListItem(
                                     shapes = if (transactionGroup.value.size == 1) {
                                         ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
@@ -203,6 +205,17 @@ private fun CategoryScreen(
                                     onClick = { onTransactionSelect(transaction) },
                                     selected = shouldHighlightSelectedTransaction && (transaction.id == categoryUiState.selectedTransaction?.id),
                                     modifier = Modifier
+                                        .sharedBoundsAdaptive(
+                                            sharedContentState = rememberSharedContentState(
+                                                key = SharedElementKey(
+                                                    id = transaction.id,
+                                                    origin = transaction.id,
+                                                    type = SharedElementType.Bounds,
+                                                ),
+                                            ),
+                                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                                            clipShape = RoundedCornerShape(0.dp),
+                                        )
                                         .padding(horizontal = 16.dp)
                                         .animateItem(
                                             fadeInSpec = motionScheme.defaultEffectsSpec(),
@@ -210,13 +223,22 @@ private fun CategoryScreen(
                                             placementSpec = motionScheme.defaultSpatialSpec(),
                                         ),
                                     content = {
+                                        val formattedAmount = transaction.amount
+                                            .formatAmount(transaction.currency, true)
                                         Text(
-                                            text = transaction.amount.formatAmount(
-                                                currency = transaction.currency,
-                                                plusPrefix = true,
-                                            ),
+                                            text = formattedAmount,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier.sharedBoundsAdaptive(
+                                                sharedContentState = rememberSharedContentState(
+                                                    key = SharedElementKey(
+                                                        id = transaction.id,
+                                                        origin = formattedAmount,
+                                                        type = SharedElementType.TransactionAmount,
+                                                    ),
+                                                ),
+                                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                            ),
                                         )
                                     },
                                     supportingContent = categoryUiState.walletTitles[transaction.walletOwnerId]?.let { walletTitle ->
