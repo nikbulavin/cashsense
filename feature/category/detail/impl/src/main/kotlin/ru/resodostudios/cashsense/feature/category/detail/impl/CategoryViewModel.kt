@@ -46,14 +46,25 @@ internal class CategoryViewModel @AssistedInject constructor(
         getExtendedUserWallets.invoke(),
         selectedTransactionState,
     ) { category, wallets, selectedTransaction ->
-        val transactions = wallets
+
+        val walletsWithTargetTransactions = wallets
+            .map { extendedWallet ->
+                extendedWallet.copy(
+                    transactions = extendedWallet.transactions
+                        .filter { it.category?.id == category.id },
+                )
+            }
+            .filter { it.transactions.isNotEmpty() }
+        val walletTitles = walletsWithTargetTransactions
+            .associate { it.wallet.id to it.wallet.title }
+        val transactions = walletsWithTargetTransactions
             .flatMap { it.transactions }
-            .filter { it.category?.id == category.id }
             .sortedByDescending { it.timestamp }
             .groupByDate()
+
         CategoryUiState.Success(
             category = category,
-            walletTitles = wallets.associate { it.wallet.id to it.wallet.title },
+            walletTitles = walletTitles,
             groupedTransactions = transactions,
             selectedTransaction = selectedTransaction,
         )

@@ -1,6 +1,7 @@
 package ru.resodostudios.cashsense.feature.category.list.impl
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
@@ -9,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
@@ -38,6 +40,7 @@ internal fun CategoryItem(
                     ),
                 ),
                 placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                clipShape = RoundedCornerShape(0.dp),
             ),
             selected = selected,
             onClick = { onClick(category) },
@@ -55,6 +58,7 @@ internal fun CategoryItem(
                             ),
                         ),
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        clipShape = RoundedCornerShape(0.dp),
                     )
                 )
             },
@@ -72,6 +76,7 @@ internal fun CategoryItem(
                             ),
                         ),
                         resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        clipShape = RoundedCornerShape(0.dp),
                     ),
                 )
             },

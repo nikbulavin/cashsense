@@ -33,12 +33,14 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun CategoriesScreen(
     navigateToCategory: (String) -> Unit,
+    shouldHighlightSelectedCategory: Boolean,
     viewModel: CategoriesViewModel = hiltViewModel(),
 ) {
     val categoriesState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
 
     CategoriesScreen(
         categoriesState = categoriesState,
+        shouldHighlightSelectedCategory = shouldHighlightSelectedCategory,
         onCategorySelect = { category ->
             viewModel.updateSelectedCategory(category)
             navigateToCategory(category.id)
@@ -50,6 +52,7 @@ internal fun CategoriesScreen(
 @Composable
 private fun CategoriesScreen(
     categoriesState: CategoriesUiState,
+    shouldHighlightSelectedCategory: Boolean,
     onCategorySelect: (Category) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -99,6 +102,7 @@ private fun CategoriesScreen(
                         categories = categoriesState.categories,
                         onCategoryClick = onCategorySelect,
                         selectedCategory = categoriesState.selectedCategory,
+                        shouldHighlightSelectedCategory = shouldHighlightSelectedCategory,
                     )
                 }
             }
@@ -120,6 +124,7 @@ private fun CategoriesScreenPreview(
                     categories = categories,
                     selectedCategory = null,
                 ),
+                shouldHighlightSelectedCategory = false,
                 onCategorySelect = {},
             )
         }

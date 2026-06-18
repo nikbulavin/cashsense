@@ -359,6 +359,7 @@ private fun Header(
                                 ),
                             ),
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                            clipShape = RoundedCornerShape(0.dp),
                         ),
                 )
             }
@@ -373,10 +374,11 @@ private fun Header(
                         key = SharedElementKey(
                             id = category.id,
                             origin = title,
-                            type = SharedElementType.TransactionAmount,
+                            type = SharedElementType.CategoryTitle,
                         ),
                     ),
                     resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                    clipShape = RoundedCornerShape(0.dp),
                 ),
             )
             ActionButtons(

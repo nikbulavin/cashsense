@@ -13,6 +13,7 @@ import ru.resodostudios.cashsense.core.model.data.Category
 internal fun LazyListScope.categories(
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
+    shouldHighlightSelectedCategory: Boolean = false,
     selectedCategory: Category? = null,
 ) {
     itemsIndexed(
@@ -23,7 +24,7 @@ internal fun LazyListScope.categories(
         CategoryItem(
             category = category,
             modifier = Modifier.animateItem(),
-            selected = category == selectedCategory,
+            selected = shouldHighlightSelectedCategory && category == selectedCategory,
             onClick = { onCategoryClick(category) },
             shapes = if (categories.size == 1) {
                 ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))

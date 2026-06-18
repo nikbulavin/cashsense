@@ -4,6 +4,7 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.component.DetailPanePlaceholder
 import ru.resodostudios.cashsense.feature.category.detail.api.navigateToCategory
 import ru.resodostudios.cashsense.feature.category.list.api.CategoriesNavKey
@@ -20,6 +21,7 @@ fun EntryProviderScope<NavKey>.categoriesEntry(navigator: Navigator) {
     ) {
         CategoriesScreen(
             navigateToCategory = navigator::navigateToCategory,
+            shouldHighlightSelectedCategory = !LocalIsSinglePane.current,
         )
     }
 }
