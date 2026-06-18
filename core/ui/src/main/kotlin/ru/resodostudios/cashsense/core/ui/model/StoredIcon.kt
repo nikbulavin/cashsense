@@ -1,20 +1,6 @@
-package ru.resodostudios.cashsense.core.ui.component
+package ru.resodostudios.cashsense.core.ui.model
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.AccountBalance
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Apparel
@@ -56,48 +42,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SmokingRooms
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SportsEsports
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Travel
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Work
-
-@Composable
-fun IconPickerDropdownMenu(
-    currentIcon: ImageVector,
-    onSelectedIconClick: (Int) -> Unit,
-    onClick: () -> Unit = {},
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-        IconButton(
-            onClick = {
-                onClick()
-                expanded = true
-            },
-        ) {
-            AnimatedIcon(
-                icon = currentIcon,
-            )
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            FlowRow(maxItemsInEachRow = 5) {
-                StoredIcon.entries.forEach { icon ->
-                    IconButton(
-                        onClick = {
-                            onSelectedIconClick(icon.storedId)
-                            expanded = false
-                        },
-                    ) {
-                        Icon(
-                            imageVector = icon.imageVector,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 enum class StoredIcon(
     val imageVector: ImageVector,
