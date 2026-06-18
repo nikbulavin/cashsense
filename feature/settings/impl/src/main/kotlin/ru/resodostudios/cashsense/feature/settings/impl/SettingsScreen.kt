@@ -29,6 +29,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -264,6 +265,7 @@ private fun General(
     }
 
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    val availableLanguages = rememberAvailableLanguages()
 
     CsListItemEmphasized(
         shapes = ListItemDefaults.segmentedShapes(1, 2),
@@ -527,76 +529,82 @@ private const val FEEDBACK_URL =
 private const val PRIVACY_POLICY_URL =
     "https://trusted-cowl-779.notion.site/Privacy-Policy-65accc6cf3714f289392ae1ffee96bae?pvs=4"
 
-private val availableLanguages: List<Language>
-    @Composable get() = listOf(
-        Language(
-            code = "",
-            displayName = stringResource(localesR.string.theme_system_default),
-            icon = CsIcons.Outlined.Android,
-        ),
-        Language(
-            code = "en",
-            displayName = "English",
-            icon = CsIcons.Filled.UnitedStates,
-        ),
-        Language(
-            code = "ar",
-            displayName = "العربية",
-            icon = CsIcons.Filled.SaudiArabia,
-        ),
-        Language(
-            code = "de",
-            displayName = "Deutsch",
-            icon = CsIcons.Filled.Germany,
-        ),
-        Language(
-            code = "es",
-            displayName = "Español",
-            icon = CsIcons.Filled.Spain,
-        ),
-        Language(
-            code = "fr",
-            displayName = "Français",
-            icon = CsIcons.Filled.France,
-        ),
-        Language(
-            code = "hi",
-            displayName = "हिंदी",
-            icon = CsIcons.Filled.India,
-        ),
-        Language(
-            code = "it",
-            displayName = "Italiano",
-            icon = CsIcons.Filled.Italy,
-        ),
-        Language(
-            code = "ja",
-            displayName = "日本語",
-            icon = CsIcons.Filled.Japan,
-        ),
-        Language(
-            code = "ko",
-            displayName = "한국어",
-            icon = CsIcons.Filled.SouthKorea,
-        ),
-        Language(
-            code = "pl",
-            displayName = "Polski",
-            icon = CsIcons.Filled.Poland,
-        ),
-        Language(
-            code = "ru",
-            displayName = "Русский",
-            icon = CsIcons.Filled.Russia,
-        ),
-        Language(
-            code = "ta",
-            displayName = "தமிழ்",
-            icon = CsIcons.Filled.India,
-        ),
-        Language(
-            code = "zh",
-            displayName = "简体中文",
-            icon = CsIcons.Filled.China,
-        ),
-    )
+@Composable
+internal fun rememberAvailableLanguages(): List<Language> {
+    val systemDefaultText = stringResource(localesR.string.theme_system_default)
+
+    return remember(systemDefaultText) {
+        listOf(
+            Language(
+                code = "",
+                displayName = systemDefaultText,
+                icon = CsIcons.Outlined.Android,
+            ),
+            Language(
+                code = "en",
+                displayName = "English",
+                icon = CsIcons.Filled.UnitedStates,
+            ),
+            Language(
+                code = "ar",
+                displayName = "العربية",
+                icon = CsIcons.Filled.SaudiArabia,
+            ),
+            Language(
+                code = "de",
+                displayName = "Deutsch",
+                icon = CsIcons.Filled.Germany,
+            ),
+            Language(
+                code = "es",
+                displayName = "Español",
+                icon = CsIcons.Filled.Spain,
+            ),
+            Language(
+                code = "fr",
+                displayName = "Français",
+                icon = CsIcons.Filled.France,
+            ),
+            Language(
+                code = "hi",
+                displayName = "हिंदी",
+                icon = CsIcons.Filled.India,
+            ),
+            Language(
+                code = "it",
+                displayName = "Italiano",
+                icon = CsIcons.Filled.Italy,
+            ),
+            Language(
+                code = "ja",
+                displayName = "日本語",
+                icon = CsIcons.Filled.Japan,
+            ),
+            Language(
+                code = "ko",
+                displayName = "한국어",
+                icon = CsIcons.Filled.SouthKorea,
+            ),
+            Language(
+                code = "pl",
+                displayName = "Polski",
+                icon = CsIcons.Filled.Poland,
+            ),
+            Language(
+                code = "ru",
+                displayName = "Русский",
+                icon = CsIcons.Filled.Russia,
+            ),
+            Language(
+                code = "ta",
+                displayName = "தமிழ்",
+                icon = CsIcons.Filled.India,
+            ),
+            Language(
+                code = "zh",
+                displayName = "简体中文",
+                icon = CsIcons.Filled.China,
+            ),
+        )
+    }
+}
