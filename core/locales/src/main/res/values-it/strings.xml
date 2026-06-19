@@ -4,7 +4,6 @@
   <string name="ok">OK</string>
   <string name="cancel">Annulla</string>
   <string name="date">Data</string>
-  <string name="undo">Annulla</string>
   <string name="navigation_back_icon_description">Indietro</string>
   <string name="save">Salva</string>
   <string name="add">Aggiungi</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">Modifica categoria</string>
   <string name="categories_title">Categorie</string>
   <string name="categories_empty">Niente nelle Categorie</string>
-  <string name="category_deleted">Categoria eliminata</string>
   <string name="home_title">Home</string>
   <string name="wallet_menu_icon_description">Menu portafoglio</string>
   <string name="home_empty">Niente nei Portafogli</string>
@@ -126,4 +124,7 @@
   <string name="import_title">Importa</string>
   <string name="preview">Anteprima</string>
   <string name="wallet_widget_description">Track balances and quick transactions</string>
+  <string name="delete_category">Delete category?</string>
+  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
+  <string name="select_category">Select a category</string>
 </resources>
