@@ -4,7 +4,6 @@
   <string name="ok">ОК</string>
   <string name="cancel">Отмена</string>
   <string name="date">Дата</string>
-  <string name="undo">Вернуть</string>
   <string name="navigation_back_icon_description">Назад</string>
   <string name="save">Сохранить</string>
   <string name="add">Добавить</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">Изменение категории</string>
   <string name="categories_title">Категории</string>
   <string name="categories_empty">Здесь будут ваши категории</string>
-  <string name="category_deleted">Категория удалена</string>
   <string name="home_title">Главная</string>
   <string name="wallet_menu_icon_description">Меню кошелька</string>
   <string name="home_empty">Здесь будут ваши кошельки</string>
@@ -126,4 +124,7 @@
   <string name="import_title">Импортировать</string>
   <string name="preview">Предпросмотр</string>
   <string name="wallet_widget_description">Отслеживание остатков и быстрые транзакции</string>
+  <string name="delete_category">Удалить категорию?</string>
+  <string name="permanently_delete_category">Эта категория будет навсегда удалена с вашего устройства</string>
+  <string name="select_category">Выбрать категорию</string>
 </resources>
