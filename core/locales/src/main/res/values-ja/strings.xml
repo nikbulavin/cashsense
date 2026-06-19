@@ -4,7 +4,6 @@
   <string name="ok">OK</string>
   <string name="cancel">キャンセル</string>
   <string name="date">日付</string>
-  <string name="undo">元に戻す</string>
   <string name="navigation_back_icon_description">戻る</string>
   <string name="save">保存</string>
   <string name="add">追加</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">カテゴリーを編集</string>
   <string name="categories_title">カテゴリー</string>
   <string name="categories_empty">カテゴリーに何もありません</string>
-  <string name="category_deleted">カテゴリーが削除されました</string>
   <string name="home_title">ホーム</string>
   <string name="wallet_menu_icon_description">ウォレットメニュー</string>
   <string name="home_empty">ウォレットに何もありません</string>
@@ -126,4 +124,7 @@
   <string name="import_title">インポート</string>
   <string name="preview">プレビュー</string>
   <string name="wallet_widget_description">Track balances and quick transactions</string>
+  <string name="delete_category">Delete category?</string>
+  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
+  <string name="select_category">Select a category</string>
 </resources>
