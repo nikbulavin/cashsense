@@ -1,7 +1,8 @@
 package ru.resodostudios.cashsense.core.database.di
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room3.Room
+import androidx.room3.support.getSupportWrapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,6 +35,6 @@ internal object DatabaseModule {
         database: CsDatabase,
     ) = DatabaseTransferManager(
         context = context,
-        databaseOpenHelper = database.openHelper,
+        database = database.getSupportWrapper(),
     )
 }

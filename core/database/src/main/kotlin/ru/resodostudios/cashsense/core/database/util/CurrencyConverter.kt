@@ -1,13 +1,13 @@
 package ru.resodostudios.cashsense.core.database.util
 
-import androidx.room.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import java.util.Currency
 
 internal class CurrencyConverter {
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun currencyToString(currency: Currency?): String? = currency?.currencyCode
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun stringToCurrency(currencyCode: String?): Currency? = currencyCode?.let(Currency::getInstance)
 }

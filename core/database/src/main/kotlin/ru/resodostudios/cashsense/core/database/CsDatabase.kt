@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.core.database
 
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room3.AutoMigration
+import androidx.room3.ColumnTypeConverters
+import androidx.room3.Database
+import androidx.room3.RoomDatabase
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
 import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
 import ru.resodostudios.cashsense.core.database.dao.SubscriptionDao
@@ -46,7 +46,7 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
     ],
     exportSchema = true,
 )
-@TypeConverters(
+@ColumnTypeConverters(
     BigDecimalConverter::class,
     CurrencyConverter::class,
     InstantConverter::class,

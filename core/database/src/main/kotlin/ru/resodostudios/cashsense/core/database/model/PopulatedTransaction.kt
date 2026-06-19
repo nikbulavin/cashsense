@@ -1,8 +1,8 @@
 package ru.resodostudios.cashsense.core.database.model
 
-import androidx.room.Embedded
-import androidx.room.Junction
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Junction
+import androidx.room3.Relation
 import ru.resodostudios.cashsense.core.model.data.Transaction
 import java.util.Currency
 
@@ -10,19 +10,19 @@ data class PopulatedTransaction(
     @Embedded
     val transaction: TransactionEntity,
     @Relation(
-        parentColumn = "wallet_owner_id",
-        entityColumn = "id",
+        parentColumns = ["wallet_owner_id"],
+        entityColumns = ["id"],
         entity = WalletEntity::class,
         projection = ["currency"],
     )
     val walletCurrency: Currency,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "id",
+        parentColumns = ["id"],
+        entityColumns = ["id"],
         associateBy = Junction(
             value = TransactionCategoryCrossRefEntity::class,
-            parentColumn = "transaction_id",
-            entityColumn = "category_id",
+            parentColumns = ["transaction_id"],
+            entityColumns = ["category_id"],
         ),
     )
     val category: CategoryEntity?,
