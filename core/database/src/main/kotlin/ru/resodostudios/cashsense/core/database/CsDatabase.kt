@@ -12,7 +12,6 @@ import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.CurrencyExchangeRateEntity
 import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
-import ru.resodostudios.cashsense.core.database.model.TransactionCategoryCrossRefEntity
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
 import ru.resodostudios.cashsense.core.database.util.BigDecimalConverter
@@ -27,10 +26,9 @@ import ru.resodostudios.cashsense.core.database.util.UuidConverter
         CurrencyExchangeRateEntity::class,
         SubscriptionEntity::class,
         TransactionEntity::class,
-        TransactionCategoryCrossRefEntity::class,
         WalletEntity::class,
     ],
-    version = 13,
+    version = 14,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = DatabaseMigrations.Schema1to2::class),
         AutoMigration(from = 2, to = 3, spec = DatabaseMigrations.Schema2to3::class),

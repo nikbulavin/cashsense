@@ -13,5 +13,6 @@ fun Transaction.asEntity(): TransactionEntity {
         completed = completed,
         ignored = ignored,
         transferId = transferId,
+        categoryId = category?.id,
     )
 }

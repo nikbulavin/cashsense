@@ -2,12 +2,12 @@ package ru.resodostudios.cashsense.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionCategoryCrossRef
 import ru.resodostudios.cashsense.core.model.data.Transfer
 import javax.inject.Inject
 import kotlin.uuid.Uuid
@@ -18,12 +18,7 @@ internal class OfflineTransactionRepository @Inject constructor(
 
     override fun getTransaction(transactionId: String): Flow<Transaction> {
         return dao.getPopulatedTransaction(transactionId)
-            .map { it.asExternalModel() }
-    }
-
-    override fun getTransactionCategoryCrossRefs(categoryId: String): Flow<List<TransactionCategoryCrossRef>> {
-        return dao.getTransactionCategoryCrossRefs(categoryId)
-            .map { it.map { crossRef -> crossRef.asExternalModel() } }
+            .mapNotNull { it?.asExternalModel() }
     }
 
     override fun getTransactionsCount(): Flow<Int> = dao.getTransactionsCount()
@@ -42,17 +37,10 @@ internal class OfflineTransactionRepository @Inject constructor(
     }
 
     override suspend fun upsertTransaction(transaction: Transaction) {
-        dao.upsertTransactionWithCategory(
-            transaction = transaction.asEntity(),
-            category = transaction.category?.asEntity(),
-        )
+        dao.upsertTransaction(transaction.asEntity())
     }
 
     override suspend fun deleteTransaction(id: String) = dao.deleteTransaction(id)
-
-    override suspend fun upsertTransactionCategoryCrossRef(crossRef: TransactionCategoryCrossRef) {
-        dao.upsertTransactionCategoryCrossRef(crossRef.asEntity())
-    }
 
     override suspend fun upsertTransfer(transfer: Transfer) {
         dao.upsertTransfer(

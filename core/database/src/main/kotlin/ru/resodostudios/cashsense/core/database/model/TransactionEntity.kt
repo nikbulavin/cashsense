@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.database.model
 import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import androidx.room3.ForeignKey
+import androidx.room3.Index
 import androidx.room3.PrimaryKey
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.model.data.Transaction
@@ -19,12 +20,23 @@ import kotlin.uuid.Uuid
             childColumns = ["wallet_owner_id"],
             onDelete = ForeignKey.CASCADE,
         ),
+        ForeignKey(
+            entity = CategoryEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["category_id"],
+            onDelete = ForeignKey.SET_NULL,
+        ),
+    ],
+    indices = [
+        Index("wallet_owner_id"),
+        Index("transfer_id"),
+        Index("category_id"),
     ],
 )
 data class TransactionEntity(
     @PrimaryKey
     val id: String,
-    @ColumnInfo(name = "wallet_owner_id", index = true)
+    @ColumnInfo(name = "wallet_owner_id")
     val walletOwnerId: String,
     val description: String?,
     val amount: BigDecimal,
@@ -33,8 +45,10 @@ data class TransactionEntity(
     val completed: Boolean,
     @ColumnInfo(defaultValue = "0")
     val ignored: Boolean,
-    @ColumnInfo(name = "transfer_id", index = true)
+    @ColumnInfo(name = "transfer_id")
     val transferId: Uuid?,
+    @ColumnInfo(name = "category_id")
+    val categoryId: String?,
 )
 
 fun TransactionEntity.asExternalModel(): Transaction {

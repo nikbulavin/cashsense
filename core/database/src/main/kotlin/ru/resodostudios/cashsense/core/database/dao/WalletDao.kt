@@ -14,11 +14,11 @@ interface WalletDao {
 
     @Transaction
     @Query("SELECT * FROM wallets WHERE id = :walletId")
-    fun getWalletWithTransactionsAndCategoriesEntity(walletId: String): Flow<PopulatedWallet>
+    fun getPopulatedWallet(walletId: String): Flow<PopulatedWallet?>
 
     @Transaction
     @Query("SELECT * FROM wallets")
-    fun getWalletWithTransactionsAndCategoriesEntities(): Flow<List<PopulatedWallet>>
+    fun getPopulatedWallets(): Flow<List<PopulatedWallet>>
 
     @Query("SELECT DISTINCT currency FROM wallets")
     fun getDistinctCurrencies(): Flow<List<Currency>>
