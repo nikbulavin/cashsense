@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.feature.transaction.detail.api.TransactionNavKey
 import kotlin.time.Duration.Companion.seconds
 

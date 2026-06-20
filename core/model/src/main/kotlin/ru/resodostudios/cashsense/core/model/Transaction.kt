@@ -1,6 +1,8 @@
-package ru.resodostudios.cashsense.core.model.data
+package ru.resodostudios.cashsense.core.model
 
 import kotlinx.serialization.Serializable
+import ru.resodostudios.cashsense.core.model.util.BigDecimalSerializer
+import ru.resodostudios.cashsense.core.model.util.CurrencySerializer
 import java.math.BigDecimal
 import java.util.Currency
 import kotlin.time.Instant

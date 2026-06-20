@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.Palette
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

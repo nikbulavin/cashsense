@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

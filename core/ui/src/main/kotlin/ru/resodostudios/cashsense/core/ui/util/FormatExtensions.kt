@@ -5,7 +5,7 @@ import androidx.compose.ui.platform.LocalLocale
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaZoneId
-import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.model.DateFormatType
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import java.math.BigDecimal
 import java.text.DecimalFormat

@@ -38,8 +38,8 @@ import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionS
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
-import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.util.Currency

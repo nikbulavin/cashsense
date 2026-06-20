@@ -2,7 +2,7 @@ package ru.resodostudios.cashsense.feature.transaction.editor.api
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
 import ru.resodostudios.core.navigation.NavDeepLinkKey
 import ru.resodostudios.core.navigation.Navigator

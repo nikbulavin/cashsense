@@ -7,7 +7,7 @@ import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 import javax.inject.Inject
 
 internal class OfflineCategoriesRepository @Inject constructor(

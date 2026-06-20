@@ -2,8 +2,8 @@ package ru.resodostudios.cashsense.core.data.repository
 
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.model.data.UserData
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.UserData
 
 interface UserDataRepository {
 

@@ -1,6 +1,6 @@
 package ru.resodostudios.cashsense.feature.home.impl.model
 
-import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.model.ExtendedUserWallet
 import java.math.BigDecimal
 
 data class UiWallet(

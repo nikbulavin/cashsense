@@ -42,7 +42,7 @@ import ru.resodostudios.cashsense.core.data.util.InAppUpdateManager
 import ru.resodostudios.cashsense.core.data.util.PermissionManager
 import ru.resodostudios.cashsense.core.data.util.TimeZoneMonitor
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig
 import ru.resodostudios.cashsense.core.shortcuts.ShortcutManager
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS

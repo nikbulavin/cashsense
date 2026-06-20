@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.model.ExtendedUserWallet
 import javax.inject.Inject
 
 class GetExtendedUserWalletUseCase @Inject constructor(

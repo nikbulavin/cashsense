@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ru.resodostudios.cashsense.MainActivityUiState.Loading
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.DARK
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.FOLLOW_SYSTEM
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig.LIGHT
-import ru.resodostudios.cashsense.core.model.data.UserData
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig.DARK
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig.FOLLOW_SYSTEM
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig.LIGHT
+import ru.resodostudios.cashsense.core.model.UserData
 import javax.inject.Inject
 
 @HiltViewModel

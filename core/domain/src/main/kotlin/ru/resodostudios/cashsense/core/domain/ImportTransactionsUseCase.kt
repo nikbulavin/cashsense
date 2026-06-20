@@ -14,8 +14,8 @@ import ru.resodostudios.cashsense.core.common.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.CsvConfig
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.CsvConfig
+import ru.resodostudios.cashsense.core.model.Transaction
 import java.math.BigDecimal
 import javax.inject.Inject
 import kotlin.time.Instant

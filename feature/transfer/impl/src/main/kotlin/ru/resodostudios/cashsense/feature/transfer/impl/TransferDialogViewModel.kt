@@ -17,8 +17,8 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
-import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.Transfer
+import ru.resodostudios.cashsense.core.model.Transaction
+import ru.resodostudios.cashsense.core.model.Transfer
 import ru.resodostudios.cashsense.feature.transfer.dialog.api.TransferDialogNavKey
 import java.math.BigDecimal
 import java.math.RoundingMode

@@ -6,7 +6,7 @@ import androidx.room3.ForeignKey
 import androidx.room3.Index
 import androidx.room3.PrimaryKey
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Transaction
 import java.math.BigDecimal
 import kotlin.time.Instant
 import kotlin.uuid.Uuid

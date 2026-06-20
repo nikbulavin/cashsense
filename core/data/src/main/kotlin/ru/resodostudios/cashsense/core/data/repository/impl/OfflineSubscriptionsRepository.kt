@@ -8,7 +8,7 @@ import ru.resodostudios.cashsense.core.data.util.ReminderScheduler
 import ru.resodostudios.cashsense.core.database.dao.SubscriptionDao
 import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.Subscription
 import javax.inject.Inject
 
 internal class OfflineSubscriptionsRepository @Inject constructor(

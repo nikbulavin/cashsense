@@ -44,8 +44,8 @@ import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_TRANSACTION
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.core.common.Constants.TARGET_ACTIVITY_NAME
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
-import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.model.Wallet
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.feature.wallet.widget.R
 import ru.resodostudios.cashsense.wallet.widget.WalletWidgetEntryPoint

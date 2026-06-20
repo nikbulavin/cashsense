@@ -7,7 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 internal fun LazyListScope.categories(

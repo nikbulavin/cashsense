@@ -2,8 +2,8 @@ package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
-import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import kotlin.time.Instant
 

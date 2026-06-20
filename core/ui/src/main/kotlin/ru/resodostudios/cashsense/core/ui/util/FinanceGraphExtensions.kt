@@ -2,12 +2,12 @@ package ru.resodostudios.cashsense.core.ui.util
 
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.number
-import ru.resodostudios.cashsense.core.model.data.DateType
-import ru.resodostudios.cashsense.core.model.data.DateType.ALL
-import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
-import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
-import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.DateType
+import ru.resodostudios.cashsense.core.model.DateType.ALL
+import ru.resodostudios.cashsense.core.model.DateType.MONTH
+import ru.resodostudios.cashsense.core.model.DateType.WEEK
+import ru.resodostudios.cashsense.core.model.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.Transaction
 import java.math.BigDecimal
 import java.util.Currency
 

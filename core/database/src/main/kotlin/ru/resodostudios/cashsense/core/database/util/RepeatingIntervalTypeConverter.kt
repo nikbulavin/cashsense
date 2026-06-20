@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.database.util
 
 import androidx.room3.ColumnTypeConverter
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType
 
 class RepeatingIntervalTypeConverter {
 

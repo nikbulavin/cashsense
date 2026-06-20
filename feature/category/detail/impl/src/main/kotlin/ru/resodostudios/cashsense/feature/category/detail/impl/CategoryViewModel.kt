@@ -23,8 +23,8 @@ import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
-import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.feature.category.detail.api.CategoryNavKey
 import kotlin.time.Duration.Companion.seconds
