@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.sqlite.db.SupportSQLiteOpenHelper
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.lingala.zip4j.ZipFile
 import java.io.File
@@ -15,9 +15,8 @@ import kotlin.system.exitProcess
 
 class DatabaseTransferManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val databaseOpenHelper: SupportSQLiteOpenHelper,
+    private val database: SupportSQLiteDatabase,
 ) {
-
     fun export(backupFileUri: Uri) {
         try {
             val dbFiles = dbFiles()
@@ -66,17 +65,16 @@ class DatabaseTransferManager @Inject constructor(
     }
 
     private fun checkpoint() {
-        val db = databaseOpenHelper.writableDatabase
-        db.query("PRAGMA wal_checkpoint(FULL);")
-        db.query("PRAGMA wal_checkpoint(TRUNCATE);")
+        database.query("PRAGMA wal_checkpoint(FULL);")
+        database.query("PRAGMA wal_checkpoint(TRUNCATE);")
     }
 
     private fun dbFiles() =
         DbFiles(
-            dbFile = File(databaseOpenHelper.readableDatabase.path!!),
-            walFile = File(databaseOpenHelper.readableDatabase.path + "-wal"),
-            shmFile = File(databaseOpenHelper.readableDatabase.path + "-shm"),
-            backupZipFile = File(databaseOpenHelper.readableDatabase.path + ".zip"),
+            dbFile = File(database.path!!),
+            walFile = File(database.path + "-wal"),
+            shmFile = File(database.path + "-shm"),
+            backupZipFile = File(database.path + ".zip"),
         )
 }
 

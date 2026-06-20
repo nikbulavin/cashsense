@@ -1,7 +1,8 @@
 package ru.resodostudios.cashsense.core.database.di
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room3.Room
+import androidx.room3.support.getSupportWrapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.resodostudios.cashsense.core.database.CsDatabase
 import ru.resodostudios.cashsense.core.database.Schema11to12
+import ru.resodostudios.cashsense.core.database.Schema13to14
 import ru.resodostudios.cashsense.core.database.util.DatabaseTransferManager
 import javax.inject.Singleton
 
@@ -26,6 +28,7 @@ internal object DatabaseModule {
         name = "cs-database",
     )
         .addMigrations(Schema11to12)
+        .addMigrations(Schema13to14)
         .build()
 
     @Provides
@@ -34,6 +37,6 @@ internal object DatabaseModule {
         database: CsDatabase,
     ) = DatabaseTransferManager(
         context = context,
-        databaseOpenHelper = database.openHelper,
+        database = database.getSupportWrapper(),
     )
 }

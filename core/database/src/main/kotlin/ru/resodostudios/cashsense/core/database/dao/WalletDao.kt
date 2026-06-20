@@ -1,9 +1,9 @@
 package ru.resodostudios.cashsense.core.database.dao
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.Upsert
+import androidx.room3.Dao
+import androidx.room3.Query
+import androidx.room3.Transaction
+import androidx.room3.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.resodostudios.cashsense.core.database.model.PopulatedWallet
 import ru.resodostudios.cashsense.core.database.model.WalletEntity
@@ -14,11 +14,11 @@ interface WalletDao {
 
     @Transaction
     @Query("SELECT * FROM wallets WHERE id = :walletId")
-    fun getWalletWithTransactionsAndCategoriesEntity(walletId: String): Flow<PopulatedWallet>
+    fun getPopulatedWallet(walletId: String): Flow<PopulatedWallet?>
 
     @Transaction
     @Query("SELECT * FROM wallets")
-    fun getWalletWithTransactionsAndCategoriesEntities(): Flow<List<PopulatedWallet>>
+    fun getPopulatedWallets(): Flow<List<PopulatedWallet>>
 
     @Query("SELECT DISTINCT currency FROM wallets")
     fun getDistinctCurrencies(): Flow<List<Currency>>

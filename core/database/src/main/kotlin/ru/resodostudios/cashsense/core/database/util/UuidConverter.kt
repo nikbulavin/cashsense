@@ -1,13 +1,13 @@
 package ru.resodostudios.cashsense.core.database.util
 
-import androidx.room.TypeConverter
+import androidx.room3.ColumnTypeConverter
 import kotlin.uuid.Uuid
 
 internal class UuidConverter {
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun uuidToString(value: Uuid?): String? = value?.toString()
 
-    @TypeConverter
+    @ColumnTypeConverter
     fun stringToUuid(value: String?): Uuid? = value?.let(Uuid::parse)
 }

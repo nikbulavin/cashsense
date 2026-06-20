@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.database.model
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Relation
 import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
 
 data class PopulatedWallet(
@@ -9,8 +9,8 @@ data class PopulatedWallet(
     val wallet: WalletEntity,
     @Relation(
         entity = TransactionEntity::class,
-        parentColumn = "id",
-        entityColumn = "wallet_owner_id",
+        parentColumns = ["id"],
+        entityColumns = ["wallet_owner_id"],
     )
     val transactions: List<PopulatedTransaction>,
 )

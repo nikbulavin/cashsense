@@ -1,10 +1,11 @@
 package ru.resodostudios.cashsense.core.database
 
-import androidx.room.DeleteColumn
-import androidx.room.RenameColumn
-import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room3.DeleteColumn
+import androidx.room3.RenameColumn
+import androidx.room3.migration.AutoMigrationSpec
+import androidx.room3.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 
 /**
  * Automatic schema migrations sometimes require extra instructions to perform the migration, for
@@ -69,9 +70,9 @@ internal object DatabaseMigrations {
 }
 
 internal val Schema11to12 = object : Migration(11, 12) {
-    override fun migrate(db: SupportSQLiteDatabase) {
+    override suspend fun migrate(connection: SQLiteConnection) {
         // Create a new transactions table with the new schema
-        db.execSQL(
+        connection.execSQL(
             """
             CREATE TABLE `transactions_new` (
                 `id` TEXT NOT NULL PRIMARY KEY,
@@ -88,7 +89,7 @@ internal val Schema11to12 = object : Migration(11, 12) {
         )
 
         // Copy data from the old table to the new one, converting `status` to `completed`
-        db.execSQL(
+        connection.execSQL(
             """
             INSERT INTO `transactions_new` (id, wallet_owner_id, description, amount, timestamp, completed)
             SELECT id, wallet_owner_id, description, amount, timestamp,
@@ -98,13 +99,64 @@ internal val Schema11to12 = object : Migration(11, 12) {
         )
 
         // Drop the old transactions table
-        db.execSQL("DROP TABLE `transactions`")
+        connection.execSQL("DROP TABLE `transactions`")
 
         // Rename the new table to the original name
-        db.execSQL("ALTER TABLE `transactions_new` RENAME TO `transactions`")
+        connection.execSQL("ALTER TABLE `transactions_new` RENAME TO `transactions`")
 
         // Recreate indices
-        db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_wallet_owner_id` ON `transactions` (`wallet_owner_id`)")
-        db.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_transfer_id` ON `transactions` (`transfer_id`)")
+        connection.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_wallet_owner_id` ON `transactions` (`wallet_owner_id`)")
+        connection.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_transfer_id` ON `transactions` (`transfer_id`)")
+    }
+}
+
+internal val Schema13to14 = object : Migration(13, 14) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `transactions_new` (
+                `id` TEXT NOT NULL, 
+                `wallet_owner_id` TEXT NOT NULL, 
+                `description` TEXT, 
+                `amount` TEXT NOT NULL, 
+                `timestamp` INTEGER NOT NULL, 
+                `completed` INTEGER NOT NULL DEFAULT 1, 
+                `ignored` INTEGER NOT NULL DEFAULT 0, 
+                `transfer_id` TEXT, 
+                `category_id` TEXT, 
+                PRIMARY KEY(`id`), 
+                FOREIGN KEY(`wallet_owner_id`) REFERENCES `wallets`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, 
+                FOREIGN KEY(`category_id`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL
+            )
+        """.trimIndent()
+        )
+
+        connection.execSQL(
+            """
+            INSERT INTO `transactions_new` (
+                `id`, `wallet_owner_id`, `description`, `amount`, `timestamp`, `completed`, `ignored`, `transfer_id`, `category_id`
+            )
+            SELECT 
+                t.`id`, 
+                t.`wallet_owner_id`, 
+                t.`description`, 
+                t.`amount`, 
+                t.`timestamp`, 
+                t.`completed`, 
+                t.`ignored`, 
+                t.`transfer_id`,
+                (SELECT `category_id` FROM `transactions_categories` WHERE `transaction_id` = t.`id` LIMIT 1)
+            FROM `transactions` t
+        """.trimIndent()
+        )
+
+        connection.execSQL("DROP TABLE IF EXISTS `transactions_categories`")
+        connection.execSQL("DROP TABLE IF EXISTS `transactions`")
+
+        connection.execSQL("ALTER TABLE `transactions_new` RENAME TO `transactions`")
+
+        connection.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_wallet_owner_id` ON `transactions` (`wallet_owner_id`)")
+        connection.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_transfer_id` ON `transactions` (`transfer_id`)")
+        connection.execSQL("CREATE INDEX IF NOT EXISTS `index_transactions_category_id` ON `transactions` (`category_id`)")
     }
 }

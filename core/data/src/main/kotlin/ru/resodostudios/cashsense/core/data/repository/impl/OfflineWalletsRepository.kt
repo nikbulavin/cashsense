@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.core.data.repository.impl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.database.dao.WalletDao
@@ -20,12 +21,12 @@ internal class OfflineWalletsRepository @Inject constructor(
 ) : WalletsRepository {
 
     override fun getExtendedWallet(walletId: String): Flow<ExtendedWallet> {
-        return walletDao.getWalletWithTransactionsAndCategoriesEntity(walletId)
-            .map(PopulatedWallet::asExternalModel)
+        return walletDao.getPopulatedWallet(walletId)
+            .mapNotNull { it?.asExternalModel() }
     }
 
     override fun getExtendedWallets(): Flow<List<ExtendedWallet>> {
-        return walletDao.getWalletWithTransactionsAndCategoriesEntities()
+        return walletDao.getPopulatedWallets()
             .map { it.map(PopulatedWallet::asExternalModel) }
     }
 
