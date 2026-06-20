@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.PlaceholderSize.Companion.ContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
@@ -79,7 +80,7 @@ fun Modifier.sharedBoundsAdaptive(
     animatedVisibilityScope: AnimatedVisibilityScope = LocalNavAnimatedContentScope.current,
     boundsTransform: BoundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
     resizeMode: SharedTransitionScope.ResizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-    clipShape: Shape = MaterialTheme.shapes.large,
+    clipShape: Shape = RoundedCornerShape(0.dp),
     renderInOverlayDuringTransition: Boolean = true,
     placeholderSize: SharedTransitionScope.PlaceholderSize = ContentSize,
 ): Modifier {
