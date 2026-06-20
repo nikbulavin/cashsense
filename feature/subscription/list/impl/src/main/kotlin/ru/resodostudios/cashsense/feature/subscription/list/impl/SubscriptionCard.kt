@@ -50,9 +50,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.MoreVert
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.NotificationsActive
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.NONE
+import ru.resodostudios.cashsense.core.model.Subscription
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal

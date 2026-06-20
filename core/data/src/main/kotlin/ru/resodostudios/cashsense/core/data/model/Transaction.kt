@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.data.model
 
 import ru.resodostudios.cashsense.core.database.model.TransactionEntity
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Transaction
 
 fun Transaction.asEntity(): TransactionEntity {
     return TransactionEntity(

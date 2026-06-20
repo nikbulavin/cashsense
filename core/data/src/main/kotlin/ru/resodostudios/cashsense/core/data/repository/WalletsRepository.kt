@@ -1,8 +1,8 @@
 package ru.resodostudios.cashsense.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.ExtendedWallet
+import ru.resodostudios.cashsense.core.model.Wallet
 import java.util.Currency
 
 interface WalletsRepository {

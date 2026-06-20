@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 
 /**
  * This [PreviewParameterProvider](https://developer.android.com/reference/kotlin/androidx/compose/ui/tooling/preview/PreviewParameterProvider)

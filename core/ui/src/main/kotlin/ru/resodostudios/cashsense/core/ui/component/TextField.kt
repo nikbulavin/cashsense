@@ -50,7 +50,7 @@ import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
-import ru.resodostudios.cashsense.core.model.data.DateFormatType
+import ru.resodostudios.cashsense.core.model.DateFormatType
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount

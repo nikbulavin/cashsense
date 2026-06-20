@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.model.data
+package ru.resodostudios.cashsense.core.model
 
 import kotlinx.serialization.Serializable
 

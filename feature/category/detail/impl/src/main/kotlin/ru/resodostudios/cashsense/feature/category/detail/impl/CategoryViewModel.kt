@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -23,8 +22,8 @@ import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
-import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.feature.category.detail.api.CategoryNavKey
 import kotlin.time.Duration.Companion.seconds
@@ -70,7 +69,6 @@ internal class CategoryViewModel @AssistedInject constructor(
         )
     }
         .flowOn(defaultDispatcher)
-        .catch {}
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),

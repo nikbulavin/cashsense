@@ -2,9 +2,9 @@ package ru.resodostudios.cashsense.feature.subscription.list.impl
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.MONTHLY
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.MONTHLY
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.NONE
+import ru.resodostudios.cashsense.core.model.Subscription
 import java.math.BigDecimal
 import kotlin.time.Instant
 

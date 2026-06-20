@@ -36,10 +36,10 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentExcit
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentFrustrated
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentNeutral
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentSad
-import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.DateType
-import ru.resodostudios.cashsense.core.model.data.FinanceType
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.DateType
+import ru.resodostudios.cashsense.core.model.FinanceType
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState

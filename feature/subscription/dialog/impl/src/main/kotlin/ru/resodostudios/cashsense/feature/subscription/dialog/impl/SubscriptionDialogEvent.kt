@@ -1,8 +1,8 @@
 package ru.resodostudios.cashsense.feature.subscription.dialog.impl
 
 import androidx.compose.runtime.Immutable
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.Subscription
 import java.util.Currency
 import kotlin.time.Instant
 

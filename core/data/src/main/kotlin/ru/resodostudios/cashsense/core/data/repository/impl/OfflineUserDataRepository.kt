@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.first
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.database.util.DatabaseTransferManager
 import ru.resodostudios.cashsense.core.datastore.CsPreferencesDataSource
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
-import ru.resodostudios.cashsense.core.model.data.UserData
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.UserData
 import javax.inject.Inject
 
 internal class OfflineUserDataRepository @Inject constructor(

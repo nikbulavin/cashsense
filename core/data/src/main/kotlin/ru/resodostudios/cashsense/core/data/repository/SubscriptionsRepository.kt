@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.Subscription
 
 interface SubscriptionsRepository {
 

@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.AnalyticsHelper
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
 import kotlin.uuid.Uuid

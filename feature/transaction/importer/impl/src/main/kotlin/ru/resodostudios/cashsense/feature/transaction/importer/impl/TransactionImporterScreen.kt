@@ -59,9 +59,9 @@ import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.filled.DocumentSearch
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
-import ru.resodostudios.cashsense.core.model.data.CsvConfig
-import ru.resodostudios.cashsense.core.model.data.DateFormatType
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.CsvConfig
+import ru.resodostudios.cashsense.core.model.DateFormatType
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
 import ru.resodostudios.cashsense.core.ui.groupByDate

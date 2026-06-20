@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -26,17 +25,17 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletUseCase
-import ru.resodostudios.cashsense.core.model.data.Category
-import ru.resodostudios.cashsense.core.model.data.DateType
-import ru.resodostudios.cashsense.core.model.data.DateType.ALL
-import ru.resodostudios.cashsense.core.model.data.DateType.MONTH
-import ru.resodostudios.cashsense.core.model.data.DateType.WEEK
-import ru.resodostudios.cashsense.core.model.data.DateType.YEAR
-import ru.resodostudios.cashsense.core.model.data.FinanceType
-import ru.resodostudios.cashsense.core.model.data.FinanceType.NOT_SET
-import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.TransactionFilter
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.DateType
+import ru.resodostudios.cashsense.core.model.DateType.ALL
+import ru.resodostudios.cashsense.core.model.DateType.MONTH
+import ru.resodostudios.cashsense.core.model.DateType.WEEK
+import ru.resodostudios.cashsense.core.model.DateType.YEAR
+import ru.resodostudios.cashsense.core.model.FinanceType
+import ru.resodostudios.cashsense.core.model.FinanceType.NOT_SET
+import ru.resodostudios.cashsense.core.model.Transaction
+import ru.resodostudios.cashsense.core.model.TransactionFilter
+import ru.resodostudios.cashsense.core.model.Wallet
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.filterTransactions
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
@@ -101,7 +100,6 @@ internal class WalletViewModel @AssistedInject constructor(
         )
     }
         .flowOn(defaultDispatcher)
-        .catch { WalletUiState.Error(it.message.toString()) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -189,10 +187,6 @@ internal class WalletViewModel @AssistedInject constructor(
 sealed interface WalletUiState {
 
     data object Loading : WalletUiState
-
-    data class Error(
-        val message: String,
-    ) : WalletUiState
 
     data class Success(
         val transactionFilter: TransactionFilter,

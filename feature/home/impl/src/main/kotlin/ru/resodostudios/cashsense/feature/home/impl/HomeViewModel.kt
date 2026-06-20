@@ -27,7 +27,7 @@ import kotlinx.datetime.toLocalDateTime
 import ru.resodostudios.cashsense.core.common.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet

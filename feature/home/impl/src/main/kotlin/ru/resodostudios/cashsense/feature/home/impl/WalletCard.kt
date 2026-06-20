@@ -62,8 +62,8 @@ import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.dropShadow
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
-import ru.resodostudios.cashsense.core.model.data.ExtendedUserWallet
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.model.Wallet
 import ru.resodostudios.cashsense.core.ui.TransitionThemeWrapper
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.util.formatAmount

@@ -7,8 +7,8 @@ import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.database.dao.TransactionDao
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
-import ru.resodostudios.cashsense.core.model.data.Transaction
-import ru.resodostudios.cashsense.core.model.data.Transfer
+import ru.resodostudios.cashsense.core.model.Transaction
+import ru.resodostudios.cashsense.core.model.Transfer
 import javax.inject.Inject
 import kotlin.uuid.Uuid
 

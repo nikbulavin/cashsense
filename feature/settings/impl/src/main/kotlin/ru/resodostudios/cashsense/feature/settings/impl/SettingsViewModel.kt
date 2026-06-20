@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.util.AppLocaleManager
-import ru.resodostudios.cashsense.core.model.data.DarkThemeConfig
+import ru.resodostudios.cashsense.core.model.DarkThemeConfig
 import java.util.Currency
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds

@@ -2,7 +2,7 @@ package ru.resodostudios.cashsense.core.database.model
 
 import androidx.room3.Embedded
 import androidx.room3.Relation
-import ru.resodostudios.cashsense.core.model.data.Transaction
+import ru.resodostudios.cashsense.core.model.Transaction
 import java.util.Currency
 
 data class PopulatedTransaction(

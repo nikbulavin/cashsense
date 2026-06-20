@@ -2,12 +2,13 @@ package ru.resodostudios.cashsense.core.data.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.database.dao.CategoryDao
 import ru.resodostudios.cashsense.core.database.model.CategoryEntity
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 import javax.inject.Inject
 
 internal class OfflineCategoriesRepository @Inject constructor(
@@ -15,7 +16,7 @@ internal class OfflineCategoriesRepository @Inject constructor(
 ) : CategoriesRepository {
 
     override fun getCategory(id: String): Flow<Category> {
-        return dao.getCategoryEntity(id).map { it.asExternalModel() }
+        return dao.getCategoryEntity(id).mapNotNull { it?.asExternalModel() }
     }
 
     override fun getCategories(): Flow<List<Category>> {

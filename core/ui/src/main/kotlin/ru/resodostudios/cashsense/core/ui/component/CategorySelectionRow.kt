@@ -20,7 +20,7 @@ import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.ui.CategoryPreviewParameterProvider
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 

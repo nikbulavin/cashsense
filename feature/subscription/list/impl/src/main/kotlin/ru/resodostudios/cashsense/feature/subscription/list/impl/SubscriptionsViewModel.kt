@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.Subscription
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 

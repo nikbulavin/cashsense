@@ -1,7 +1,7 @@
 package ru.resodostudios.cashsense.core.data.model
 
 import ru.resodostudios.cashsense.core.database.model.SubscriptionEntity
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.Subscription
 
 fun Subscription.asEntity(): SubscriptionEntity {
     return SubscriptionEntity(

@@ -10,8 +10,8 @@ import ru.resodostudios.cashsense.core.database.dao.WalletDao
 import ru.resodostudios.cashsense.core.database.model.PopulatedWallet
 import ru.resodostudios.cashsense.core.database.model.asExternalModel
 import ru.resodostudios.cashsense.core.datastore.CsPreferencesDataSource
-import ru.resodostudios.cashsense.core.model.data.ExtendedWallet
-import ru.resodostudios.cashsense.core.model.data.Wallet
+import ru.resodostudios.cashsense.core.model.ExtendedWallet
+import ru.resodostudios.cashsense.core.model.Wallet
 import java.util.Currency
 import javax.inject.Inject
 

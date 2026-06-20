@@ -63,7 +63,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.CheckCircle
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
-import ru.resodostudios.cashsense.core.model.data.Category
+import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField

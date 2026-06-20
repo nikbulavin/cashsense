@@ -24,9 +24,9 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.SubscriptionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType
-import ru.resodostudios.cashsense.core.model.data.RepeatingIntervalType.NONE
-import ru.resodostudios.cashsense.core.model.data.Subscription
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType
+import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.NONE
+import ru.resodostudios.cashsense.core.model.Subscription
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.feature.subscription.dialog.api.SubscriptionDialogNavKey
 import java.util.Currency

@@ -1,4 +1,4 @@
-package ru.resodostudios.cashsense.core.model.data
+package ru.resodostudios.cashsense.core.model.util
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
