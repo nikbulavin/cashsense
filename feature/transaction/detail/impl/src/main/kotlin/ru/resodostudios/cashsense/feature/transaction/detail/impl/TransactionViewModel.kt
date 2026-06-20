@@ -10,7 +10,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,7 +28,6 @@ internal class TransactionViewModel @AssistedInject constructor(
 
     val transactionUiState: StateFlow<TransactionUiState> = transactionsRepository.getTransaction(key.transactionId)
         .map(TransactionUiState::Success)
-        .catch { TransactionUiState.Error(it.message.toString()) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -55,10 +53,6 @@ internal class TransactionViewModel @AssistedInject constructor(
 internal sealed interface TransactionUiState {
 
     data object Loading : TransactionUiState
-
-    data class Error(
-        val message: String,
-    ) : TransactionUiState
 
     data class Success(
         val transaction: Transaction,
