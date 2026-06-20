@@ -150,8 +150,8 @@ internal val Schema13to14 = object : Migration(13, 14) {
         """.trimIndent()
         )
 
-        connection.execSQL("DROP TABLE IF EXISTS `transactions`")
         connection.execSQL("DROP TABLE IF EXISTS `transactions_categories`")
+        connection.execSQL("DROP TABLE IF EXISTS `transactions`")
 
         connection.execSQL("ALTER TABLE `transactions_new` RENAME TO `transactions`")
 
