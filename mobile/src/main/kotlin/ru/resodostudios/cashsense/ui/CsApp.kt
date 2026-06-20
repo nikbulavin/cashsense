@@ -83,6 +83,7 @@ import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEdit
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
 import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
 import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.transactionImporterEntry
+import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -128,6 +129,7 @@ fun CsApp(
                 WalletNavKey::class,
                 TransactionEditorNavKey::class,
                 TransactionImporterNavKey::class,
+                TransactionOverviewNavKey::class,
                 CategoryEditorNavKey::class,
                 CategoryNavKey::class,
             )
