@@ -384,7 +384,6 @@ private fun Header(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ActionButtons(
     onEditClick: () -> Unit,
