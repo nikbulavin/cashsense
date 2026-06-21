@@ -25,7 +25,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -71,7 +70,6 @@ import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun WalletCard(
     uiWallet: UiWallet,
@@ -91,7 +89,6 @@ internal fun WalletCard(
                     }
                 }
             val shape = RoundedCornerShape(roundedCornerAnim)
-            val motionScheme = MaterialTheme.motionScheme
             val wallet = uiWallet.extendedUserWallet.wallet
             OutlinedCard(
                 onClick = { onWalletClick(wallet.id) },
@@ -273,7 +270,6 @@ internal fun WalletCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun TagsSection(
     formattedExpenses: String,

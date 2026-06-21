@@ -58,6 +58,7 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.ui.LocalIsNavRailVisible
 import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
@@ -70,7 +71,9 @@ import ru.resodostudios.cashsense.feature.category.detail.impl.navigation.catego
 import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
+import ru.resodostudios.cashsense.feature.category.list.api.CategoriesNavKey
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
+import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.api.SettingsNavKey
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.licensesEntry
@@ -83,6 +86,7 @@ import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEdit
 import ru.resodostudios.cashsense.feature.transaction.editor.impl.navigation.transactionEditorEntry
 import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
 import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.transactionImporterEntry
+import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
 import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
@@ -118,26 +122,23 @@ fun CsApp(
     val navSuiteType = NavigationSuiteScaffoldDefaults.navigationSuiteType(windowAdaptiveInfo)
     val navSuiteState = rememberNavigationSuiteScaffoldState()
 
-    val navRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
+    val isNavRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
             navSuiteType == NavigationSuiteType.WideNavigationRailExpanded
 
-    val isFabVisible by remember {
+    val isFabVisible by remember(isSinglePane) {
         derivedStateOf {
-            val hideFabKeys = setOf(
-                SettingsNavKey::class,
-                WalletNavKey::class,
-                TransactionEditorNavKey::class,
-                TransactionImporterNavKey::class,
-                CategoryEditorNavKey::class,
-                CategoryNavKey::class,
-            )
-            appState.navigationState.currentSubStack.none { it::class in hideFabKeys }
+            val currentStack = appState.navigationState.currentSubStack
+
+            val isOnHiddenScreen = currentStack.any { it::class in FAB_HIDDEN_SCREENS }
+            if (isOnHiddenScreen) return@derivedStateOf false
+
+            isSinglePane || currentStack.none { it is HomeNavKey || it is CategoriesNavKey }
         }
     }
 
-    val shouldShowNavigation by remember(navRailVisible, navSuiteType) {
+    val shouldShowNavigation by remember(isNavRailVisible, navSuiteType) {
         derivedStateOf {
-            navRailVisible ||
+            isNavRailVisible ||
                     navSuiteType == NavigationSuiteType.ShortNavigationBarMedium ||
                     appState.navigationState.currentSubStack.none { it is WalletNavKey }
         }
@@ -181,7 +182,7 @@ fun CsApp(
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
                             if (isFabVisible) {
-                                Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
+                                Modifier.padding(bottom = if (isNavRailVisible) 110.dp else 76.dp)
                             } else if (appState.navigationState.currentKey is WalletNavKey) {
                                 Modifier.padding(bottom = 96.dp)
                             } else {
@@ -233,6 +234,7 @@ fun CsApp(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHostState,
                     LocalIsSinglePane provides isSinglePane,
+                    LocalIsNavRailVisible provides isNavRailVisible,
                 ) {
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
@@ -259,7 +261,7 @@ fun CsApp(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .windowInsetsPadding(WindowInsets.systemBars),
-                    toggleContainerSize = if (navRailVisible) {
+                    toggleContainerSize = if (isNavRailVisible) {
                         ToggleFloatingActionButtonDefaults.containerSizeMedium()
                     } else {
                         ToggleFloatingActionButtonDefaults.containerSize()
@@ -321,3 +323,13 @@ private fun InAppUpdateSnackbarHandler(
         }
     }
 }
+
+private val FAB_HIDDEN_SCREENS = setOf(
+    SettingsNavKey::class,
+    WalletNavKey::class,
+    TransactionEditorNavKey::class,
+    TransactionImporterNavKey::class,
+    TransactionOverviewNavKey::class,
+    CategoryEditorNavKey::class,
+    CategoryNavKey::class,
+)

@@ -13,6 +13,7 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
@@ -79,7 +80,7 @@ fun Modifier.sharedBoundsAdaptive(
     animatedVisibilityScope: AnimatedVisibilityScope = LocalNavAnimatedContentScope.current,
     boundsTransform: BoundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
     resizeMode: SharedTransitionScope.ResizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-    clipShape: Shape = MaterialTheme.shapes.large,
+    clipShape: Shape = RectangleShape,
     renderInOverlayDuringTransition: Boolean = true,
     placeholderSize: SharedTransitionScope.PlaceholderSize = ContentSize,
 ): Modifier {

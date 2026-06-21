@@ -15,3 +15,5 @@ val LocalSnackbarHostState = compositionLocalOf<SnackbarHostState> {
 }
 
 val LocalIsSinglePane = compositionLocalOf { false }
+
+val LocalIsNavRailVisible = compositionLocalOf { false }

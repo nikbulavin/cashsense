@@ -94,6 +94,7 @@ dependencies {
     implementation(projects.feature.transaction.editor.impl)
     implementation(projects.feature.transaction.importer.api)
     implementation(projects.feature.transaction.importer.impl)
+    implementation(projects.feature.transaction.overview.api)
     implementation(projects.feature.transaction.overview.impl)
     implementation(projects.feature.transfer.api)
     implementation(projects.feature.transfer.impl)

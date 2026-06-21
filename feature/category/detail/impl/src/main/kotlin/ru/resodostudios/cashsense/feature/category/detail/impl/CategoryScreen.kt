@@ -164,6 +164,7 @@ private fun CategoryScreen(
                                 ),
                             ),
                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                            clipShape = MaterialTheme.shapes.large,
                         ),
                 ) { innerPadding ->
                     LazyColumn(
@@ -214,7 +215,6 @@ private fun CategoryScreen(
                                                 ),
                                             ),
                                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                                            clipShape = RoundedCornerShape(0.dp),
                                         )
                                         .padding(horizontal = 16.dp)
                                         .animateItem(
@@ -354,7 +354,6 @@ private fun Header(
                                 ),
                             ),
                             resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                            clipShape = RoundedCornerShape(0.dp),
                         ),
                 )
             }
@@ -373,7 +372,6 @@ private fun Header(
                         ),
                     ),
                     resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    clipShape = RoundedCornerShape(0.dp),
                 ),
             )
             ActionButtons(
