@@ -251,7 +251,7 @@ fun CsApp(
                     )
                 }
                 FabMenu(
-                    visible = isFabVisible && (isSinglePane && appState.navigationState.currentSubStack.none { it is HomeNavKey }),
+                    visible = isFabVisible && (isSinglePane || appState.navigationState.currentSubStack.none { it is HomeNavKey }),
                     onMenuItemClick = { fabItem ->
                         when (fabItem) {
                             WALLET -> navigator.navigateToWalletDialog()
