@@ -6,7 +6,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.PlaceholderSize.Companion.ContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
@@ -14,6 +13,7 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.unit.dp
@@ -80,7 +80,7 @@ fun Modifier.sharedBoundsAdaptive(
     animatedVisibilityScope: AnimatedVisibilityScope = LocalNavAnimatedContentScope.current,
     boundsTransform: BoundsTransform = MaterialTheme.motionScheme.sharedElementTransitionSpec,
     resizeMode: SharedTransitionScope.ResizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-    clipShape: Shape = RoundedCornerShape(0.dp),
+    clipShape: Shape = RectangleShape,
     renderInOverlayDuringTransition: Boolean = true,
     placeholderSize: SharedTransitionScope.PlaceholderSize = ContentSize,
 ): Modifier {
