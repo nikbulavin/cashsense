@@ -125,18 +125,14 @@ fun CsApp(
     val isNavRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
             navSuiteType == NavigationSuiteType.WideNavigationRailExpanded
 
-    val isFabVisible by remember {
+    val isFabVisible by remember(isSinglePane) {
         derivedStateOf {
-            val hideFabKeys = setOf(
-                SettingsNavKey::class,
-                WalletNavKey::class,
-                TransactionEditorNavKey::class,
-                TransactionImporterNavKey::class,
-                TransactionOverviewNavKey::class,
-                CategoryEditorNavKey::class,
-                CategoryNavKey::class,
-            )
-            appState.navigationState.currentSubStack.none { it::class in hideFabKeys }
+            val currentStack = appState.navigationState.currentSubStack
+
+            val isOnHiddenScreen = currentStack.any { it::class in FAB_HIDDEN_SCREENS }
+            if (isOnHiddenScreen) return@derivedStateOf false
+
+            isSinglePane || currentStack.none { it is HomeNavKey || it is CategoriesNavKey }
         }
     }
 
@@ -254,7 +250,7 @@ fun CsApp(
                     )
                 }
                 FabMenu(
-                    visible = isFabVisible && (isSinglePane || (appState.navigationState.currentSubStack.none { it is HomeNavKey } && appState.navigationState.currentSubStack.none { it is CategoriesNavKey })),
+                    visible = isFabVisible,
                     onMenuItemClick = { fabItem ->
                         when (fabItem) {
                             WALLET -> navigator.navigateToWalletDialog()
@@ -327,3 +323,13 @@ private fun InAppUpdateSnackbarHandler(
         }
     }
 }
+
+private val FAB_HIDDEN_SCREENS = setOf(
+    SettingsNavKey::class,
+    WalletNavKey::class,
+    TransactionEditorNavKey::class,
+    TransactionImporterNavKey::class,
+    TransactionOverviewNavKey::class,
+    CategoryEditorNavKey::class,
+    CategoryNavKey::class,
+)
