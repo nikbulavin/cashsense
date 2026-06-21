@@ -58,6 +58,7 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import ru.resodostudios.cashsense.core.data.util.InAppUpdateResult
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
+import ru.resodostudios.cashsense.core.ui.LocalIsNavRailVisible
 import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.LocalSnackbarHostState
 import ru.resodostudios.cashsense.core.ui.component.FabMenu
@@ -70,6 +71,7 @@ import ru.resodostudios.cashsense.feature.category.detail.impl.navigation.catego
 import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavKey
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
+import ru.resodostudios.cashsense.feature.category.list.api.CategoriesNavKey
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
@@ -208,7 +210,7 @@ fun CsApp(
                 val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
                 val entryProvider = entryProvider {
-                    homeEntry(navigator, isNavRailVisible)
+                    homeEntry(navigator)
                     categoryEntry(navigator, fadeSpec)
                     categoriesEntry(navigator)
                     subscriptionsEntry(navigator)
@@ -236,6 +238,7 @@ fun CsApp(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHostState,
                     LocalIsSinglePane provides isSinglePane,
+                    LocalIsNavRailVisible provides isNavRailVisible,
                 ) {
                     NavDisplay(
                         entries = appState.navigationState.toEntries(entryProvider),
@@ -251,7 +254,7 @@ fun CsApp(
                     )
                 }
                 FabMenu(
-                    visible = isFabVisible && (isSinglePane || appState.navigationState.currentSubStack.none { it is HomeNavKey }),
+                    visible = isFabVisible && (isSinglePane || (appState.navigationState.currentSubStack.none { it is HomeNavKey } && appState.navigationState.currentSubStack.none { it is CategoriesNavKey })),
                     onMenuItemClick = { fabItem ->
                         when (fabItem) {
                             WALLET -> navigator.navigateToWalletDialog()

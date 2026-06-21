@@ -155,7 +155,7 @@ private fun HomeScreen(
             }
         }
         FabMenu(
-            visible = shouldShowFab && walletsState !is WalletsUiState.Loading,
+            visible = shouldShowFab,
             onMenuItemClick = onFabMenuItemClick,
             modifier = Modifier
                 .align(Alignment.BottomEnd)

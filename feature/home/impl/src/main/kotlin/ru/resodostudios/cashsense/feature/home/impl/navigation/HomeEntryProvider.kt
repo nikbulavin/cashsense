@@ -5,6 +5,7 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import ru.resodostudios.cashsense.core.ui.LocalIsNavRailVisible
 import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.component.DetailPanePlaceholder
 import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.CATEGORY
@@ -28,7 +29,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun EntryProviderScope<NavKey>.homeEntry(
     navigator: Navigator,
-    isNavRailVisible: Boolean,
 ) {
     entry<HomeNavKey>(
         metadata = ListDetailSceneStrategy.listPane {
@@ -45,7 +45,7 @@ fun EntryProviderScope<NavKey>.homeEntry(
             onTotalBalanceClick = navigator::navigateToTransactionOverview,
             shouldHighlightSelectedWallet = !isSinglePane,
             shouldShowFab = !isSinglePane,
-            isNavRailVisible = isNavRailVisible,
+            isNavRailVisible = LocalIsNavRailVisible.current,
             onFabMenuItemClick = { fabItem ->
                 when (fabItem) {
                     WALLET -> navigator.navigateToWalletDialog()
