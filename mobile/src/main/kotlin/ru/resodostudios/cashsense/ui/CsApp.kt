@@ -71,6 +71,7 @@ import ru.resodostudios.cashsense.feature.category.editor.api.CategoryEditorNavK
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.cashsense.feature.category.editor.impl.navigation.categoryEditorEntry
 import ru.resodostudios.cashsense.feature.category.list.impl.navigation.categoriesEntry
+import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.navigation.homeEntry
 import ru.resodostudios.cashsense.feature.settings.api.SettingsNavKey
 import ru.resodostudios.cashsense.feature.settings.impl.navigation.licensesEntry
@@ -119,7 +120,7 @@ fun CsApp(
     val navSuiteType = NavigationSuiteScaffoldDefaults.navigationSuiteType(windowAdaptiveInfo)
     val navSuiteState = rememberNavigationSuiteScaffoldState()
 
-    val navRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
+    val isNavRailVisible = navSuiteType == NavigationSuiteType.WideNavigationRailCollapsed ||
             navSuiteType == NavigationSuiteType.WideNavigationRailExpanded
 
     val isFabVisible by remember {
@@ -137,9 +138,9 @@ fun CsApp(
         }
     }
 
-    val shouldShowNavigation by remember(navRailVisible, navSuiteType) {
+    val shouldShowNavigation by remember(isNavRailVisible, navSuiteType) {
         derivedStateOf {
-            navRailVisible ||
+            isNavRailVisible ||
                     navSuiteType == NavigationSuiteType.ShortNavigationBarMedium ||
                     appState.navigationState.currentSubStack.none { it is WalletNavKey }
         }
@@ -183,7 +184,7 @@ fun CsApp(
                         .windowInsetsPadding(WindowInsets.safeDrawing)
                         .then(
                             if (isFabVisible) {
-                                Modifier.padding(bottom = if (navRailVisible) 110.dp else 76.dp)
+                                Modifier.padding(bottom = if (isNavRailVisible) 110.dp else 76.dp)
                             } else if (appState.navigationState.currentKey is WalletNavKey) {
                                 Modifier.padding(bottom = 96.dp)
                             } else {
@@ -207,7 +208,7 @@ fun CsApp(
                 val fadeSpec = motionScheme.defaultEffectsSpec<Float>()
 
                 val entryProvider = entryProvider {
-                    homeEntry(navigator)
+                    homeEntry(navigator, isNavRailVisible)
                     categoryEntry(navigator, fadeSpec)
                     categoriesEntry(navigator)
                     subscriptionsEntry(navigator)
@@ -250,7 +251,7 @@ fun CsApp(
                     )
                 }
                 FabMenu(
-                    visible = isFabVisible,
+                    visible = isFabVisible && (isSinglePane && appState.navigationState.currentSubStack.none { it is HomeNavKey }),
                     onMenuItemClick = { fabItem ->
                         when (fabItem) {
                             WALLET -> navigator.navigateToWalletDialog()
@@ -261,7 +262,7 @@ fun CsApp(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .windowInsetsPadding(WindowInsets.systemBars),
-                    toggleContainerSize = if (navRailVisible) {
+                    toggleContainerSize = if (isNavRailVisible) {
                         ToggleFloatingActionButtonDefaults.containerSizeMedium()
                     } else {
                         ToggleFloatingActionButtonDefaults.containerSize()

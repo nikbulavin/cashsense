@@ -1,8 +1,12 @@
 package ru.resodostudios.cashsense.feature.home.impl
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -11,8 +15,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +29,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.datetime.LocalDate
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.ExtendedUserWallet
+import ru.resodostudios.cashsense.core.ui.component.FabMenu
+import ru.resodostudios.cashsense.core.ui.component.FabMenuItem
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -33,9 +41,12 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 internal fun HomeScreen(
     onWalletClick: (String) -> Unit,
     onTransfer: (String) -> Unit,
-    shouldHighlightSelectedWallet: Boolean = false,
     onTransactionCreate: (String) -> Unit,
     onTransactionClick: (String) -> Unit,
+    shouldHighlightSelectedWallet: Boolean = false,
+    shouldShowFab: Boolean = false,
+    isNavRailVisible: Boolean = false,
+    onFabMenuItemClick: (FabMenuItem) -> Unit = {},
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
@@ -59,6 +70,9 @@ internal fun HomeScreen(
         onTransactionCreate = onTransactionCreate,
         onTransactionClick = onTransactionClick,
         shouldHighlightSelectedWallet = shouldHighlightSelectedWallet,
+        shouldShowFab = shouldShowFab,
+        isNavRailVisible = isNavRailVisible,
+        onFabMenuItemClick = onFabMenuItemClick,
         onTotalBalanceClick = onTotalBalanceClick,
         onSettingsClick = onSettingsClick,
     )
@@ -78,63 +92,80 @@ private fun HomeScreen(
     onTransactionCreate: (String) -> Unit,
     onTransactionClick: (String) -> Unit,
     shouldHighlightSelectedWallet: Boolean,
+    shouldShowFab: Boolean,
+    isNavRailVisible: Boolean = false,
+    onFabMenuItemClick: (FabMenuItem) -> Unit = {},
     onTotalBalanceClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
 ) {
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
-    Scaffold(
-        topBar = {
-            CsAppBarWithSearch(
-                scrollBehavior = scrollBehavior,
-                searchResultState = searchResultState,
-                searchFilterState = searchFilterState,
-                walletIdsAndTitles = if (walletsState is WalletsUiState.Success) {
-                    walletsState.walletIdsAndTitles
-                } else {
-                    emptyMap()
-                },
-                onSearch = onSearch,
-                onSearchFilterWalletToggle = onSearchFilterWalletToggle,
-                onSearchFilterDateRangeChange = onSearchFilterDateRangeChange,
-                onTransactionClick = onTransactionClick,
-                onTotalBalanceClick = onTotalBalanceClick,
-                onSettingsClick = onSettingsClick,
-            )
-        },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-    ) { innerPadding ->
-        when (walletsState) {
-            WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-            WalletsUiState.Empty -> IllustratedMessage(
-                localesR.string.home_empty,
-                R.raw.anim_wallets_empty,
-            )
+    Box {
+        Scaffold(
+            topBar = {
+                CsAppBarWithSearch(
+                    scrollBehavior = scrollBehavior,
+                    searchResultState = searchResultState,
+                    searchFilterState = searchFilterState,
+                    walletIdsAndTitles = if (walletsState is WalletsUiState.Success) {
+                        walletsState.walletIdsAndTitles
+                    } else {
+                        emptyMap()
+                    },
+                    onSearch = onSearch,
+                    onSearchFilterWalletToggle = onSearchFilterWalletToggle,
+                    onSearchFilterDateRangeChange = onSearchFilterDateRangeChange,
+                    onTransactionClick = onTransactionClick,
+                    onTotalBalanceClick = onTotalBalanceClick,
+                    onSettingsClick = onSettingsClick,
+                )
+            },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        ) { innerPadding ->
+            when (walletsState) {
+                WalletsUiState.Loading -> LoadingState(Modifier.fillMaxSize())
+                WalletsUiState.Empty -> IllustratedMessage(
+                    localesR.string.home_empty,
+                    R.raw.anim_wallets_empty,
+                )
 
-            is WalletsUiState.Success -> {
-                LazyVerticalStaggeredGrid(
-                    columns = StaggeredGridCells.Adaptive(300.dp),
-                    verticalItemSpacing = 16.dp,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 110.dp + innerPadding.calculateBottomPadding(),
-                        top = 12.dp + innerPadding.calculateTopPadding(),
-                    ),
-                ) {
-                    wallets(
-                        uiWallets = walletsState.uiWallets,
-                        selectedWalletId = walletsState.selectedWalletId,
-                        onWalletClick = onWalletClick,
-                        onTransactionCreate = onTransactionCreate,
-                        onTransferClick = onTransfer,
-                        shouldHighlightSelectedWallet = shouldHighlightSelectedWallet,
-                    )
+                is WalletsUiState.Success -> {
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Adaptive(300.dp),
+                        verticalItemSpacing = 16.dp,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 110.dp + innerPadding.calculateBottomPadding(),
+                            top = 12.dp + innerPadding.calculateTopPadding(),
+                        ),
+                    ) {
+                        wallets(
+                            uiWallets = walletsState.uiWallets,
+                            selectedWalletId = walletsState.selectedWalletId,
+                            onWalletClick = onWalletClick,
+                            onTransactionCreate = onTransactionCreate,
+                            onTransferClick = onTransfer,
+                            shouldHighlightSelectedWallet = shouldHighlightSelectedWallet,
+                        )
+                    }
                 }
             }
         }
+        FabMenu(
+            visible = shouldShowFab && walletsState !is WalletsUiState.Loading,
+            onMenuItemClick = onFabMenuItemClick,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .windowInsetsPadding(WindowInsets.systemBars),
+            toggleContainerSize = if (isNavRailVisible) {
+                ToggleFloatingActionButtonDefaults.containerSizeMedium()
+            } else {
+                ToggleFloatingActionButtonDefaults.containerSize()
+            },
+        )
     }
     TrackScreenViewEvent(screenName = "Home")
 }
@@ -193,6 +224,7 @@ private fun HomeScreenPopulatedPreview(
                 onTransactionCreate = {},
                 onTransactionClick = { _ -> },
                 shouldHighlightSelectedWallet = false,
+                shouldShowFab = false,
             )
         }
     }

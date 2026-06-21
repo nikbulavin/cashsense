@@ -12,13 +12,16 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.locales)
 
+    implementation(projects.feature.category.editor.api)
     implementation(projects.feature.home.api)
     implementation(projects.feature.transaction.detail.api)
     implementation(projects.feature.transaction.editor.api)
     implementation(projects.feature.transaction.overview.api)
     implementation(projects.feature.transfer.api)
-    implementation(projects.feature.wallet.detail.api)
     implementation(projects.feature.settings.api)
+    implementation(projects.feature.subscription.dialog.api)
+    implementation(projects.feature.wallet.detail.api)
+    implementation(projects.feature.wallet.dialog.api)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }
