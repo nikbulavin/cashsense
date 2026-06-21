@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
@@ -109,8 +110,13 @@ fun DetailPanePlaceholder(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
-            .clip(MaterialTheme.shapes.extraExtraLarge)
-            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
+            .clip(
+                MaterialTheme.shapes.extraLargeIncreased.copy(
+                    topEnd = CornerSize(0.dp),
+                    bottomEnd = CornerSize(0.dp),
+                )
+            )
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         Text(
             text = stringResource(titleRes),
