@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -64,9 +63,11 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingDown
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.TrendingUp
 import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
+import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.isAmountValid
@@ -92,10 +93,10 @@ internal fun TransactionEditorScreen(
         onDateUpdate = viewModel::updateDate,
         onDescriptionUpdate = viewModel::updateDescription,
         onIgnoredStateUpdate = viewModel::updateIgnoredState,
+        onWalletUpdate = viewModel::updateWallet,
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionEditorScreen(
     transactionEditorState: TransactionEditorState,
@@ -108,6 +109,7 @@ private fun TransactionEditorScreen(
     onDateUpdate: (Instant) -> Unit,
     onDescriptionUpdate: (String) -> Unit,
     onIgnoredStateUpdate: (Boolean) -> Unit,
+    onWalletUpdate: (MenuWallet) -> Unit,
 ) {
     TrackScreenViewEvent(screenName = "TransactionEditor")
     if (transactionEditorState.isLoading) {
@@ -151,7 +153,7 @@ private fun TransactionEditorScreen(
                                 }
                                 if (transactionEditorState.isFromImporter) {
                                     resultEventBus.sendResult(
-                                        transactionEditorState.asTransaction()
+                                        transactionEditorState.asTransaction(),
                                     )
                                 } else {
                                     onTransactionSave()
@@ -176,6 +178,13 @@ private fun TransactionEditorScreen(
                     .padding(innerPadding)
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
             ) {
+                WalletDropdownMenu(
+                    title = localesR.string.select_wallet,
+                    onWalletSelect = onWalletUpdate,
+                    selectedWallet = transactionEditorState.selectedWallet,
+                    availableWallets = transactionEditorState.availableWallets,
+                    modifier = Modifier.fillMaxWidth(),
+                )
                 TransactionTypeChoiceRow(
                     onTransactionTypeUpdate = onTransactionTypeUpdate,
                     transactionEditorState = transactionEditorState,

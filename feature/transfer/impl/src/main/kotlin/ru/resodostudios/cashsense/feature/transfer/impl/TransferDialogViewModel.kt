@@ -48,13 +48,10 @@ internal class TransferDialogViewModel @AssistedInject constructor(
             val transferWallets = walletsRepository.getExtendedWallets()
                 .first()
                 .map { extendedWallet ->
-                    val currentBalance = extendedWallet.transactions
-                        .sumOf { it.amount }
-                        .plus(extendedWallet.wallet.initialBalance)
                     MenuWallet(
                         id = extendedWallet.wallet.id,
                         title = extendedWallet.wallet.title,
-                        currentBalance = currentBalance,
+                        currentBalance = extendedWallet.currentBalance,
                         currency = extendedWallet.wallet.currency,
                     )
                 }
