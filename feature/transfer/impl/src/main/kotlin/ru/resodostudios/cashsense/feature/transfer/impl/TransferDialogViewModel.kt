@@ -17,12 +17,12 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.model.Transfer
 import ru.resodostudios.cashsense.feature.transfer.dialog.api.TransferDialogNavKey
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.Currency
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
@@ -51,7 +51,7 @@ internal class TransferDialogViewModel @AssistedInject constructor(
                     val currentBalance = extendedWallet.transactions
                         .sumOf { it.amount }
                         .plus(extendedWallet.wallet.initialBalance)
-                    TransferWallet(
+                    MenuWallet(
                         id = extendedWallet.wallet.id,
                         title = extendedWallet.wallet.title,
                         currentBalance = currentBalance,
@@ -62,7 +62,7 @@ internal class TransferDialogViewModel @AssistedInject constructor(
             val receivingWallet = if (transferWallets.size == 2) {
                 transferWallets.first { it != sendingWallet }
             } else {
-                TransferWallet()
+                MenuWallet()
             }
             val exchangeRate = if (sendingWallet.currency == receivingWallet.currency) "1" else ""
             _transferDialogState.update {
@@ -70,7 +70,7 @@ internal class TransferDialogViewModel @AssistedInject constructor(
                     sendingWallet = sendingWallet,
                     receivingWallet = receivingWallet,
                     exchangeRate = exchangeRate,
-                    transferWallets = transferWallets,
+                    availableWallets = transferWallets,
                     isLoading = false,
                 )
             }
@@ -104,11 +104,11 @@ internal class TransferDialogViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateSendingWallet(transferWallet: TransferWallet) {
+    fun updateSendingWallet(wallet: MenuWallet) {
         _transferDialogState.update {
-            it.copy(sendingWallet = transferWallet)
+            it.copy(sendingWallet = wallet)
         }
-        if (transferWallet.currency == _transferDialogState.value.receivingWallet.currency) {
+        if (wallet.currency == _transferDialogState.value.receivingWallet.currency) {
             _transferDialogState.update {
                 it.copy(exchangeRate = "1")
             }
@@ -119,11 +119,11 @@ internal class TransferDialogViewModel @AssistedInject constructor(
         }
     }
 
-    fun updateReceivingWallet(transferWallet: TransferWallet) {
+    fun updateReceivingWallet(wallet: MenuWallet) {
         _transferDialogState.update {
-            it.copy(receivingWallet = transferWallet)
+            it.copy(receivingWallet = wallet)
         }
-        if (transferWallet.currency == _transferDialogState.value.sendingWallet.currency) {
+        if (wallet.currency == _transferDialogState.value.sendingWallet.currency) {
             _transferDialogState.update {
                 it.copy(exchangeRate = "1")
             }
@@ -169,21 +169,14 @@ internal class TransferDialogViewModel @AssistedInject constructor(
 
 @Immutable
 data class TransferDialogUiState(
-    val sendingWallet: TransferWallet = TransferWallet(),
-    val receivingWallet: TransferWallet = TransferWallet(),
+    val sendingWallet: MenuWallet = MenuWallet(),
+    val receivingWallet: MenuWallet = MenuWallet(),
     val amount: String = "",
     val exchangeRate: String = "",
     val convertedAmount: String = "",
-    val transferWallets: List<TransferWallet> = emptyList(),
+    val availableWallets: List<MenuWallet> = emptyList(),
     val isLoading: Boolean = false,
     val date: Instant = Clock.System.now(),
-)
-
-data class TransferWallet(
-    val id: String = "",
-    val title: String = "",
-    val currentBalance: BigDecimal = BigDecimal.ZERO,
-    val currency: Currency? = null,
 )
 
 fun TransferDialogUiState.asTransfer(): Transfer {
