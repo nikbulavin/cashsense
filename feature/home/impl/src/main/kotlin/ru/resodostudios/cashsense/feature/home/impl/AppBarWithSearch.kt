@@ -364,7 +364,7 @@ private fun SearchResultItem(
             Text(
                 text = walletIdsAndTitles[transaction.walletOwnerId]
                     ?: stringResource(localesR.string.none),
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         },

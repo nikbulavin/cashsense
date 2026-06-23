@@ -73,7 +73,7 @@ internal fun TransactionOverviewScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class)
+@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
