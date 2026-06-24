@@ -4,7 +4,6 @@
   <string name="ok">Okay</string>
   <string name="cancel">Abbrechen</string>
   <string name="date">Datum</string>
-  <string name="undo">Rückgängig</string>
   <string name="navigation_back_icon_description">Zurück</string>
   <string name="save">Speichern</string>
   <string name="add">Hinzufügen</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">Kategorie bearbeiten</string>
   <string name="categories_title">Kategorien</string>
   <string name="categories_empty">Nichts in Kategorien</string>
-  <string name="category_deleted">Kategorie entfernt</string>
   <string name="home_title">Startseite</string>
   <string name="wallet_menu_icon_description">Brieftasche Menü</string>
   <string name="home_empty">Nichts in Wallets</string>
@@ -71,7 +69,6 @@
   <string name="edit_wallet">Wallet bearbeiten</string>
   <string name="initial_balance">Anfangssaldo</string>
   <string name="primary">Primär</string>
-  <string name="wallet_widget_description">Deine Wallets</string>
   <string name="wallet_widget_title">Wallets</string>
   <string name="wallet_widget_empty">Sie haben keine Wallets</string>
   <string name="not_enough_data">Nicht genug Daten</string>
@@ -126,4 +123,8 @@
   <string name="select_file">Datei auswählen</string>
   <string name="import_title">Importieren</string>
   <string name="preview">Vorschau</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
+  <string name="delete_category">Delete category?</string>
+  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
+  <string name="select_category">Select a category</string>
 </resources>

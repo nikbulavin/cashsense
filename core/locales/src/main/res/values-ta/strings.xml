@@ -4,7 +4,6 @@
   <string name="ok">சரி</string>
   <string name="cancel">இரத்துசெய்</string>
   <string name="date">தேதி</string>
-  <string name="undo">செயல்தவிர்</string>
   <string name="navigation_back_icon_description">பின் செல்</string>
   <string name="save">சேமிக்கவும்</string>
   <string name="add">சேர்</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">வகையை திருத்து</string>
   <string name="categories_title">வகைகள்</string>
   <string name="categories_empty">வகைகளில் எதுவும் இல்லை</string>
-  <string name="category_deleted">வகை நீக்கப்பட்டது</string>
   <string name="home_title">முகப்பு</string>
   <string name="wallet_menu_icon_description">பணப்பை மெனு</string>
   <string name="home_empty">பணப்பைகளில் எதுவும் இல்லை</string>
@@ -71,7 +69,6 @@
   <string name="edit_wallet">பணப்பையை திருத்துக</string>
   <string name="initial_balance">ஆரம்ப இருப்பு</string>
   <string name="primary">முதன்மை</string>
-  <string name="wallet_widget_description">உங்கள் பணப்பைகள்</string>
   <string name="wallet_widget_title">பணப்பைகள்</string>
   <string name="wallet_widget_empty">உங்களிடம் எந்த பணப்பையும் இல்லை</string>
   <string name="not_enough_data">மிக குறைந்த தரவு</string>
@@ -126,4 +123,8 @@
   <string name="select_file">கோப்பைத் தேர்ந்தெடு</string>
   <string name="import_title">இறக்குமதி</string>
   <string name="preview">மாதிரிக்காட்சி</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
+  <string name="delete_category">Delete category?</string>
+  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
+  <string name="select_category">Select a category</string>
 </resources>

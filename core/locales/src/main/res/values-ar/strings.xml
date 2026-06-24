@@ -4,7 +4,6 @@
   <string name="ok">موافق</string>
   <string name="cancel">إلغاء</string>
   <string name="date">التاريخ</string>
-  <string name="undo">تراجع</string>
   <string name="navigation_back_icon_description">رجوع</string>
   <string name="save">حفظ</string>
   <string name="add">إضافة</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">تحرير الفئة</string>
   <string name="categories_title">الفئات</string>
   <string name="categories_empty">لا شيء في الفئات</string>
-  <string name="category_deleted">تم حذف الفئة</string>
   <string name="home_title">الرئيسية</string>
   <string name="wallet_menu_icon_description">قائمة المحفظة</string>
   <string name="home_empty">لا يوجد محافظ</string>
@@ -71,7 +69,6 @@
   <string name="edit_wallet">تحرير المحفظة</string>
   <string name="initial_balance">الرصيد الافتتاحي</string>
   <string name="primary">أساسي</string>
-  <string name="wallet_widget_description">محافظك</string>
   <string name="wallet_widget_title">المحافظ</string>
   <string name="wallet_widget_empty">لا تملك أي محافظ</string>
   <string name="not_enough_data">البيانات غير كافية</string>
@@ -126,4 +123,8 @@
   <string name="select_file">حدد ملفًا</string>
   <string name="import_title">استيراد</string>
   <string name="preview">معاينة</string>
+  <string name="wallet_widget_description">Track balances and quick transactions</string>
+  <string name="delete_category">Delete category?</string>
+  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
+  <string name="select_category">Select a category</string>
 </resources>

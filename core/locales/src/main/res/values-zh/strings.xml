@@ -4,7 +4,6 @@
   <string name="ok">确定</string>
   <string name="cancel">取消</string>
   <string name="date">日期</string>
-  <string name="undo">撤销</string>
   <string name="navigation_back_icon_description">返回</string>
   <string name="save">保存</string>
   <string name="add">添加</string>
@@ -21,7 +20,6 @@
   <string name="edit_category">编辑类别</string>
   <string name="categories_title">类别</string>
   <string name="categories_empty">类别为空</string>
-  <string name="category_deleted">类别已删除</string>
   <string name="home_title">主页</string>
   <string name="wallet_menu_icon_description">钱包菜单</string>
   <string name="home_empty">钱包为空</string>
@@ -71,7 +69,6 @@
   <string name="edit_wallet">编辑钱包</string>
   <string name="initial_balance">初始余额</string>
   <string name="primary">主要</string>
-  <string name="wallet_widget_description">您的钱包</string>
   <string name="wallet_widget_title">钱包</string>
   <string name="wallet_widget_empty">您还没有钱包</string>
   <string name="not_enough_data">数据不足</string>
@@ -126,4 +123,8 @@
   <string name="select_file">选择文件</string>
   <string name="import_title">导入</string>
   <string name="preview">预览</string>
+  <string name="wallet_widget_description">跟踪余额和快速交易</string>
+  <string name="delete_category">删除类别？</string>
+  <string name="permanently_delete_category">此类别将从您的设备中永久删除</string>
+  <string name="select_category">选择类别</string>
 </resources>
