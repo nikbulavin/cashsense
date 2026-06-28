@@ -159,10 +159,7 @@ internal fun CsAppBarWithSearch(
             textFieldState = textFieldState,
             searchBarState = searchBarState,
             colors = appBarWithSearchColors.searchBarColors.inputFieldColors,
-            onSearch = {
-                scope.launch { searchBarState.animateToCollapsed() }
-                textFieldState.clearText()
-            },
+            onSearch = {},
             placeholder = {
                 Text(
                     modifier = Modifier
@@ -260,9 +257,8 @@ internal fun CsAppBarWithSearch(
                     )
                 } else {
                     val hazeState = rememberHazeState()
-                    val hazeStyle = HazeMaterials.ultraThin(
-                        MaterialTheme.colorScheme.secondaryContainer,
-                    )
+                    val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
+                    val motionScheme = MaterialTheme.motionScheme
                     LazyColumn {
                         searchResultState.transactions.groupByDate().forEach { transactionGroup ->
                             stickyHeader(
@@ -274,6 +270,7 @@ internal fun CsAppBarWithSearch(
                                         FormatStyle.MEDIUM
                                     ),
                                     color = Color.Transparent,
+                                    textColor = MaterialTheme.colorScheme.onTertiaryContainer,
                                     modifier = Modifier
                                         .padding(start = 16.dp, top = 16.dp)
                                         .clip(CircleShape)
@@ -291,7 +288,6 @@ internal fun CsAppBarWithSearch(
                                 key = { _, transaction -> transaction.id },
                                 contentType = { _, _ -> "Transaction" },
                             ) { index, transaction ->
-                                val motionScheme = MaterialTheme.motionScheme
                                 SearchResultItem(
                                     walletIdsAndTitles = walletIdsAndTitles,
                                     transaction = transaction,
@@ -426,7 +422,6 @@ private fun SearchResultItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateFilterChip(
     selectedDateRange: Pair<LocalDate, LocalDate>?,
