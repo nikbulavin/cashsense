@@ -62,7 +62,7 @@ internal class TransactionOverviewViewModel @Inject constructor(
             financeType = NOT_SET,
             dateType = ALL,
             selectedDate = getCurrentZonedDateTime().date,
-        )
+        ),
     )
 
     private val selectedTransactionState = MutableStateFlow<Transaction?>(null)
@@ -175,6 +175,7 @@ internal class TransactionOverviewViewModel @Inject constructor(
         TransactionOverviewUiState.Success(
             selectedTransaction = selectedTransaction,
             groupedTransactions = transactions.groupByDate(),
+            walletIdsAndTitles = extendedUserWallets.associate { it.wallet.id to it.wallet.title },
         )
     }
         .flowOn(defaultDispatcher)
@@ -325,5 +326,6 @@ sealed interface TransactionOverviewUiState {
     data class Success(
         val selectedTransaction: Transaction?,
         val groupedTransactions: Map<Instant, List<Transaction>>,
+        val walletIdsAndTitles: Map<String, String>,
     ) : TransactionOverviewUiState
 }

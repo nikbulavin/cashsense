@@ -125,6 +125,7 @@ private fun TransactionOverviewScreen(
                     transactions(
                         selectedTransaction = transactionOverviewState.selectedTransaction,
                         groupedTransactions = transactionOverviewState.groupedTransactions,
+                        walletIdsAndTitles = transactionOverviewState.walletIdsAndTitles,
                         hazeState = hazeState,
                         hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,

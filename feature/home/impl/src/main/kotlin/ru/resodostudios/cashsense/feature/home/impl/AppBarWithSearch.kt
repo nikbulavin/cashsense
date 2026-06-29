@@ -238,6 +238,7 @@ internal fun CsAppBarWithSearch(
                             dateTextColor = dateTextColor,
                             transactionContainerColor = transactionContainerColor,
                             isSharedTransitionEnabled = false,
+                            walletIdsAndTitles = walletIdsAndTitles,
                         )
                     }
                 }
