@@ -96,7 +96,9 @@ private fun TransactionOverviewScreen(
         TransactionOverviewUiState.Loading -> Unit
         is TransactionOverviewUiState.Success -> {
             val hazeState = rememberHazeState()
-            val hazeStyle = HazeMaterials.ultraThin(MaterialTheme.colorScheme.secondaryContainer)
+            val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
+            val motionScheme = MaterialTheme.motionScheme
+            val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
             Scaffold(
                 topBar = {
                     TopBar(
@@ -126,6 +128,8 @@ private fun TransactionOverviewScreen(
                         hazeState = hazeState,
                         hazeStyle = hazeStyle,
                         onClick = onTransactionSelect,
+                        motionScheme = motionScheme,
+                        dateTextColor = dateTextColor,
                     )
                 }
             }
