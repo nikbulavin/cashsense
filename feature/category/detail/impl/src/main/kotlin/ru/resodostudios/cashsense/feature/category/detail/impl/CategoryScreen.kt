@@ -160,6 +160,7 @@ private fun CategoryScreen(
                             hazeState = hazeState,
                             hazeStyle = hazeStyle,
                             walletIdsAndTitles = categoryUiState.walletIdsAndTitles,
+                            shouldShowCategoryIcon = false,
                         )
                     }
                 }

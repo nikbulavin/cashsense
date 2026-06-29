@@ -45,6 +45,7 @@ fun LazyListScope.transactions(
     transactionContainerColor: Color? = null,
     selectedTransaction: Transaction? = null,
     shouldHighlightSelectedTransaction: Boolean = false,
+    shouldShowCategoryIcon: Boolean = true,
     walletIdsAndTitles: Map<String, String> = emptyMap(),
     isSharedTransitionEnabled: Boolean = true,
 ) {
@@ -95,6 +96,7 @@ fun LazyListScope.transactions(
                 containerColor = transactionContainerColor
                     ?: MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
                 isSharedTransitionEnabled = isSharedTransitionEnabled,
+                shouldShowCategoryIcon = shouldShowCategoryIcon,
             )
             if (index != transactionGroup.value.lastIndex) {
                 Spacer(Modifier.height(ListItemDefaults.SegmentedGap))

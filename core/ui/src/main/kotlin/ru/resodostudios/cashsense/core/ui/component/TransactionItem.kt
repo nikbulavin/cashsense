@@ -61,6 +61,7 @@ fun TransactionItem(
     walletIdsAndTitles: Map<String, String> = emptyMap(),
     containerColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
     isSharedTransitionEnabled: Boolean = true,
+    shouldShowCategoryIcon: Boolean = true,
 ) {
     val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
@@ -129,7 +130,7 @@ fun TransactionItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .then(
-                            if (walletIdsAndTitles.isNotEmpty()) {
+                            if (isSharedTransitionEnabled) {
                                 Modifier.sharedBoundsAdaptive(
                                     sharedContentState = rememberSharedContentState(
                                         key = SharedElementKey(
@@ -194,29 +195,31 @@ fun TransactionItem(
                     }
                 }
             } else trailingContent,
-            leadingContent = {
-                Icon(
-                    imageVector = categoryIcon,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .then(
-                            if (isSharedTransitionEnabled) {
-                                Modifier.sharedBoundsAdaptive(
-                                    sharedContentState = rememberSharedContentState(
-                                        key = SharedElementKey(
-                                            id = transaction.id,
-                                            origin = categoryIcon.toString(),
-                                            type = SharedElementType.CategoryIcon,
+            leadingContent = if (shouldShowCategoryIcon) {
+                {
+                    Icon(
+                        imageVector = categoryIcon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .then(
+                                if (isSharedTransitionEnabled) {
+                                    Modifier.sharedBoundsAdaptive(
+                                        sharedContentState = rememberSharedContentState(
+                                            key = SharedElementKey(
+                                                id = transaction.id,
+                                                origin = categoryIcon.toString(),
+                                                type = SharedElementType.CategoryIcon,
+                                            ),
                                         ),
-                                    ),
-                                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                )
-                            } else {
-                                Modifier
-                            }
-                        ),
-                )
-            },
+                                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                    )
+                                } else {
+                                    Modifier
+                                }
+                            ),
+                    )
+                }
+            } else null,
             colors = ListItemDefaults.segmentedColors(
                 containerColor = containerColor,
             ),
