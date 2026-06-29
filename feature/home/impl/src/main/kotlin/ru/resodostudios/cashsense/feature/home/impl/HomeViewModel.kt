@@ -15,10 +15,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
@@ -28,17 +25,19 @@ import ru.resodostudios.cashsense.core.common.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.Transaction
+import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 @HiltViewModel(assistedFactory = HomeViewModel.Factory::class)
 internal class HomeViewModel @AssistedInject constructor(
     private val savedStateHandle: SavedStateHandle,
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
-    @Assisted val key: HomeNavKey,
+    @Assisted private val key: HomeNavKey,
 ) : ViewModel() {
 
     private val selectedWalletId = savedStateHandle.getStateFlow(
@@ -55,37 +54,42 @@ internal class HomeViewModel @AssistedInject constructor(
     val searchResultUiState = combine(
         searchQuery,
         searchFilterState,
-    ) { query, filterState ->
-        query to filterState
-    }
-        .flatMapLatest { (query, filterState) ->
-            if (query.isBlank()) {
-                flowOf(SearchResultUiState.EmptyQuery)
-            } else {
-                getExtendedUserWallets.invoke()
-                    .map { extendedUserWallets ->
-                        runCatching {
-                            SearchResultUiState.Success(
-                                transactions = extendedUserWallets
-                                    .filter { it.wallet.id in filterState.selectedWalletIds || filterState.selectedWalletIds.isEmpty() }
-                                    .flatMap { it.transactions }
-                                    .filter { transaction ->
-                                        val inDateRange = filterState.selectedDateRange?.let { (start, end) ->
-                                            transaction.timestamp
-                                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                                .date in start..end
-                                        } ?: true
-                                        inDateRange && (transaction.description?.contains(
-                                            query,
-                                            true,
-                                        ) == true || query in transaction.amount.toPlainString())
-                                    },
-                            )
-                        }.getOrDefault(SearchResultUiState.LoadFailed)
+        getExtendedUserWallets.invoke()
+    ) { query, filterState, extendedUserWallets ->
+        if (query.isBlank()) return@combine SearchResultUiState.EmptyQuery
+        runCatching {
+            val timeZone = TimeZone.currentSystemDefault()
+
+            val dateRangeStart = filterState.selectedDateRange?.first
+            val dateRangeEnd = filterState.selectedDateRange?.second
+            val filterWallets = filterState.selectedWalletIds.isNotEmpty()
+
+            val filteredTransactions = extendedUserWallets
+                .asSequence()
+                .filter { !filterWallets || it.wallet.id in filterState.selectedWalletIds }
+                .flatMap { it.transactions }
+                .filter { transaction ->
+                    val inDateRange = if (dateRangeStart != null && dateRangeEnd != null) {
+                        val transactionDate = transaction.timestamp.toLocalDateTime(timeZone).date
+                        transactionDate in dateRangeStart..dateRangeEnd
+                    } else {
+                        true
                     }
-                    .catch { emit(SearchResultUiState.LoadFailed) }
-            }
-        }
+
+                    if (!inDateRange) return@filter false
+
+                    val matchesDescription = transaction.description
+                        ?.contains(query, ignoreCase = true) == true
+                    matchesDescription || query in transaction.amount.toPlainString()
+                }
+                .toList()
+
+            SearchResultUiState.Success(
+                groupedTransactions = filteredTransactions.groupByDate(timeZone),
+            )
+        }.getOrDefault(SearchResultUiState.LoadFailed)
+    }
+        .catch { emit(SearchResultUiState.LoadFailed) }
         .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
@@ -188,7 +192,7 @@ internal sealed interface SearchResultUiState {
     data object LoadFailed : SearchResultUiState
 
     data class Success(
-        val transactions: List<Transaction>,
+        val groupedTransactions: Map<Instant, List<Transaction>>,
     ) : SearchResultUiState
 }
 

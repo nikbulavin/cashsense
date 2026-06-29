@@ -110,7 +110,6 @@ import ru.resodostudios.cashsense.core.model.DateFormatType
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
-import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -247,7 +246,7 @@ internal fun CsAppBarWithSearch(
             SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
             SearchResultUiState.Loading -> LoadingState(Modifier.fillMaxSize())
             is SearchResultUiState.Success -> {
-                if (searchResultState.transactions.isEmpty()) {
+                if (searchResultState.groupedTransactions.isEmpty()) {
                     IllustratedMessage(
                         messageRes = localesR.string.search_no_results,
                         animationRes = R.raw.anim_search_no_results,
@@ -260,7 +259,7 @@ internal fun CsAppBarWithSearch(
                     val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
                     val motionScheme = MaterialTheme.motionScheme
                     LazyColumn {
-                        searchResultState.transactions.groupByDate().forEach { transactionGroup ->
+                        searchResultState.groupedTransactions.forEach { transactionGroup ->
                             stickyHeader(
                                 contentType = "Date",
                             ) {
