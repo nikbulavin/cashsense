@@ -1,42 +1,28 @@
 package ru.resodostudios.cashsense.feature.category.detail.impl
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.mediumContainerSize
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,39 +32,32 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
+import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
-import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledTonalIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Block
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Delete
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Edit
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Pending
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
 import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.model.Category
-import ru.resodostudios.cashsense.core.model.DateFormatType
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
+import ru.resodostudios.cashsense.core.ui.transactions
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
-import ru.resodostudios.cashsense.core.ui.util.formatDate
-import java.time.format.FormatStyle
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @Composable
@@ -109,7 +88,10 @@ internal fun CategoryScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalHazeMaterialsApi::class,
+)
 @Composable
 private fun CategoryScreen(
     categoryUiState: CategoryUiState,
@@ -121,40 +103,18 @@ private fun CategoryScreen(
     onTransactionSelect: (Transaction?) -> Unit,
 ) {
     with(LocalSharedTransitionScope.current) {
-        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
         when (categoryUiState) {
             CategoryUiState.Loading -> LoadingState(Modifier.fillMaxSize())
             is CategoryUiState.Success -> {
                 val category = categoryUiState.category
+                val hazeState = rememberHazeState()
+                val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
                 val motionScheme = MaterialTheme.motionScheme
-                val effectsSpec = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
-                val floatSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
-                val intSizeSpatialSpec = MaterialTheme.motionScheme.defaultSpatialSpec<IntSize>()
+                val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {},
-                            navigationIcon = {
-                                if (shouldShowNavigationIcon) {
-                                    CsIconButton(
-                                        onClick = onBackClick,
-                                        icon = CsIcons.Outlined.ArrowBack,
-                                        contentDescription = stringResource(localesR.string.navigation_back_icon_description),
-                                        tooltipPosition = TooltipAnchorPosition.Right,
-                                    )
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors().copy(
-                                scrolledContainerColor = Color.Transparent,
-                                containerColor = Color.Transparent,
-                            ),
-                            scrollBehavior = scrollBehavior,
-                        )
-                    },
+                Column(
                     modifier = Modifier
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                        .background(MaterialTheme.colorScheme.surface)
                         .sharedBoundsAdaptive(
                             sharedContentState = rememberSharedContentState(
                                 key = SharedElementKey(
@@ -166,9 +126,22 @@ private fun CategoryScreen(
                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
                             clipShape = MaterialTheme.shapes.large,
                         ),
-                ) { innerPadding ->
+                ) {
+                    TopAppBar(
+                        title = {},
+                        navigationIcon = {
+                            if (shouldShowNavigationIcon) {
+                                CsIconButton(
+                                    onClick = onBackClick,
+                                    icon = CsIcons.Outlined.ArrowBack,
+                                    contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                                    tooltipPosition = TooltipAnchorPosition.Right,
+                                )
+                            }
+                        },
+                    )
                     LazyColumn(
-                        contentPadding = innerPadding + PaddingValues(bottom = 16.dp),
+                        contentPadding = PaddingValues(bottom = 16.dp),
                     ) {
                         item {
                             Header(
@@ -177,141 +150,17 @@ private fun CategoryScreen(
                                 onCategoryDelete = onCategoryDelete,
                             )
                         }
-                        categoryUiState.groupedTransactions.forEach { transactionGroup ->
-                            item {
-                                CsTag(
-                                    text = transactionGroup.key.formatDate(
-                                        DateFormatType.DATE,
-                                        FormatStyle.MEDIUM,
-                                    ),
-                                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                                    textColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    modifier = Modifier.padding(16.dp),
-                                )
-                            }
-                            itemsIndexed(
-                                items = transactionGroup.value,
-                                key = { _, transaction -> transaction.id },
-                                contentType = { _, _ -> "Transaction" },
-                            ) { index, transaction ->
-                                CsSelectableListItem(
-                                    shapes = if (transactionGroup.value.size == 1) {
-                                        ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
-                                    } else {
-                                        ListItemDefaults.segmentedShapes(
-                                            index,
-                                            transactionGroup.value.size,
-                                        )
-                                    },
-                                    onClick = { onTransactionSelect(transaction) },
-                                    selected = shouldHighlightSelectedTransaction && (transaction.id == categoryUiState.selectedTransaction?.id),
-                                    modifier = Modifier
-                                        .sharedBoundsAdaptive(
-                                            sharedContentState = rememberSharedContentState(
-                                                key = SharedElementKey(
-                                                    id = transaction.id,
-                                                    origin = transaction.id,
-                                                    type = SharedElementType.Bounds,
-                                                ),
-                                            ),
-                                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                                        )
-                                        .padding(horizontal = 16.dp)
-                                        .animateItem(
-                                            fadeInSpec = motionScheme.defaultEffectsSpec(),
-                                            fadeOutSpec = motionScheme.defaultEffectsSpec(),
-                                            placementSpec = motionScheme.defaultSpatialSpec(),
-                                        ),
-                                    content = {
-                                        val formattedAmount = transaction.amount
-                                            .formatAmount(transaction.currency, true)
-                                        Text(
-                                            text = formattedAmount,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            modifier = Modifier.sharedBoundsAdaptive(
-                                                sharedContentState = rememberSharedContentState(
-                                                    key = SharedElementKey(
-                                                        id = transaction.id,
-                                                        origin = formattedAmount,
-                                                        type = SharedElementType.TransactionAmount,
-                                                    ),
-                                                ),
-                                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                                            ),
-                                        )
-                                    },
-                                    supportingContent = categoryUiState.walletTitles[transaction.walletOwnerId]?.let { walletTitle ->
-                                        {
-                                            Text(
-                                                text = walletTitle,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
-                                        }
-                                    },
-                                    trailingContent = {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.animateContentSize(
-                                                intSizeSpatialSpec,
-                                            ),
-                                        ) {
-                                            AnimatedVisibility(
-                                                visible = transaction.ignored,
-                                                enter = fadeIn(effectsSpec) + scaleIn(
-                                                    floatSpatialSpec
-                                                ),
-                                                exit = fadeOut(effectsSpec) + scaleOut(
-                                                    floatSpatialSpec
-                                                ),
-                                            ) {
-                                                Surface(
-                                                    color = MaterialTheme.colorScheme.errorContainer,
-                                                    shape = MaterialShapes.PixelCircle.toShape(),
-                                                ) {
-                                                    Icon(
-                                                        imageVector = CsIcons.Outlined.Block,
-                                                        contentDescription = stringResource(localesR.string.transaction_ignore),
-                                                        modifier = Modifier
-                                                            .padding(4.dp)
-                                                            .size(20.dp),
-                                                        tint = MaterialTheme.colorScheme.onErrorContainer,
-                                                    )
-                                                }
-                                            }
-                                            AnimatedVisibility(
-                                                visible = !transaction.completed,
-                                                enter = fadeIn(effectsSpec) + scaleIn(
-                                                    floatSpatialSpec
-                                                ),
-                                                exit = fadeOut(effectsSpec) + scaleOut(
-                                                    floatSpatialSpec
-                                                ),
-                                            ) {
-                                                Surface(
-                                                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                                                    shape = MaterialShapes.Clover4Leaf.toShape(),
-                                                    modifier = Modifier.padding(start = 8.dp),
-                                                ) {
-                                                    Icon(
-                                                        imageVector = CsIcons.Outlined.Pending,
-                                                        contentDescription = stringResource(localesR.string.pending),
-                                                        modifier = Modifier
-                                                            .padding(4.dp)
-                                                            .size(20.dp),
-                                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    },
-                                )
-                                if (index != transactionGroup.value.lastIndex) {
-                                    Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
-                                }
-                            }
-                        }
+                        transactions(
+                            groupedTransactions = categoryUiState.groupedTransactions,
+                            motionScheme = motionScheme,
+                            dateTextColor = dateTextColor,
+                            shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
+                            onClick = onTransactionSelect,
+                            selectedTransaction = categoryUiState.selectedTransaction,
+                            hazeState = hazeState,
+                            hazeStyle = hazeStyle,
+                            walletIdsAndTitles = categoryUiState.walletIdsAndTitles,
+                        )
                     }
                 }
             }
