@@ -18,10 +18,12 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -56,6 +58,9 @@ fun TransactionItem(
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
     trailingContent: @Composable (() -> Unit)? = null,
+    walletIdsAndTitles: Map<String, String> = emptyMap(),
+    containerColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+    isSharedTransitionEnabled: Boolean = true,
 ) {
     val (categoryIcon, categoryTitle) = if (transaction.transferId != null) {
         CsIcons.Outlined.SendMoney to stringResource(localesR.string.transfers)
@@ -76,15 +81,21 @@ fun TransactionItem(
             onClick = onClick,
             selected = selected,
             modifier = modifier
-                .sharedBoundsAdaptive(
-                    sharedContentState = rememberSharedContentState(
-                        key = SharedElementKey(
-                            id = transaction.id,
-                            origin = transaction.id,
-                            type = SharedElementType.Bounds,
-                        ),
-                    ),
-                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                .then(
+                    if (isSharedTransitionEnabled) {
+                        Modifier.sharedBoundsAdaptive(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = transaction.id,
+                                    origin = transaction.id,
+                                    type = SharedElementType.Bounds,
+                                ),
+                            ),
+                            placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                        )
+                    } else {
+                        Modifier
+                    },
                 ),
             content = {
                 val formattedAmount = transaction.amount.formatAmount(currency, true)
@@ -92,33 +103,47 @@ fun TransactionItem(
                     text = formattedAmount,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBoundsAdaptive(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = transaction.id,
-                                origin = formattedAmount,
-                                type = SharedElementType.TransactionAmount,
-                            ),
+                    modifier = Modifier
+                        .then(
+                            if (isSharedTransitionEnabled) {
+                                Modifier.sharedBoundsAdaptive(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = SharedElementKey(
+                                            id = transaction.id,
+                                            origin = formattedAmount,
+                                            type = SharedElementType.TransactionAmount,
+                                        ),
+                                    ),
+                                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                )
+                            } else {
+                                Modifier
+                            }
                         ),
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
                 )
             },
             supportingContent = {
                 Text(
-                    text = categoryTitle,
+                    text = walletIdsAndTitles[transaction.walletOwnerId] ?: categoryTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.sharedBoundsAdaptive(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = transaction.id,
-                                origin = categoryTitle,
-                                type = SharedElementType.CategoryTitle,
-                            ),
+                    modifier = Modifier
+                        .then(
+                            if (walletIdsAndTitles.isNotEmpty()) {
+                                Modifier.sharedBoundsAdaptive(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = SharedElementKey(
+                                            id = transaction.id,
+                                            origin = categoryTitle,
+                                            type = SharedElementType.CategoryTitle,
+                                        ),
+                                    ),
+                                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                )
+                            } else {
+                                Modifier
+                            },
                         ),
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
                 )
             },
             trailingContent = if (trailingContent == null) {
@@ -173,18 +198,28 @@ fun TransactionItem(
                 Icon(
                     imageVector = categoryIcon,
                     contentDescription = null,
-                    modifier = Modifier.sharedBoundsAdaptive(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = transaction.id,
-                                origin = categoryIcon.toString(),
-                                type = SharedElementType.CategoryIcon,
-                            ),
+                    modifier = Modifier
+                        .then(
+                            if (isSharedTransitionEnabled) {
+                                Modifier.sharedBoundsAdaptive(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = SharedElementKey(
+                                            id = transaction.id,
+                                            origin = categoryIcon.toString(),
+                                            type = SharedElementType.CategoryIcon,
+                                        ),
+                                    ),
+                                    resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                                )
+                            } else {
+                                Modifier
+                            }
                         ),
-                        resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
-                    ),
                 )
             },
+            colors = ListItemDefaults.segmentedColors(
+                containerColor = containerColor,
+            ),
         )
     }
 }

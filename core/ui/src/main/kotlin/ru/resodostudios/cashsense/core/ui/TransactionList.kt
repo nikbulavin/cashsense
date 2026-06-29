@@ -9,7 +9,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -40,8 +42,11 @@ fun LazyListScope.transactions(
     hazeStyle: HazeStyle,
     motionScheme: MotionScheme,
     dateTextColor: Color,
+    transactionContainerColor: Color? = null,
     selectedTransaction: Transaction? = null,
     shouldHighlightSelectedTransaction: Boolean = false,
+    walletIdsAndTitles: Map<String, String> = emptyMap(),
+    isSharedTransitionEnabled: Boolean = true,
 ) {
     groupedTransactions.forEach { transactionGroup ->
         stickyHeader(
@@ -86,6 +91,10 @@ fun LazyListScope.transactions(
                 } else {
                     ListItemDefaults.segmentedShapes(index, transactionGroup.value.size)
                 },
+                walletIdsAndTitles = walletIdsAndTitles,
+                containerColor = transactionContainerColor
+                    ?: MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                isSharedTransitionEnabled = isSharedTransitionEnabled,
             )
             if (index != transactionGroup.value.lastIndex) {
                 Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
