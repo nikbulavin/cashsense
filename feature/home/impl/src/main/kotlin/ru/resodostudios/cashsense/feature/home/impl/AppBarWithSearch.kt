@@ -189,44 +189,51 @@ internal fun CsAppBarWithSearch(
         inputField = inputField,
         colors = appBarWithSearchColors.searchBarColors,
     ) {
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        val hazeState = rememberHazeState()
+        val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
+        val motionScheme = MaterialTheme.motionScheme
+        val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
+        val transactionContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = 16.dp),
+            modifier = Modifier.fillMaxSize(),
         ) {
             item {
-                DateFilterChip(
-                    selectedDateRange = searchFilterState.selectedDateRange,
-                    onDateRangeUpdate = onSearchFilterDateRangeChange,
-                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    item {
+                        DateFilterChip(
+                            selectedDateRange = searchFilterState.selectedDateRange,
+                            onDateRangeUpdate = onSearchFilterDateRangeChange,
+                        )
+                    }
+                    item {
+                        WalletFilterChip(
+                            walletIdsAndTitles = walletIdsAndTitles,
+                            selectedWalletIds = searchFilterState.selectedWalletIds,
+                            onSearchFilterWalletToggle = onSearchFilterWalletToggle,
+                        )
+                    }
+                }
             }
-            item {
-                WalletFilterChip(
-                    walletIdsAndTitles = walletIdsAndTitles,
-                    selectedWalletIds = searchFilterState.selectedWalletIds,
-                    onSearchFilterWalletToggle = onSearchFilterWalletToggle,
-                )
-            }
-        }
-        when (searchResultState) {
-            SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
-            SearchResultUiState.Loading -> LoadingState(Modifier.fillMaxSize())
-            is SearchResultUiState.Success -> {
-                if (searchResultState.groupedTransactions.isEmpty()) {
-                    IllustratedMessage(
-                        messageRes = localesR.string.search_no_results,
-                        animationRes = R.raw.anim_search_no_results,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                    )
-                } else {
-                    val hazeState = rememberHazeState()
-                    val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
-                    val motionScheme = MaterialTheme.motionScheme
-                    val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    val transactionContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                    LazyColumn {
+            when (searchResultState) {
+                SearchResultUiState.EmptyQuery, SearchResultUiState.LoadFailed -> Unit
+                SearchResultUiState.Loading -> item { LoadingState(Modifier.fillParentMaxSize()) }
+                is SearchResultUiState.Success -> {
+                    if (searchResultState.groupedTransactions.isEmpty()) {
+                        item {
+                            IllustratedMessage(
+                                messageRes = localesR.string.search_no_results,
+                                animationRes = R.raw.anim_search_no_results,
+                                modifier = Modifier
+                                    .fillParentMaxSize()
+                                    .padding(16.dp),
+                            )
+                        }
+                    } else {
                         transactions(
                             groupedTransactions = searchResultState.groupedTransactions,
                             onClick = { transaction ->
