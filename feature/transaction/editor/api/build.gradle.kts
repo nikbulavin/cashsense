@@ -11,5 +11,5 @@ dependencies {
     api(projects.core.model)
 
     implementation(projects.feature.home.api)
-    implementation(projects.feature.wallet.detail.api)
+    implementation(projects.feature.transaction.overview.api)
 }

@@ -20,7 +20,6 @@ dependencies {
     implementation(projects.feature.transfer.api)
     implementation(projects.feature.settings.api)
     implementation(projects.feature.subscription.dialog.api)
-    implementation(projects.feature.wallet.detail.api)
     implementation(projects.feature.wallet.dialog.api)
 
     implementation(libs.androidx.compose.material3.adaptive.navigation3)

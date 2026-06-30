@@ -89,8 +89,6 @@ import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.t
 import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
-import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
-import ru.resodostudios.cashsense.feature.wallet.detail.impl.navigation.walletEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.walletDialogEntry
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
@@ -140,7 +138,7 @@ fun CsApp(
         derivedStateOf {
             isNavRailVisible ||
                     navSuiteType == NavigationSuiteType.ShortNavigationBarMedium ||
-                    appState.navigationState.currentSubStack.none { it is WalletNavKey }
+                    appState.navigationState.currentSubStack.none { it is TransactionOverviewNavKey }
         }
     }
 
@@ -183,7 +181,7 @@ fun CsApp(
                         .then(
                             if (isFabVisible) {
                                 Modifier.padding(bottom = if (isNavRailVisible) 110.dp else 76.dp)
-                            } else if (appState.navigationState.currentKey is WalletNavKey) {
+                            } else if (appState.navigationState.currentKey is TransactionOverviewNavKey) {
                                 Modifier.padding(bottom = 96.dp)
                             } else {
                                 Modifier
@@ -210,11 +208,10 @@ fun CsApp(
                     categoryEntry(navigator, fadeSpec)
                     categoriesEntry(navigator)
                     subscriptionsEntry(navigator)
-                    walletEntry(navigator, fadeSpec)
                     settingsEntry(navigator, slideSpec)
                     licensesEntry(navigator, slideSpec)
                     walletDialogEntry(navigator)
-                    transactionOverviewEntry(navigator, slideSpec)
+                    transactionOverviewEntry(navigator, fadeSpec)
                     categoryEditorEntry(navigator, slideSpec)
                     subscriptionDialogEntry(navigator)
                     transactionEntry(navigator, fadeSpec)
@@ -326,7 +323,6 @@ private fun InAppUpdateSnackbarHandler(
 
 private val FAB_HIDDEN_SCREENS = setOf(
     SettingsNavKey::class,
-    WalletNavKey::class,
     TransactionEditorNavKey::class,
     TransactionImporterNavKey::class,
     TransactionOverviewNavKey::class,

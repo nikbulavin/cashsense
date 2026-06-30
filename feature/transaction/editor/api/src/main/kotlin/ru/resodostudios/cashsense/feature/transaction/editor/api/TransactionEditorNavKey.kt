@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
-import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
+import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.core.navigation.NavDeepLinkKey
 import ru.resodostudios.core.navigation.Navigator
 
@@ -17,7 +17,7 @@ data class TransactionEditorNavKey(
 ) : NavDeepLinkKey {
 
     @Transient
-    override val parent = walletId?.let { WalletNavKey(it) } ?: HomeNavKey()
+    override val parent = walletId?.let { TransactionOverviewNavKey(it) } ?: HomeNavKey()
 }
 
 fun Navigator.navigateToTransactionEditor(

@@ -8,4 +8,5 @@ android {
 
 dependencies {
     api(projects.core.navigation)
+    implementation(projects.feature.home.api)
 }
