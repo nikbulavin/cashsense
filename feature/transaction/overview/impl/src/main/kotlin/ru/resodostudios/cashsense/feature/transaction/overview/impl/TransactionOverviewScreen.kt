@@ -6,11 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -29,7 +26,6 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -163,24 +159,31 @@ private fun TransactionOverviewScreen(
 
             with(LocalSharedTransitionScope.current) {
                 Box(
-                    modifier = Modifier.sharedBoundsAdaptive(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = wallet?.id ?: "",
-                                origin = wallet?.id ?: "",
-                                type = SharedElementType.Bounds,
-                            ),
+                    modifier = Modifier
+                        .then(
+                            if (wallet != null) {
+                                Modifier.sharedBoundsAdaptive(
+                                    sharedContentState = rememberSharedContentState(
+                                        key = SharedElementKey(
+                                            id = wallet.id,
+                                            origin = wallet.id,
+                                            type = SharedElementType.Bounds,
+                                        ),
+                                    ),
+                                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                                    clipShape = MaterialTheme.shapes.extraLarge,
+                                )
+                            } else {
+                                Modifier
+                            }
                         ),
-                        placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                        clipShape = MaterialTheme.shapes.extraLarge,
-                    ),
                 ) {
-                    var isFabMenuExpanded by rememberSaveable { mutableStateOf(true) }
+                    var isWalletToolbarExpanded by rememberSaveable { mutableStateOf(true) }
                     if (wallet != null) {
                         WalletToolbar(
                             wallet = wallet,
                             formattedCurrentBalance = financePanelUiState.formattedTotalBalance,
-                            expanded = isFabMenuExpanded,
+                            expanded = isWalletToolbarExpanded,
                             onTransfer = onTransfer,
                             onWalletEdit = onWalletEdit,
                             onWalletDelete = onWalletDelete,
@@ -193,36 +196,25 @@ private fun TransactionOverviewScreen(
                                 .zIndex(1f),
                         )
                     }
-                    Scaffold(
-                        topBar = {
-                            TopBar(
-                                financePanelUiState = financePanelUiState,
-                                shouldShowNavigationIcon = shouldShowNavigationIcon,
-                                onBackClick = onBackClick,
-                                onPrimaryClick = onPrimaryClick,
-                                modifier = Modifier.padding(bottom = 6.dp),
-                            )
-                        },
+                    Column(
                         modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                    ) { paddingValues ->
+                    ) {
+                        TopBar(
+                            financePanelUiState = financePanelUiState,
+                            shouldShowNavigationIcon = shouldShowNavigationIcon,
+                            onBackClick = onBackClick,
+                            onPrimaryClick = onPrimaryClick,
+                        )
                         LazyColumn(
-                            contentPadding = PaddingValues(
-                                bottom = if (wallet != null) {
-                                    96.dp + WindowInsets.navigationBars.asPaddingValues()
-                                        .calculateBottomPadding()
-                                } else {
-                                    110.dp
-                                },
-                            ),
+                            contentPadding = PaddingValues(bottom = 96.dp),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(paddingValues)
                                 .then(
                                     if (wallet != null) {
                                         Modifier.floatingToolbarVerticalNestedScroll(
-                                            expanded = isFabMenuExpanded,
-                                            onExpand = { isFabMenuExpanded = true },
-                                            onCollapse = { isFabMenuExpanded = false },
+                                            expanded = isWalletToolbarExpanded,
+                                            onExpand = { isWalletToolbarExpanded = true },
+                                            onCollapse = { isWalletToolbarExpanded = false },
                                         )
                                     } else {
                                         Modifier
