@@ -1,11 +1,9 @@
 package ru.resodostudios.cashsense.feature.home.impl
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -32,7 +30,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +42,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
@@ -78,192 +74,183 @@ internal fun WalletCard(
     onTransferClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     selected: Boolean = false,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
 ) {
     with(LocalSharedTransitionScope.current) {
-        with(LocalNavAnimatedContentScope.current) {
-            val roundedCornerAnim by transition.animateDp(label = "rounded_corner") { enterExit ->
-                    when (enterExit) {
-                        EnterExitState.PreEnter -> 0.dp
-                        EnterExitState.Visible -> 28.dp
-                        EnterExitState.PostExit -> 28.dp
-                    }
-                }
-            val shape = RoundedCornerShape(roundedCornerAnim)
-            val wallet = uiWallet.extendedUserWallet.wallet
-            OutlinedCard(
-                onClick = { onWalletClick(wallet.id) },
-                shape = shape,
-                modifier = modifier
-                    .sharedBoundsAdaptive(
-                        sharedContentState = rememberSharedContentState(
-                            key = SharedElementKey(
-                                id = wallet.id,
-                                origin = wallet.id,
-                                type = SharedElementType.Bounds,
-                            ),
+        val wallet = uiWallet.extendedUserWallet.wallet
+        OutlinedCard(
+            onClick = { onWalletClick(wallet.id) },
+            shape = shape,
+            modifier = modifier
+                .sharedBoundsAdaptive(
+                    sharedContentState = rememberSharedContentState(
+                        key = SharedElementKey(
+                            id = wallet.id,
+                            origin = wallet.id,
+                            type = SharedElementType.Bounds,
                         ),
-                        placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                        clipShape = shape,
-                    )
-                    .then(if (selected) Modifier.dropShadow(shape) else Modifier),
+                    ),
+                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                    clipShape = shape,
+                )
+                .then(if (selected) Modifier.dropShadow(shape) else Modifier),
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier
+                    .padding(top = 12.dp, start = 16.dp, end = 16.dp)
+                    .fillMaxWidth(),
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalAlignment = Alignment.Start,
+                Text(
+                    text = wallet.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier
-                        .padding(top = 12.dp, start = 16.dp, end = 16.dp)
-                        .fillMaxWidth(),
-                ) {
-                    Text(
-                        text = wallet.title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .sharedBoundsAdaptive(
-                                sharedContentState = rememberSharedContentState(
-                                    key = SharedElementKey(
-                                        id = wallet.id,
-                                        origin = wallet.id,
-                                        type = SharedElementType.WalletTitle,
-                                    ),
+                        .sharedBoundsAdaptive(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = wallet.id,
+                                    type = SharedElementType.WalletTitle,
                                 ),
-                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             ),
-                    )
-                    val balance = uiWallet.extendedUserWallet.currentBalance
-                        .formatAmount(wallet.currency)
-                    AnimatedAmount(
-                        formattedAmount = balance,
-                        label = "WalletBalance",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .sharedBoundsAdaptive(
-                                sharedContentState = rememberSharedContentState(
-                                    key = SharedElementKey(
-                                        id = wallet.id,
-                                        origin = wallet.id,
-                                        type = SharedElementType.BalanceAmount,
-                                    ),
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        ),
+                )
+                val balance = uiWallet.extendedUserWallet.currentBalance
+                    .formatAmount(wallet.currency)
+                AnimatedAmount(
+                    formattedAmount = balance,
+                    label = "WalletBalance",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .sharedBoundsAdaptive(
+                            sharedContentState = rememberSharedContentState(
+                                key = SharedElementKey(
+                                    id = wallet.id,
+                                    origin = wallet.id,
+                                    type = SharedElementType.BalanceAmount,
                                 ),
-                                resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
                             ),
+                            resizeMode = SharedTransitionScope.ResizeMode.scaleToBounds(),
+                        ),
+                )
+                TagsSection(
+                    formattedExpenses = uiWallet.expenses.formatAmount(wallet.currency),
+                    formattedIncome = uiWallet.income.formatAmount(wallet.currency),
+                    shouldShowExpensesTag = uiWallet.expenses.signum() > 0,
+                    shouldShowIncomeTag = uiWallet.income.signum() > 0,
+                    modifier = Modifier.padding(top = 8.dp),
+                    isPrimary = uiWallet.extendedUserWallet.isPrimary,
+                )
+            }
+            val newTransactionText = stringResource(localesR.string.new_transaction)
+            val transferText = stringResource(localesR.string.transfer)
+            ButtonGroup(
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 12.dp,
+                        top = 16.dp,
+                    ),
+                overflowIndicator = { menuState ->
+                    CsIconButton(
+                        onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
+                        icon = CsIcons.Outlined.MoreVert,
+                        contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
                     )
-                    TagsSection(
-                        formattedExpenses = uiWallet.expenses.formatAmount(wallet.currency),
-                        formattedIncome = uiWallet.income.formatAmount(wallet.currency),
-                        shouldShowExpensesTag = uiWallet.expenses.signum() > 0,
-                        shouldShowIncomeTag = uiWallet.income.signum() > 0,
-                        modifier = Modifier.padding(top = 8.dp),
-                        isPrimary = uiWallet.extendedUserWallet.isPrimary,
+                },
+            ) {
+                customItem(
+                    buttonGroupContent = {
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                        Button(
+                            onClick = { onNewTransactionClick(wallet.id) },
+                            shapes = ButtonDefaults.shapes(),
+                            interactionSource = interactionSource,
+                            contentPadding = contentPadding,
+                            modifier = Modifier
+                                .weight(1f)
+                                .animateWidth(
+                                    interactionSource = interactionSource,
+                                    compressionLimit = contentPadding,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                text = newTransactionText,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                ) { state ->
+                    DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.Add,
+                                contentDescription = null,
+                            )
+                        },
+                        text = { Text(newTransactionText) },
+                        onClick = {
+                            onNewTransactionClick(wallet.id)
+                            state.dismiss()
+                        },
                     )
                 }
-                val newTransactionText = stringResource(localesR.string.new_transaction)
-                val transferText = stringResource(localesR.string.transfer)
-                ButtonGroup(
-                    modifier = Modifier
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 12.dp,
-                            top = 16.dp,
-                        ),
-                    overflowIndicator = { menuState ->
-                        CsIconButton(
-                            onClick = { if (menuState.isShowing) menuState.dismiss() else menuState.show() },
-                            icon = CsIcons.Outlined.MoreVert,
-                            contentDescription = stringResource(localesR.string.wallet_menu_icon_description),
-                        )
-                    },
-                ) {
-                    customItem(
-                        buttonGroupContent = {
-                            val interactionSource = remember { MutableInteractionSource() }
-                            val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                            Button(
-                                onClick = { onNewTransactionClick(wallet.id) },
-                                shapes = ButtonDefaults.shapes(),
-                                interactionSource = interactionSource,
-                                contentPadding = contentPadding,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .animateWidth(
-                                        interactionSource = interactionSource,
-                                        compressionLimit = contentPadding,
-                                    ),
-                            ) {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.Add,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                                )
-                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                Text(
-                                    text = newTransactionText,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
+                customItem(
+                    buttonGroupContent = {
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                        OutlinedButton(
+                            onClick = { onTransferClick(wallet.id) },
+                            shapes = ButtonDefaults.shapes(),
+                            interactionSource = interactionSource,
+                            contentPadding = contentPadding,
+                            modifier = Modifier
+                                .animateWidth(
+                                    interactionSource = interactionSource,
+                                    compressionLimit = contentPadding,
+                                ),
+                        ) {
+                            Icon(
+                                imageVector = CsIcons.Outlined.SendMoney,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(
+                                text = transferText,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
                         }
-                    ) { state ->
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.Add,
-                                    contentDescription = null,
-                                )
-                            },
-                            text = { Text(newTransactionText) },
-                            onClick = {
-                                onNewTransactionClick(wallet.id)
-                                state.dismiss()
-                            },
-                        )
-                    }
-                    customItem(
-                        buttonGroupContent = {
-                            val interactionSource = remember { MutableInteractionSource() }
-                            val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
-                            OutlinedButton(
-                                onClick = { onTransferClick(wallet.id) },
-                                shapes = ButtonDefaults.shapes(),
-                                interactionSource = interactionSource,
-                                contentPadding = contentPadding,
-                                modifier = Modifier
-                                    .animateWidth(
-                                        interactionSource = interactionSource,
-                                        compressionLimit = contentPadding,
-                                    ),
-                            ) {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.SendMoney,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                                )
-                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                Text(
-                                    text = transferText,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
+                    },
+                ) { state ->
+                    DropdownMenuItem(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = CsIcons.Outlined.SendMoney,
+                                contentDescription = null,
+                            )
                         },
-                    ) { state ->
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = CsIcons.Outlined.SendMoney,
-                                    contentDescription = null,
-                                )
-                            },
-                            text = { Text(transferText) },
-                            onClick = {
-                                onTransferClick(wallet.id)
-                                state.dismiss()
-                            },
-                        )
-                    }
+                        text = { Text(transferText) },
+                        onClick = {
+                            onTransferClick(wallet.id)
+                            state.dismiss()
+                        },
+                    )
                 }
             }
         }
