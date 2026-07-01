@@ -520,7 +520,7 @@ private fun WalletToolbar(
                 Column {
                     Text(stringResource(localesR.string.permanently_delete_wallet))
                     CsListItem(
-                        headlineContent = {
+                        content = {
                             Text(
                                 text = wallet.title,
                                 maxLines = 1,

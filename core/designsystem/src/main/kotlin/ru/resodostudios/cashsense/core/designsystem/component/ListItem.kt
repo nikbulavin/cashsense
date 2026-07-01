@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CsListItem(
-    headlineContent: @Composable () -> Unit,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -25,7 +25,7 @@ fun CsListItem(
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     ListItem(
-        headlineContent = headlineContent,
+        content = content,
         modifier = modifier,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
