@@ -295,7 +295,6 @@ private fun TopBar(
                             formattedAmount = financePanelUiState.formattedTotalBalance,
                             label = if (financePanelUiState.wallet != null) "WalletBalance" else "TotalBalance",
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .then(
                                     if (financePanelUiState.wallet != null) {
                                         Modifier.sharedBoundsAdaptive(
