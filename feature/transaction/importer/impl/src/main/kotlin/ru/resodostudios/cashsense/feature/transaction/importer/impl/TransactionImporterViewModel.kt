@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
 import ru.resodostudios.cashsense.core.domain.GetMenuWalletsUseCase
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
 import ru.resodostudios.cashsense.core.model.CsvConfig
@@ -30,7 +29,6 @@ import java.util.Currency
 @HiltViewModel(assistedFactory = TransactionImporterViewModel.Factory::class)
 internal class TransactionImporterViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
-    private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
     private val userDataRepository: UserDataRepository,
     private val getMenuWalletsUseCase: GetMenuWalletsUseCase,
@@ -48,18 +46,23 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
             val userData = userDataRepository.userData.first()
             val walletId = key.walletId ?: userData.primaryWalletId
             if (walletId.isNotEmpty()) {
-                val wallet = walletsRepository.getExtendedWallet(walletId).first()
                 _transactionImporterUiState.update {
-                    it.copy(
-                        walletId = walletId,
-                        currency = wallet.wallet.currency,
-                    )
+                    it.copy(walletId = walletId)
                 }
             }
         }
         viewModelScope.launch {
             getMenuWalletsUseCase().collect { availableWallets ->
-                _transactionImporterUiState.update { it.copy(availableWallets = availableWallets) }
+                val currency = availableWallets
+                    .find { it.id == _transactionImporterUiState.value.walletId }
+                    ?.currency
+                _transactionImporterUiState.update {
+                    it.copy(
+                        availableWallets = availableWallets,
+                        walletIdsAndTitles = availableWallets.associate { wallet -> wallet.id to wallet.title },
+                        currency = currency,
+                    )
+                }
             }
         }
     }
@@ -201,6 +204,7 @@ internal data class TransactionImporterUiState(
     val parsedTransactions: List<Transaction> = emptyList(),
     val selectedTransactions: Set<String> = emptySet(),
     val availableWallets: List<MenuWallet> = emptyList(),
+    val walletIdsAndTitles: Map<String, String> = emptyMap(),
     val currency: Currency? = null,
     val isLoading: Boolean = false,
 )

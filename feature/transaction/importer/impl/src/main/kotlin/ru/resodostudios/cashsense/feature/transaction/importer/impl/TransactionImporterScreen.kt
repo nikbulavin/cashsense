@@ -284,9 +284,9 @@ private fun TransactionImporterScreen(
                                 val selected =
                                     transaction.id in transactionImporterUiState.selectedTransactions
                                 TransactionItem(
-                                    transaction = transaction,
-                                    currency = transactionImporterUiState.currency,
                                     selected = selected,
+                                    transaction = transaction,
+                                    currency = transaction.currency,
                                     onClick = { onTransactionEdit(transaction) },
                                     shapes = if (transactionGroup.value.size == 1) {
                                         ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
@@ -302,6 +302,7 @@ private fun TransactionImporterScreen(
                                             onCheckedChange = { onTransactionSelect(transaction.id) },
                                         )
                                     },
+                                    walletIdsAndTitles = transactionImporterUiState.walletIdsAndTitles,
                                 )
                                 if (index != transactionGroup.value.lastIndex) {
                                     Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
