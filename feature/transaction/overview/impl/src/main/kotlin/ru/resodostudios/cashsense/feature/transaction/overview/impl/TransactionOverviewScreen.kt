@@ -144,98 +144,98 @@ private fun TransactionOverviewScreen(
         financePanelUiState is FinancePanelUiState.Loading
     ) {
         LoadingState(Modifier.fillMaxSize())
-    }
+    } else {
+        val hazeState = rememberHazeState()
+        val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
+        val motionScheme = MaterialTheme.motionScheme
+        val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
-    when (transactionOverviewState) {
-        TransactionOverviewUiState.Loading -> Unit
-        is TransactionOverviewUiState.Success -> {
-            val hazeState = rememberHazeState()
-            val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
-            val motionScheme = MaterialTheme.motionScheme
-            val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
+        with(LocalSharedTransitionScope.current) {
             val wallet = (financePanelUiState as? FinancePanelUiState.Shown)?.wallet
-
-            with(LocalSharedTransitionScope.current) {
-                Box(
-                    modifier = Modifier
-                        .then(
-                            if (wallet != null) {
-                                Modifier.sharedBoundsAdaptive(
-                                    sharedContentState = rememberSharedContentState(
-                                        key = SharedElementKey(
-                                            id = wallet.id,
-                                            origin = wallet.id,
-                                            type = SharedElementType.Bounds,
-                                        ),
+            Box(
+                modifier = Modifier
+                    .then(
+                        if (wallet != null) {
+                            Modifier.sharedBoundsAdaptive(
+                                sharedContentState = rememberSharedContentState(
+                                    key = SharedElementKey(
+                                        id = wallet.id,
+                                        origin = wallet.id,
+                                        type = SharedElementType.Bounds,
                                     ),
-                                    placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                                    clipShape = MaterialTheme.shapes.extraLarge,
-                                )
-                            } else {
-                                Modifier
-                            }
-                        ),
-                ) {
-                    var isWalletToolbarExpanded by rememberSaveable { mutableStateOf(true) }
-                    if (wallet != null) {
-                        WalletToolbar(
-                            wallet = wallet,
-                            formattedCurrentBalance = financePanelUiState.formattedTotalBalance,
-                            expanded = isWalletToolbarExpanded,
-                            onTransfer = onTransfer,
-                            onWalletEdit = onWalletEdit,
-                            onWalletDelete = onWalletDelete,
-                            onImportClick = onImportClick,
-                            navigateToTransactionEditor = navigateToTransactionEditor,
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .navigationBarsPadding()
-                                .offset(y = -ScreenOffset)
-                                .zIndex(1f),
-                        )
-                    }
-                    Column(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                    ) {
-                        TopBar(
-                            financePanelUiState = financePanelUiState,
-                            shouldShowNavigationIcon = shouldShowNavigationIcon,
-                            onBackClick = onBackClick,
-                            onPrimaryClick = onPrimaryClick,
-                        )
-                        LazyColumn(
-                            contentPadding = PaddingValues(bottom = 96.dp),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .then(
-                                    if (wallet != null) {
-                                        Modifier.floatingToolbarVerticalNestedScroll(
-                                            expanded = isWalletToolbarExpanded,
-                                            onExpand = { isWalletToolbarExpanded = true },
-                                            onCollapse = { isWalletToolbarExpanded = false },
-                                        )
-                                    } else {
-                                        Modifier
-                                    }
                                 ),
-                        ) {
-                            header(
-                                financePanelUiState = financePanelUiState,
-                                onDateTypeUpdate = onDateTypeUpdate,
-                                onFinanceTypeUpdate = onFinanceTypeUpdate,
-                                onSelectedDateUpdate = onSelectedDateUpdate,
-                                onCategoryFilterUpdate = onCategoryFilterUpdate,
+                                placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
+                                clipShape = MaterialTheme.shapes.extraLarge,
                             )
-                            transactions(
-                                selectedTransaction = transactionOverviewState.selectedTransaction,
-                                groupedTransactions = transactionOverviewState.groupedTransactions,
-                                walletIdsAndTitles = transactionOverviewState.walletIdsAndTitles,
-                                hazeState = hazeState,
-                                hazeStyle = hazeStyle,
-                                onClick = onTransactionSelect,
-                                motionScheme = motionScheme,
-                                dateTextColor = dateTextColor,
-                            )
+                        } else {
+                            Modifier
+                        }
+                    ),
+            ) {
+                var isWalletToolbarExpanded by rememberSaveable { mutableStateOf(true) }
+                if (wallet != null) {
+                    WalletToolbar(
+                        wallet = wallet,
+                        formattedCurrentBalance = financePanelUiState.formattedTotalBalance,
+                        expanded = isWalletToolbarExpanded,
+                        onTransfer = onTransfer,
+                        onWalletEdit = onWalletEdit,
+                        onWalletDelete = onWalletDelete,
+                        onImportClick = onImportClick,
+                        navigateToTransactionEditor = navigateToTransactionEditor,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
+                            .offset(y = -ScreenOffset)
+                            .zIndex(1f),
+                    )
+                }
+                Column(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                ) {
+                    TopBar(
+                        financePanelUiState = financePanelUiState,
+                        shouldShowNavigationIcon = shouldShowNavigationIcon,
+                        onBackClick = onBackClick,
+                        onPrimaryClick = onPrimaryClick,
+                    )
+                    LazyColumn(
+                        contentPadding = PaddingValues(bottom = 96.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(
+                                if (wallet != null) {
+                                    Modifier.floatingToolbarVerticalNestedScroll(
+                                        expanded = isWalletToolbarExpanded,
+                                        onExpand = { isWalletToolbarExpanded = true },
+                                        onCollapse = { isWalletToolbarExpanded = false },
+                                    )
+                                } else {
+                                    Modifier
+                                }
+                            ),
+                    ) {
+                        header(
+                            financePanelUiState = financePanelUiState,
+                            onDateTypeUpdate = onDateTypeUpdate,
+                            onFinanceTypeUpdate = onFinanceTypeUpdate,
+                            onSelectedDateUpdate = onSelectedDateUpdate,
+                            onCategoryFilterUpdate = onCategoryFilterUpdate,
+                        )
+                        when (transactionOverviewState) {
+                            TransactionOverviewUiState.Loading -> Unit
+                            is TransactionOverviewUiState.Success -> {
+                                transactions(
+                                    selectedTransaction = transactionOverviewState.selectedTransaction,
+                                    groupedTransactions = transactionOverviewState.groupedTransactions,
+                                    walletIdsAndTitles = transactionOverviewState.walletIdsAndTitles,
+                                    hazeState = hazeState,
+                                    hazeStyle = hazeStyle,
+                                    onClick = onTransactionSelect,
+                                    motionScheme = motionScheme,
+                                    dateTextColor = dateTextColor,
+                                )
+                            }
                         }
                     }
                 }
