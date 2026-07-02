@@ -123,9 +123,9 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 
     fun importTransactions() {
         appScope.launch {
-            _transactionImporterUiState.value.parsedTransactions
+            val transactions = _transactionImporterUiState.value.parsedTransactions
                 .filter { it.id in _transactionImporterUiState.value.selectedTransactions }
-                .forEach { transactionsRepository.upsertTransaction(it) }
+            transactionsRepository.upsertTransactions(transactions)
         }
     }
 

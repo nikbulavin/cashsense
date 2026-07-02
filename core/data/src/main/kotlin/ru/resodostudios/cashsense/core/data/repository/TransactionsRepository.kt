@@ -15,6 +15,8 @@ interface TransactionsRepository {
 
     suspend fun upsertTransaction(transaction: Transaction)
 
+    suspend fun upsertTransactions(transactions: List<Transaction>)
+
     suspend fun deleteTransaction(id: String)
 
     suspend fun upsertTransfer(transfer: Transfer)
