@@ -160,7 +160,8 @@ private fun TransactionEditorScreen(
                                 }
                                 onBackClick()
                             },
-                            enabled = transactionEditorState.amount.isAmountValid(),
+                            enabled = transactionEditorState.amount.isAmountValid() &&
+                                    transactionEditorState.walletId.isNotBlank(),
                             title = stringResource(confirmButtonTextRes),
                         )
                     },

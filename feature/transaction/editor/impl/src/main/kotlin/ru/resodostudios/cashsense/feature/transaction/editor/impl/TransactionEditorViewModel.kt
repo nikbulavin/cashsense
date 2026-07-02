@@ -136,6 +136,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
                     availableWallets = wallets,
                     selectedWallet = wallets.find { wallet -> wallet.id == transaction.walletOwnerId }
                         ?: MenuWallet(),
+                    walletId = transaction.walletOwnerId,
                 )
             }
         }
@@ -169,6 +170,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
                     availableWallets = wallets,
                     selectedWallet = wallets.find { wallet -> wallet.id == transaction.walletOwnerId }
                         ?: MenuWallet(),
+                    walletId = transaction.walletOwnerId,
                 )
             }
         }
@@ -236,7 +238,7 @@ internal fun TransactionEditorState.asTransaction(): Transaction {
         completed = completed,
         ignored = ignored,
         transferId = null,
-        currency = getUsdCurrency(),
+        currency = selectedWallet.currency ?: getUsdCurrency(),
         category = category,
     )
 }
