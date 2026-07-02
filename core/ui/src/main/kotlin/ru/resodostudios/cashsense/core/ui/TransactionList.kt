@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MotionScheme
@@ -34,7 +33,7 @@ import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
 import kotlin.time.Instant
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalHazeApi::class)
+@OptIn(ExperimentalHazeApi::class)
 fun LazyListScope.transactions(
     groupedTransactions: Map<Instant, List<Transaction>>,
     onClick: (Transaction?) -> Unit,
@@ -46,7 +45,7 @@ fun LazyListScope.transactions(
     selectedTransaction: Transaction? = null,
     shouldHighlightSelectedTransaction: Boolean = false,
     shouldShowCategoryIcon: Boolean = true,
-    walletIdsAndTitles: Map<String, String> = emptyMap(),
+    walletIdsAndTitles: Map<String, String>? = null,
     isSharedTransitionEnabled: Boolean = true,
 ) {
     groupedTransactions.forEach { transactionGroup ->
