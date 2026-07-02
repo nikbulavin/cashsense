@@ -44,18 +44,16 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             val userData = userDataRepository.userData.first()
-            val walletId = key.walletId ?: userData.primaryWalletId
-            if (walletId.isNotEmpty()) {
-                _transactionImporterUiState.update {
-                    it.copy(walletId = walletId)
-                }
+            val initialWalletId = key.walletId ?: userData.primaryWalletId
+
+            if (initialWalletId.isNotEmpty()) {
+                _transactionImporterUiState.update { it.copy(walletId = initialWalletId) }
             }
-        }
-        viewModelScope.launch {
+
             getMenuWalletsUseCase().collect { availableWallets ->
-                val currency = availableWallets
-                    .find { it.id == _transactionImporterUiState.value.walletId }
-                    ?.currency
+                val currentWalletId = _transactionImporterUiState.value.walletId
+                val currency = availableWallets.find { it.id == currentWalletId }?.currency
+
                 _transactionImporterUiState.update {
                     it.copy(
                         availableWallets = availableWallets,
@@ -72,19 +70,10 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
         lines: List<String>,
     ) {
         _transactionImporterUiState.update {
-            val columns = if (lines.isNotEmpty() && it.config.columnSeparator.isNotEmpty()) {
-                runCatching {
-                    csvReader {
-                        dialect = CsvDialect(delimiter = it.config.columnSeparator.first())
-                    }.readAll(lines.first()).firstOrNull()
-                }.getOrNull() ?: emptyList()
-            } else {
-                emptyList()
-            }
             it.copy(
                 fileName = fileName,
                 lines = lines,
-                columns = columns,
+                columns = extractColumns(lines, it.config.columnSeparator),
             )
         }
         parseTransactions()
@@ -92,18 +81,9 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 
     fun updateConfig(config: CsvConfig) {
         _transactionImporterUiState.update {
-            val columns = if (it.lines.isNotEmpty() && config.columnSeparator.isNotEmpty()) {
-                runCatching {
-                    csvReader {
-                        dialect = CsvDialect(delimiter = config.columnSeparator.first())
-                    }.readAll(it.lines.first()).firstOrNull()
-                }.getOrNull() ?: emptyList()
-            } else {
-                it.columns
-            }
             it.copy(
                 config = config,
-                columns = columns,
+                columns = extractColumns(it.lines, config.columnSeparator),
             )
         }
         parseTransactions()
@@ -139,6 +119,24 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                 },
             )
         }
+    }
+
+    fun importTransactions() {
+        appScope.launch {
+            _transactionImporterUiState.value.parsedTransactions
+                .filter { it.id in _transactionImporterUiState.value.selectedTransactions }
+                .forEach { transactionsRepository.upsertTransaction(it) }
+        }
+    }
+
+    private fun extractColumns(lines: List<String>, separator: String): List<String> {
+        if (lines.isEmpty() || separator.isEmpty()) return emptyList()
+
+        return runCatching {
+            csvReader {
+                dialect = CsvDialect(delimiter = separator.first())
+            }.readAll(lines.first()).firstOrNull()
+        }.getOrNull() ?: emptyList()
     }
 
     private fun parseTransactions() {
@@ -178,14 +176,6 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
                     selectedTransactions = emptySet(),
                 )
             }
-        }
-    }
-
-    fun importTransactions() {
-        appScope.launch {
-            _transactionImporterUiState.value.parsedTransactions
-                .filter { it.id in _transactionImporterUiState.value.selectedTransactions }
-                .forEach { transactionsRepository.upsertTransaction(it) }
         }
     }
 
