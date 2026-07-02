@@ -17,7 +17,7 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.domain.GetMenuWalletsUseCase
 import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
@@ -31,7 +31,7 @@ import kotlin.uuid.Uuid
 internal class TransactionEditorViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val categoriesRepository: CategoriesRepository,
-    private val walletsRepository: WalletsRepository,
+    private val getMenuWalletsUseCase: GetMenuWalletsUseCase,
     @ApplicationScope private val appScope: CoroutineScope,
     @Assisted private val key: TransactionEditorNavKey,
 ) : ViewModel() {
@@ -116,14 +116,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     private fun initTransaction(transaction: Transaction) {
         viewModelScope.launch {
             val categories = categoriesRepository.getCategories().first()
-            val wallets = walletsRepository.getExtendedWallets().first().map { extendedWallet ->
-                MenuWallet(
-                    id = extendedWallet.wallet.id,
-                    title = extendedWallet.wallet.title,
-                    currentBalance = extendedWallet.currentBalance,
-                    currency = extendedWallet.wallet.currency,
-                )
-            }
+            val wallets = getMenuWalletsUseCase().first()
             _transactionEditorState.update {
                 it.copy(
                     transactionId = transaction.id,
@@ -156,14 +149,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
             } else {
                 transaction.timestamp
             }
-            val wallets = walletsRepository.getExtendedWallets().first().map { extendedWallet ->
-                MenuWallet(
-                    id = extendedWallet.wallet.id,
-                    title = extendedWallet.wallet.title,
-                    currentBalance = extendedWallet.currentBalance,
-                    currency = extendedWallet.wallet.currency,
-                )
-            }
+            val wallets = getMenuWalletsUseCase().first()
             _transactionEditorState.update {
                 it.copy(
                     transactionId = if (key.repeated) "" else transaction.id,
@@ -190,14 +176,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
-            val wallets = walletsRepository.getExtendedWallets().first().map { extendedWallet ->
-                MenuWallet(
-                    id = extendedWallet.wallet.id,
-                    title = extendedWallet.wallet.title,
-                    currentBalance = extendedWallet.currentBalance,
-                    currency = extendedWallet.wallet.currency,
-                )
-            }
+            val wallets = getMenuWalletsUseCase().first()
             _transactionEditorState.update {
                 it.copy(
                     categories = buildList {

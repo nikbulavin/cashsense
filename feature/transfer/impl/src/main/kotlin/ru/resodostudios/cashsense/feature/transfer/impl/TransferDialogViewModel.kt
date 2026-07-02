@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.domain.GetMenuWalletsUseCase
 import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.model.Transfer
@@ -29,8 +29,8 @@ import kotlin.uuid.Uuid
 
 @HiltViewModel(assistedFactory = TransferDialogViewModel.Factory::class)
 internal class TransferDialogViewModel @AssistedInject constructor(
-    private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
+    private val getMenuWalletsUseCase: GetMenuWalletsUseCase,
     @ApplicationScope private val appScope: CoroutineScope,
     @Assisted val key: TransferDialogNavKey,
 ) : ViewModel() {
@@ -44,17 +44,8 @@ internal class TransferDialogViewModel @AssistedInject constructor(
 
     private fun loadTransfer(walletId: String?) {
         viewModelScope.launch {
-            _transferDialogState.update { TransferDialogUiState(isLoading = true) }
-            val transferWallets = walletsRepository.getExtendedWallets()
-                .first()
-                .map { extendedWallet ->
-                    MenuWallet(
-                        id = extendedWallet.wallet.id,
-                        title = extendedWallet.wallet.title,
-                        currentBalance = extendedWallet.currentBalance,
-                        currency = extendedWallet.wallet.currency,
-                    )
-                }
+            _transferDialogState.update { it.copy(isLoading = true) }
+            val transferWallets = getMenuWalletsUseCase().first()
             val sendingWallet = transferWallets.find { it.id == walletId } ?: MenuWallet()
             val receivingWallet = if (transferWallets.size == 2) {
                 transferWallets.first { it != sendingWallet }
@@ -132,21 +123,30 @@ internal class TransferDialogViewModel @AssistedInject constructor(
     }
 
     fun updateAmount(amount: String) {
-        val convertedAmount = calculateConvertedAmount(amount, _transferDialogState.value.exchangeRate)
+        val convertedAmount = calculateConvertedAmount(
+            amount = amount,
+            exchangeRate = _transferDialogState.value.exchangeRate,
+        )
         _transferDialogState.update {
             it.copy(amount = amount, convertedAmount = convertedAmount)
         }
     }
 
     fun updateExchangingRate(exchangeRate: String) {
-        val convertedAmount = calculateConvertedAmount(_transferDialogState.value.amount, exchangeRate)
+        val convertedAmount = calculateConvertedAmount(
+            amount = _transferDialogState.value.amount,
+            exchangeRate = exchangeRate,
+        )
         _transferDialogState.update {
             it.copy(exchangeRate = exchangeRate, convertedAmount = convertedAmount)
         }
     }
 
     fun updateConvertedAmount(convertedAmount: String) {
-        val amount = calculateAmount(convertedAmount, _transferDialogState.value.exchangeRate)
+        val amount = calculateAmount(
+            convertedAmount = convertedAmount,
+            exchangeRate = _transferDialogState.value.exchangeRate,
+        )
         _transferDialogState.update {
             it.copy(convertedAmount = convertedAmount, amount = amount)
         }
