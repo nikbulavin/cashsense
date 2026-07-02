@@ -148,16 +148,16 @@ private fun TransactionOverviewScreen(
         val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
         with(LocalSharedTransitionScope.current) {
-            val wallet = (financePanelUiState as? FinancePanelUiState.Shown)?.wallet
+            val walletId = (financePanelUiState as? FinancePanelUiState.Shown)?.wallet?.id
             Box(
                 modifier = Modifier
                     .then(
-                        if (wallet != null) {
+                        if (walletId != null) {
                             Modifier.sharedBoundsAdaptive(
                                 sharedContentState = rememberSharedContentState(
                                     key = SharedElementKey(
-                                        id = wallet.id,
-                                        origin = wallet.id,
+                                        id = walletId,
+                                        origin = walletId,
                                         type = SharedElementType.Bounds,
                                     ),
                                 ),
@@ -172,7 +172,7 @@ private fun TransactionOverviewScreen(
                 var isWalletToolbarExpanded by rememberSaveable { mutableStateOf(true) }
                 var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
                 WalletToolbar(
-                    walletId = wallet?.id,
+                    walletId = walletId,
                     expanded = isWalletToolbarExpanded,
                     onTransfer = onTransfer,
                     onWalletEdit = onWalletEdit,
@@ -192,7 +192,7 @@ private fun TransactionOverviewScreen(
                         confirmButtonTextRes = localesR.string.delete,
                         dismissButtonTextRes = localesR.string.cancel,
                         onConfirm = {
-                            wallet?.id?.let { onWalletDelete(it) }
+                            walletId?.let { onWalletDelete(it) }
                             shouldShowDeletionDialog = false
                         },
                         onDismiss = { shouldShowDeletionDialog = false },
@@ -234,7 +234,7 @@ private fun TransactionOverviewScreen(
                                 transactions(
                                     selectedTransaction = transactionOverviewState.selectedTransaction,
                                     groupedTransactions = transactionOverviewState.groupedTransactions,
-                                    walletIdsAndTitles = transactionOverviewState.walletIdsAndTitles,
+                                    walletIdsAndTitles = if (walletId == null) transactionOverviewState.walletIdsAndTitles else emptyMap(),
                                     hazeState = hazeState,
                                     hazeStyle = hazeStyle,
                                     onClick = onTransactionSelect,
