@@ -46,7 +46,6 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -65,7 +64,6 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentFrust
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentNeutral
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.SentimentSad
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Star
-import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
 import ru.resodostudios.cashsense.core.designsystem.theme.LocalSharedTransitionScope
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementKey
 import ru.resodostudios.cashsense.core.designsystem.theme.SharedElementType
@@ -74,7 +72,6 @@ import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.model.DateType
 import ru.resodostudios.cashsense.core.model.FinanceType
 import ru.resodostudios.cashsense.core.model.Transaction
-import ru.resodostudios.cashsense.core.model.Wallet
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
 import ru.resodostudios.cashsense.core.ui.component.FinancePanel
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -87,10 +84,10 @@ internal fun TransactionOverviewScreen(
     shouldShowNavigationIcon: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (String) -> Unit,
-    onTransfer: (String) -> Unit,
+    onTransfer: (String?) -> Unit,
     onEditWallet: (String) -> Unit,
-    onImportClick: (String) -> Unit,
-    navigateToTransactionEditor: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    onImportClick: (String?) -> Unit,
+    navigateToTransactionEditor: (walletId: String?, transactionId: String?, repeated: Boolean) -> Unit,
     viewModel: TransactionOverviewViewModel = hiltViewModel(),
 ) {
     val financePanelUiState by viewModel.financePanelUiState.collectAsStateWithLifecycle()
@@ -133,12 +130,12 @@ private fun TransactionOverviewScreen(
     onSelectedDateUpdate: (Int) -> Unit,
     onCategoryFilterUpdate: (Category, Boolean) -> Unit,
     onTransactionSelect: (Transaction?) -> Unit = {},
-    onTransfer: (String) -> Unit,
+    onTransfer: (String?) -> Unit,
     onWalletEdit: (String) -> Unit,
     onWalletDelete: (String) -> Unit,
-    onImportClick: (String) -> Unit,
+    onImportClick: (String?) -> Unit,
     onPrimaryClick: (walletId: String, isPrimary: Boolean) -> Unit,
-    navigateToTransactionEditor: (walletId: String, transactionId: String?, repeated: Boolean) -> Unit,
+    navigateToTransactionEditor: (walletId: String?, transactionId: String?, repeated: Boolean) -> Unit,
 ) {
     if (transactionOverviewState is TransactionOverviewUiState.Loading ||
         financePanelUiState is FinancePanelUiState.Loading
@@ -173,23 +170,38 @@ private fun TransactionOverviewScreen(
                     ),
             ) {
                 var isWalletToolbarExpanded by rememberSaveable { mutableStateOf(true) }
-                if (wallet != null) {
-                    WalletToolbar(
-                        wallet = wallet,
-                        formattedCurrentBalance = financePanelUiState.formattedTotalBalance,
-                        expanded = isWalletToolbarExpanded,
-                        onTransfer = onTransfer,
-                        onWalletEdit = onWalletEdit,
-                        onWalletDelete = onWalletDelete,
-                        onImportClick = onImportClick,
-                        navigateToTransactionEditor = navigateToTransactionEditor,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .navigationBarsPadding()
-                            .offset(y = -ScreenOffset)
-                            .zIndex(1f),
+                var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
+                WalletToolbar(
+                    walletId = wallet?.id,
+                    expanded = isWalletToolbarExpanded,
+                    onTransfer = onTransfer,
+                    onWalletEdit = onWalletEdit,
+                    onWalletDelete = { shouldShowDeletionDialog = true },
+                    onImportClick = onImportClick,
+                    navigateToTransactionEditor = navigateToTransactionEditor,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .offset(y = -ScreenOffset)
+                        .zIndex(1f),
+                )
+                if (shouldShowDeletionDialog) {
+                    CsAlertDialog(
+                        titleRes = localesR.string.delete_wallet,
+                        icon = CsIcons.Outlined.Delete,
+                        confirmButtonTextRes = localesR.string.delete,
+                        dismissButtonTextRes = localesR.string.cancel,
+                        onConfirm = {
+                            wallet?.id?.let { onWalletDelete(it) }
+                            shouldShowDeletionDialog = false
+                        },
+                        onDismiss = { shouldShowDeletionDialog = false },
+                        content = {
+                            Text(stringResource(localesR.string.permanently_delete_wallet))
+                        },
                     )
                 }
+
                 Column(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                 ) {
@@ -203,17 +215,11 @@ private fun TransactionOverviewScreen(
                         contentPadding = PaddingValues(bottom = 96.dp),
                         modifier = Modifier
                             .fillMaxSize()
-                            .then(
-                                if (wallet != null) {
-                                    Modifier.floatingToolbarVerticalNestedScroll(
-                                        expanded = isWalletToolbarExpanded,
-                                        onExpand = { isWalletToolbarExpanded = true },
-                                        onCollapse = { isWalletToolbarExpanded = false },
-                                    )
-                                } else {
-                                    Modifier
-                                }
-                            ),
+                            .floatingToolbarVerticalNestedScroll(
+                                expanded = isWalletToolbarExpanded,
+                                onExpand = { isWalletToolbarExpanded = true },
+                                onCollapse = { isWalletToolbarExpanded = false },
+                            )
                     ) {
                         header(
                             financePanelUiState = financePanelUiState,
@@ -410,28 +416,37 @@ private fun FinancialHealthIcon(
 
 @Composable
 private fun WalletToolbar(
-    wallet: Wallet,
-    formattedCurrentBalance: String,
+    walletId: String?,
     expanded: Boolean,
-    onTransfer: (String) -> Unit,
+    onTransfer: (String?) -> Unit,
     onWalletEdit: (String) -> Unit,
-    onWalletDelete: (String) -> Unit,
-    onImportClick: (String) -> Unit,
-    navigateToTransactionEditor: (String, String?, Boolean) -> Unit,
+    onWalletDelete: () -> Unit,
+    onImportClick: (String?) -> Unit,
+    navigateToTransactionEditor: (String?, String?, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var shouldShowDeletionDialog by rememberSaveable { mutableStateOf(false) }
     HorizontalFloatingToolbar(
         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
         modifier = modifier,
         expanded = expanded,
         leadingContent = {
             IconButton(
-                onClick = { onTransfer(wallet.id) },
+                onClick = { onTransfer(walletId) },
             ) {
                 Icon(
                     imageVector = CsIcons.Outlined.SendMoney,
                     contentDescription = stringResource(localesR.string.transfer),
+                )
+            }
+        },
+        content = {
+            FilledIconButton(
+                modifier = Modifier.width(64.dp),
+                onClick = { navigateToTransactionEditor(walletId, null, false) },
+            ) {
+                Icon(
+                    imageVector = CsIcons.Outlined.Add,
+                    contentDescription = stringResource(localesR.string.add_transaction),
                 )
             }
         },
@@ -455,7 +470,7 @@ private fun WalletToolbar(
                 },
             ) {
                 clickableItem(
-                    onClick = { onImportClick(wallet.id) },
+                    onClick = { onImportClick(walletId) },
                     icon = {
                         Icon(
                             imageVector = CsIcons.Filled.Csv,
@@ -464,80 +479,31 @@ private fun WalletToolbar(
                     },
                     label = importButtonLabel,
                 )
-                clickableItem(
-                    onClick = { onWalletEdit(wallet.id) },
-                    icon = {
-                        Icon(
-                            imageVector = CsIcons.Filled.Edit,
-                            contentDescription = editButtonLabel,
-                        )
-                    },
-                    label = editButtonLabel,
-                )
-                clickableItem(
-                    onClick = { shouldShowDeletionDialog = true },
-                    icon = {
-                        Icon(
-                            imageVector = CsIcons.Filled.Delete,
-                            contentDescription = deleteButtonLabel,
-                        )
-                    },
-                    label = deleteButtonLabel,
-                )
-            }
-        },
-        content = {
-            FilledIconButton(
-                modifier = Modifier.width(64.dp),
-                onClick = { navigateToTransactionEditor(wallet.id, null, false) },
-            ) {
-                Icon(
-                    imageVector = CsIcons.Outlined.Add,
-                    contentDescription = stringResource(localesR.string.add_transaction),
-                )
-            }
-        }
-    )
-    if (shouldShowDeletionDialog) {
-        CsAlertDialog(
-            titleRes = localesR.string.delete_wallet,
-            icon = CsIcons.Outlined.Delete,
-            confirmButtonTextRes = localesR.string.delete,
-            dismissButtonTextRes = localesR.string.cancel,
-            onConfirm = {
-                onWalletDelete(wallet.id)
-                shouldShowDeletionDialog = false
-            },
-            onDismiss = { shouldShowDeletionDialog = false },
-            content = {
-                Column {
-                    Text(stringResource(localesR.string.permanently_delete_wallet))
-                    CsListItem(
-                        content = {
-                            Text(
-                                text = wallet.title,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        supportingContent = {
-                            Text(
-                                text = formattedCurrentBalance,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                        leadingContent = {
+                if (walletId != null) {
+                    clickableItem(
+                        onClick = { onWalletEdit(walletId) },
+                        icon = {
                             Icon(
-                                imageVector = CsIcons.Outlined.Wallet,
-                                contentDescription = null,
+                                imageVector = CsIcons.Filled.Edit,
+                                contentDescription = editButtonLabel,
                             )
                         },
+                        label = editButtonLabel,
+                    )
+                    clickableItem(
+                        onClick = onWalletDelete,
+                        icon = {
+                            Icon(
+                                imageVector = CsIcons.Filled.Delete,
+                                contentDescription = deleteButtonLabel,
+                            )
+                        },
+                        label = deleteButtonLabel,
                     )
                 }
-            },
-        )
-    }
+            }
+        },
+    )
 }
 
 @Composable

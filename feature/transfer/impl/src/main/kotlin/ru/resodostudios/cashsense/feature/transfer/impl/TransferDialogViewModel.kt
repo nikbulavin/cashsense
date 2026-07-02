@@ -42,7 +42,7 @@ internal class TransferDialogViewModel @AssistedInject constructor(
         loadTransfer(key.walletId)
     }
 
-    private fun loadTransfer(walletId: String) {
+    private fun loadTransfer(walletId: String?) {
         viewModelScope.launch {
             _transferDialogState.update { TransferDialogUiState(isLoading = true) }
             val transferWallets = walletsRepository.getExtendedWallets()
@@ -55,7 +55,7 @@ internal class TransferDialogViewModel @AssistedInject constructor(
                         currency = extendedWallet.wallet.currency,
                     )
                 }
-            val sendingWallet = transferWallets.first { it.id == walletId }
+            val sendingWallet = transferWallets.find { it.id == walletId } ?: MenuWallet()
             val receivingWallet = if (transferWallets.size == 2) {
                 transferWallets.first { it != sendingWallet }
             } else {
