@@ -116,7 +116,7 @@ fun DetailPanePlaceholder(
                     bottomEnd = CornerSize(0.dp),
                 )
             )
-            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+            .background(MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
         Text(
             text = stringResource(titleRes),

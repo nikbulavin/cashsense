@@ -17,7 +17,9 @@ import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.data.repository.CategoriesRepository
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
+import ru.resodostudios.cashsense.core.domain.GetMenuWalletsUseCase
 import ru.resodostudios.cashsense.core.model.Category
+import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
@@ -29,6 +31,7 @@ import kotlin.uuid.Uuid
 internal class TransactionEditorViewModel @AssistedInject constructor(
     private val transactionsRepository: TransactionsRepository,
     private val categoriesRepository: CategoriesRepository,
+    private val getMenuWalletsUseCase: GetMenuWalletsUseCase,
     @ApplicationScope private val appScope: CoroutineScope,
     @Assisted private val key: TransactionEditorNavKey,
 ) : ViewModel() {
@@ -40,7 +43,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
         _transactionEditorState.update {
             it.copy(
                 isLoading = true,
-                walletId = key.walletId,
+                walletId = key.walletId ?: "",
                 isFromImporter = key.transaction != null,
             )
         }
@@ -77,6 +80,15 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
         }
     }
 
+    fun updateWallet(wallet: MenuWallet) {
+        _transactionEditorState.update {
+            it.copy(
+                selectedWallet = wallet,
+                walletId = wallet.id,
+            )
+        }
+    }
+
     fun updateCompletionStatus(completed: Boolean) {
         _transactionEditorState.update {
             it.copy(completed = completed)
@@ -104,6 +116,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
     private fun initTransaction(transaction: Transaction) {
         viewModelScope.launch {
             val categories = categoriesRepository.getCategories().first()
+            val wallets = getMenuWalletsUseCase().first()
             _transactionEditorState.update {
                 it.copy(
                     transactionId = transaction.id,
@@ -120,6 +133,10 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
                         add(null)
                         addAll(categories)
                     },
+                    availableWallets = wallets,
+                    selectedWallet = wallets.find { wallet -> wallet.id == transaction.walletOwnerId }
+                        ?: MenuWallet(),
+                    walletId = transaction.walletOwnerId,
                 )
             }
         }
@@ -133,6 +150,7 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
             } else {
                 transaction.timestamp
             }
+            val wallets = getMenuWalletsUseCase().first()
             _transactionEditorState.update {
                 it.copy(
                     transactionId = if (key.repeated) "" else transaction.id,
@@ -149,6 +167,10 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
                         add(null)
                         addAll(categoriesRepository.getCategories().first())
                     },
+                    availableWallets = wallets,
+                    selectedWallet = wallets.find { wallet -> wallet.id == transaction.walletOwnerId }
+                        ?: MenuWallet(),
+                    walletId = transaction.walletOwnerId,
                 )
             }
         }
@@ -156,12 +178,18 @@ internal class TransactionEditorViewModel @AssistedInject constructor(
 
     private fun loadCategories() {
         viewModelScope.launch {
+            val wallets = getMenuWalletsUseCase().first()
             _transactionEditorState.update {
                 it.copy(
                     categories = buildList {
                         add(null)
                         addAll(categoriesRepository.getCategories().first())
                     },
+                    availableWallets = wallets,
+                    selectedWallet = wallets.find { wallet -> wallet.id == key.walletId }
+                        ?: wallets.firstOrNull() ?: MenuWallet(),
+                    walletId = (wallets.find { wallet -> wallet.id == key.walletId }
+                        ?: wallets.firstOrNull())?.id ?: "",
                     isLoading = false,
                 )
             }
@@ -194,6 +222,8 @@ internal data class TransactionEditorState(
     val isFromImporter: Boolean = false,
     val walletId: String = "",
     val categories: List<Category?> = emptyList(),
+    val availableWallets: List<MenuWallet> = emptyList(),
+    val selectedWallet: MenuWallet = MenuWallet(),
 )
 
 internal fun TransactionEditorState.asTransaction(): Transaction {
@@ -208,7 +238,7 @@ internal fun TransactionEditorState.asTransaction(): Transaction {
         completed = completed,
         ignored = ignored,
         transferId = null,
-        currency = getUsdCurrency(),
+        currency = selectedWallet.currency ?: getUsdCurrency(),
         category = category,
     )
 }

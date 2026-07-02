@@ -9,6 +9,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -23,7 +24,6 @@ import javax.inject.Inject
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
 private const val DYNAMIC_TRANSACTION_SHORTCUT_ID = "dynamic_new_transaction"
-private const val DEEP_LINK_BASE_PATH = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION"
 
 internal class DynamicShortcutManager @Inject constructor(
     @ApplicationScope private val appScope: CoroutineScope,
@@ -35,6 +35,7 @@ internal class DynamicShortcutManager @Inject constructor(
     override fun syncTransactionShortcut() {
         userDataRepository.userData
             .map { it.primaryWalletId }
+            .distinctUntilChanged()
             .onEach { primaryWalletId ->
                 if (primaryWalletId.isBlank()) return@onEach removeShortcuts()
                 runCatching { walletsRepository.getExtendedWallet(primaryWalletId).first() }
@@ -47,12 +48,11 @@ internal class DynamicShortcutManager @Inject constructor(
     private fun addTransactionShortcut(walletId: String) {
         val shortcutInfo = ShortcutInfoCompat.Builder(context, DYNAMIC_TRANSACTION_SHORTCUT_ID)
             .setShortLabel(context.getString(localesR.string.new_transaction))
-            .setLongLabel(context.getString(localesR.string.transaction_shortcut_long_label))
             .setIcon(IconCompat.createWithResource(context, R.drawable.ic_shortcut_receipt_long))
             .setIntent(
                 Intent().apply {
                     action = Intent.ACTION_VIEW
-                    data = "$DEEP_LINK_BASE_PATH/$walletId/null/false".toUri()
+                    data = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_TRANSACTION/$walletId".toUri()
                     component = ComponentName(
                         context.packageName,
                         TARGET_ACTIVITY_NAME,

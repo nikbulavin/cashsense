@@ -1,6 +1,8 @@
 package ru.resodostudios.cashsense.core.ui.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -26,6 +28,8 @@ import ru.resodostudios.cashsense.core.common.getValidCurrencies
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
+import ru.resodostudios.cashsense.core.model.MenuWallet
+import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
@@ -130,6 +134,80 @@ fun CurrencyDropdownMenu(
                         expanded = false
                         focusManager.clearFocus()
                     },
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WalletDropdownMenu(
+    @StringRes title: Int,
+    onWalletSelect: (MenuWallet) -> Unit,
+    selectedWallet: MenuWallet,
+    availableWallets: List<MenuWallet>,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier,
+    ) {
+        CsOutlinedTextField(
+            value = selectedWallet.title,
+            onValueChange = {},
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            readOnly = true,
+            singleLine = true,
+            labelText = stringResource(title),
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            placeholderText = stringResource(localesR.string.choose_wallet),
+            supportingText = selectedWallet.currency?.let {
+                selectedWallet.currentBalance.formatAmount(it)
+            },
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            shape = MenuDefaults.standaloneGroupShape,
+            containerColor = MenuDefaults.groupStandardContainerColor,
+        ) {
+            availableWallets.forEachIndexed { index, wallet ->
+                val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
+                DropdownMenuItem(
+                    shapes = MenuDefaults.itemShape(index, availableWallets.size),
+                    selected = selectedWallet == wallet,
+                    selectedLeadingIcon = {
+                        Icon(
+                            imageVector = CsIcons.Outlined.Check,
+                            modifier = Modifier.size(MenuDefaults.LeadingIconSize),
+                            contentDescription = null,
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = wallet.title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    supportingText = currentBalance?.let {
+                        {
+                            Text(
+                                text = it,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    },
+                    onClick = {
+                        onWalletSelect(wallet)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }

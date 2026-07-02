@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,11 +37,17 @@ import kotlin.time.Instant
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalHazeApi::class)
 fun LazyListScope.transactions(
     groupedTransactions: Map<Instant, List<Transaction>>,
+    onClick: (Transaction?) -> Unit,
     hazeState: HazeState,
     hazeStyle: HazeStyle,
-    onClick: (Transaction?) -> Unit,
+    motionScheme: MotionScheme,
+    dateTextColor: Color,
+    transactionContainerColor: Color? = null,
     selectedTransaction: Transaction? = null,
     shouldHighlightSelectedTransaction: Boolean = false,
+    shouldShowCategoryIcon: Boolean = true,
+    walletIdsAndTitles: Map<String, String> = emptyMap(),
+    isSharedTransitionEnabled: Boolean = true,
 ) {
     groupedTransactions.forEach { transactionGroup ->
         stickyHeader(
@@ -48,6 +56,7 @@ fun LazyListScope.transactions(
             CsTag(
                 text = transactionGroup.key.formatDate(DateFormatType.DATE, FormatStyle.MEDIUM),
                 color = Color.Transparent,
+                textColor = dateTextColor,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
                     .clip(CircleShape)
@@ -65,8 +74,6 @@ fun LazyListScope.transactions(
             key = { _, transaction -> transaction.id },
             contentType = { _, _ -> "Transaction" }
         ) { index, transaction ->
-            val selected = shouldHighlightSelectedTransaction && selectedTransaction == transaction
-            val motionScheme = MaterialTheme.motionScheme
             TransactionItem(
                 transaction = transaction,
                 currency = transaction.currency,
@@ -78,13 +85,18 @@ fun LazyListScope.transactions(
                         fadeOutSpec = motionScheme.defaultEffectsSpec(),
                         placementSpec = motionScheme.defaultSpatialSpec(),
                     ),
-                selected = selected,
+                selected = shouldHighlightSelectedTransaction && selectedTransaction == transaction,
                 onClick = { onClick(transaction) },
                 shapes = if (transactionGroup.value.size == 1) {
                     ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
                 } else {
                     ListItemDefaults.segmentedShapes(index, transactionGroup.value.size)
                 },
+                walletIdsAndTitles = walletIdsAndTitles,
+                containerColor = transactionContainerColor
+                    ?: MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                isSharedTransitionEnabled = isSharedTransitionEnabled,
+                shouldShowCategoryIcon = shouldShowCategoryIcon,
             )
             if (index != transactionGroup.value.lastIndex) {
                 Spacer(Modifier.height(ListItemDefaults.SegmentedGap))

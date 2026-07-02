@@ -1,6 +1,5 @@
 package ru.resodostudios.cashsense.core.designsystem.component
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
@@ -17,7 +16,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CsListItem(
-    headlineContent: @Composable () -> Unit,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     overlineContent: @Composable (() -> Unit)? = null,
     supportingContent: @Composable (() -> Unit)? = null,
@@ -25,7 +24,7 @@ fun CsListItem(
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     ListItem(
-        headlineContent = headlineContent,
+        content = content,
         modifier = modifier,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
@@ -37,7 +36,6 @@ fun CsListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsToggableListItem(
     content: @Composable () -> Unit,
@@ -73,7 +71,6 @@ fun CsToggableListItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsListItemEmphasized(
     content: @Composable () -> Unit,
@@ -101,7 +98,6 @@ fun CsListItemEmphasized(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CsSelectableListItem(
     selected: Boolean,

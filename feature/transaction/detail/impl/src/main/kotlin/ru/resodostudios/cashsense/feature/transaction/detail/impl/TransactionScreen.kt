@@ -343,7 +343,7 @@ private fun ActionButtons(
                 Column {
                     Text(stringResource(localesR.string.permanently_delete_transaction))
                     CsListItem(
-                        headlineContent = {
+                        content = {
                             Text(
                                 text = transaction.amount.formatAmount(
                                     transaction.currency,

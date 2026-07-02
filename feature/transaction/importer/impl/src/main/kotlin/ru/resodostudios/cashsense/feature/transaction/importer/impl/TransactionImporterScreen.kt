@@ -61,9 +61,11 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.model.CsvConfig
 import ru.resodostudios.cashsense.core.model.DateFormatType
+import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.component.TransactionItem
+import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.formatDate
@@ -87,6 +89,7 @@ internal fun TransactionImporterScreen(
         onBackClick = onBackClick,
         onFileSelected = viewModel::handleFileSelected,
         onConfigUpdate = viewModel::updateConfig,
+        onWalletUpdate = viewModel::updateWallet,
         onTransactionEdit = onTransactionEdit,
         onTransactionSelect = viewModel::toggleTransactionSelection,
         onImportClick = viewModel::importTransactions,
@@ -100,6 +103,7 @@ private fun TransactionImporterScreen(
     onBackClick: () -> Unit,
     onFileSelected: (String, List<String>) -> Unit,
     onConfigUpdate: (CsvConfig) -> Unit,
+    onWalletUpdate: (MenuWallet) -> Unit,
     onTransactionEdit: (Transaction) -> Unit,
     onTransactionSelect: (String) -> Unit,
     onImportClick: () -> Unit,
@@ -151,10 +155,21 @@ private fun TransactionImporterScreen(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
+                        val selectedWallet = transactionImporterUiState.availableWallets
+                            .find { it.id == transactionImporterUiState.walletId }
+                        WalletDropdownMenu(
+                            title = localesR.string.select_wallet,
+                            onWalletSelect = onWalletUpdate,
+                            selectedWallet = selectedWallet ?: MenuWallet(),
+                            availableWallets = transactionImporterUiState.availableWallets,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+
                         CsvPickerCard(
                             fileName = transactionImporterUiState.fileName,
                             onFileSelected = onFileSelected,
                             modifier = Modifier.fillMaxWidth(),
+                            enabled = selectedWallet != null,
                         )
 
                         if (transactionImporterUiState.lines.isNotEmpty()) {
@@ -170,7 +185,7 @@ private fun TransactionImporterScreen(
                                     onConfigUpdate(
                                         transactionImporterUiState.config.copy(
                                             dateColumnIndex = it,
-                                        )
+                                        ),
                                     )
                                 },
                             )
@@ -182,7 +197,7 @@ private fun TransactionImporterScreen(
                                     onConfigUpdate(
                                         transactionImporterUiState.config.copy(
                                             amountColumnIndex = it,
-                                        )
+                                        ),
                                     )
                                 },
                             )
@@ -194,7 +209,7 @@ private fun TransactionImporterScreen(
                                     onConfigUpdate(
                                         transactionImporterUiState.config.copy(
                                             descriptionColumnIndex = it,
-                                        )
+                                        ),
                                     )
                                 },
                             )
@@ -206,7 +221,7 @@ private fun TransactionImporterScreen(
                                     onConfigUpdate(
                                         transactionImporterUiState.config.copy(
                                             categoryColumnIndex = it,
-                                        )
+                                        ),
                                     )
                                 },
                             )
@@ -217,7 +232,7 @@ private fun TransactionImporterScreen(
                                     onConfigUpdate(
                                         transactionImporterUiState.config.copy(
                                             dateFormat = it,
-                                        )
+                                        ),
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth(),
@@ -228,7 +243,7 @@ private fun TransactionImporterScreen(
                                     onConfigUpdate(
                                         transactionImporterUiState.config.copy(
                                             columnSeparator = it,
-                                        )
+                                        ),
                                     )
                                 },
                                 labelText = stringResource(localesR.string.column_separator),
@@ -269,9 +284,9 @@ private fun TransactionImporterScreen(
                                 val selected =
                                     transaction.id in transactionImporterUiState.selectedTransactions
                                 TransactionItem(
-                                    transaction = transaction,
-                                    currency = transactionImporterUiState.currency,
                                     selected = selected,
+                                    transaction = transaction,
+                                    currency = transaction.currency,
                                     onClick = { onTransactionEdit(transaction) },
                                     shapes = if (transactionGroup.value.size == 1) {
                                         ListItemDefaults.shapes(shape = RoundedCornerShape(16.dp))
@@ -287,6 +302,7 @@ private fun TransactionImporterScreen(
                                             onCheckedChange = { onTransactionSelect(transaction.id) },
                                         )
                                     },
+                                    walletIdsAndTitles = transactionImporterUiState.walletIdsAndTitles,
                                 )
                                 if (index != transactionGroup.value.lastIndex) {
                                     Spacer(Modifier.height(ListItemDefaults.SegmentedGap))
@@ -423,6 +439,7 @@ private fun CsvPickerCard(
     fileName: String,
     onFileSelected: (String, List<String>) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val context = LocalContext.current
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -479,6 +496,7 @@ private fun CsvPickerCard(
                 modifier = Modifier.fillMaxWidth(),
                 icon = CsIcons.Filled.DocumentSearch,
                 title = stringResource(localesR.string.select_file),
+                enabled = enabled,
             )
         }
     }

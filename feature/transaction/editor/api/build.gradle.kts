@@ -10,5 +10,6 @@ dependencies {
     api(projects.core.navigation)
     api(projects.core.model)
 
-    implementation(projects.feature.wallet.detail.api)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.transaction.overview.api)
 }

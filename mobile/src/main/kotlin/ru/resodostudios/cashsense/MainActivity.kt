@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity() {
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.shouldKeepSplashScreen() }
 
         val syntheticBackStack = buildBackStack(
-            startKey = intent.data?.let(DeepLinkRequest::fromUri).toKey(),
+            startKey = intent.data?.let(::DeepLinkRequest).toKey(),
         )
 
         setContent {

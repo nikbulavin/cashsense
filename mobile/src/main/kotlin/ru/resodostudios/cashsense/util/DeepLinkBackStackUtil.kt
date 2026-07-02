@@ -13,7 +13,7 @@ import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_WALLET
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.subscription.list.api.SubscriptionsNavKey
 import ru.resodostudios.cashsense.feature.transaction.editor.api.TransactionEditorNavKey
-import ru.resodostudios.cashsense.feature.wallet.detail.api.WalletNavKey
+import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.core.navigation.NavDeepLinkKey
 
 /**
@@ -49,7 +49,7 @@ private val DeepLinkMatchers = listOf(
     ),
     UriDeepLinkMatcher(
         uriPattern = "$DEEPLINK_PATH_BASE/$DEEPLINK_TAG_WALLET/{walletId}".toUri(),
-        serializer = serializer<WalletNavKey>(),
+        serializer = serializer<TransactionOverviewNavKey>(),
     ),
 )
 

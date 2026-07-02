@@ -146,7 +146,7 @@ fun SubscriptionCard(
                 Column {
                     Text(stringResource(localesR.string.permanently_delete_subscription))
                     CsListItem(
-                        headlineContent = {
+                        content = {
                             Text(
                                 text = subscription.title,
                                 maxLines = 1,

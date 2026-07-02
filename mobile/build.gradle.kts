@@ -98,8 +98,6 @@ dependencies {
     implementation(projects.feature.transaction.overview.impl)
     implementation(projects.feature.transfer.api)
     implementation(projects.feature.transfer.impl)
-    implementation(projects.feature.wallet.detail.api)
-    implementation(projects.feature.wallet.detail.impl)
     implementation(projects.feature.wallet.dialog.api)
     implementation(projects.feature.wallet.dialog.impl)
     implementation(projects.feature.wallet.widget)

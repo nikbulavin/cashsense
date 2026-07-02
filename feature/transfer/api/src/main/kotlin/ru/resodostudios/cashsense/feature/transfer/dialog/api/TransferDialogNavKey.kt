@@ -6,11 +6,11 @@ import ru.resodostudios.core.navigation.Navigator
 
 @Serializable
 data class TransferDialogNavKey(
-    val walletId: String,
+    val walletId: String?,
 ) : NavKey
 
 fun Navigator.navigateToTransferDialog(
-    walletId: String,
+    walletId: String?,
 ) {
     navigate(TransferDialogNavKey(walletId))
 }

@@ -6,11 +6,11 @@ import ru.resodostudios.core.navigation.Navigator
 
 @Serializable
 data class TransactionImporterNavKey(
-    val walletId: String,
+    val walletId: String?,
 ) : NavKey
 
 fun Navigator.navigateToTransactionImporter(
-    walletId: String,
+    walletId: String?,
 ) {
     navigate(TransactionImporterNavKey(walletId))
 }

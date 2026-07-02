@@ -17,9 +17,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.repository.TransactionsRepository
-import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
+import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
+import ru.resodostudios.cashsense.core.domain.GetMenuWalletsUseCase
 import ru.resodostudios.cashsense.core.domain.ImportTransactionsUseCase
 import ru.resodostudios.cashsense.core.model.CsvConfig
+import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionImporterNavKey
 import java.util.Currency
@@ -27,8 +29,9 @@ import java.util.Currency
 @HiltViewModel(assistedFactory = TransactionImporterViewModel.Factory::class)
 internal class TransactionImporterViewModel @AssistedInject constructor(
     private val importTransactionsUseCase: ImportTransactionsUseCase,
-    private val walletsRepository: WalletsRepository,
     private val transactionsRepository: TransactionsRepository,
+    private val userDataRepository: UserDataRepository,
+    private val getMenuWalletsUseCase: GetMenuWalletsUseCase,
     @Assisted private val key: TransactionImporterNavKey,
     @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
@@ -40,8 +43,25 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            val wallet = walletsRepository.getExtendedWallet(key.walletId).first()
-            _transactionImporterUiState.update { it.copy(currency = wallet.wallet.currency) }
+            val userData = userDataRepository.userData.first()
+            val initialWalletId = key.walletId ?: userData.primaryWalletId
+
+            if (initialWalletId.isNotEmpty()) {
+                _transactionImporterUiState.update { it.copy(walletId = initialWalletId) }
+            }
+
+            getMenuWalletsUseCase().collect { availableWallets ->
+                val currentWalletId = _transactionImporterUiState.value.walletId
+                val currency = availableWallets.find { it.id == currentWalletId }?.currency
+
+                _transactionImporterUiState.update {
+                    it.copy(
+                        availableWallets = availableWallets,
+                        walletIdsAndTitles = availableWallets.associate { wallet -> wallet.id to wallet.title },
+                        currency = currency,
+                    )
+                }
+            }
         }
     }
 
@@ -50,19 +70,10 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
         lines: List<String>,
     ) {
         _transactionImporterUiState.update {
-            val columns = if (lines.isNotEmpty() && it.config.columnSeparator.isNotEmpty()) {
-                runCatching {
-                    csvReader {
-                        dialect = CsvDialect(delimiter = it.config.columnSeparator.first())
-                    }.readAll(lines.first()).firstOrNull()
-                }.getOrNull() ?: emptyList()
-            } else {
-                emptyList()
-            }
             it.copy(
                 fileName = fileName,
                 lines = lines,
-                columns = columns,
+                columns = extractColumns(lines, it.config.columnSeparator),
             )
         }
         parseTransactions()
@@ -70,18 +81,19 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 
     fun updateConfig(config: CsvConfig) {
         _transactionImporterUiState.update {
-            val columns = if (it.lines.isNotEmpty() && config.columnSeparator.isNotEmpty()) {
-                runCatching {
-                    csvReader {
-                        dialect = CsvDialect(delimiter = config.columnSeparator.first())
-                    }.readAll(it.lines.first()).firstOrNull()
-                }.getOrNull() ?: emptyList()
-            } else {
-                it.columns
-            }
             it.copy(
                 config = config,
-                columns = columns,
+                columns = extractColumns(it.lines, config.columnSeparator),
+            )
+        }
+        parseTransactions()
+    }
+
+    fun updateWallet(wallet: MenuWallet) {
+        _transactionImporterUiState.update {
+            it.copy(
+                walletId = wallet.id,
+                currency = wallet.currency,
             )
         }
         parseTransactions()
@@ -104,18 +116,36 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
             state.copy(
                 parsedTransactions = state.parsedTransactions.map {
                     if (it.id == transaction.id) transaction else it
-                }
+                },
             )
         }
+    }
+
+    fun importTransactions() {
+        appScope.launch {
+            val transactions = _transactionImporterUiState.value.parsedTransactions
+                .filter { it.id in _transactionImporterUiState.value.selectedTransactions }
+            transactionsRepository.upsertTransactions(transactions)
+        }
+    }
+
+    private fun extractColumns(lines: List<String>, separator: String): List<String> {
+        if (lines.isEmpty() || separator.isEmpty()) return emptyList()
+
+        return runCatching {
+            csvReader {
+                dialect = CsvDialect(delimiter = separator.first())
+            }.readAll(lines.first()).firstOrNull()
+        }.getOrNull() ?: emptyList()
     }
 
     private fun parseTransactions() {
         parseJob?.cancel()
         val currentState = _transactionImporterUiState.value
-        if (currentState.lines.isNotEmpty()) {
+        if (currentState.lines.isNotEmpty() && currentState.walletId.isNotEmpty()) {
             parseJob = viewModelScope.launch {
                 importTransactionsUseCase(
-                    walletId = key.walletId,
+                    walletId = currentState.walletId,
                     lines = currentState.lines,
                     config = currentState.config,
                 ).fold(
@@ -149,14 +179,6 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
         }
     }
 
-    fun importTransactions() {
-        appScope.launch {
-            _transactionImporterUiState.value.parsedTransactions
-                .filter { it.id in _transactionImporterUiState.value.selectedTransactions }
-                .forEach { transactionsRepository.upsertTransaction(it) }
-        }
-    }
-
     @AssistedFactory
     interface Factory {
         fun create(key: TransactionImporterNavKey): TransactionImporterViewModel
@@ -164,12 +186,15 @@ internal class TransactionImporterViewModel @AssistedInject constructor(
 }
 
 internal data class TransactionImporterUiState(
+    val walletId: String = "",
     val fileName: String = "",
     val lines: List<String> = emptyList(),
     val columns: List<String> = emptyList(),
     val config: CsvConfig = CsvConfig(),
     val parsedTransactions: List<Transaction> = emptyList(),
     val selectedTransactions: Set<String> = emptySet(),
+    val availableWallets: List<MenuWallet> = emptyList(),
+    val walletIdsAndTitles: Map<String, String> = emptyMap(),
     val currency: Currency? = null,
     val isLoading: Boolean = false,
 )

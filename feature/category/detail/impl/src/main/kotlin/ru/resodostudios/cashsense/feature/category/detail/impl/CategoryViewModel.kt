@@ -54,7 +54,7 @@ internal class CategoryViewModel @AssistedInject constructor(
                 )
             }
             .filter { it.transactions.isNotEmpty() }
-        val walletTitles = walletsWithTargetTransactions
+        val walletIdsAndTitles = walletsWithTargetTransactions
             .associate { it.wallet.id to it.wallet.title }
         val transactions = walletsWithTargetTransactions
             .flatMap { it.transactions }
@@ -63,7 +63,7 @@ internal class CategoryViewModel @AssistedInject constructor(
 
         CategoryUiState.Success(
             category = category,
-            walletTitles = walletTitles,
+            walletIdsAndTitles = walletIdsAndTitles,
             groupedTransactions = transactions,
             selectedTransaction = selectedTransaction,
         )
@@ -97,7 +97,7 @@ internal sealed interface CategoryUiState {
 
     data class Success(
         val category: Category,
-        val walletTitles: Map<String, String>,
+        val walletIdsAndTitles: Map<String, String>,
         val groupedTransactions: Map<Instant, List<Transaction>>,
         val selectedTransaction: Transaction?,
     ) : CategoryUiState
