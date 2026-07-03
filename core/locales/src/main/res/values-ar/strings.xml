@@ -57,7 +57,6 @@
   <string name="expenses">النفقات</string>
   <string name="income_singular">الدخل</string>
   <string name="income_plural">الإيرادات</string>
-  <string name="transaction_shortcut_long_label">إضافة معاملة جديدة</string>
   <string name="completed">مكتمل</string>
   <string name="pending">معلق</string>
   <string name="transaction_ignore">تجاهل في الحسابات</string>
