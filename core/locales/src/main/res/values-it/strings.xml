@@ -57,7 +57,6 @@
   <string name="expenses">Spese</string>
   <string name="income_singular">Entrata</string>
   <string name="income_plural">Entrate</string>
-  <string name="transaction_shortcut_long_label">Aggiungi una nuova transazione</string>
   <string name="completed">Completato</string>
   <string name="pending">In sospeso</string>
   <string name="transaction_ignore">Ignora nei calcoli</string>
