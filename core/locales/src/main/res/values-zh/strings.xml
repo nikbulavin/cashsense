@@ -57,7 +57,6 @@
   <string name="expenses">支出</string>
   <string name="income_singular">收入</string>
   <string name="income_plural">收入</string>
-  <string name="transaction_shortcut_long_label">添加新交易</string>
   <string name="completed">已完成</string>
   <string name="pending">待处理</string>
   <string name="transaction_ignore">不纳入计算</string>
