@@ -57,7 +57,6 @@
   <string name="expenses">Dépenses</string>
   <string name="income_singular">Revenu</string>
   <string name="income_plural">Revenus</string>
-  <string name="transaction_shortcut_long_label">Ajouter une nouvelle transaction</string>
   <string name="completed">Terminé</string>
   <string name="pending">En attente</string>
   <string name="transaction_ignore">Ignorer dans les calculs</string>
