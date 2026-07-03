@@ -57,7 +57,6 @@
   <string name="expenses">Расходы</string>
   <string name="income_singular">Доход</string>
   <string name="income_plural">Доходы</string>
-  <string name="transaction_shortcut_long_label">Добавить новую транзакцию</string>
   <string name="completed">Завершена</string>
   <string name="pending">В процессе</string>
   <string name="transaction_ignore">Не учитывать в расчетах</string>
