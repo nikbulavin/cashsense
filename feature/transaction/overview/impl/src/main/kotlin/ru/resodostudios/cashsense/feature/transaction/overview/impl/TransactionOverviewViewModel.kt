@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction.overview.impl
 import androidx.annotation.IntRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.Lazy
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -63,19 +64,19 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
     private val currencyConversionRepository: CurrencyConversionRepository,
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
-    getExtendedUserWallets: GetExtendedUserWalletsUseCase,
-    getExtendedUserWallet: GetExtendedUserWalletUseCase,
+    getExtendedUserWallets: Lazy<GetExtendedUserWalletsUseCase>,
+    getExtendedUserWallet: Lazy<GetExtendedUserWalletUseCase>,
     @Assisted private val key: TransactionOverviewNavKey,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
     @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
     private val walletId = key.walletId
-    private val walletsFlow: Flow<List<ExtendedUserWallet>> = if (walletId == null) {
-        getExtendedUserWallets()
-    } else {
-        getExtendedUserWallet(walletId).map { listOf(it) }
-    }
+    private val isOverviewMode = walletId == null
+
+    private val walletsFlow: Flow<List<ExtendedUserWallet>> = walletId?.let { id ->
+        getExtendedUserWallet.get().invoke(id).map { listOf(it) }
+    } ?: getExtendedUserWallets.get().invoke()
 
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
@@ -96,13 +97,13 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
         Triple(baseCurrencies, Currency.getInstance(userData.currency), wallets)
     }
         .flatMapLatest { (baseCurrencies, appCurrency, wallets) ->
-            val targetCurrency = if (walletId != null) {
+            val targetCurrency = if (!isOverviewMode) {
                 wallets.firstOrNull()?.wallet?.currency ?: appCurrency
             } else {
                 appCurrency
             }
 
-            if (baseCurrencies.isEmpty() && walletId == null) {
+            if (baseCurrencies.isEmpty() && isOverviewMode) {
                 return@flatMapLatest flowOf(FinancePanelUiState.NotShown)
             }
 
@@ -151,11 +152,11 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
                     transactionFilter = transactionFilter,
                     formattedIncome = income.formatAmount(
                         currency = targetCurrency,
-                        approximatelyPrefix = isMultiCurrencyIncome && walletId == null,
+                        approximatelyPrefix = isMultiCurrencyIncome && isOverviewMode,
                     ),
                     formattedExpenses = expenses.abs().formatAmount(
                         currency = targetCurrency,
-                        approximatelyPrefix = isMultiCurrencyExpenses && walletId == null,
+                        approximatelyPrefix = isMultiCurrencyExpenses && isOverviewMode,
                     ),
                     graphData = filteredTransactions.getGraphData(
                         dateType = transactionFilter.dateType,
@@ -166,9 +167,9 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
                     availableCategories = filterableTransactions.availableCategories,
                     formattedTotalBalance = totalBalance.formatAmount(
                         currency = targetCurrency,
-                        approximatelyPrefix = !baseCurrencies.all { it == targetCurrency } && walletId == null,
+                        approximatelyPrefix = !baseCurrencies.all { it == targetCurrency } && isOverviewMode,
                     ),
-                    financialHealth = if (walletId == null) {
+                    financialHealth = if (isOverviewMode) {
                         calculateFinancialHealth(
                             transactions = allTransactions,
                             userCurrency = targetCurrency,
