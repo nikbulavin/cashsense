@@ -57,7 +57,6 @@
   <string name="expenses">費用</string>
   <string name="income_singular">収入</string>
   <string name="income_plural">収入</string>
-  <string name="transaction_shortcut_long_label">新しい取引を追加</string>
   <string name="completed">完了</string>
   <string name="pending">保留中</string>
   <string name="transaction_ignore">計算に含めない</string>
