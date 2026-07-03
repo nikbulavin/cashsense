@@ -57,7 +57,6 @@
   <string name="expenses">지출</string>
   <string name="income_singular">수입</string>
   <string name="income_plural">수입</string>
-  <string name="transaction_shortcut_long_label">새 거래 추가</string>
   <string name="completed">완료</string>
   <string name="pending">대기 중</string>
   <string name="transaction_ignore">계산에 포함하지 않음</string>
