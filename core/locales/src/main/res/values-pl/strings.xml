@@ -57,7 +57,6 @@
   <string name="expenses">Wydatki</string>
   <string name="income_singular">Przychód</string>
   <string name="income_plural">Przychody</string>
-  <string name="transaction_shortcut_long_label">Dodaj nową transakcję</string>
   <string name="completed">Zakończono</string>
   <string name="pending">Oczekujące</string>
   <string name="transaction_ignore">Pomiń w obliczeniach</string>
