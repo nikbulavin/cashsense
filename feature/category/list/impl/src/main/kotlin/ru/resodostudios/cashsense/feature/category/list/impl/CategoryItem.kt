@@ -1,7 +1,6 @@
 package ru.resodostudios.cashsense.feature.category.list.impl
 
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
@@ -17,7 +16,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun CategoryItem(
     category: Category,

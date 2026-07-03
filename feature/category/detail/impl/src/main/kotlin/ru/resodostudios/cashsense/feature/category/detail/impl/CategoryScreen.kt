@@ -88,10 +88,7 @@ internal fun CategoryScreen(
     )
 }
 
-@OptIn(
-    ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalHazeMaterialsApi::class,
-)
+@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 private fun CategoryScreen(
     categoryUiState: CategoryUiState,
@@ -114,6 +111,7 @@ private fun CategoryScreen(
 
                 Column(
                     modifier = Modifier
+                        .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surface)
                         .sharedBoundsAdaptive(
                             sharedContentState = rememberSharedContentState(
@@ -124,7 +122,6 @@ private fun CategoryScreen(
                                 ),
                             ),
                             placeholderSize = SharedTransitionScope.PlaceholderSize.AnimatedSize,
-                            clipShape = MaterialTheme.shapes.large,
                         ),
                 ) {
                     TopAppBar(
