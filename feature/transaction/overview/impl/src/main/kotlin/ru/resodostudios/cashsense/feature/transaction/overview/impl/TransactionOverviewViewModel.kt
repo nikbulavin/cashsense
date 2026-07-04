@@ -3,6 +3,7 @@ package ru.resodostudios.cashsense.feature.transaction.overview.impl
 import androidx.annotation.IntRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.Lazy
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -63,19 +65,19 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
     private val currencyConversionRepository: CurrencyConversionRepository,
     private val walletsRepository: WalletsRepository,
     private val userDataRepository: UserDataRepository,
-    getExtendedUserWallets: GetExtendedUserWalletsUseCase,
-    getExtendedUserWallet: GetExtendedUserWalletUseCase,
+    getExtendedUserWallets: Lazy<GetExtendedUserWalletsUseCase>,
+    getExtendedUserWallet: Lazy<GetExtendedUserWalletUseCase>,
     @Assisted private val key: TransactionOverviewNavKey,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
     @ApplicationScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
     private val walletId = key.walletId
-    private val walletsFlow: Flow<List<ExtendedUserWallet>> = if (walletId == null) {
-        getExtendedUserWallets()
-    } else {
-        getExtendedUserWallet(walletId).map { listOf(it) }
-    }
+    private val isOverviewMode = walletId == null
+
+    private val walletsFlow: Flow<List<ExtendedUserWallet>> = walletId?.let { id ->
+        getExtendedUserWallet.get().invoke(id).map { listOf(it) }
+    } ?: getExtendedUserWallets.get().invoke()
 
     private val transactionFilterState = MutableStateFlow(
         TransactionFilter(
@@ -88,100 +90,102 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
 
     private val selectedTransactionState = MutableStateFlow<Transaction?>(null)
 
-    val financePanelUiState: StateFlow<FinancePanelUiState> = combine(
-        walletsRepository.getDistinctCurrencies(),
+    private val targetCurrencyFlow: Flow<Currency> = combine(
         userDataRepository.userData,
-        walletsFlow
-    ) { baseCurrencies, userData, wallets ->
-        Triple(baseCurrencies, Currency.getInstance(userData.currency), wallets)
-    }
-        .flatMapLatest { (baseCurrencies, appCurrency, wallets) ->
-            val targetCurrency = if (walletId != null) {
-                wallets.firstOrNull()?.wallet?.currency ?: appCurrency
-            } else {
-                appCurrency
-            }
-
-            if (baseCurrencies.isEmpty() && walletId == null) {
-                return@flatMapLatest flowOf(FinancePanelUiState.NotShown)
-            }
-
-            combine(
-                currencyConversionRepository.getConvertedCurrencies(
-                    baseCurrencies = baseCurrencies.toSet(),
-                    targetCurrency = targetCurrency,
-                ),
-                transactionFilterState,
-            ) { exchangeRates, transactionFilter ->
-                val allTransactions = wallets.flatMap { it.transactions }
-                val filterableTransactions = allTransactions.filterTransactions(transactionFilter)
-                val filteredTransactions = filterableTransactions.transactions.filter {
-                    !it.ignored && if (transactionFilter.dateType == ALL) {
-                        it.timestamp.isInCurrentMonthAndYear()
-                    } else true
-                }
-
-                val singleWallet = wallets.singleOrNull()
-
-                val totalBalance = wallets.sumOf {
-                    if (targetCurrency == it.wallet.currency) return@sumOf it.currentBalance
-                    exchangeRates[it.wallet.currency]?.times(it.currentBalance)
-                        ?: return@combine FinancePanelUiState.NotShown
-                }
-
-                val isMultiCurrencyExpenses = !filteredTransactions.asSequence()
-                    .filter { it.amount.signum() < 0 }
-                    .map { it.currency }
-                    .distinct()
-                    .all { it == targetCurrency }
-
-                val isMultiCurrencyIncome = !filteredTransactions.asSequence()
-                    .filter { it.amount.signum() > 0 }
-                    .map { it.currency }
-                    .distinct()
-                    .all { it == targetCurrency }
-
-                val (expenses, income) = calculateExpensesAndIncome(
-                    transactions = filteredTransactions,
-                    userCurrency = targetCurrency,
-                    currencyExchangeRates = exchangeRates,
-                ) ?: return@combine FinancePanelUiState.NotShown
-
-                FinancePanelUiState.Shown(
-                    transactionFilter = transactionFilter,
-                    formattedIncome = income.formatAmount(
-                        currency = targetCurrency,
-                        approximatelyPrefix = isMultiCurrencyIncome && walletId == null,
-                    ),
-                    formattedExpenses = expenses.abs().formatAmount(
-                        currency = targetCurrency,
-                        approximatelyPrefix = isMultiCurrencyExpenses && walletId == null,
-                    ),
-                    graphData = filteredTransactions.getGraphData(
-                        dateType = transactionFilter.dateType,
-                        userCurrency = targetCurrency,
-                        currencyExchangeRates = exchangeRates,
-                    ),
-                    userCurrency = targetCurrency,
-                    availableCategories = filterableTransactions.availableCategories,
-                    formattedTotalBalance = totalBalance.formatAmount(
-                        currency = targetCurrency,
-                        approximatelyPrefix = !baseCurrencies.all { it == targetCurrency } && walletId == null,
-                    ),
-                    financialHealth = if (walletId == null) {
-                        calculateFinancialHealth(
-                            transactions = allTransactions,
-                            userCurrency = targetCurrency,
-                            currencyExchangeRates = exchangeRates,
-                        ) ?: return@combine FinancePanelUiState.NotShown
-                    } else {
-                        FinancialHealth.NEUTRAL
-                    },
-                    wallet = singleWallet?.wallet,
-                    isPrimary = singleWallet?.isPrimary ?: false,
-                )
-            }
+        walletsFlow,
+    ) { userData, wallets ->
+        if (isOverviewMode) {
+            Currency.getInstance(userData.currency)
+        } else {
+            wallets.firstOrNull()?.wallet?.currency ?: Currency.getInstance(userData.currency)
         }
+    }.distinctUntilChanged()
+
+    private val baseCurrenciesFlow = walletsRepository.getDistinctCurrencies()
+
+    private val exchangeRatesFlow: Flow<Map<Currency, BigDecimal>> = combine(
+        baseCurrenciesFlow,
+        targetCurrencyFlow,
+    ) { baseCurrencies, targetCurrency ->
+        baseCurrencies to targetCurrency
+    }.flatMapLatest { (baseCurrencies, targetCurrency) ->
+        if (baseCurrencies.isEmpty() && isOverviewMode) {
+            flowOf(emptyMap())
+        } else {
+            currencyConversionRepository.getConvertedCurrencies(
+                baseCurrencies = baseCurrencies.toSet(),
+                targetCurrency = targetCurrency,
+            )
+        }
+    }
+
+    private val totalBalanceFlow: Flow<BigDecimal?> = combine(
+        walletsFlow,
+        targetCurrencyFlow,
+        exchangeRatesFlow,
+    ) { wallets, targetCurrency, exchangeRates ->
+        calculateTotalBalance(wallets, targetCurrency, exchangeRates)
+    }.flowOn(defaultDispatcher)
+
+    private val panelDataFlow: Flow<PanelData> = combine(
+        walletsFlow,
+        targetCurrencyFlow,
+        exchangeRatesFlow,
+        totalBalanceFlow,
+        baseCurrenciesFlow,
+    ) { wallets, targetCurrency, exchangeRates, totalBalance, baseCurrencies ->
+        PanelData(wallets, targetCurrency, exchangeRates, totalBalance, baseCurrencies)
+    }.flowOn(defaultDispatcher)
+
+    val financePanelUiState: StateFlow<FinancePanelUiState> = combine(
+        panelDataFlow,
+        transactionFilterState,
+    ) { data, filter ->
+        if (data.baseCurrencies.isEmpty() && isOverviewMode) return@combine FinancePanelUiState.NotShown
+        if (data.totalBalance == null) return@combine FinancePanelUiState.NotShown
+
+        val allTransactions = data.wallets.flatMap { it.transactions }
+        val filterableTransactions = allTransactions.filterTransactions(filter)
+        val filteredTransactions = filterableTransactions.transactions.filter {
+            !it.ignored && if (filter.dateType == ALL) it.timestamp.isInCurrentMonthAndYear() else true
+        }
+
+        val metrics = calculatePeriodMetrics(
+            filteredTransactions = filteredTransactions,
+            allTransactions = allTransactions,
+            targetCurrency = data.targetCurrency,
+            exchangeRates = data.exchangeRates,
+            isOverviewMode = isOverviewMode,
+        ) ?: return@combine FinancePanelUiState.NotShown
+
+        val singleWallet = data.wallets.singleOrNull()
+
+        FinancePanelUiState.Shown(
+            transactionFilter = filter,
+            formattedIncome = metrics.income.formatAmount(
+                currency = data.targetCurrency,
+                approximatelyPrefix = metrics.isMultiCurrencyIncome && isOverviewMode,
+            ),
+            formattedExpenses = metrics.expenses.abs().formatAmount(
+                currency = data.targetCurrency,
+                approximatelyPrefix = metrics.isMultiCurrencyExpenses && isOverviewMode,
+            ),
+            graphData = filteredTransactions.getGraphData(
+                dateType = filter.dateType,
+                userCurrency = data.targetCurrency,
+                currencyExchangeRates = data.exchangeRates,
+            ),
+            userCurrency = data.targetCurrency,
+            availableCategories = filterableTransactions.availableCategories,
+            formattedTotalBalance = data.totalBalance.formatAmount(
+                currency = data.targetCurrency,
+                approximatelyPrefix = !data.baseCurrencies.all { it == data.targetCurrency } && isOverviewMode,
+            ),
+            financialHealth = metrics.financialHealth,
+            wallet = singleWallet?.wallet,
+            isPrimary = singleWallet?.isPrimary ?: false,
+        )
+    }
         .catch { emit(FinancePanelUiState.NotShown) }
         .flowOn(defaultDispatcher)
         .stateIn(
@@ -251,28 +255,31 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
 
     fun updateSelectedDate(@IntRange(from = -1, to = 1) dateOffset: Int) {
         when (transactionFilterState.value.dateType) {
-            MONTH -> {
-                transactionFilterState.update {
-                    it.copy(
-                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.MONTH),
+            MONTH -> transactionFilterState.update {
+                it.copy(
+                    selectedDate = it.selectedDate.plus(
+                        dateOffset,
+                        DateTimeUnit.MONTH,
                     )
-                }
+                )
             }
 
-            YEAR -> {
-                transactionFilterState.update {
-                    it.copy(
-                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.YEAR),
+            YEAR -> transactionFilterState.update {
+                it.copy(
+                    selectedDate = it.selectedDate.plus(
+                        dateOffset,
+                        DateTimeUnit.YEAR,
                     )
-                }
+                )
             }
 
-            WEEK -> {
-                transactionFilterState.update {
-                    it.copy(
-                        selectedDate = it.selectedDate.plus(dateOffset, DateTimeUnit.WEEK),
+            WEEK -> transactionFilterState.update {
+                it.copy(
+                    selectedDate = it.selectedDate.plus(
+                        dateOffset,
+                        DateTimeUnit.WEEK,
                     )
-                }
+                )
             }
 
             ALL -> {}
@@ -291,60 +298,127 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
         }
     }
 
-    private fun calculateFinancialHealth(
-        transactions: List<Transaction>,
-        userCurrency: Currency,
-        currencyExchangeRates: Map<Currency, BigDecimal>,
-    ): FinancialHealth? {
-        val monthlyTransactions = transactions
-            .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-        val (monthlyExpenses, monthlyIncome) = calculateExpensesAndIncome(
-            transactions = monthlyTransactions,
-            userCurrency = userCurrency,
-            currencyExchangeRates = currencyExchangeRates,
-        ) ?: return null
-        if (monthlyExpenses == BigDecimal.ZERO) {
-            return if (monthlyIncome > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
-        }
-        val ratio = monthlyIncome.divide(monthlyExpenses, 2, RoundingMode.HALF_UP).toDouble()
-        return when {
-            ratio < 0.5 -> FinancialHealth.VERY_BAD
-            ratio < 0.9 -> FinancialHealth.BAD
-            ratio < 1.1 -> FinancialHealth.NEUTRAL
-            ratio < 1.5 -> FinancialHealth.GOOD
-            else -> FinancialHealth.VERY_GOOD
-        }
-    }
-
-    private fun calculateExpensesAndIncome(
-        transactions: List<Transaction>,
-        userCurrency: Currency,
-        currencyExchangeRates: Map<Currency, BigDecimal>,
-    ): Pair<BigDecimal, BigDecimal>? {
-        var expenses = BigDecimal.ZERO
-        var income = BigDecimal.ZERO
-        for (transaction in transactions) {
-            val amount = transaction.amount
-            val currency = transaction.currency
-
-            val convertedAmount = if (userCurrency == currency) {
-                amount
-            } else {
-                currencyExchangeRates[currency]?.times(amount) ?: return null
-            }
-
-            if (amount.signum() < 0) {
-                expenses += convertedAmount
-            } else {
-                income += convertedAmount
-            }
-        }
-        return expenses to income
-    }
-
     @AssistedFactory
     interface Factory {
         fun create(key: TransactionOverviewNavKey): TransactionOverviewViewModel
+    }
+}
+
+private data class PanelData(
+    val wallets: List<ExtendedUserWallet>,
+    val targetCurrency: Currency,
+    val exchangeRates: Map<Currency, BigDecimal>,
+    val totalBalance: BigDecimal?,
+    val baseCurrencies: List<Currency>,
+)
+
+private data class PeriodMetricsResult(
+    val expenses: BigDecimal,
+    val income: BigDecimal,
+    val isMultiCurrencyExpenses: Boolean,
+    val isMultiCurrencyIncome: Boolean,
+    val financialHealth: FinancialHealth,
+)
+
+private fun calculateTotalBalance(
+    wallets: List<ExtendedUserWallet>,
+    targetCurrency: Currency,
+    exchangeRates: Map<Currency, BigDecimal>,
+): BigDecimal? {
+    var total = BigDecimal.ZERO
+    for (userWallet in wallets) {
+        val balance = userWallet.currentBalance
+        val currency = userWallet.wallet.currency
+
+        if (targetCurrency == currency) {
+            total += balance
+        } else {
+            val rate = exchangeRates[currency] ?: return null
+            total += rate * balance
+        }
+    }
+    return total
+}
+
+private fun calculatePeriodMetrics(
+    filteredTransactions: List<Transaction>,
+    allTransactions: List<Transaction>,
+    targetCurrency: Currency,
+    exchangeRates: Map<Currency, BigDecimal>,
+    isOverviewMode: Boolean,
+): PeriodMetricsResult? {
+    var expenses = BigDecimal.ZERO
+    var income = BigDecimal.ZERO
+    val expenseCurrencies = mutableSetOf<Currency>()
+    val incomeCurrencies = mutableSetOf<Currency>()
+
+    for (transaction in filteredTransactions) {
+        val amount = transaction.amount
+        val currency = transaction.currency
+
+        val convertedAmount = if (targetCurrency == currency) {
+            amount
+        } else {
+            exchangeRates[currency]?.times(amount) ?: return null
+        }
+
+        if (amount.signum() < 0) {
+            expenses += convertedAmount
+            expenseCurrencies.add(currency)
+        } else {
+            income += convertedAmount
+            incomeCurrencies.add(currency)
+        }
+    }
+
+    val health = if (isOverviewMode) {
+        calculateFinancialHealth(allTransactions, targetCurrency, exchangeRates) ?: return null
+    } else {
+        FinancialHealth.NEUTRAL
+    }
+
+    return PeriodMetricsResult(
+        expenses = expenses,
+        income = income,
+        isMultiCurrencyExpenses = !expenseCurrencies.all { it == targetCurrency },
+        isMultiCurrencyIncome = !incomeCurrencies.all { it == targetCurrency },
+        financialHealth = health,
+    )
+}
+
+private fun calculateFinancialHealth(
+    transactions: List<Transaction>,
+    userCurrency: Currency,
+    currencyExchangeRates: Map<Currency, BigDecimal>,
+): FinancialHealth? {
+    val monthlyTransactions = transactions
+        .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+    var expenses = BigDecimal.ZERO
+    var income = BigDecimal.ZERO
+
+    for (transaction in monthlyTransactions) {
+        val convertedAmount = if (userCurrency == transaction.currency) {
+            transaction.amount
+        } else {
+            currencyExchangeRates[transaction.currency]?.times(transaction.amount) ?: return null
+        }
+        if (transaction.amount.signum() < 0) {
+            expenses += convertedAmount
+        } else {
+            income += convertedAmount
+        }
+    }
+
+    if (expenses.signum() == 0) {
+        return if (income > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
+    }
+    val ratio = income.divide(expenses.abs(), 2, RoundingMode.HALF_UP).toDouble()
+    return when {
+        ratio < 0.5 -> FinancialHealth.VERY_BAD
+        ratio < 0.9 -> FinancialHealth.BAD
+        ratio < 1.1 -> FinancialHealth.NEUTRAL
+        ratio < 1.5 -> FinancialHealth.GOOD
+        else -> FinancialHealth.VERY_GOOD
     }
 }
 

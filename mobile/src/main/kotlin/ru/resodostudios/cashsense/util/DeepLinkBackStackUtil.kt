@@ -54,8 +54,8 @@ private val DeepLinkMatchers = listOf(
 )
 
 fun DeepLinkRequest?.toKey(): NavKey {
-    if (this == null) return HomeNavKey()
+    if (this == null) return HomeNavKey
     return DeepLinkMatchers.firstNotNullOfOrNull { matcher ->
         runCatching { matcher.match(this)?.key }.getOrNull()
-    } ?: HomeNavKey()
+    } ?: HomeNavKey
 }

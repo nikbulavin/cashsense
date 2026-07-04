@@ -3,16 +3,16 @@ package ru.resodostudios.cashsense.feature.category.list.impl
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MotionScheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.resodostudios.cashsense.core.model.Category
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 internal fun LazyListScope.categories(
     categories: List<Category>,
     onCategoryClick: (Category) -> Unit,
+    motionScheme: MotionScheme,
     shouldHighlightSelectedCategory: Boolean = false,
     selectedCategory: Category? = null,
 ) {
@@ -23,7 +23,11 @@ internal fun LazyListScope.categories(
     ) { index, category ->
         CategoryItem(
             category = category,
-            modifier = Modifier.animateItem(),
+            modifier = Modifier.animateItem(
+                fadeInSpec = motionScheme.defaultEffectsSpec(),
+                fadeOutSpec = motionScheme.defaultEffectsSpec(),
+                placementSpec = motionScheme.defaultSpatialSpec(),
+            ),
             selected = shouldHighlightSelectedCategory && category == selectedCategory,
             onClick = { onCategoryClick(category) },
             shapes = if (categories.size == 1) {

@@ -26,7 +26,7 @@ fun rememberCsAppState(
     permissionManager: PermissionManager,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navigationState: NavigationState = rememberNavigationState(
-        initialBackStack = listOf(HomeNavKey()),
+        initialBackStack = listOf(HomeNavKey),
         topLevelKeys = TOP_LEVEL_NAV_ITEMS.keys,
     ),
 ): CsAppState {

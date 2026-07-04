@@ -11,18 +11,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RichTimePickerDialog
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
-import androidx.compose.material3.TimePickerDialog
 import androidx.compose.material3.TimePickerDialogDefaults
 import androidx.compose.material3.TimePickerDialogDefaults.MinHeightForTimePicker
 import androidx.compose.material3.TimePickerDisplayMode
@@ -42,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
@@ -150,7 +148,6 @@ fun DatePickerTextField(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TimePickerTextField(
     timestamp: Instant,
@@ -190,8 +187,7 @@ fun TimePickerTextField(
             initialHour = localTime.hour,
             initialMinute = localTime.minute,
         )
-        TimePickerDialog(
-            title = { TimePickerDialogDefaults.Title(displayMode) },
+        RichTimePickerDialog(
             onDismissRequest = { openDialog = false },
             confirmButton = {
                 TextButton(
@@ -218,7 +214,7 @@ fun TimePickerTextField(
                 }
             },
             modeToggleButton = {
-                if (windowInfo.containerSize.height.dp > MinHeightForTimePicker) {
+                if (windowInfo.containerDpSize.height > MinHeightForTimePicker) {
                     TimePickerDialogDefaults.DisplayModeToggle(
                         onDisplayModeChange = {
                             displayMode = if (displayMode == TimePickerDisplayMode.Picker) {
@@ -234,14 +230,11 @@ fun TimePickerTextField(
         ) {
             if (
                 displayMode == TimePickerDisplayMode.Picker &&
-                windowInfo.containerSize.height.dp > MinHeightForTimePicker
+                windowInfo.containerDpSize.height > MinHeightForTimePicker
             ) {
-                TimePicker(state = timePickerState)
+                TimePicker(state = timePickerState, shapes = TimePickerDefaults.shapes())
             } else {
-                TimeInput(
-                    state = timePickerState,
-                    shapes = TimePickerDefaults.shapes(),
-                )
+                TimeInput(state = timePickerState, shapes = TimePickerDefaults.shapes())
             }
         }
     }

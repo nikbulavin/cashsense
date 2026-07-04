@@ -58,7 +58,7 @@ fun TransactionItem(
     modifier: Modifier = Modifier,
     shapes: ListItemShapes = ListItemDefaults.shapes(),
     trailingContent: @Composable (() -> Unit)? = null,
-    walletIdsAndTitles: Map<String, String> = emptyMap(),
+    walletIdsAndTitles: Map<String, String>? = null,
     containerColor: Color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
     isSharedTransitionEnabled: Boolean = true,
     shouldShowCategoryIcon: Boolean = true,
@@ -125,12 +125,12 @@ fun TransactionItem(
             },
             supportingContent = {
                 Text(
-                    text = walletIdsAndTitles[transaction.walletOwnerId] ?: categoryTitle,
+                    text = walletIdsAndTitles?.get(transaction.walletOwnerId) ?: categoryTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .then(
-                            if (isSharedTransitionEnabled) {
+                            if (isSharedTransitionEnabled && walletIdsAndTitles.isNullOrEmpty()) {
                                 Modifier.sharedBoundsAdaptive(
                                     sharedContentState = rememberSharedContentState(
                                         key = SharedElementKey(
@@ -227,7 +227,6 @@ fun TransactionItem(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @PreviewLightDark
 @Composable
 private fun TransactionItemPreview() {
