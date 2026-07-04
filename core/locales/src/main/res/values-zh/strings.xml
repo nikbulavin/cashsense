@@ -126,4 +126,6 @@
   <string name="delete_category">删除类别？</string>
   <string name="permanently_delete_category">此类别将从您的设备中永久删除</string>
   <string name="select_category">选择类别</string>
+  <string name="conversion_error">换算错误</string>
+  <string name="conversion_error_description">获取 %1$s 货币信息失败</string>
 </resources>
