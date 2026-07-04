@@ -409,7 +409,7 @@ private fun calculateFinancialHealth(
         }
     }
 
-    if (expenses == BigDecimal.ZERO) {
+    if (expenses.signum() == 0) {
         return if (income > BigDecimal.ZERO) FinancialHealth.VERY_GOOD else FinancialHealth.NEUTRAL
     }
     val ratio = income.divide(expenses.abs(), 2, RoundingMode.HALF_UP).toDouble()
