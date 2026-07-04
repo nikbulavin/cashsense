@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -141,8 +140,11 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
         panelDataFlow,
         transactionFilterState,
     ) { data, filter ->
-        if (data.baseCurrencies.isEmpty() && isOverviewMode) return@combine FinancePanelUiState.NotShown
-        if (data.totalBalance == null) return@combine FinancePanelUiState.NotShown
+        if (data.baseCurrencies.isEmpty() && isOverviewMode ||
+            data.totalBalance == null
+        ) {
+            return@combine FinancePanelUiState.Error(data.targetCurrency)
+        }
 
         val allTransactions = data.wallets.flatMap { it.transactions }
         val filterableTransactions = allTransactions.filterTransactions(filter)
@@ -156,11 +158,11 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
             targetCurrency = data.targetCurrency,
             exchangeRates = data.exchangeRates,
             isOverviewMode = isOverviewMode,
-        ) ?: return@combine FinancePanelUiState.NotShown
+        ) ?: return@combine FinancePanelUiState.Error(data.targetCurrency)
 
         val singleWallet = data.wallets.singleOrNull()
 
-        FinancePanelUiState.Shown(
+        FinancePanelUiState.Success(
             transactionFilter = filter,
             formattedIncome = metrics.income.formatAmount(
                 currency = data.targetCurrency,
@@ -186,7 +188,6 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
             isPrimary = singleWallet?.isPrimary ?: false,
         )
     }
-        .catch { emit(FinancePanelUiState.NotShown) }
         .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
@@ -426,9 +427,9 @@ internal sealed interface FinancePanelUiState {
 
     data object Loading : FinancePanelUiState
 
-    data object NotShown : FinancePanelUiState
+    data class Error(val currency: Currency) : FinancePanelUiState
 
-    data class Shown(
+    data class Success(
         val transactionFilter: TransactionFilter,
         val availableCategories: List<Category>,
         val userCurrency: Currency,

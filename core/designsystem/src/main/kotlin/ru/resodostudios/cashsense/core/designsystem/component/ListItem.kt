@@ -9,10 +9,36 @@ import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun CsListItem(
+    content: @Composable () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    overlineContent: @Composable (() -> Unit)? = null,
+    supportingContent: @Composable (() -> Unit)? = null,
+    leadingContent: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+    ),
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
+) {
+    ListItem(
+        shapes = shapes,
+        onClick = onClick,
+        content = content,
+        modifier = modifier,
+        overlineContent = overlineContent,
+        supportingContent = supportingContent,
+        leadingContent = leadingContent,
+        trailingContent = trailingContent,
+        colors = colors,
+    )
+}
 
 @Composable
 fun CsListItem(
@@ -22,17 +48,20 @@ fun CsListItem(
     supportingContent: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+    ),
+    shapes: ListItemShapes = ListItemDefaults.shapes(),
 ) {
     ListItem(
+        shapes = shapes,
         content = content,
         modifier = modifier,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
         leadingContent = leadingContent,
         trailingContent = trailingContent,
-        colors = ListItemDefaults.colors(
-            containerColor = Color.Transparent,
-        ),
+        colors = colors,
     )
 }
 
@@ -68,33 +97,6 @@ fun CsToggableListItem(
         trailingContent = trailingContent,
         colors = colors,
         modifier = modifier,
-    )
-}
-
-@Composable
-fun CsListItemEmphasized(
-    content: @Composable () -> Unit,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    overlineContent: @Composable (() -> Unit)? = null,
-    supportingContent: @Composable (() -> Unit)? = null,
-    leadingContent: @Composable (() -> Unit)? = null,
-    trailingContent: @Composable (() -> Unit)? = null,
-    colors: ListItemColors = ListItemDefaults.colors(
-        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-    ),
-    shapes: ListItemShapes = ListItemDefaults.shapes(),
-) {
-    ListItem(
-        shapes = shapes,
-        onClick = onClick,
-        content = content,
-        modifier = modifier,
-        overlineContent = overlineContent,
-        supportingContent = supportingContent,
-        leadingContent = leadingContent,
-        trailingContent = trailingContent,
-        colors = colors,
     )
 }
 

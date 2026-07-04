@@ -151,7 +151,7 @@ private fun TransactionOverviewScreen(
         val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
         with(LocalSharedTransitionScope.current) {
-            val walletId = (financePanelUiState as? FinancePanelUiState.Shown)?.wallet?.id
+            val walletId = (financePanelUiState as? FinancePanelUiState.Success)?.wallet?.id
             Box(
                 modifier = Modifier
                     .then(
@@ -265,8 +265,33 @@ private fun TopBar(
 ) {
     when (financePanelUiState) {
         FinancePanelUiState.Loading -> Unit
-        FinancePanelUiState.NotShown -> Unit
-        is FinancePanelUiState.Shown -> {
+        is FinancePanelUiState.Error -> {
+            TopAppBar(
+                title = { Text(stringResource(localesR.string.conversion_error)) },
+                subtitle = {
+                    Text(
+                        text = stringResource(
+                            localesR.string.conversion_error_description,
+                            financePanelUiState.currency.currencyCode,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    if (shouldShowNavigationIcon) {
+                        CsIconButton(
+                            onClick = onBackClick,
+                            icon = CsIcons.Outlined.ArrowBack,
+                            contentDescription = stringResource(localesR.string.navigation_back_icon_description),
+                            tooltipPosition = TooltipAnchorPosition.Right,
+                        )
+                    }
+                },
+            )
+        }
+
+        is FinancePanelUiState.Success -> {
             with(LocalSharedTransitionScope.current) {
                 TopAppBar(
                     title = {
@@ -362,8 +387,8 @@ private fun LazyListScope.header(
 ) {
     when (financePanelUiState) {
         FinancePanelUiState.Loading -> Unit
-        FinancePanelUiState.NotShown -> Unit
-        is FinancePanelUiState.Shown -> {
+        is FinancePanelUiState.Error -> Unit
+        is FinancePanelUiState.Success -> {
             item {
                 FinancePanel(
                     walletId = financePanelUiState.wallet?.id ?: "",
