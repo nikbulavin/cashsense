@@ -19,26 +19,26 @@ data class TopLevelNavItem(
     @StringRes val iconTextId: Int,
 )
 
-val HOME = TopLevelNavItem(
+private val HOME = TopLevelNavItem(
     selectedIcon = CsIcons.Filled.Home,
     unselectedIcon = CsIcons.Outlined.Home,
     iconTextId = localesR.string.home_title,
 )
 
-val CATEGORIES = TopLevelNavItem(
+private val CATEGORIES = TopLevelNavItem(
     selectedIcon = CsIcons.Filled.Category,
     unselectedIcon = CsIcons.Outlined.Category,
     iconTextId = localesR.string.categories_title,
 )
 
-val SUBSCRIPTIONS = TopLevelNavItem(
+private val SUBSCRIPTIONS = TopLevelNavItem(
     selectedIcon = CsIcons.Outlined.Autorenew,
     unselectedIcon = CsIcons.Outlined.Autorenew,
     iconTextId = localesR.string.subscriptions_title,
 )
 
 val TOP_LEVEL_NAV_ITEMS = mapOf(
-    HomeNavKey() to HOME,
+    HomeNavKey to HOME,
     CategoriesNavKey to CATEGORIES,
     SubscriptionsNavKey to SUBSCRIPTIONS,
 )

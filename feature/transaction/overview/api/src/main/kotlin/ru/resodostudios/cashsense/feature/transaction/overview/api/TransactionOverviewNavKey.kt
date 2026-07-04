@@ -13,7 +13,7 @@ data class TransactionOverviewNavKey(
 ) : NavDeepLinkKey {
 
     @Transient
-    override val parent: NavKey = HomeNavKey()
+    override val parent: NavKey = HomeNavKey
 }
 
 fun Navigator.navigateToTransactionOverview(

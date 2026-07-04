@@ -73,7 +73,10 @@ internal fun HomeScreen(
         shouldShowFab = shouldShowFab,
         isNavRailVisible = isNavRailVisible,
         onFabMenuItemClick = onFabMenuItemClick,
-        onTotalBalanceClick = onTotalBalanceClick,
+        onTotalBalanceClick = {
+            onTotalBalanceClick()
+            viewModel.onWalletClick(null)
+        },
         onSettingsClick = onSettingsClick,
     )
 }

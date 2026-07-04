@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense.feature.home.impl.navigation
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.resodostudios.cashsense.core.ui.LocalIsNavRailVisible
@@ -14,7 +13,6 @@ import ru.resodostudios.cashsense.core.ui.component.FabMenuItem.WALLET
 import ru.resodostudios.cashsense.feature.category.editor.api.navigateToCategoryEditor
 import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.HomeScreen
-import ru.resodostudios.cashsense.feature.home.impl.HomeViewModel
 import ru.resodostudios.cashsense.feature.settings.api.navigateToSettings
 import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubscriptionDialog
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
@@ -33,7 +31,7 @@ fun EntryProviderScope<NavKey>.homeEntry(
         metadata = ListDetailSceneStrategy.listPane {
             DetailPanePlaceholder(localesR.string.select_wallet)
         },
-    ) { key ->
+    ) {
         val isSinglePane = LocalIsSinglePane.current
         HomeScreen(
             onWalletClick = navigator::navigateToTransactionOverview,
@@ -52,7 +50,6 @@ fun EntryProviderScope<NavKey>.homeEntry(
                     SUBSCRIPTION -> navigator.navigateToSubscriptionDialog()
                 }
             },
-            viewModel = hiltViewModel<HomeViewModel, HomeViewModel.Factory> { it.create(key) },
         )
     }
 }

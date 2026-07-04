@@ -1,11 +1,7 @@
 package ru.resodostudios.cashsense.feature.home.impl
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
@@ -27,23 +24,18 @@ import ru.resodostudios.cashsense.core.domain.GetExtendedUserWalletsUseCase
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
-import ru.resodostudios.cashsense.feature.home.api.HomeNavKey
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-@HiltViewModel(assistedFactory = HomeViewModel.Factory::class)
-internal class HomeViewModel @AssistedInject constructor(
-    private val savedStateHandle: SavedStateHandle,
+@HiltViewModel
+internal class HomeViewModel @Inject constructor(
     getExtendedUserWallets: GetExtendedUserWalletsUseCase,
     @Dispatcher(Default) private val defaultDispatcher: CoroutineDispatcher,
-    @Assisted private val key: HomeNavKey,
 ) : ViewModel() {
 
-    private val selectedWalletId = savedStateHandle.getStateFlow(
-        key = SELECTED_WALLET_ID_KEY,
-        initialValue = key.walletId,
-    )
+    private val selectedWalletIdState = MutableStateFlow<String?>(null)
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -54,7 +46,7 @@ internal class HomeViewModel @AssistedInject constructor(
     val searchResultUiState = combine(
         searchQuery,
         searchFilterState,
-        getExtendedUserWallets.invoke()
+        getExtendedUserWallets.invoke(),
     ) { query, filterState, extendedUserWallets ->
         if (query.isBlank()) return@combine SearchResultUiState.EmptyQuery
         runCatching {
@@ -97,35 +89,44 @@ internal class HomeViewModel @AssistedInject constructor(
             initialValue = SearchResultUiState.Loading,
         )
 
-    val walletsUiState: StateFlow<WalletsUiState> = combine(
-        selectedWalletId,
-        getExtendedUserWallets.invoke(),
-    ) { selectedWalletId, extendedUserWallets ->
-        if (extendedUserWallets.isEmpty()) return@combine WalletsUiState.Empty
-        val uiWallets = extendedUserWallets.map { walletData ->
-            val (expenses, income) = walletData.transactions
-                .asSequence()
-                .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
-                .partition { it.amount.signum() < 0 }
-                .let { (expensesList, incomeList) ->
-                    val totalExpenses = expensesList.sumOf { it.amount }.abs()
-                    val totalIncome = incomeList.sumOf { it.amount }
-                    totalExpenses to totalIncome
-                }
+    private val uiWalletsFlow = getExtendedUserWallets.invoke()
+        .map { extendedUserWallets ->
+            if (extendedUserWallets.isEmpty()) return@map null
 
-            UiWallet(
-                extendedUserWallet = walletData,
-                expenses = expenses,
-                income = income,
-            )
+            val uiWallets = extendedUserWallets.map { walletData ->
+                val (expensesList, incomeList) = walletData.transactions
+                    .asSequence()
+                    .filter { !it.ignored && it.timestamp.isInCurrentMonthAndYear() }
+                    .partition { it.amount.signum() < 0 }
+
+                val totalExpenses = expensesList.sumOf { it.amount }.abs()
+                val totalIncome = incomeList.sumOf { it.amount }
+
+                UiWallet(
+                    extendedUserWallet = walletData,
+                    expenses = totalExpenses,
+                    income = totalIncome,
+                )
+            }
+
+            val walletIdsAndTitles = extendedUserWallets.associate { it.wallet.id to it.wallet.title }
+
+            uiWallets to walletIdsAndTitles
         }
+        .flowOn(defaultDispatcher)
+
+    val walletsUiState: StateFlow<WalletsUiState> = combine(
+        selectedWalletIdState,
+        uiWalletsFlow,
+    ) { selectedWalletId, mappedData ->
+        if (mappedData == null) return@combine WalletsUiState.Empty
+
         WalletsUiState.Success(
             selectedWalletId = selectedWalletId,
-            uiWallets = uiWallets,
-            walletIdsAndTitles = extendedUserWallets.associate { it.wallet.id to it.wallet.title },
+            uiWallets = mappedData.first,
+            walletIdsAndTitles = mappedData.second,
         )
     }
-        .flowOn(defaultDispatcher)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5.seconds),
@@ -133,7 +134,7 @@ internal class HomeViewModel @AssistedInject constructor(
         )
 
     fun onWalletClick(walletId: String?) {
-        savedStateHandle[SELECTED_WALLET_ID_KEY] = walletId
+        selectedWalletIdState.value = walletId
     }
 
     fun onSearch(query: String) {
@@ -162,11 +163,6 @@ internal class HomeViewModel @AssistedInject constructor(
                 },
             )
         }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(key: HomeNavKey): HomeViewModel
     }
 }
 
@@ -200,5 +196,3 @@ internal data class SearchFilterState(
     val selectedWalletIds: List<String> = emptyList(),
     val selectedDateRange: Pair<LocalDate, LocalDate>? = null,
 )
-
-private const val SELECTED_WALLET_ID_KEY = "selectedWalletId"
