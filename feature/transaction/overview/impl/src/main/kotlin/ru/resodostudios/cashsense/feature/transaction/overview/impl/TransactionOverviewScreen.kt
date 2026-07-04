@@ -82,6 +82,7 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @Composable
 internal fun TransactionOverviewScreen(
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     onBackClick: () -> Unit,
     onTransactionClick: (String) -> Unit,
     onTransfer: (String?) -> Unit,
@@ -95,6 +96,7 @@ internal fun TransactionOverviewScreen(
 
     TransactionOverviewScreen(
         shouldShowNavigationIcon = shouldShowNavigationIcon,
+        shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
         onBackClick = onBackClick,
         financePanelUiState = financePanelUiState,
         onDateTypeUpdate = viewModel::updateDateType,
@@ -124,6 +126,7 @@ private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
     transactionOverviewState: TransactionOverviewUiState,
     shouldShowNavigationIcon: Boolean,
+    shouldHighlightSelectedTransaction: Boolean,
     onBackClick: () -> Unit,
     onDateTypeUpdate: (DateType) -> Unit,
     onFinanceTypeUpdate: (FinanceType) -> Unit,
@@ -234,6 +237,7 @@ private fun TransactionOverviewScreen(
                                 transactions(
                                     selectedTransaction = transactionOverviewState.selectedTransaction,
                                     groupedTransactions = transactionOverviewState.groupedTransactions,
+                                    shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                                     walletIdsAndTitles = if (walletId == null) transactionOverviewState.walletIdsAndTitles else emptyMap(),
                                     hazeState = hazeState,
                                     hazeStyle = hazeStyle,
