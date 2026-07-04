@@ -334,7 +334,7 @@ private fun calculateTotalBalance(
             total += balance
         } else {
             val rate = exchangeRates[currency] ?: return null
-            total += rate.times(balance)
+            total += rate * balance
         }
     }
     return total
