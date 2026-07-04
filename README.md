@@ -19,7 +19,7 @@ multi-currency support, intelligent transaction categorization, and proactive su
 
 ## Screenshots
 
-![Screenshots](docs/images/screenshots.png "Interface Overview")
+![Screenshots](docs/images/screenshots.jpg "Interface Overview")
 
 ## UI
 
