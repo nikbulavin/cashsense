@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.ListItemDefaults
@@ -45,7 +43,7 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
-import ru.resodostudios.cashsense.core.designsystem.component.CsListItemEmphasized
+import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
 import ru.resodostudios.cashsense.core.designsystem.component.CsSwitch
 import ru.resodostudios.cashsense.core.designsystem.component.CsToggableListItem
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
@@ -109,7 +107,6 @@ internal fun SettingsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
     settingsState: SettingsUiState,
@@ -179,7 +176,6 @@ private fun SettingsScreen(
     TrackScreenViewEvent(screenName = "Settings")
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(
     onBackClick: () -> Unit,
@@ -232,7 +228,6 @@ fun SettingsScreenPreview() {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun General(
     settings: UserEditableSettings,
@@ -243,7 +238,7 @@ private fun General(
 
     var showCurrencyDialog by rememberSaveable { mutableStateOf(false) }
 
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(0, 2),
         content = { Text(stringResource(localesR.string.currency)) },
         leadingContent = {
@@ -267,7 +262,7 @@ private fun General(
     var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
     val availableLanguages = rememberAvailableLanguages()
 
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(1, 2),
         content = { Text(stringResource(localesR.string.language)) },
         leadingContent = {
@@ -297,7 +292,6 @@ private fun General(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Appearance(
     settings: UserEditableSettings,
@@ -314,7 +308,7 @@ private fun Appearance(
         stringResource(localesR.string.theme_dark) to CsIcons.Filled.DarkMode,
     )
 
-    CsListItemEmphasized(
+    CsListItem(
         onClick = { shouldShowThemeDialog = true },
         shapes = if (supportDynamicColor) {
             ListItemDefaults.segmentedShapes(0, 2)
@@ -367,7 +361,6 @@ private fun Appearance(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun BackupAndRestore(
     onDataExport: (Uri) -> Unit,
@@ -382,7 +375,7 @@ private fun BackupAndRestore(
     }
     val date = Clock.System.now().formatDate(formatStyle = FormatStyle.SHORT)
     val fileName = "CASH_SENSE_BACKUP_${date.filter { it.isDigit() }}"
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(0, 2),
         content = { Text(stringResource(localesR.string.backup)) },
         leadingContent = {
@@ -406,7 +399,7 @@ private fun BackupAndRestore(
     ) {
         it?.let { onDataImport(it, true) }
     }
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(1, 2),
         content = { Text(stringResource(localesR.string.restore)) },
         leadingContent = {
@@ -426,7 +419,6 @@ private fun BackupAndRestore(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun About(
     onLicensesClick: () -> Unit,
@@ -436,7 +428,7 @@ private fun About(
     val context = LocalContext.current
     val backgroundColor = MaterialTheme.colorScheme.background.toArgb()
 
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(0, 4),
         content = { Text(stringResource(localesR.string.feedback)) },
         leadingContent = {
@@ -454,7 +446,7 @@ private fun About(
         },
     )
 
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(1, 4),
         content = { Text(stringResource(localesR.string.privacy_policy)) },
         leadingContent = {
@@ -472,7 +464,7 @@ private fun About(
         },
     )
 
-    CsListItemEmphasized(
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(2, 4),
         content = { Text(stringResource(localesR.string.licenses)) },
         leadingContent = {
@@ -490,8 +482,7 @@ private fun About(
     val versionName = packageInfo?.versionName ?: "?.?.?"
     val versionCode = "(${packageInfo?.longVersionCode})"
 
-    CsListItemEmphasized(
-        onClick = {},
+    CsListItem(
         shapes = ListItemDefaults.segmentedShapes(3, 4),
         content = { Text(stringResource(localesR.string.version)) },
         supportingContent = { Text("$versionName $versionCode") },
