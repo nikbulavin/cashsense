@@ -126,4 +126,6 @@
   <string name="delete_category">Удалить категорию?</string>
   <string name="permanently_delete_category">Эта категория будет навсегда удалена с вашего устройства</string>
   <string name="select_category">Выбрать категорию</string>
+  <string name="conversion_error">Ошибка конвертации</string>
+  <string name="conversion_error_description">Не удалось получить информацию по валюте %1$s</string>
 </resources>
