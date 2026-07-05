@@ -160,7 +160,7 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
             isOverviewMode = isOverviewMode,
         ) ?: return@combine FinancePanelUiState.Error(data.targetCurrency)
 
-        val singleWallet = data.wallets.singleOrNull()
+        val singleWallet = if (isOverviewMode) null else data.wallets.singleOrNull()
 
         FinancePanelUiState.Success(
             transactionFilter = filter,
