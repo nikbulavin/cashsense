@@ -19,7 +19,7 @@ import ru.resodostudios.cashsense.feature.transaction.importer.api.navigateToTra
 import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.TransactionOverviewScreen
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.TransactionOverviewViewModel
-import ru.resodostudios.cashsense.feature.transfer.dialog.api.navigateToTransferDialog
+import ru.resodostudios.cashsense.feature.transfer.api.navigateToTransferEditor
 import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
 import ru.resodostudios.core.navigation.Navigator
 
@@ -45,7 +45,7 @@ fun EntryProviderScope<NavKey>.transactionOverviewEntry(
         TransactionOverviewScreen(
             onBackClick = navigator::goBack,
             onTransactionClick = navigator::navigateToTransaction,
-            onTransfer = navigator::navigateToTransferDialog,
+            onTransfer = navigator::navigateToTransferEditor,
             onEditWallet = navigator::navigateToWalletDialog,
             onImportClick = navigator::navigateToTransactionImporter,
             navigateToTransactionEditor = navigator::navigateToTransactionEditor,

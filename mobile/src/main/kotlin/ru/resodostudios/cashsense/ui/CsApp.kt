@@ -88,7 +88,7 @@ import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionIm
 import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.transactionImporterEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
-import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferDialogEntry
+import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferEditorEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.walletDialogEntry
 import ru.resodostudios.cashsense.navigation.TOP_LEVEL_NAV_ITEMS
@@ -217,7 +217,7 @@ fun CsApp(
                     transactionEntry(navigator, fadeSpec)
                     transactionEditorEntry(navigator, slideSpec)
                     transactionImporterEntry(navigator, slideSpec)
-                    transferDialogEntry(navigator)
+                    transferEditorEntry(navigator, slideSpec)
                 }
 
                 val enterTransition = scaleIn(scaleSpec, 0.96f) +
