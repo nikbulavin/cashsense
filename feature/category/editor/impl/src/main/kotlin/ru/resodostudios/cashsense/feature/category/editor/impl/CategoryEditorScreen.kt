@@ -12,12 +12,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.mediumContainerSize
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -41,10 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
@@ -66,7 +66,6 @@ internal fun CategoryEditorScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun CategoryEditorScreen(
     categoryEditorState: CategoryEditorState,
@@ -106,14 +105,18 @@ private fun CategoryEditorScreen(
                     actions = {
                         val hapticFeedback = LocalHapticFeedback.current
 
-                        CsButton(
+                        CsFilledIconButton(
+                            tooltipPosition = TooltipAnchorPosition.Left,
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 onSaveCategory()
                                 onBackClick()
                             },
                             enabled = categoryEditorState.title.isNotBlank(),
-                            title = stringResource(confirmButtonTextRes),
+                            contentDescription = stringResource(confirmButtonTextRes),
+                            icon = CsIcons.Outlined.Check,
+                            modifier = Modifier
+                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                         )
                     },
                 )

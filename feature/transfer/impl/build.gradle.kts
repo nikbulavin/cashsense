@@ -13,5 +13,5 @@ dependencies {
 
     implementation(projects.feature.transfer.api)
 
-    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.compose.material3.adaptive.navigation3)
 }

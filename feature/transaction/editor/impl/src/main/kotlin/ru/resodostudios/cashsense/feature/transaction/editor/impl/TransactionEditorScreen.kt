@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +17,8 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,7 +53,7 @@ import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.component.button.ConnectedTonalToggleButtonGroup
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsTonalToggleButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -143,7 +146,8 @@ private fun TransactionEditorScreen(
                         val hapticFeedback = LocalHapticFeedback.current
                         val resultEventBus = LocalResultEventBus.current
 
-                        CsButton(
+                        CsFilledIconButton(
+                            tooltipPosition = TooltipAnchorPosition.Left,
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 if (transactionEditorState.transactionId.isBlank()) {
@@ -162,7 +166,10 @@ private fun TransactionEditorScreen(
                             },
                             enabled = transactionEditorState.amount.isAmountValid() &&
                                     transactionEditorState.walletId.isNotBlank(),
-                            title = stringResource(confirmButtonTextRes),
+                            contentDescription = stringResource(confirmButtonTextRes),
+                            icon = CsIcons.Outlined.Check,
+                            modifier = Modifier
+                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                         )
                     },
                 )

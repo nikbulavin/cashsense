@@ -173,7 +173,7 @@ fun WalletDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = MenuDefaults.standaloneGroupShape,
-            containerColor = MenuDefaults.groupStandardContainerColor,
+            containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             availableWallets.forEachIndexed { index, wallet ->
                 val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
@@ -208,6 +208,7 @@ fun WalletDropdownMenu(
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    colors = MenuDefaults.selectableItemVibrantColors(),
                 )
             }
         }

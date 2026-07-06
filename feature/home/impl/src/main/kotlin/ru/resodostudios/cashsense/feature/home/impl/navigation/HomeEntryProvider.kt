@@ -18,7 +18,7 @@ import ru.resodostudios.cashsense.feature.subscription.dialog.api.navigateToSubs
 import ru.resodostudios.cashsense.feature.transaction.detail.api.navigateToTransaction
 import ru.resodostudios.cashsense.feature.transaction.editor.api.navigateToTransactionEditor
 import ru.resodostudios.cashsense.feature.transaction.overview.api.navigateToTransactionOverview
-import ru.resodostudios.cashsense.feature.transfer.dialog.api.navigateToTransferDialog
+import ru.resodostudios.cashsense.feature.transfer.api.navigateToTransferEditor
 import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
 import ru.resodostudios.core.navigation.Navigator
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -35,7 +35,7 @@ fun EntryProviderScope<NavKey>.homeEntry(
         val isSinglePane = LocalIsSinglePane.current
         HomeScreen(
             onWalletClick = navigator::navigateToTransactionOverview,
-            onTransfer = navigator::navigateToTransferDialog,
+            onTransfer = navigator::navigateToTransferEditor,
             onTransactionCreate = navigator::navigateToTransactionEditor,
             onTransactionClick = navigator::navigateToTransaction,
             onSettingsClick = navigator::navigateToSettings,

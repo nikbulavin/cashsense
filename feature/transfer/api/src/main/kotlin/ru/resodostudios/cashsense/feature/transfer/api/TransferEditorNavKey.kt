@@ -1,16 +1,16 @@
-package ru.resodostudios.cashsense.feature.transfer.dialog.api
+package ru.resodostudios.cashsense.feature.transfer.api
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import ru.resodostudios.core.navigation.Navigator
 
 @Serializable
-data class TransferDialogNavKey(
+data class TransferEditorNavKey(
     val walletId: String?,
 ) : NavKey
 
-fun Navigator.navigateToTransferDialog(
+fun Navigator.navigateToTransferEditor(
     walletId: String?,
 ) {
-    navigate(TransferDialogNavKey(walletId))
+    navigate(TransferEditorNavKey(walletId))
 }
