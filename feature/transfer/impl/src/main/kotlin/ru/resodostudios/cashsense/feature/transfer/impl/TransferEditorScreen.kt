@@ -51,7 +51,6 @@ import ru.resodostudios.cashsense.core.ui.component.TimePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.WalletDropdownMenu
 import ru.resodostudios.cashsense.core.ui.util.TrackScreenViewEvent
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.core.ui.util.logNewItemAdded
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -125,12 +124,7 @@ private fun TransferEditorScreen(
                                 )
                                 onBackClick()
                             },
-                            enabled = transferState.amount.isAmountValid() &&
-                                    transferState.sendingWallet.id.isNotBlank() &&
-                                    transferState.receivingWallet.id.isNotBlank() &&
-                                    transferState.exchangeRate.isAmountValid() &&
-                                    transferState.convertedAmount.isAmountValid() &&
-                                    transferState.sendingWallet != transferState.receivingWallet,
+                            enabled = transferState.isTransferValid,
                             contentDescription = stringResource(localesR.string.transfer),
                             icon = CsIcons.Outlined.Check,
                             modifier = Modifier

@@ -20,6 +20,7 @@ import ru.resodostudios.cashsense.core.domain.GetMenuWalletsUseCase
 import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.model.Transfer
+import ru.resodostudios.cashsense.core.ui.util.isAmountValid
 import ru.resodostudios.cashsense.feature.transfer.api.TransferEditorNavKey
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -66,7 +67,10 @@ internal class TransferEditorViewModel @AssistedInject constructor(
     }
 
     private fun calculateAmount(convertedAmount: String, exchangeRate: String): String {
-        return if (convertedAmount.isNotBlank() && exchangeRate.isNotBlank() && BigDecimal(exchangeRate) != BigDecimal.ZERO) {
+        return if (convertedAmount.isNotBlank() && exchangeRate.isNotBlank() && BigDecimal(
+                exchangeRate
+            ) != BigDecimal.ZERO
+        ) {
             BigDecimal(convertedAmount)
                 .divide(BigDecimal(exchangeRate), 2, RoundingMode.HALF_UP)
                 .toString()
@@ -165,7 +169,7 @@ internal class TransferEditorViewModel @AssistedInject constructor(
 }
 
 @Immutable
-data class TransferEditorState(
+internal data class TransferEditorState(
     val sendingWallet: MenuWallet = MenuWallet(),
     val receivingWallet: MenuWallet = MenuWallet(),
     val amount: String = "",
@@ -174,9 +178,17 @@ data class TransferEditorState(
     val availableWallets: List<MenuWallet> = emptyList(),
     val isLoading: Boolean = false,
     val date: Instant = Clock.System.now(),
-)
+) {
+    val isTransferValid: Boolean
+        get() = amount.isAmountValid() &&
+                sendingWallet.id.isNotBlank() &&
+                receivingWallet.id.isNotBlank() &&
+                exchangeRate.isAmountValid() &&
+                convertedAmount.isAmountValid() &&
+                sendingWallet != receivingWallet
+}
 
-fun TransferEditorState.asTransfer(): Transfer {
+internal fun TransferEditorState.asTransfer(): Transfer {
     val transferId = Uuid.random()
     val withdrawalTransaction = Transaction(
         id = Uuid.random().toHexString(),
