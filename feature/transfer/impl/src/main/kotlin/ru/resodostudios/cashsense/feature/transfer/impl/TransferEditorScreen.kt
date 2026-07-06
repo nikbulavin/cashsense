@@ -3,13 +3,17 @@ package ru.resodostudios.cashsense.feature.transfer.impl
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -33,11 +37,12 @@ import ru.resodostudios.cashsense.core.analytics.AnalyticsEvent
 import ru.resodostudios.cashsense.core.analytics.LocalAnalyticsHelper
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
-import ru.resodostudios.cashsense.core.designsystem.component.button.CsButton
+import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.ArrowBack
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
+import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.model.MenuWallet
 import ru.resodostudios.cashsense.core.ui.component.DatePickerTextField
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
@@ -110,7 +115,8 @@ private fun TransferEditorScreen(
                         val analyticsHelper = LocalAnalyticsHelper.current
                         val hapticFeedback = LocalHapticFeedback.current
 
-                        CsButton(
+                        CsFilledIconButton(
+                            tooltipPosition = TooltipAnchorPosition.Left,
                             onClick = {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                                 onTransferSave()
@@ -125,7 +131,10 @@ private fun TransferEditorScreen(
                                     transferState.exchangeRate.isAmountValid() &&
                                     transferState.convertedAmount.isAmountValid() &&
                                     transferState.sendingWallet != transferState.receivingWallet,
-                            title = stringResource(localesR.string.transfer),
+                            contentDescription = stringResource(localesR.string.transfer),
+                            icon = CsIcons.Outlined.Check,
+                            modifier = Modifier
+                                .size(smallContainerSize(IconButtonDefaults.IconButtonWidthOption.Wide)),
                         )
                     },
                 )
@@ -194,18 +203,23 @@ private fun TransferEditorScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
-                DatePickerTextField(
-                    timestamp = transferState.date,
-                    labelRes = localesR.string.date,
-                    icon = CsIcons.Outlined.Calendar,
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxWidth(),
-                    onDateSelect = onDateUpdate,
-                )
-                TimePickerTextField(
-                    timestamp = transferState.date,
-                    modifier = Modifier.fillMaxWidth(),
-                    onTimeSelect = onDateUpdate,
-                )
+                ) {
+                    DatePickerTextField(
+                        timestamp = transferState.date,
+                        labelRes = localesR.string.date,
+                        icon = CsIcons.Outlined.Calendar,
+                        modifier = Modifier.weight(1f),
+                        onDateSelect = onDateUpdate,
+                    )
+                    TimePickerTextField(
+                        onTimeSelect = onDateUpdate,
+                        modifier = Modifier.weight(1f),
+                        timestamp = transferState.date,
+                    )
+                }
             }
         }
     }
