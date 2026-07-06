@@ -88,6 +88,7 @@ import ru.resodostudios.cashsense.feature.transaction.importer.api.TransactionIm
 import ru.resodostudios.cashsense.feature.transaction.importer.impl.navigation.transactionImporterEntry
 import ru.resodostudios.cashsense.feature.transaction.overview.api.TransactionOverviewNavKey
 import ru.resodostudios.cashsense.feature.transaction.overview.impl.navigation.transactionOverviewEntry
+import ru.resodostudios.cashsense.feature.transfer.api.TransferEditorNavKey
 import ru.resodostudios.cashsense.feature.transfer.impl.navigation.transferEditorEntry
 import ru.resodostudios.cashsense.feature.wallet.dialog.api.navigateToWalletDialog
 import ru.resodostudios.cashsense.feature.wallet.dialog.impl.navigation.walletDialogEntry
@@ -326,6 +327,7 @@ private val FAB_HIDDEN_SCREENS = setOf(
     TransactionEditorNavKey::class,
     TransactionImporterNavKey::class,
     TransactionOverviewNavKey::class,
+    TransferEditorNavKey::class,
     CategoryEditorNavKey::class,
     CategoryNavKey::class,
 )
