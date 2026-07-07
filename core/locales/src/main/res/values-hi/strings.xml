@@ -122,10 +122,10 @@
   <string name="select_file">फ़ाइल चुनें</string>
   <string name="import_title">इम्पोर्ट करें</string>
   <string name="preview">पूर्वावलोकन</string>
-  <string name="wallet_widget_description">Track balances and quick transactions</string>
-  <string name="delete_category">Delete category?</string>
-  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
-  <string name="select_category">Select a category</string>
-  <string name="conversion_error">Conversion error</string>
-  <string name="conversion_error_description">Failed to get information for the %1$s currency</string>
+  <string name="wallet_widget_description">अपने खाते के बैलेंस पर नज़र रखें और तुरंत लेन-देन करें</string>
+  <string name="delete_category">श्रेणी हटाएं?</string>
+  <string name="permanently_delete_category">यह श्रेणी आपके डिवाइस से स्थायी रूप से हटा दी जाएगी</string>
+  <string name="select_category">कोई श्रेणी चुनें</string>
+  <string name="conversion_error">रूपांतरण त्रुटि</string>
+  <string name="conversion_error_description">%1$s मुद्रा की जानकारी प्राप्त करने में विफल</string>
 </resources>
