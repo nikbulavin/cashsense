@@ -46,9 +46,11 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                 }
                 if (missingBaseCurrencies.isNotEmpty()) {
                     appScope.launch {
-                        dao.upsertCurrencyExchangeRates(
-                            getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
-                        )
+                        runCatching {
+                            dao.upsertCurrencyExchangeRates(
+                                getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
+                            )
+                        }
                     }
                 }
             }
