@@ -122,10 +122,10 @@
   <string name="select_file">Seleziona file</string>
   <string name="import_title">Importa</string>
   <string name="preview">Anteprima</string>
-  <string name="wallet_widget_description">Track balances and quick transactions</string>
-  <string name="delete_category">Delete category?</string>
-  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
-  <string name="select_category">Select a category</string>
-  <string name="conversion_error">Conversion error</string>
-  <string name="conversion_error_description">Failed to get information for the %1$s currency</string>
+  <string name="wallet_widget_description">Tieni traccia dei saldi del tuo conto ed effettua transazioni rapide</string>
+  <string name="delete_category">Eliminare la categoria?</string>
+  <string name="permanently_delete_category">Questa categoria verrà rimossa definitivamente dal tuo dispositivo</string>
+  <string name="select_category">Seleziona una categoria</string>
+  <string name="conversion_error">Errore di conversione</string>
+  <string name="conversion_error_description">Impossibile recuperare le informazioni per la valuta %1$s</string>
 </resources>
