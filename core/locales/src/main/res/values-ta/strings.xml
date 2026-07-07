@@ -122,10 +122,10 @@
   <string name="select_file">கோப்பைத் தேர்ந்தெடு</string>
   <string name="import_title">இறக்குமதி</string>
   <string name="preview">மாதிரிக்காட்சி</string>
-  <string name="wallet_widget_description">Track balances and quick transactions</string>
-  <string name="delete_category">Delete category?</string>
-  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
-  <string name="select_category">Select a category</string>
-  <string name="conversion_error">Conversion error</string>
-  <string name="conversion_error_description">Failed to get information for the %1$s currency</string>
+  <string name="wallet_widget_description">உங்கள் கணக்கு நிலுவைகளைக் கண்காணித்து விரைவான பரிவர்த்தனைகளைச் செய்யுங்கள்</string>
+  <string name="delete_category">வகையை நீக்கவா?</string>
+  <string name="permanently_delete_category">இந்த வகை உங்கள் சாதனத்திலிருந்து நிரந்தரமாக அகற்றப்படும்</string>
+  <string name="select_category">ஒரு வகையைத் தேர்ந்தெடுக்கவும்</string>
+  <string name="conversion_error">மாற்றுவதில் பிழை</string>
+  <string name="conversion_error_description">%1$s நாணயத்திற்கான தகவலைப் பெற முடியவில்லை</string>
 </resources>
