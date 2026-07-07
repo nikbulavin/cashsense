@@ -122,10 +122,10 @@
   <string name="select_file">파일 선택</string>
   <string name="import_title">가져오기</string>
   <string name="preview">미리보기</string>
-  <string name="wallet_widget_description">Track balances and quick transactions</string>
-  <string name="delete_category">Delete category?</string>
-  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
-  <string name="select_category">Select a category</string>
-  <string name="conversion_error">Conversion error</string>
-  <string name="conversion_error_description">Failed to get information for the %1$s currency</string>
+  <string name="wallet_widget_description">계좌 잔액을 추적하고 빠른 거래를 진행하세요</string>
+  <string name="delete_category">카테고리를 삭제하시겠습니까?</string>
+  <string name="permanently_delete_category">이 카테고리는 기기에서 영구적으로 삭제됩니다</string>
+  <string name="select_category">카테고리 선택</string>
+  <string name="conversion_error">변환 오류</string>
+  <string name="conversion_error_description">%1$s 통화 정보를 가져오지 못했습니다</string>
 </resources>
