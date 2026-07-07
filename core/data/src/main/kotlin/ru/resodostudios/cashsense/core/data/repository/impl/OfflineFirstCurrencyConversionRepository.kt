@@ -1,5 +1,6 @@
 package ru.resodostudios.cashsense.core.data.repository.impl
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -7,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import ru.resodostudios.cashsense.core.common.di.ApplicationScope
 import ru.resodostudios.cashsense.core.data.model.asEntity
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.database.dao.CurrencyConversionDao
@@ -21,6 +24,7 @@ import kotlin.time.Duration.Companion.days
 internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
     private val dao: CurrencyConversionDao,
     private val network: CsNetworkDataSource,
+    @ApplicationScope private val appScope: CoroutineScope,
 ) : CurrencyConversionRepository {
 
     override fun getConvertedCurrencies(
@@ -41,9 +45,13 @@ internal class OfflineFirstCurrencyConversionRepository @Inject constructor(
                     removeAll(currencyExchangeRates.keys)
                 }
                 if (missingBaseCurrencies.isNotEmpty()) {
-                    dao.upsertCurrencyExchangeRates(
-                        getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
-                    )
+                    appScope.launch {
+                        runCatching {
+                            dao.upsertCurrencyExchangeRates(
+                                getCurrencyExchangeRates(missingBaseCurrencies, targetCurrency)
+                            )
+                        }
+                    }
                 }
             }
             .catch { emit(emptyMap()) }
