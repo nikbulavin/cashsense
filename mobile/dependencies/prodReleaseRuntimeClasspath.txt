@@ -200,10 +200,10 @@ com.google.android.play:core-common:2.0.4
 com.google.android.play:review-ktx:2.0.2
 com.google.android.play:review:2.0.2
 com.google.code.findbugs:jsr305:3.0.2
-com.google.dagger:dagger-lint-aar:2.60
-com.google.dagger:dagger:2.60
-com.google.dagger:hilt-android:2.60
-com.google.dagger:hilt-core:2.60
+com.google.dagger:dagger-lint-aar:2.60.1
+com.google.dagger:dagger:2.60.1
+com.google.dagger:hilt-android:2.60.1
+com.google.dagger:hilt-core:2.60.1
 com.google.errorprone:error_prone_annotations:2.26.0
 com.google.firebase:firebase-abt:21.1.1
 com.google.firebase:firebase-analytics:23.2.0
