@@ -122,10 +122,10 @@
   <string name="select_file">ファイルを選択</string>
   <string name="import_title">インポート</string>
   <string name="preview">プレビュー</string>
-  <string name="wallet_widget_description">Track balances and quick transactions</string>
-  <string name="delete_category">Delete category?</string>
-  <string name="permanently_delete_category">This category will be permanently removed from your device</string>
-  <string name="select_category">Select a category</string>
-  <string name="conversion_error">Conversion error</string>
-  <string name="conversion_error_description">Failed to get information for the %1$s currency</string>
+  <string name="wallet_widget_description">口座残高を確認し、すばやく取引を行います</string>
+  <string name="delete_category">カテゴリを削除しますか？</string>
+  <string name="permanently_delete_category">このカテゴリはデバイスから完全に削除されます</string>
+  <string name="select_category">カテゴリを選択</string>
+  <string name="conversion_error">変換エラー</string>
+  <string name="conversion_error_description">%1$s通貨の情報を取得できませんでした</string>
 </resources>
