@@ -42,23 +42,21 @@ fun CurrencyDropdownMenu(
     dropDownHeight: Dp = 200.dp,
     enabled: Boolean = true,
 ) {
-    var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
-    var currencySearchText by rememberSaveable { mutableStateOf("") }
-
-    val currencies = getValidCurrencies()
-    val filteredCurrencies = currencies.filter {
-        it.currencyCode.contains(currencySearchText, ignoreCase = true) ||
-                it.displayName.contains(currencySearchText, ignoreCase = true)
-    }
-
-    val focusManager = LocalFocusManager.current
+    var currencySearchText by rememberSaveable { mutableStateOf(currency.currencyCode) }
     var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    val currencies = remember { getValidCurrencies() }
+
+    val filteredCurrencies = remember(currencySearchText, currencies) {
+        currencies.filter {
+            it.currencyCode.contains(currencySearchText, ignoreCase = true) ||
+                    it.displayName.contains(currencySearchText, ignoreCase = true)
+        }
+    }
 
     LaunchedEffect(currency) {
         currencySearchText = currency.currencyCode
-        if (currency in currencies) {
-            selectedCurrency = currency
-        }
     }
 
     ExposedDropdownMenuBox(
@@ -87,11 +85,8 @@ fun CurrencyDropdownMenu(
             expanded = expanded,
             onDismissRequest = {
                 expanded = false
-                selectedCurrency?.let {
-                    onCurrencyClick(it)
-                    currencySearchText = it.currencyCode
-                    focusManager.clearFocus()
-                }
+                currencySearchText = currency.currencyCode
+                focusManager.clearFocus()
             },
             shape = MenuDefaults.standaloneGroupShape,
             modifier = Modifier.heightIn(max = dropDownHeight),
@@ -102,13 +97,19 @@ fun CurrencyDropdownMenu(
                     shapes = MenuDefaults.itemShape(index, filteredCurrencies.size),
                     text = {
                         Text(
-                            text = "${option.currencyCode} - ${option.displayName}",
+                            text = option.currencyCode,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    supportingText = {
+                        Text(
+                            text = option.displayName,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
                     onClick = {
-                        selectedCurrency = option
                         onCurrencyClick(option)
                         currencySearchText = option.currencyCode
                         expanded = false
