@@ -21,6 +21,7 @@ import androidx.compose.material3.DateRangePickerDefaults
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExpandedDockedSearchBarWithGap
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -77,6 +78,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.transactions
@@ -182,11 +184,8 @@ internal fun CsAppBarWithSearch(
             )
         },
     )
-    ExpandedFullScreenContainedSearchBar(
-        state = searchBarState,
-        inputField = inputField,
-        colors = appBarWithSearchColors.searchBarColors,
-    ) {
+
+    val content = @Composable {
         val hazeState = rememberHazeState()
         val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
         val motionScheme = MaterialTheme.motionScheme
@@ -249,6 +248,22 @@ internal fun CsAppBarWithSearch(
                 }
             }
         }
+    }
+
+    if (LocalIsSinglePane.current) {
+        ExpandedFullScreenContainedSearchBar(
+            state = searchBarState,
+            inputField = inputField,
+            colors = appBarWithSearchColors.searchBarColors,
+            content = { content() },
+        )
+    } else {
+        ExpandedDockedSearchBarWithGap(
+            state = searchBarState,
+            inputField = inputField,
+            colors = appBarWithSearchColors.searchBarColors,
+            content = { content() },
+        )
     }
 }
 
