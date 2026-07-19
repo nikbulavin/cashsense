@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -66,6 +67,7 @@ import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WalletCard(
     uiWallet: UiWallet,

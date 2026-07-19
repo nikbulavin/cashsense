@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
@@ -255,6 +256,7 @@ private fun TransactionOverviewScreen(
     TrackScreenViewEvent(screenName = "TransactionOverview")
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(
     financePanelUiState: FinancePanelUiState,
@@ -535,6 +537,7 @@ private fun WalletToolbar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimaryToggleButton(
     isPrimary: Boolean,
