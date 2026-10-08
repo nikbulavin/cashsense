@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
@@ -41,8 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
@@ -120,7 +119,6 @@ internal fun TransactionOverviewScreen(
     )
 }
 
-@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
@@ -146,7 +144,6 @@ private fun TransactionOverviewScreen(
         LoadingState(Modifier.fillMaxSize())
     } else {
         val hazeState = rememberHazeState()
-        val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
         val motionScheme = MaterialTheme.motionScheme
         val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
@@ -240,7 +237,6 @@ private fun TransactionOverviewScreen(
                                     shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                                     walletIdsAndTitles = if (walletId == null) transactionOverviewState.walletIdsAndTitles else emptyMap(),
                                     hazeState = hazeState,
-                                    hazeStyle = hazeStyle,
                                     onClick = onTransactionSelect,
                                     motionScheme = motionScheme,
                                     dateTextColor = dateTextColor,
@@ -255,6 +251,7 @@ private fun TransactionOverviewScreen(
     TrackScreenViewEvent(screenName = "TransactionOverview")
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(
     financePanelUiState: FinancePanelUiState,
@@ -535,6 +532,7 @@ private fun WalletToolbar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PrimaryToggleButton(
     isPrimary: Boolean,

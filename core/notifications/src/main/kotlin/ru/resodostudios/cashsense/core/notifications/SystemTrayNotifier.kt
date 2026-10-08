@@ -20,8 +20,8 @@ import kotlinx.datetime.toJavaZoneId
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_PATH_BASE
 import ru.resodostudios.cashsense.core.common.Constants.DEEPLINK_TAG_SUBSCRIPTIONS
 import ru.resodostudios.cashsense.core.common.Constants.TARGET_ACTIVITY_NAME
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.model.Subscription
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale

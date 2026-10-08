@@ -18,9 +18,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -29,6 +28,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,7 +85,7 @@ internal fun SubscriptionDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SubscriptionDialog(
     subscriptionDialogState: SubscriptionDialogUiState,
@@ -241,7 +241,6 @@ private fun SubscriptionDialog(
     TrackScreenViewEvent(screenName = "SubscriptionDialog")
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun RepeatingIntervalDropdownMenu(
     interval: RepeatingIntervalType,
@@ -275,7 +274,7 @@ private fun RepeatingIntervalDropdownMenu(
             containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
             intervalNames.forEachIndexed { index, label ->
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     text = { Text(label) },
                     onClick = {
                         onIntervalChange(RepeatingIntervalType.entries[index])

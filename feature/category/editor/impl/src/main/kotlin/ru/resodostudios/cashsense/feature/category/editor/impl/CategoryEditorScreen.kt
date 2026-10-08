@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -66,6 +67,7 @@ internal fun CategoryEditorScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryEditorScreen(
     categoryEditorState: CategoryEditorState,

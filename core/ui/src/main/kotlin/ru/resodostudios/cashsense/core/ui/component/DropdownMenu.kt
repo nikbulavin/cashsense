@@ -3,13 +3,13 @@ package ru.resodostudios.cashsense.core.ui.component
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,16 +24,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.common.getValidCurrencies
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.model.MenuWallet
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.util.Currency
 import ru.resodostudios.cashsense.core.locales.R as localesR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyDropdownMenu(
     currency: Currency,
@@ -42,23 +41,21 @@ fun CurrencyDropdownMenu(
     dropDownHeight: Dp = 200.dp,
     enabled: Boolean = true,
 ) {
-    var selectedCurrency by rememberSaveable { mutableStateOf<Currency?>(null) }
-    var currencySearchText by rememberSaveable { mutableStateOf("") }
-
-    val currencies = getValidCurrencies()
-    val filteredCurrencies = currencies.filter {
-        it.currencyCode.contains(currencySearchText, ignoreCase = true) ||
-                it.displayName.contains(currencySearchText, ignoreCase = true)
-    }
-
-    val focusManager = LocalFocusManager.current
+    var currencySearchText by rememberSaveable { mutableStateOf(currency.currencyCode) }
     var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    val currencies = remember { getValidCurrencies() }
+
+    val filteredCurrencies = remember(currencySearchText, currencies) {
+        currencies.filter {
+            it.currencyCode.contains(currencySearchText, ignoreCase = true) ||
+                    it.displayName.contains(currencySearchText, ignoreCase = true)
+        }
+    }
 
     LaunchedEffect(currency) {
         currencySearchText = currency.currencyCode
-        if (currency in currencies) {
-            selectedCurrency = currency
-        }
     }
 
     ExposedDropdownMenuBox(
@@ -87,28 +84,31 @@ fun CurrencyDropdownMenu(
             expanded = expanded,
             onDismissRequest = {
                 expanded = false
-                selectedCurrency?.let {
-                    onCurrencyClick(it)
-                    currencySearchText = it.currencyCode
-                    focusManager.clearFocus()
-                }
+                currencySearchText = currency.currencyCode
+                focusManager.clearFocus()
             },
             shape = MenuDefaults.standaloneGroupShape,
             modifier = Modifier.heightIn(max = dropDownHeight),
             containerColor = MenuDefaults.groupStandardContainerColor,
         ) {
             filteredCurrencies.forEachIndexed { index, option ->
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     shapes = MenuDefaults.itemShape(index, filteredCurrencies.size),
                     text = {
                         Text(
-                            text = "${option.currencyCode} - ${option.displayName}",
+                            text = option.currencyCode,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    supportingText = {
+                        Text(
+                            text = option.displayName,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
                     },
                     onClick = {
-                        selectedCurrency = option
                         onCurrencyClick(option)
                         currencySearchText = option.currencyCode
                         expanded = false
@@ -125,7 +125,7 @@ fun CurrencyDropdownMenu(
                 )
             }
             if (filteredCurrencies.isEmpty()) {
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     shapes = MenuDefaults.itemShape(0, 1),
                     text = { Text(stringResource(localesR.string.currency_not_found)) },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -140,7 +140,6 @@ fun CurrencyDropdownMenu(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalletDropdownMenu(
     @StringRes title: Int,
@@ -177,7 +176,7 @@ fun WalletDropdownMenu(
         ) {
             availableWallets.forEachIndexed { index, wallet ->
                 val currentBalance = wallet.currency?.let { wallet.currentBalance.formatAmount(it) }
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     shapes = MenuDefaults.itemShape(index, availableWallets.size),
                     selected = selectedWallet == wallet,
                     selectedLeadingIcon = {

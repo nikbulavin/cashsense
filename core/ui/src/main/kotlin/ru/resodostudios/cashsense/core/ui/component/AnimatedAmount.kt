@@ -28,11 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.HazeInputScale
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.hazeBlur
 
-@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun AnimatedAmount(
     formattedAmount: String,
@@ -80,12 +80,15 @@ fun AnimatedAmount(
                 Text(
                     text = char.toString(),
                     modifier = Modifier
-                        .hazeEffect {
-                            blurRadius = animatedBlurRadius
-                            blurEnabled = animatedBlurRadius > 0.dp
-                            noiseFactor = 0f
-                            inputScale = HazeInputScale.Auto
-                        }
+                        .hazeBlur(
+                            input = HazeInput.Content,
+                            style = HazeBlurStyle {
+                                blurEnabled(animatedBlurRadius > 0.dp)
+                                blurRadius(animatedBlurRadius)
+                                noiseFactor(0f)
+                            },
+                            performanceMode = HazePerformanceMode.Default,
+                        )
                         .animateEnterExit(
                             enter = if (shouldAnimate) {
                                 slideInVertically(tween(animDuration, animDelay)) { -it / 2 } +

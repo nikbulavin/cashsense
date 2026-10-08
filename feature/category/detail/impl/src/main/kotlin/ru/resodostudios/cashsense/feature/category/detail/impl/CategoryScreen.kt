@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -37,8 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
@@ -88,7 +87,7 @@ internal fun CategoryScreen(
     )
 }
 
-@OptIn(ExperimentalHazeMaterialsApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryScreen(
     categoryUiState: CategoryUiState,
@@ -105,7 +104,6 @@ private fun CategoryScreen(
             is CategoryUiState.Success -> {
                 val category = categoryUiState.category
                 val hazeState = rememberHazeState()
-                val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
                 val motionScheme = MaterialTheme.motionScheme
                 val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
@@ -155,7 +153,6 @@ private fun CategoryScreen(
                             onClick = onTransactionSelect,
                             selectedTransaction = categoryUiState.selectedTransaction,
                             hazeState = hazeState,
-                            hazeStyle = hazeStyle,
                             walletIdsAndTitles = categoryUiState.walletIdsAndTitles,
                             shouldShowCategoryIcon = false,
                         )
@@ -229,6 +226,7 @@ private fun Header(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ActionButtons(
     onEditClick: () -> Unit,

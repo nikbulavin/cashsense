@@ -14,13 +14,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarWithSearch
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerDefaults
 import androidx.compose.material3.DropdownMenuGroup
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExpandedDockedSearchBarWithGap
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -54,9 +55,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -77,6 +75,7 @@ import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Calendar
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Check
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Close
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Wallet
+import ru.resodostudios.cashsense.core.ui.LocalIsSinglePane
 import ru.resodostudios.cashsense.core.ui.component.IllustratedMessage
 import ru.resodostudios.cashsense.core.ui.component.LoadingState
 import ru.resodostudios.cashsense.core.ui.transactions
@@ -86,8 +85,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class,
     FlowPreview::class,
 )
 @Composable
@@ -182,13 +179,9 @@ internal fun CsAppBarWithSearch(
             )
         },
     )
-    ExpandedFullScreenContainedSearchBar(
-        state = searchBarState,
-        inputField = inputField,
-        colors = appBarWithSearchColors.searchBarColors,
-    ) {
+
+    val content = @Composable {
         val hazeState = rememberHazeState()
-        val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
         val motionScheme = MaterialTheme.motionScheme
         val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
         val transactionContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -238,7 +231,6 @@ internal fun CsAppBarWithSearch(
                                 transaction?.id?.let { onTransactionClick(it) }
                             },
                             hazeState = hazeState,
-                            hazeStyle = hazeStyle,
                             motionScheme = motionScheme,
                             dateTextColor = dateTextColor,
                             transactionContainerColor = transactionContainerColor,
@@ -249,6 +241,22 @@ internal fun CsAppBarWithSearch(
                 }
             }
         }
+    }
+
+    if (LocalIsSinglePane.current) {
+        ExpandedFullScreenContainedSearchBar(
+            state = searchBarState,
+            inputField = inputField,
+            colors = appBarWithSearchColors.searchBarColors,
+            content = { content() },
+        )
+    } else {
+        ExpandedDockedSearchBarWithGap(
+            state = searchBarState,
+            inputField = inputField,
+            colors = appBarWithSearchColors.searchBarColors,
+            content = { content() },
+        )
     }
 }
 
@@ -407,7 +415,7 @@ private fun WalletFilterChip(
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
                 walletIdsAndTitles.entries.forEachIndexed { index, (id, title) ->
-                    DropdownMenuItem(
+                    CheckableDropdownMenuItem(
                         checked = id in selectedWalletIds,
                         onCheckedChange = { checked ->
                             hapticFeedback.performHapticFeedback(

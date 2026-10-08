@@ -11,8 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonDefaults.smallContainerSize
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
@@ -34,8 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component1
-import androidx.compose.ui.focus.FocusRequester.Companion.FocusRequesterFactory.component2
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -100,6 +99,7 @@ internal fun TransactionEditorScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionEditorScreen(
     transactionEditorState: TransactionEditorState,
@@ -306,7 +306,6 @@ private fun TransactionStatusChoiceRow(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryDropdownMenu(
     currentCategory: Category?,
@@ -345,7 +344,7 @@ private fun CategoryDropdownMenu(
             containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             categories.forEachIndexed { index, category ->
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     shapes = MenuDefaults.itemShape(index, categories.size),
                     text = {
                         Text(

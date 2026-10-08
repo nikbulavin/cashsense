@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsSelectableListItem
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
@@ -43,7 +44,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.sharedBoundsAdaptive
 import ru.resodostudios.cashsense.core.model.Category
 import ru.resodostudios.cashsense.core.model.Transaction
 import ru.resodostudios.cashsense.core.ui.model.StoredIcon
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import java.util.Currency
 import kotlin.time.Instant
 import ru.resodostudios.cashsense.core.locales.R as localesR

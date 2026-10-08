@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.RichTimePickerDialog
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,6 +24,7 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerDialogDefaults
 import androidx.compose.material3.TimePickerDialogDefaults.MinHeightForTimePicker
 import androidx.compose.material3.TimePickerDisplayMode
+import androidx.compose.material3.VibrantTimePickerDialog
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -45,13 +45,13 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.designsystem.component.CsOutlinedTextField
 import ru.resodostudios.cashsense.core.designsystem.icon.CsIcons
 import ru.resodostudios.cashsense.core.designsystem.icon.outlined.Schedule
 import ru.resodostudios.cashsense.core.model.DateFormatType
 import ru.resodostudios.cashsense.core.ui.LocalTimeZone
 import ru.resodostudios.cashsense.core.ui.util.cleanAmount
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
 import java.time.format.FormatStyle
@@ -187,7 +187,7 @@ fun TimePickerTextField(
             initialHour = localTime.hour,
             initialMinute = localTime.minute,
         )
-        RichTimePickerDialog(
+        VibrantTimePickerDialog(
             onDismissRequest = { openDialog = false },
             confirmButton = {
                 TextButton(
