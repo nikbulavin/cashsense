@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.kotlin
 import ru.resodostudios.cashsense.configureFlavors
 import ru.resodostudios.cashsense.configureKotlinAndroid
 import ru.resodostudios.cashsense.libs
@@ -19,17 +20,18 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 testOptions.targetSdk = 37
                 lint.targetSdk = 37
                 defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                configureFlavors(this)
                 testOptions.animationsDisabled = true
                 resourcePrefix = path.split("""\W""".toRegex())
                     .drop(1)
                     .distinct()
                     .joinToString(separator = "_")
                     .lowercase() + "_"
-                configureFlavors(this)
             }
             dependencies {
                 "androidTestImplementation"(libs.findLibrary("kotlin.test").get())
-                "testImplementation"(libs.findLibrary("kotlin.test").get())
+
+                "testImplementation"(kotlin("test"))
                 "testImplementation"(libs.findLibrary("junit").get())
 
                 "implementation"(libs.findLibrary("androidx.tracing").get())

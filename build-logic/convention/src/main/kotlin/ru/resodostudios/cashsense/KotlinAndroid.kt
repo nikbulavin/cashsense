@@ -2,7 +2,6 @@ package ru.resodostudios.cashsense
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
@@ -16,6 +15,7 @@ internal fun Project.configureKotlinAndroid(
 ) {
     commonExtension.apply {
         compileSdk = 37
+        compileSdkMinor = 1
 
         defaultConfig.apply {
             minSdk = 28
@@ -29,8 +29,6 @@ internal fun Project.configureKotlinAndroid(
  * Configure base Kotlin options
  */
 internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() = configure<T> {
-    // Treat all Kotlin warnings as errors (disabled by default)
-    // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
     val warningsAsErrors = providers.gradleProperty("warningsAsErrors")
         .map { it.toBoolean() }
         .orElse(false)
@@ -40,9 +38,7 @@ internal inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() 
         else -> TODO("Unsupported project extension $this ${T::class}")
     }.apply {
         jvmToolchain(25)
-        allWarningsAsErrors = warningsAsErrors
-        freeCompilerArgs.add(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        )
+        allWarningsAsErrors.set(warningsAsErrors)
+        freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
