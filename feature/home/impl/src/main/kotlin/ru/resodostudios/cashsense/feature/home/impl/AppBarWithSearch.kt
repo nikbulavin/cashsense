@@ -55,8 +55,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -87,7 +85,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalHazeMaterialsApi::class,
     FlowPreview::class,
 )
 @Composable
@@ -185,7 +182,6 @@ internal fun CsAppBarWithSearch(
 
     val content = @Composable {
         val hazeState = rememberHazeState()
-        val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
         val motionScheme = MaterialTheme.motionScheme
         val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
         val transactionContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -235,7 +231,6 @@ internal fun CsAppBarWithSearch(
                                 transaction?.id?.let { onTransactionClick(it) }
                             },
                             hazeState = hazeState,
-                            hazeStyle = hazeStyle,
                             motionScheme = motionScheme,
                             dateTextColor = dateTextColor,
                             transactionContainerColor = transactionContainerColor,

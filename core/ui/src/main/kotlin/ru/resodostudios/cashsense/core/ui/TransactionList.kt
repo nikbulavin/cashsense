@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.HazeInputScale
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.HazeMaterials
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -33,12 +33,10 @@ import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.time.format.FormatStyle
 import kotlin.time.Instant
 
-@OptIn(ExperimentalHazeApi::class)
 fun LazyListScope.transactions(
     groupedTransactions: Map<Instant, List<Transaction>>,
     onClick: (Transaction?) -> Unit,
     hazeState: HazeState,
-    hazeStyle: HazeStyle,
     motionScheme: MotionScheme,
     dateTextColor: Color,
     transactionContainerColor: Color? = null,
@@ -59,12 +57,17 @@ fun LazyListScope.transactions(
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
                     .clip(CircleShape)
-                    .hazeEffect(hazeState, hazeStyle) {
-                        blurEnabled = true
-                        blurRadius = 10.dp
-                        noiseFactor = 0f
-                        inputScale = HazeInputScale.Auto
-                    },
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeMaterials
+                            .thick(MaterialTheme.colorScheme.tertiaryContainer)
+                            .then {
+                                blurEnabled(true)
+                                blurRadius(10.dp)
+                                noiseFactor(0f)
+                            },
+                        performanceMode = HazePerformanceMode.Default,
+                    ),
             )
         }
         item { Spacer(Modifier.height(16.dp)) }

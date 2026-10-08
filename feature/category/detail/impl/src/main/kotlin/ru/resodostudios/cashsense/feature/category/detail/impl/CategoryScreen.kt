@@ -38,8 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsFilledIconButton
@@ -89,7 +87,7 @@ internal fun CategoryScreen(
     )
 }
 
-@OptIn(ExperimentalHazeMaterialsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CategoryScreen(
     categoryUiState: CategoryUiState,
@@ -106,7 +104,6 @@ private fun CategoryScreen(
             is CategoryUiState.Success -> {
                 val category = categoryUiState.category
                 val hazeState = rememberHazeState()
-                val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
                 val motionScheme = MaterialTheme.motionScheme
                 val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
@@ -156,7 +153,6 @@ private fun CategoryScreen(
                             onClick = onTransactionSelect,
                             selectedTransaction = categoryUiState.selectedTransaction,
                             hazeState = hazeState,
-                            hazeStyle = hazeStyle,
                             walletIdsAndTitles = categoryUiState.walletIdsAndTitles,
                             shouldShowCategoryIcon = false,
                         )

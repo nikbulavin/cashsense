@@ -42,8 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import ru.resodostudios.cashsense.core.designsystem.component.AnimatedIcon
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
@@ -121,7 +119,6 @@ internal fun TransactionOverviewScreen(
     )
 }
 
-@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 private fun TransactionOverviewScreen(
     financePanelUiState: FinancePanelUiState,
@@ -147,7 +144,6 @@ private fun TransactionOverviewScreen(
         LoadingState(Modifier.fillMaxSize())
     } else {
         val hazeState = rememberHazeState()
-        val hazeStyle = HazeMaterials.thick(MaterialTheme.colorScheme.tertiaryContainer)
         val motionScheme = MaterialTheme.motionScheme
         val dateTextColor = MaterialTheme.colorScheme.onTertiaryContainer
 
@@ -241,7 +237,6 @@ private fun TransactionOverviewScreen(
                                     shouldHighlightSelectedTransaction = shouldHighlightSelectedTransaction,
                                     walletIdsAndTitles = if (walletId == null) transactionOverviewState.walletIdsAndTitles else emptyMap(),
                                     hazeState = hazeState,
-                                    hazeStyle = hazeStyle,
                                     onClick = onTransactionSelect,
                                     motionScheme = motionScheme,
                                     dateTextColor = dateTextColor,
