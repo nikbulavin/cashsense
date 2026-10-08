@@ -15,14 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsAlertDialog
 import ru.resodostudios.cashsense.core.designsystem.component.CsListItem
@@ -54,7 +54,6 @@ import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.MONTHLY
 import ru.resodostudios.cashsense.core.model.RepeatingIntervalType.NONE
 import ru.resodostudios.cashsense.core.model.Subscription
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.formatDate
 import java.math.BigDecimal
 import kotlin.time.Clock
@@ -174,7 +173,7 @@ fun SubscriptionCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DropdownMenu(
     onEditClick: () -> Unit,
@@ -197,7 +196,7 @@ private fun DropdownMenu(
             onDismissRequest = { expanded = false },
             containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
-            DropdownMenuItem(
+            SelectableDropdownMenuItem(
                 shapes = MenuDefaults.itemShape(0, 2),
                 text = { Text(text = stringResource(localesR.string.edit)) },
                 onClick = {
@@ -213,7 +212,7 @@ private fun DropdownMenu(
                 selected = false,
                 colors = MenuDefaults.selectableItemVibrantColors(),
             )
-            DropdownMenuItem(
+            SelectableDropdownMenuItem(
                 shapes = MenuDefaults.itemShape(1, 2),
                 text = { Text(text = stringResource(localesR.string.delete)) },
                 onClick = {

@@ -29,6 +29,7 @@ import kotlinx.datetime.plus
 import ru.resodostudios.cashsense.core.common.CsDispatchers.Default
 import ru.resodostudios.cashsense.core.common.Dispatcher
 import ru.resodostudios.cashsense.core.common.di.ApplicationScope
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.data.repository.CurrencyConversionRepository
 import ru.resodostudios.cashsense.core.data.repository.UserDataRepository
 import ru.resodostudios.cashsense.core.data.repository.WalletsRepository
@@ -48,7 +49,6 @@ import ru.resodostudios.cashsense.core.model.TransactionFilter
 import ru.resodostudios.cashsense.core.model.Wallet
 import ru.resodostudios.cashsense.core.ui.groupByDate
 import ru.resodostudios.cashsense.core.ui.util.filterTransactions
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
 import ru.resodostudios.cashsense.core.ui.util.getGraphData
 import ru.resodostudios.cashsense.core.ui.util.isInCurrentMonthAndYear
@@ -149,7 +149,7 @@ internal class TransactionOverviewViewModel @AssistedInject constructor(
         val allTransactions = data.wallets.flatMap { it.transactions }
         val filterableTransactions = allTransactions.filterTransactions(filter)
         val filteredTransactions = filterableTransactions.transactions.filter {
-            !it.ignored && if (filter.dateType == ALL) it.timestamp.isInCurrentMonthAndYear() else true
+            !it.ignored && (filter.dateType != ALL || it.timestamp.isInCurrentMonthAndYear())
         }
 
         val metrics = calculatePeriodMetrics(
@@ -327,9 +327,8 @@ private fun calculateTotalBalance(
     exchangeRates: Map<Currency, BigDecimal>,
 ): BigDecimal? {
     var total = BigDecimal.ZERO
-    for (userWallet in wallets) {
-        val balance = userWallet.currentBalance
-        val currency = userWallet.wallet.currency
+    for ((wallet, _, balance) in wallets) {
+        val currency = wallet.currency
 
         if (targetCurrency == currency) {
             total += balance
@@ -353,9 +352,7 @@ private fun calculatePeriodMetrics(
     val expenseCurrencies = mutableSetOf<Currency>()
     val incomeCurrencies = mutableSetOf<Currency>()
 
-    for (transaction in filteredTransactions) {
-        val amount = transaction.amount
-        val currency = transaction.currency
+    for ((_, _, _, amount, _, _, _, _, currency) in filteredTransactions) {
 
         val convertedAmount = if (targetCurrency == currency) {
             amount
@@ -397,13 +394,13 @@ private fun calculateFinancialHealth(
     var expenses = BigDecimal.ZERO
     var income = BigDecimal.ZERO
 
-    for (transaction in monthlyTransactions) {
-        val convertedAmount = if (userCurrency == transaction.currency) {
-            transaction.amount
+    for ((_, _, _, amount, _, _, _, _, currency) in monthlyTransactions) {
+        val convertedAmount = if (userCurrency == currency) {
+            amount
         } else {
-            currencyExchangeRates[transaction.currency]?.times(transaction.amount) ?: return null
+            currencyExchangeRates[currency]?.times(amount) ?: return null
         }
-        if (transaction.amount.signum() < 0) {
+        if (amount.signum() < 0) {
             expenses += convertedAmount
         } else {
             income += convertedAmount

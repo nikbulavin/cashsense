@@ -19,9 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -33,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
@@ -96,7 +96,7 @@ internal fun TransactionImporterScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TransactionImporterScreen(
     transactionImporterUiState: TransactionImporterUiState,
@@ -315,7 +315,6 @@ private fun TransactionImporterScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateFormatField(
     value: String,
@@ -345,7 +344,7 @@ private fun DateFormatField(
             containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             COMMON_DATE_TIME_PATTERNS.forEachIndexed { index, pattern ->
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     text = {
                         Text(
                             text = pattern,
@@ -373,7 +372,6 @@ private fun DateFormatField(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MappingField(
     label: String,
@@ -406,7 +404,7 @@ private fun MappingField(
             containerColor = MenuDefaults.groupVibrantContainerColor,
         ) {
             columns.forEachIndexed { index, column ->
-                DropdownMenuItem(
+                SelectableDropdownMenuItem(
                     text = {
                         Text(
                             text = column,

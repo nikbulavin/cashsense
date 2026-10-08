@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,11 +39,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import ru.resodostudios.cashsense.core.common.formatAmount
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.component.CsTag
 import ru.resodostudios.cashsense.core.designsystem.component.button.CsIconButton
@@ -62,7 +65,6 @@ import ru.resodostudios.cashsense.core.model.ExtendedUserWallet
 import ru.resodostudios.cashsense.core.model.Wallet
 import ru.resodostudios.cashsense.core.ui.TransitionThemeWrapper
 import ru.resodostudios.cashsense.core.ui.component.AnimatedAmount
-import ru.resodostudios.cashsense.core.ui.util.formatAmount
 import ru.resodostudios.cashsense.feature.home.impl.model.UiWallet
 import java.math.BigDecimal
 import ru.resodostudios.cashsense.core.locales.R as localesR
@@ -171,6 +173,7 @@ internal fun WalletCard(
                     buttonGroupContent = {
                         val interactionSource = remember { MutableInteractionSource() }
                         val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                        val layoutDirection = LocalLayoutDirection.current
                         Button(
                             onClick = { onNewTransactionClick(wallet.id) },
                             shapes = ButtonDefaults.shapes(),
@@ -180,7 +183,7 @@ internal fun WalletCard(
                                 .weight(1f)
                                 .animateWidth(
                                     interactionSource = interactionSource,
-                                    compressionLimit = contentPadding,
+                                    compressionLimit = contentPadding.calculateEndPadding(layoutDirection),
                                 ),
                         ) {
                             Icon(
@@ -215,6 +218,7 @@ internal fun WalletCard(
                     buttonGroupContent = {
                         val interactionSource = remember { MutableInteractionSource() }
                         val contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+                        val layoutDirection = LocalLayoutDirection.current
                         OutlinedButton(
                             onClick = { onTransferClick(wallet.id) },
                             shapes = ButtonDefaults.shapes(),
@@ -223,7 +227,7 @@ internal fun WalletCard(
                             modifier = Modifier
                                 .animateWidth(
                                     interactionSource = interactionSource,
-                                    compressionLimit = contentPadding,
+                                    compressionLimit = contentPadding.calculateEndPadding(layoutDirection),
                                 ),
                         ) {
                             Icon(

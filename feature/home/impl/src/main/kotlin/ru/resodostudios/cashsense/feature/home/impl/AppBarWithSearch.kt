@@ -14,12 +14,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.AppBarWithSearch
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerDefaults
 import androidx.compose.material3.DropdownMenuGroup
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedDockedSearchBarWithGap
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
@@ -55,7 +55,6 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
@@ -89,7 +88,6 @@ import ru.resodostudios.cashsense.core.locales.R as localesR
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalHazeMaterialsApi::class,
-    ExperimentalHazeApi::class,
     FlowPreview::class,
 )
 @Composable
@@ -422,7 +420,7 @@ private fun WalletFilterChip(
                 containerColor = MenuDefaults.groupVibrantContainerColor,
             ) {
                 walletIdsAndTitles.entries.forEachIndexed { index, (id, title) ->
-                    DropdownMenuItem(
+                    CheckableDropdownMenuItem(
                         checked = id in selectedWalletIds,
                         onCheckedChange = { checked ->
                             hapticFeedback.performHapticFeedback(

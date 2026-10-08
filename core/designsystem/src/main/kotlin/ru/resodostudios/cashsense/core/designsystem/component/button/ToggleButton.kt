@@ -2,11 +2,11 @@ package ru.resodostudios.cashsense.core.designsystem.component.button
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.FilledTonalToggleButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.ToggleButtonShapes
-import androidx.compose.material3.TonalToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,12 +22,12 @@ fun CsTonalToggleButton(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    shapes: ToggleButtonShapes = ToggleButtonDefaults.shapes(),
+    shapes: ToggleButtonShapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.MinHeight),
     enabled: Boolean = true,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
-    TonalToggleButton(
+    FilledTonalToggleButton(
         checked = checked,
         onCheckedChange = { isChecked ->
             hapticFeedback.performHapticFeedback(
@@ -59,7 +59,7 @@ fun CsToggleButton(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
-    shapes: ToggleButtonShapes = ToggleButtonDefaults.shapes(),
+    shapes: ToggleButtonShapes = ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.MinHeight),
     enabled: Boolean = true,
 ) {
     val hapticFeedback = LocalHapticFeedback.current

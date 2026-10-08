@@ -13,7 +13,6 @@ dependencies {
     api(projects.core.datastore)
     api(projects.core.network)
 
-    implementation(projects.core.designsystem)
     implementation(projects.core.notifications)
 
     implementation(libs.androidx.appcompat)

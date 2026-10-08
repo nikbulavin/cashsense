@@ -63,6 +63,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaDayOfWeek
 import kotlinx.datetime.toJavaMonth
+import ru.resodostudios.cashsense.core.common.getDecimalFormat
 import ru.resodostudios.cashsense.core.common.getUsdCurrency
 import ru.resodostudios.cashsense.core.designsystem.theme.CsTheme
 import ru.resodostudios.cashsense.core.locales.R
@@ -73,7 +74,6 @@ import ru.resodostudios.cashsense.core.model.DateType.YEAR
 import ru.resodostudios.cashsense.core.model.FinanceType
 import ru.resodostudios.cashsense.core.model.TransactionFilter
 import ru.resodostudios.cashsense.core.ui.util.getCurrentZonedDateTime
-import ru.resodostudios.cashsense.core.ui.util.getDecimalFormat
 import java.math.BigDecimal
 import java.time.format.TextStyle
 import java.util.Currency
